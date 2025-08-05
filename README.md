@@ -31,15 +31,15 @@ You'll create:
 ### Step 2: Create Your GitHub Repository
 
 1. Go to [GitHub](https://github.com/new) and create a new repository:
-   - **Name**: `omvira`
-   - ✅ Add README
-   - ✅ Add .gitignore → select Node
+   - **Name**: `reponame`
+   - Add README
+   - Add .gitignore → select Node
    - (Optional) Add MIT license
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/omvira.git
-   cd omvira
+   git clone https://github.com/your-username/reponame.git
+   cd reponame
    ```
 
 ### Step 3: Folder Structure
@@ -122,7 +122,7 @@ mkdir frontend backend
    app.use(cors());
    app.use(express.json());
 
-   app.get('/', (req, res) => res.send('Omvira API'));
+   app.get('/', (req, res) => res.send('Yourname API'));
    app.listen(4000, () => console.log('Server running on http://localhost:4000'));
    ```
 

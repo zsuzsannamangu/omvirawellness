@@ -1,0 +1,53 @@
+@import './_variables.scss';
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: $light-text;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: $font-main;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: $dark-text;
+  font-family: $font-heading;
+}
+
+.navLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.link {
+  font-size: 1rem;
+  color: $subtext-color;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $hover-green;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: $hover-green;
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+}
