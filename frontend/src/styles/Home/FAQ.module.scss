@@ -1,0 +1,34 @@
+@import '../_variables.scss';
+
+.faqSection {
+  padding: $spacing-xl $spacing-md;
+  background-color: $muted-bg;
+  color: $dark-text;
+
+  h2 {
+    font-size: 2rem;
+    font-family: $font-main;
+    color: $primary-color;
+    margin-bottom: $spacing-lg;
+    text-align: center;
+  }
+
+  .faqItem {
+    margin-bottom: $spacing-lg;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: $spacing-sm;
+      color: $primary-color;
+      font-family: $font-heading;
+    }
+
+    p {
+      font-size: 1rem;
+      color: $dark-text;
+      line-height: 1.6;
+      font-family: $font-main;
+    }
+  }
+}

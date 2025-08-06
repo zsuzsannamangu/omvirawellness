@@ -1,0 +1,59 @@
+@import '../_variables.scss';
+
+.howSection {
+  padding: $spacing-xl $spacing-md;
+  background-color: $muted-bg;
+  text-align: center;
+
+  h2 {
+    font-size: 2rem;
+    font-family: $font-heading;
+    color: $primary-color;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.stepsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.step {
+  background: $light-text;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  flex: 1;
+  max-width: 300px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: $primary-color;
+    margin-top: $spacing-sm;
+    margin-bottom: $spacing-xs;
+    font-family: $font-main;
+  }
+
+  p {
+    font-size: 1rem;
+    color: $subtext-color;
+    font-family: $font-main;
+  }
+}
+
+.icon {
+  font-size: 2rem;
+  color: $cta-green;
+}

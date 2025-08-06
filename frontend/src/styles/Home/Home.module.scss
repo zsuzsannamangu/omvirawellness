@@ -1,4 +1,4 @@
-@import './_variables.scss';
+@import '../_variables.scss';
 
 .main {
   padding: 0 $spacing-md;
@@ -132,7 +132,6 @@
       font-size: 4rem;
       font-family: $font-heading;
       color: $primary-color;
-      margin-bottom: $spacing-lg;
     }
 
     h3 {

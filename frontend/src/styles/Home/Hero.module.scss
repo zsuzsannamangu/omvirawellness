@@ -1,0 +1,47 @@
+@import '../_variables.scss';
+
+.hero {
+  background: url('/images/aesthetic.jpg') center/cover no-repeat;
+  height: 100vh;
+  position: relative;
+  font-family: $font-main;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $spacing-lg;
+}
+
+.title {
+  font-family: $font-heading;
+  font-size: 3rem;
+  font-weight: bold;
+  color: $light-text;
+}
+
+.subtitle {
+  color: $light-text;
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-lg;
+  font-size: 1.25rem;
+  max-width: 600px;
+}
+
+.searchInput {
+  padding: $spacing-sm $spacing-md;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 400px;
+  color: $dark-text;
+  &::placeholder {
+    color: $subtext-color;
+  }
+}
