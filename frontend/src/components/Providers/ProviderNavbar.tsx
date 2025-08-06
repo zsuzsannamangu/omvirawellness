@@ -10,13 +10,13 @@ export default function ProviderNavbar() {
         <Link href="/">Book a Provider</Link>
       </div>
       <nav className={styles.navLinks}>
-        <Link href="/providers#benefits" className={styles.link}>
+        <Link href="#benefits" className={styles.link}>
           Benefits
         </Link>
-        <Link href="/providers#features" className={styles.link}>
+        <Link href="#features" className={styles.link}>
           Features
         </Link>
-        <Link href="/providers#testimonials" className={styles.link}>
+        <Link href="#testimonials" className={styles.link}>
           Testimonials
         </Link>
         <Link href="/pre-sale" className={styles.ctaLink}>

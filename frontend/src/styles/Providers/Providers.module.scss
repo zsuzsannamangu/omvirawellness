@@ -1,84 +1,986 @@
-@import '../variables';
+@import '../_variables';
 
 .main {
-  padding: $spacing-xl $spacing-md;
-  font-family: $font-main;
-  color: $dark-text;
+  min-height: 100vh;
 }
 
+// Hero Section
 .hero {
-  text-align: center;
-  padding-bottom: $spacing-xl;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: $spacing-xxl 2rem;
+  color: $light-text;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
 
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xxl;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    text-align: center;
+  }
+}
+
+.heroText {
   h1 {
-    font-size: 2.5rem;
     font-family: $font-heading;
-    color: $primary-color;
-    margin-bottom: $spacing-sm;
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: $spacing-lg;
+    color: $light-text;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
   }
 
   p {
-    font-size: 1.2rem;
-    color: $subtext-color;
-    max-width: 700px;
-    margin: 0 auto $spacing-md;
+    font-family: $font-main;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: $spacing-xl;
+    color: rgba($light-text, 0.9);
+  }
+}
+
+.heroImage {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.heroImg {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.playButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  background: rgba($light-text, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $light-text;
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
 
 .ctaButton {
-  background-color: $cta-green;
-  color: $cta-text;
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  text-decoration: none;
   display: inline-block;
-  transition: background-color 0.3s ease;
-
+  background-color: $primary-color;
+  color: $light-text;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  
   &:hover {
     background-color: $cta-hover-green;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
   }
 }
 
-.benefits {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: $spacing-xl 0;
-
-  h2 {
-    font-size: 2rem;
-    text-align: center;
-    font-family: $font-heading;
-    color: $primary-color;
-    margin-bottom: $spacing-lg;
+// Who Is This For Section - Lyft Pink Style
+.whoSection {
+  padding: $spacing-xxl 2rem;
+  background-color: $light-text;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
   }
+}
 
-  ul {
-    list-style: disc;
-    padding-left: 1.5rem;
-    line-height: 1.6;
-    font-size: 1rem;
-    color: $subtext-color;
+.whoContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xxl;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    text-align: center;
+  }
+}
 
-    li {
-      margin-bottom: $spacing-sm;
+.whoImage {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  position: relative;
+  align-self: start;
+  margin-top: 4.5rem; // Align with description text instead of title
+  
+  @media (max-width: 768px) {
+    margin-top: 0;
+  }
+}
 
-      strong {
-        color: $primary-color;
-      }
+.whoImg {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.whoText {
+  h2 {
+    font-family: $font-heading;
+    font-size: 3rem;
+    color: $dark-text;
+    margin-bottom: $spacing-lg;
+    font-weight: 700;
+    line-height: 1.2;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
     }
   }
 }
 
-.ctaSection {
-  text-align: center;
-  padding-top: $spacing-xl;
+.whoDescription {
+  font-family: $font-main;
+  font-size: 1.1rem;
+  color: $subtext-color;
+  line-height: 1.6;
+  margin-bottom: $spacing-xl;
+}
 
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: $spacing-md;
-    color: $primary-color;
+.benefitsList {
+  margin-bottom: $spacing-xl;
+}
+
+.benefitItem {
+  margin-bottom: 4px; // Reduced from $spacing-xs (8px) to match tighter spacing
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.benefitContent {
+  strong {
     font-family: $font-heading;
+    font-size: 1.1rem;
+    color: $dark-text;
+    display: block;
+    margin-bottom: 4px; // Reduced from $spacing-xs (8px) for tighter spacing
+    font-weight: 600;
+  }
+  
+  p {
+    font-family: $font-main;
+    color: $subtext-color;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.whoCtaButton {
+  display: inline-block;
+  background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+  color: $light-text;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+  margin-bottom: $spacing-lg;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba($primary-color, 0.4);
+    background: linear-gradient(135deg, darken($primary-color, 5%) 0%, darken($primary-color, 15%) 100%);
+  }
+}
+
+.locationSection {
+  padding: $spacing-xxl 2rem;
+  background-color: $muted-bg;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.locationContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xxl;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    text-align: center;
+  }
+}
+
+.locationText {
+  h2 {
+    font-family: $font-heading;
+    font-size: 3rem;
+    color: $dark-text;
+    margin-bottom: $spacing-lg;
+    font-weight: 700;
+    line-height: 1.2;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+}
+
+.locationDescription {
+  font-family: $font-main;
+  font-size: 1.1rem;
+  color: $subtext-color;
+  line-height: 1.6;
+  margin-bottom: $spacing-xl;
+}
+
+.locationList {
+  margin-bottom: $spacing-xl;
+}
+
+.locationItem {
+  margin-bottom: $spacing-xs;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.locationDetails {
+  strong {
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    color: $dark-text;
+    display: block;
+    margin-bottom: $spacing-xs;
+    font-weight: 600;
+  }
+  
+  p {
+    font-family: $font-main;
+    color: $subtext-color;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.locationImage {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  position: relative;
+  align-self: start;
+  margin-top: 4.5rem; // Align with description text instead of title
+  
+  @media (max-width: 768px) {
+    margin-top: 0;
+  }
+}
+
+.locationImg {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// Features Section
+.features {
+  padding: $spacing-xxl 2rem;
+  background-color: $muted-bg;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.features h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  color: $dark-text;
+  text-align: center;
+  margin-bottom: $spacing-xxl;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: $spacing-xl;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+.feature {
+  background: $light-text;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.featureIcon {
+  font-size: 2.5rem;
+  margin-bottom: $spacing-md;
+}
+
+.feature h3 {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+}
+
+.feature p {
+  font-family: $font-main;
+  color: $subtext-color;
+  line-height: 1.6;
+}
+
+// Benefits Section
+.benefits {
+  padding: $spacing-xxl 2rem;
+  background-color: $light-text;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.benefitsContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xxl;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+  }
+}
+
+.benefitsText h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  color: $dark-text;
+  margin-bottom: $spacing-xl;
+  line-height: 1.3;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.benefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+}
+
+.checkmark {
+  color: $primary-color;
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.benefit strong {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  color: $dark-text;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.benefit p {
+  font-family: $font-main;
+  color: $subtext-color;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.benefitsImage {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.benefitImg {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+// CTA Section
+.ctaSection {
+  padding: $spacing-xxl 2rem;
+  background: linear-gradient(135deg, $primary-color 0%, #0d5a5d 100%);
+  color: $light-text;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.ctaSection h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  margin-bottom: $spacing-md;
+  color: $light-text;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.ctaSection p {
+  font-family: $font-main;
+  font-size: 1.25rem;
+  margin-bottom: $spacing-xl;
+  color: rgba($light-text, 0.9);
+}
+
+.ctaButtonLarge {
+  display: inline-block;
+  background-color: $secondary-color;
+  color: $dark-text;
+  padding: 1.25rem 3rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: darken($secondary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($secondary-color, 0.3);
+  }
+}
+
+// Main Sections - Alternating Layout (like How It Works)
+.mainSections {
+  padding: $spacing-xxl 2rem;
+  background-color: $light-text;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.sectionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xxl;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    gap: $spacing-xl;
+  }
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xl;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $spacing-lg;
+    text-align: center;
+  }
+  
+  &.reverse {
+    flex-direction: row-reverse;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.content {
+  flex: 1;
+  max-width: 500px;
+  
+  h2 {
+    font-size: 2.5rem;
+    font-family: $font-heading;
+    color: $primary-color;
+    margin-bottom: $spacing-lg;
+    font-weight: 600;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+}
+
+.sectionDescription {
+  font-size: 1.1rem;
+  color: $subtext-color;
+  line-height: 1.6;
+  font-family: $font-main;
+  margin-bottom: $spacing-lg;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.listItem {
+  margin-bottom: 4px;
+  position: relative;
+  padding-left: 1.5rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  // Bullet point
+  &:before {
+    content: '•';
+    color: $primary-color;
+    font-size: 1.2rem;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+  }
+  
+  strong {
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    color: $dark-text;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  
+  p {
+    font-family: $font-main;
+    color: $subtext-color;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.imageContainer {
+  flex: 1;
+  max-width: 500px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// Pricing Section
+.pricingSection {
+  padding: $spacing-xxl 2rem;
+  background-color: $muted-bg;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.pricingHeader {
+  text-align: center;
+  margin-bottom: $spacing-xxl;
+  
+  h2 {
+    font-family: $font-heading;
+    font-size: 2.5rem;
+    color: $primary-color;
+    margin-bottom: $spacing-md;
+    font-weight: 600;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+  
+  p {
+    font-family: $font-main;
+    font-size: 1.2rem;
+    color: $subtext-color;
+    margin: 0;
+  }
+}
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-bottom: $spacing-xxl;
+  border: 1px solid rgba($subtext-color, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.pricingCard {
+  background: $light-text;
+  padding: $spacing-xl;
+  border-right: 1px solid rgba($subtext-color, 0.2);
+  position: relative;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  
+  &:last-child {
+    border-right: none;
+  }
+  
+  @media (max-width: 768px) {
+    border-right: none;
+    border-bottom: 1px solid rgba($subtext-color, 0.2);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  &.popular {
+    // No special styling for popular
+  }
+}
+
+.popularBadge {
+  background: $primary-color;
+  color: $light-text;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 20px;
+  font-family: $font-main;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: $spacing-sm;
+  display: inline-block;
+}
+
+.tierHeader {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.8rem;
+    color: $primary-color;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+  }
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: $spacing-sm;
+  
+  .currency {
+    font-family: $font-main;
+    font-size: 1.2rem;
+    color: $primary-color;
+    font-weight: 600;
+  }
+  
+  .amount {
+    font-family: $font-heading;
+    font-size: 3rem;
+    color: $primary-color;
+    font-weight: 700;
+    margin: 0 4px;
+  }
+  
+  .period {
+    font-family: $font-main;
+    font-size: 1rem;
+    color: $subtext-color;
+  }
+}
+
+.tierDescription {
+  font-family: $font-main;
+  color: $subtext-color;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  text-align: left;
+  flex: 1;
+}
+
+.chooseButton {
+  margin-top: $spacing-lg;
+  text-align: center;
+}
+
+.chooseBtn {
+  display: inline-block;
+  background-color: $primary-color;
+  color: $light-text;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+  }
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  font-family: $font-main;
+  color: $dark-text;
+  
+  .checkmark {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+.addOns {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.8rem;
+    color: $primary-color;
+    margin-bottom: $spacing-lg;
+    font-weight: 600;
+  }
+}
+
+.addOnsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: $spacing-xl;
+  }
+}
+
+.addOn {
+  background: $light-text;
+  padding: $spacing-lg;
+  border-radius: 12px;
+  border-left: 4px solid $secondary-color;
+  text-align: left;
+  
+  strong {
+    font-family: $font-heading;
+    color: $dark-text;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: $spacing-xs;
+  }
+  
+  span {
+    font-family: $font-main;
+    color: $subtext-color;
+    font-size: 0.9rem;
+  }
+}
+
+// Mission/Vision Section
+.missionSection {
+  padding: $spacing-xxl 2rem;
+  background-color: $light-text;
+  border-top: 1px solid rgba($primary-color, 0.1);
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.missionContent {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  
+  h2 {
+    font-family: $font-heading;
+    font-size: 2.5rem;
+    color: $primary-color;
+    margin-bottom: $spacing-lg;
+    font-weight: 600;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+}
+
+.missionStatement {
+  font-family: $font-main;
+  font-size: 1.3rem;
+  color: $dark-text;
+  line-height: 1.6;
+  margin-bottom: $spacing-xxl;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: $spacing-xl;
+  }
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: $spacing-lg;
+  text-align: left;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    text-align: center;
+  }
+}
+
+.valueItem {
+  padding: $spacing-lg;
+  background: rgba($primary-color, 0.05);
+  border-radius: 12px;
+  border-top: 3px solid $primary-color;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.15);
+  }
+  
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.3rem;
+    color: $primary-color;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+  }
+  
+  p {
+    font-family: $font-main;
+    color: $subtext-color;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
   }
 }

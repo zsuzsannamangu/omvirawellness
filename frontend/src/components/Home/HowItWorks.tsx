@@ -11,7 +11,7 @@ const steps = [
   {
     title: 'Book on-demand or in advance for wellness services near you',
     description: 'Schedule your wellness session exactly when you need it - whether it\'s a last-minute massage or a planned yoga retreat.',
-    image: '/images/computer2.jpg',
+    image: '/images/wellness.jpg',
   },
   {
     title: 'Curate your own experience — solo or with friends, for daily care or special events',
