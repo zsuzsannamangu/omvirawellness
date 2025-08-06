@@ -1,0 +1,45 @@
+@import '../variables';
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  background-color: $light-text;
+  border-bottom: 1px solid $muted-bg;
+  font-family: $font-main;
+}
+
+.logo a {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  color: $primary-color;
+  text-decoration: none;
+}
+
+.navLinks {
+  display: flex;
+  gap: $spacing-lg;
+}
+
+.link {
+  color: $dark-text;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    color: $hover-green;
+  }
+}
+
+.ctaLink {
+  background-color: $cta-green;
+  color: $light-text;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: $cta-hover-green;
+  }
+}
