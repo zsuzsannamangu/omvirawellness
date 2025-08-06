@@ -1,23 +1,129 @@
 @import '../_variables.scss';
 
 .recommendedSection {
-  padding: $spacing-xl $spacing-md;
+  padding: $spacing-xl 2rem;
   background-color: $light-text;
-  color: $dark-text;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-lg $spacing-md;
+  }
+}
 
-  h2 {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: left;
+  margin-bottom: $spacing-xxl;
+  
+  @media (max-width: 768px) {
+    margin-bottom: $spacing-xl;
+  }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  
+  @media (max-width: 768px) {
     font-size: 2rem;
-    font-family: $font-heading;
-    color: $primary-color;
-    text-align: center;
-    margin-bottom: $spacing-lg;
+  }
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: $subtext-color;
+  font-family: $font-main;
+}
+
+.scrollWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.navButton {
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(21, 123, 127, 0.2);
+  z-index: 10;
+  flex-shrink: 0;
+
+  &:hover {
+    background: $hover-green;
+    transform: scale(1.05);
+  }
+
+  &:first-child {
+    margin-right: -24px;
+    z-index: 11;
+  }
+
+  &:last-child {
+    margin-left: -24px;
+    z-index: 11;
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+    
+    &:first-child {
+      margin-right: -20px;
+    }
+
+    &:last-child {
+      margin-left: -20px;
+    }
   }
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
   gap: $spacing-lg;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding-left: calc(50vw - 50% + 24px);
+  padding-right: calc(50vw - 50% + 200px);
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-md;
+  
+  // Hide scrollbar but keep functionality
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (max-width: 968px) {
+    padding-right: calc(50vw - 50% + 150px);
+    padding-left: calc(50vw - 50% + 20px);
+  }
+  
+  @media (max-width: 640px) {
+    margin-left: calc(-50vw + 50% + 1rem);
+    margin-right: calc(-50vw + 50%);
+    padding-left: calc(50vw - 50% - 1rem + 20px);
+    padding-right: calc(50vw - 50% + 100px);
+  }
 }
 
 .card {
@@ -29,12 +135,31 @@
   flex-direction: column;
   text-align: center;
   padding-bottom: $spacing-md;
+  min-width: 280px;
+  max-width: 280px;
+  flex-shrink: 0;
+  transition: transform 0.5s ease-out, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+  
+  @media (max-width: 640px) {
+    min-width: 240px;
+    max-width: 240px;
+  }
 }
 
 .image {
   width: 100%;
   height: 220px;
   object-fit: cover;
+  transition: transform 0.5s ease-out;
+}
+
+.card:hover .image {
+  transform: scale(1.08);
 }
 
 .info {
@@ -88,4 +213,90 @@
     background-color: $cta-hover-green;
     border-color: $cta-hover-border;
   }
+}
+
+// See All Providers Card
+.seeAllCard {
+  background: linear-gradient(135deg, $primary-color 0%, $hover-green 100%);
+  border-radius: 12px;
+  min-width: 280px;
+  max-width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(21, 123, 127, 0.2);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(21, 123, 127, 0.3);
+  }
+  
+  @media (max-width: 640px) {
+    min-width: 240px;
+    max-width: 240px;
+  }
+}
+
+.seeAllContent {
+  text-align: center;
+  color: $light-text;
+  padding: $spacing-xxl $spacing-lg;
+  
+  h3 {
+    font-size: 1.3rem;
+    font-family: $font-heading;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+  }
+  
+  p {
+    font-size: 1rem;
+    font-family: $font-main;
+    opacity: 0.9;
+    margin: 0;
+  }
+}
+
+.seeAllIcon {
+  font-size: 2rem;
+  margin-bottom: $spacing-md;
+  opacity: 0.8;
+}
+
+// More providers section styles
+.moreProvidersSection {
+  margin-top: $spacing-lg;
+  text-align: left;
+  padding: 0;
+  
+  @media (max-width: 968px) {
+    text-align: center;
+  }
+}
+
+.exploreButton {
+  background: none;
+  color: $primary-color;
+  padding: 0.5rem 0;
+  border: none;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-family: $font-main;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  text-decoration: underline;
+  
+  &:hover {
+    color: $hover-green;
+  }
+}
+
+.exploreIcon {
+  font-size: 0.9rem;
 }

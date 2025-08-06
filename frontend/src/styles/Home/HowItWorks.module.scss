@@ -1,59 +1,112 @@
 @import '../_variables.scss';
 
 .howSection {
-  padding: $spacing-xl $spacing-md;
-  background-color: $muted-bg;
-  text-align: center;
-
-  h2 {
-    font-size: 2rem;
-    font-family: $font-heading;
-    color: $primary-color;
-    margin-bottom: $spacing-lg;
+  padding: $spacing-xxl 2rem;
+  background-color: $light-text;
+  
+  @media (max-width: 768px) {
+    padding: 3rem 1rem;
   }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: left;
+  margin-bottom: $spacing-xxl;
+  
+  @media (max-width: 768px) {
+    margin-bottom: $spacing-xl;
+  }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: $subtext-color;
+  font-family: $font-main;
 }
 
 .stepsContainer {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: center;
+  gap: $spacing-xxl;
+  
+  @media (max-width: 768px) {
+    gap: $spacing-xl;
   }
 }
 
 .step {
-  background: $light-text;
-  border-radius: 12px;
-  padding: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xl;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $spacing-lg;
+    text-align: center;
+  }
+  
+  &.reverse {
+    flex-direction: row-reverse;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.content {
   flex: 1;
-  max-width: 300px;
-  margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-
+  max-width: 500px;
+  
   h3 {
-    font-size: 1.2rem;
+    font-size: 2rem;
+    font-family: $font-heading;
     color: $primary-color;
-    margin-top: $spacing-sm;
-    margin-bottom: $spacing-xs;
-    font-family: $font-main;
+    margin-bottom: $spacing-lg;
+    font-weight: 600;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
   }
-
+  
   p {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: $subtext-color;
+    line-height: 1.6;
     font-family: $font-main;
   }
 }
 
-.icon {
-  font-size: 2rem;
-  color: $cta-green;
+.imageContainer {
+  flex: 1;
+  max-width: 500px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
 }

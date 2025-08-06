@@ -19,7 +19,7 @@ const About: React.FC = () => {
             <li><strong>Book on-demand or in advance</strong> for wellness services near you</li>
             <li><strong>Browse verified providers</strong> with real-time availability and transparent pricing</li>
             <li><strong>Curate your own experience</strong> — solo or with friends, for daily care or special events</li>
-            <li><strong>Wellness that travels</strong> — to your home, retreat, hotel, or workplace</li>
+            <li><strong>Wellness that travels</strong> to your home, retreat, hotel, or workplace</li>
           </ul>
         </div>
 

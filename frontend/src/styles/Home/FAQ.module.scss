@@ -1,34 +1,116 @@
 @import '../_variables.scss';
 
 .faqSection {
-  padding: $spacing-xl $spacing-md;
+  padding: $spacing-xxl 2rem;
   background-color: $muted-bg;
-  color: $dark-text;
-
-  h2 {
-    font-size: 2rem;
-    font-family: $font-main;
-    color: $primary-color;
-    margin-bottom: $spacing-lg;
-    text-align: center;
+  margin-bottom: $spacing-xxl;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+    margin-bottom: $spacing-xl;
   }
+}
 
-  .faqItem {
-    margin-bottom: $spacing-lg;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-    h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: $spacing-sm;
-      color: $primary-color;
-      font-family: $font-heading;
-    }
+.title {
+  font-size: 2.5rem;
+  font-family: $font-heading;
+  color: $primary-color;
+  text-align: center;
+  margin-bottom: $spacing-xxl;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: $spacing-xl;
+  }
+}
 
-    p {
-      font-size: 1rem;
-      color: $dark-text;
-      line-height: 1.6;
-      font-family: $font-main;
-    }
+.faqGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.faqCard {
+  background: $light-text;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid $secondary-color;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.faqQuestion {
+  width: 100%;
+  padding: $spacing-lg;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: $font-main;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: $muted-bg;
+  }
+  
+  span {
+    flex: 1;
+    margin-right: $spacing-md;
+    line-height: 1.4;
+  }
+}
+
+.icon {
+  color: $primary-color;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  
+  &.rotated {
+    transform: rotate(45deg);
+  }
+}
+
+.faqAnswer {
+  padding: 0 $spacing-lg $spacing-lg;
+  animation: slideDown 0.3s ease-out;
+  
+  p {
+    font-family: $font-main;
+    font-size: 1rem;
+    color: $subtext-color;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

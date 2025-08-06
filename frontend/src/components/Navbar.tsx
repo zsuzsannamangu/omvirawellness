@@ -1,26 +1,56 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import styles from "../styles/Navbar.module.scss";
+import Link from 'next/link';
+import styles from '../styles/Navbar.module.scss';
 
 export default function Navbar() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className={styles.navbar}>
-      <div className={styles.logo}>Omvira Wellness</div>
-      <nav className={styles.navLinks}>
-        <Link href="/" className={styles.link}>
-          Home
+      <div className={styles.logo}>
+        <Link href="/" className={styles.logoLink}>
+          Omvira Wellness
         </Link>
-        <Link href="/clients" className={styles.link}>
-          For Clients
-        </Link>
-        <Link href="/providers" className={styles.link}>
+      </div>
+      
+      <nav className={styles.mainNav}>
+        <button 
+          onClick={() => scrollToSection('services')} 
+          className={styles.navLink}
+        >
+          Services
+        </button>
+        <button 
+          onClick={() => scrollToSection('how-it-works')} 
+          className={styles.navLink}
+        >
+          How It Works
+        </button>
+        <button 
+          onClick={() => scrollToSection('faq')} 
+          className={styles.navLink}
+        >
+          FAQ
+        </button>
+      </nav>
+      
+      <div className={styles.rightSection}>
+        <Link href="/providers" className={styles.providerLink}>
           For Providers
         </Link>
-        <Link href="/pre-sale" className={styles.link}>
-          Pre-Sale
+        <Link href="/login" className={styles.loginLink}>
+          Log In
         </Link>
-      </nav>
+        <Link href="/signup" className={styles.signupButton}>
+          Sign Up
+        </Link>
+      </div>
     </header>
   );
 }

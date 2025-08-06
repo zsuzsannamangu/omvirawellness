@@ -5,9 +5,9 @@ const Hero: React.FC = () => {
   return (
     <section className={styles.hero}>
       <div className={styles.overlay}>
-        <h1 className={styles.title}>Be bold</h1>
+        <h1 className={styles.title}>Hello, Wellness Has Arrived.</h1>
         <p className={styles.subtitle}>
-          Discover and book yoga & wellness professionals near you
+        A platform that connects you to independent wellness, beauty, and fitness professionals - anytime, anywhere.  
         </p>
         <input
           type="text"

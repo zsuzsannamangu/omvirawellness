@@ -4,50 +4,136 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1rem 2rem;
   background-color: $light-text;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
   z-index: 100;
   font-family: $font-main;
+  
+  @media (max-width: 968px) {
+    padding: 1rem $spacing-md;
+  }
 }
 
 .logo {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: $dark-text;
   font-family: $font-heading;
+  font-weight: 700;
+  font-size: 1.5rem;
 }
 
-.navLinks {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.link {
-  font-size: 1rem;
-  color: $subtext-color;
+.logoLink {
+  color: $primary-color;
   text-decoration: none;
-  position: relative;
-  transition: color 0.3s ease;
-
+  font-weight: 700;
+  
   &:hover {
     color: $hover-green;
   }
+}
 
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    height: 2px;
-    width: 0;
-    background-color: $hover-green;
-    transition: width 0.3s ease;
+// Main navigation links
+.mainNav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  
+  @media (max-width: 968px) {
+    display: none;
   }
+}
 
-  &:hover::after {
-    width: 100%;
+.navLink {
+  font-size: 1rem;
+  color: $dark-text;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-family: $font-main;
+  background: none;
+  border: none;
+  cursor: pointer;
+  
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+// Right section with provider link and auth buttons
+.rightSection {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+}
+
+.providerLink {
+  font-size: 1rem;
+  color: $dark-text;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-family: $font-main;
+  
+  &:hover {
+    color: $primary-color;
+  }
+  
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.loginLink {
+  font-size: 1rem;
+  color: $dark-text;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-family: $font-main;
+  
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.signupButton {
+  background-color: $primary-color;
+  color: $light-text;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  
+  &:hover {
+    background-color: $hover-green;
+    transform: translateY(-1px);
+  }
+  
+  @media (max-width: 640px) {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 640px) {
+  .navbar {
+    padding: 1rem;
+  }
+  
+  .logo {
+    font-size: 1.3rem;
+  }
+  
+  .rightSection {
+    gap: 0.75rem;
   }
 }

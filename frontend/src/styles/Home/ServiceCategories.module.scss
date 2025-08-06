@@ -1,43 +1,160 @@
 @import '../_variables.scss';
 
 .categoriesSection {
-  padding: $spacing-lg $spacing-md;
-  background-color: $light-text;
-  overflow-x: auto;
+  padding: $spacing-xxl 2rem;
+  background-color: $muted-bg;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-xl $spacing-md;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: left;
+  margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: $subtext-color;
+  font-family: $font-main;
+}
+
+.scrollWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navButton {
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 105, 92, 0.2);
+  z-index: 10;
+  
+  &:hover {
+    background: $hover-green;
+    transform: scale(1.05);
+  }
+  
+  &:first-child {
+    margin-right: -24px;
+  }
+  
+  &:last-child {
+    margin-left: -24px;
+  }
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .scrollContainer {
   display: flex;
-  gap: $spacing-sm;
+  gap: 1.5rem;
   overflow-x: auto;
-  white-space: nowrap;
-  padding-bottom: $spacing-sm;
-  scroll-snap-type: x mandatory;
-}
-
-.categoryPill {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-  background-color: $muted-bg;
-  color: $primary-color;
-  border: 1px solid $primary-color;
-  border-radius: 999px;
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
-  font-family: $font-main;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  scroll-snap-align: start;
-
-  &:hover {
-    background-color: $hover-green;
-    color: $light-text;
-    border-color: $hover-green;
+  scroll-behavior: smooth;
+  padding: 1rem 2rem;
+  flex: 1;
+  
+  // Hide scrollbar
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem 0;
   }
 }
 
-.icon {
-  font-size: 1.2rem;
+.categoryCard {
+  background: $light-text;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  min-width: 280px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid $secondary-color;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: $primary-color;
+  }
+  
+  @media (max-width: 768px) {
+    min-width: 240px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+.imageContainer {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 auto $spacing-lg;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.serviceImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease-out;
+}
+
+.categoryCard:hover .serviceImage {
+  transform: scale(1.08);
+}
+
+.categoryTitle {
+  font-size: 1.25rem;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  font-family: $font-main;
+  line-height: 1.4;
+  margin: 0;
 }

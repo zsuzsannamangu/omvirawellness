@@ -1,20 +1,21 @@
 // _variables.scss
 
 // Colors
-$primary-color: #00695c;
-$secondary-color: #f5f5f5;
-$accent-color: #00bfa5;
-$dark-text: #1a1a1a;
-$light-text: #ffffff;
-$muted-bg: #fafafa;
-$subtext-color: #5A5A5A;
-$hover-green: #466945;
-$cta-green: #588157;
-$cta-hover-green: #466945;
-$cta-text: #ffffff;
-$cta-border: #588157;
-$cta-hover-border: #466945;
-$cta-text-hover: #ffffff;
+$primary-color: #157B7F;
+$secondary-color: #EDE4DA;
+$accent-color: #157B7F;
+$dark-text: #070707;
+$light-text: #FAFAFA;
+$muted-bg: #FAFAFA;
+$subtext-color: #070707;
+$hover-green: #157B7F;
+$cta-green: #157B7F;
+$cta-hover-green: #157B7F;
+$cta-text: #FAFAFA;
+$cta-border: #157B7F;
+$cta-hover-border: #157B7F;
+$cta-text-hover: #FAFAFA;
+$logo-yellow: #D4E157;
 
 // Fonts
 $font-main: 'Inter', sans-serif;
@@ -22,8 +23,9 @@ $font-heading: 'Playfair Display', serif;
 $font-mono: 'Geist Mono', monospace;
 
 // Spacing
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
+$spacing-xs: 8px;
+$spacing-sm: 16px;
+$spacing-md: 24px;
+$spacing-lg: 40px;
+$spacing-xl: 64px;
+$spacing-xxl: 96px;
