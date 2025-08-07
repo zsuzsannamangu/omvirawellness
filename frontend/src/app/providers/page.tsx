@@ -17,8 +17,8 @@ export default function ProvidersPage() {
                             <p>
                                 Omvira connects you with your ideal clients and the tools you need to thrive as an independent wellness professional.
                             </p>
-                            <a href="/pre-sale" className={styles.ctaButton}>
-                                Join the Waitlist
+                            <a href="/join" className={styles.ctaButton}>
+                                Join Omvira
                             </a>
                         </div>
                         <div className={styles.heroImage}>
@@ -45,7 +45,7 @@ export default function ProvidersPage() {
                         <div className={styles.sectionsContainer}>
 
                             {/* Section 1: Who Is Omvira For? (Text left, Image right) */}
-                            <div className={styles.section}>
+                            <div id="who-is-omvira-for" className={styles.section}>
                                 <div className={styles.content}>
                                     <h2>Who Is Omvira For?</h2>
                                     <p className={styles.sectionDescription}>
@@ -90,7 +90,7 @@ export default function ProvidersPage() {
                             </div>
 
                             {/* Section 2: Work Where Your Clients Need You (Image left, Text right) */}
-                            <div className={`${styles.section} ${styles.reverse}`}>
+                            <div id="work-where-clients-need-you" className={`${styles.section} ${styles.reverse}`}>
                                 <div className={styles.content}>
                                     <h2>Work Where Your Clients Need You</h2>
                                     <p className={styles.sectionDescription}>
@@ -131,7 +131,7 @@ export default function ProvidersPage() {
                             </div>
 
                             {/* Section 3: Everything you need to grow your practice (Text left, Image right) */}
-                            <div className={styles.section}>
+                            <div id="everything-you-need" className={styles.section}>
                                 <div className={styles.content}>
                                     <h2>Everything you need to grow your practice</h2>
                                     <p className={styles.sectionDescription}>
@@ -225,7 +225,7 @@ export default function ProvidersPage() {
                 </section>
 
                 {/* Mission/Vision Section */}
-                <section className={styles.missionSection}>
+                <section id="our-mission" className={styles.missionSection}>
                     <div className={styles.container}>
                         <div className={styles.missionContent}>
                             <h2>Our Mission</h2>
@@ -257,14 +257,14 @@ export default function ProvidersPage() {
                     <div className={styles.container}>
                         <h2>Ready to transform your wellness practice?</h2>
                         <p>Join hundreds of providers who are already growing their businesses with Omvira.</p>
-                        <a href="/pre-sale" className={styles.ctaButtonLarge}>
+                        <a href="/join" className={styles.ctaButtonLarge}>
                             Start Your Journey
                         </a>
                     </div>
                 </section>
 
                 {/* Pricing Section */}
-                <section className={styles.pricingSection}>
+                <section id="pricing" className={styles.pricingSection}>
                     <div className={styles.container}>
                         <div className={styles.pricingHeader}>
                             <h2>Choose Your Plan</h2>
@@ -304,7 +304,7 @@ export default function ProvidersPage() {
                                     </div>
                                 </div>
                                 <div className={styles.chooseButton}>
-                                    <a href="/pre-sale" className={styles.chooseBtn}>
+                                    <a href="/join" className={styles.chooseBtn}>
                                         Choose Essential
                                     </a>
                                 </div>
@@ -351,7 +351,7 @@ export default function ProvidersPage() {
                                     </div>
                                 </div>
                                 <div className={styles.chooseButton}>
-                                    <a href="/pre-sale" className={styles.chooseBtn}>
+                                    <a href="/join" className={styles.chooseBtn}>
                                         Choose Professional
                                     </a>
                                 </div>
@@ -410,9 +410,62 @@ export default function ProvidersPage() {
                                     </div>
                                 </div>
                                 <div className={styles.chooseButton}>
-                                    <a href="/pre-sale" className={styles.chooseBtn}>
+                                    <a href="/join" className={styles.chooseBtn}>
                                         Choose Growth+
                                     </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* About Section */}
+                <section id="about" className={styles.aboutSection}>
+                    <div className={styles.container}>
+                        <div className={styles.aboutHeader}>
+                            <h2>Meet The Founders</h2>
+                        </div>
+
+                        <div className={styles.foundersGrid}>
+                            <div className={styles.founderCard}>
+                                <div className={styles.founderImage}>
+                                    <Image
+                                        src="/images/Jenn.png"
+                                        alt="Jennifer Duffin - Founder & CEO"
+                                        width={400}
+                                        height={500}
+                                        className={styles.founderImg}
+                                    />
+                                </div>
+                                <div className={styles.founderContent}>
+                                    <h3>Jennifer Duffin</h3>
+                                    <p className={styles.founderTitle}>Founder & CEO</p>
+                                    <p className={styles.founderBio}>
+                                        Hi! My name is Jenn, I've been on both sides of the system - an overworked and stressed traveler spending hours online
+                                        looking for a local massage therapist to show up at my Airbnb for some much needed relief AND a yoga teacher and therapist
+                                        trying to build a sustainable business. That's why I'm building Omvira. I started selling friendship bracelets in middle school
+                                        and I never stopped dreaming up ways to make more meaningful connections more accessible.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className={styles.founderCard}>
+                                <div className={styles.founderImage}>
+                                    <Image
+                                        src="/images/Zsuzsi.jpg"
+                                        alt="Zsuzsanna Mangu - Lead Software Developer and Technical Product Manager"
+                                        width={400}
+                                        height={500}
+                                        className={styles.founderImg}
+                                    />
+                                </div>
+                                <div className={styles.founderContent}>
+                                    <h3>Zsuzsanna Mangu</h3>
+                                    <p className={styles.founderTitle}>Lead Software Developer and Technical Product Manager</p>
+                                    <p className={styles.founderBio}>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                    </p>
                                 </div>
                             </div>
                         </div>

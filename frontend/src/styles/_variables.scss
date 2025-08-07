@@ -1,21 +1,23 @@
 // _variables.scss
 
 // Colors
-$primary-color: #157B7F;
-$secondary-color: #EDE4DA;
-$accent-color: #157B7F;
-$dark-text: #070707;
-$light-text: #FAFAFA;
-$muted-bg: #FAFAFA;
-$subtext-color: #070707;
-$hover-green: #157B7F;
-$cta-green: #157B7F;
-$cta-hover-green: #157B7F;
-$cta-text: #FAFAFA;
-$cta-border: #157B7F;
-$cta-hover-border: #157B7F;
-$cta-text-hover: #FAFAFA;
-$logo-yellow: #D4E157;
+$primary-color: #6C4F70;         // Muted Plum – NEW primary
+$secondary-color: #EDE4DA;       // Soft Neutral (unchanged)
+$accent-color: #A67873;          // Warm Rose Accent (instead of green)
+$dark-text: #070707;             // Dark text (unchanged)
+$light-text: #FAFAFA;            // Light text (unchanged)
+$muted-bg: #FAFAFA;              // Soft background (unchanged)
+$subtext-color: #444444;         // Slightly softened from black
+
+$hover-green: #5C3E5B;           // Plum Hover
+$cta-green: #6C4F70;             // CTA background
+$cta-hover-green: #5C3E5B;       // CTA hover color
+$cta-text: #FAFAFA;              // CTA text
+$cta-border: #6C4F70;            // CTA border
+$cta-hover-border: #5C3E5B;      // CTA border on hover
+$cta-text-hover: #FFFFFF;        // Optional bright hover text
+
+$logo-yellow: #E6C27A;           // Soft Gold (more cohesive with plum)
 
 // Fonts
 $font-main: 'Inter', sans-serif;

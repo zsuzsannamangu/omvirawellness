@@ -240,6 +240,124 @@ You'll add routes to handle:
 
 Create `.env` files in both frontend and backend directories with the necessary environment variables.
 
+## Authentication & Account System
+
+### Overview
+
+Omvira uses a **unified account system** where a single user account can have multiple roles (client and provider). This allows users to seamlessly switch between booking services and offering services without needing separate accounts.
+
+### Account Types & URLs
+
+#### **Client Experience**
+- **Homepage**: `/` - Main client-facing landing page
+- **Login**: `/login` - Client authentication
+- **Signup**: `/signup` - Client registration
+- **Provider Discovery**: Browse and book wellness services
+
+#### **Provider Experience**
+- **Landing Page**: `/providers` - Provider-specific marketing page
+- **Login**: `/providers/login` - Provider authentication
+- **Signup**: `/providers/signup` - Provider registration
+- **Join Redirect**: `/join` → redirects to `/providers/signup`
+- **Provider Dashboard**: Manage bookings, availability, and services
+
+### Navigation Flow
+
+```
+Client Journey:
+├── / (homepage)
+├── "Log In" → /login
+├── "Sign Up" → /signup
+└── "Find a Provider" → Browse services
+
+Provider Journey:
+├── /providers (landing page)
+├── "Log In" → /providers/login
+├── "Join" → /providers/signup
+├── /join → redirects to /providers/signup
+└── "Find a Provider" → / (client homepage)
+```
+
+### Cross-Navigation
+
+- **Provider pages** include "Switch to client mode" links that direct to `/login` and `/signup`
+- **Client pages** can link to provider pages when needed
+- **Unified account system** maintains single user identity across both experiences
+
+### Authentication Features
+
+#### **Social Login Support**
+- Apple Sign-In
+- Facebook Login
+- Google Sign-In
+- Email/Password authentication
+
+#### **Role-Based Access**
+- **Client Role**: Book appointments, manage bookings, leave reviews
+- **Provider Role**: Manage availability, accept bookings, track earnings
+- **Dual Role**: Users can have both client and provider capabilities
+
+#### **Security Features**
+- Password visibility toggle
+- Form validation
+- Secure session management
+- Cross-origin request handling
+
+### Technical Implementation
+
+#### **Frontend Structure**
+```
+frontend/src/app/
+├── / (client homepage)
+├── /login (client login)
+├── /signup (client signup)
+├── /providers/ (provider landing)
+├── /providers/login (provider login)
+├── /providers/signup (provider signup)
+└── /join (provider signup redirect)
+```
+
+#### **Styling Approach**
+- **Client Pages**: Clean, minimal design with brand colors
+- **Provider Pages**: Distinct visual styling with larger forms and different gradients
+- **Shared Components**: Common button styles and form elements
+- **SCSS Modules**: Component-scoped styling with global variables
+
+#### **Database Schema**
+```sql
+-- Users table supports multiple roles
+users (
+  id,
+  email,
+  password_hash,
+  created_at,
+  updated_at
+)
+
+-- User roles table
+user_roles (
+  user_id,
+  role_type, -- 'client', 'provider', or both
+  created_at
+)
+
+-- Provider-specific data
+providers (
+  user_id,
+  business_name,
+  services,
+  availability,
+  created_at
+)
+```
+
+### Development Notes
+
+- **Unified Account System**: Single user can have both client and provider roles
+- **Distinct UI/UX**: Provider and client experiences have different visual designs
+- **Shared Authentication**: Same login credentials work for both experiences
+- **Role Switching**: Users can switch between client and provider modes seamlessly
+
 ## Contributing
 
 1. Fork the repository

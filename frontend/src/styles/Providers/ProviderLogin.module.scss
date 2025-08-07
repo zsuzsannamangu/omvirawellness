@@ -1,0 +1,354 @@
+@import '../_variables.scss';
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
+  padding: 1rem;
+}
+
+.formContainer {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba($primary-color, 0.15);
+  width: 100%;
+  max-width: 450px;
+  overflow: hidden;
+  border: 1px solid rgba($primary-color, 0.1);
+}
+
+// Navigation Tabs
+.navTabs {
+  display: flex;
+  background-color: rgba($primary-color, 0.08);
+  border-bottom: 2px solid rgba($primary-color, 0.15);
+}
+
+.navTab {
+  flex: 1;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  color: $subtext-color;
+  font-weight: 500;
+  font-family: $font-main;
+  transition: all 0.3s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  
+  &:hover {
+    color: $primary-color;
+  }
+  
+  &.active {
+    background: white;
+    color: $dark-text;
+    font-weight: 600;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: $primary-color;
+    }
+  }
+}
+
+// Main Form Content
+.formContent {
+  padding: 2.5rem;
+}
+
+.title {
+  font-family: $font-heading;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  font-family: $font-main;
+  font-size: 1rem;
+  color: $subtext-color;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+// Login Form
+.loginForm {
+  margin-bottom: 1rem;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-family: $font-main;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $subtext-color;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inputContainer {
+  position: relative;
+}
+
+.emailInput,
+.passwordInput {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba($primary-color, 0.15);
+  border-radius: 12px;
+  font-family: $font-main;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: rgba($subtext-color, 0.5);
+  }
+}
+
+.inputIcons {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: $subtext-color;
+}
+
+.passwordManager {
+  position: absolute;
+  right: 1.25rem;
+  top: -0.5rem;
+  background: $dark-text;
+  color: $light-text;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: $font-main;
+}
+
+.showPasswordButton {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba($subtext-color, 0.7);
+  font-family: $font-main;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.loginButton {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 12px;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &:hover {
+    background: $hover-green;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+  }
+}
+
+.envelopeIcon {
+  font-size: 1rem;
+}
+
+// Forgot Password
+.forgotPassword {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.forgotPasswordLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 500;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Divider
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba($primary-color, 0.2);
+  }
+}
+
+.dividerText {
+  background: white;
+  padding: 0 1.5rem;
+  color: $subtext-color;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+// Social Buttons
+.socialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.socialButton {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: white;
+  border: 2px solid rgba($primary-color, 0.15);
+  border-radius: 12px;
+  font-family: $font-main;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+    transform: translateY(-1px);
+  }
+}
+
+.appleButton {
+  color: $dark-text;
+}
+
+.facebookButton {
+  color: $dark-text;
+}
+
+.googleButton {
+  color: $dark-text;
+}
+
+.appleIcon,
+.facebookIcon,
+.googleIcon {
+  width: 20px;
+  height: 20px;
+}
+
+// Switch Mode
+.switchMode {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.switchText {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+.switchLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 600;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Legal Disclaimer
+.legalDisclaimer {
+  text-align: center;
+  font-family: $font-main;
+  font-size: 0.75rem;
+  color: $subtext-color;
+  line-height: 1.4;
+}
+
+.legalLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 600;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .formContent {
+    padding: 2rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+} 
