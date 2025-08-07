@@ -1,0 +1,348 @@
+@import '_variables';
+
+.searchPage {
+  min-height: 100vh;
+  background-color: $muted-bg;
+}
+
+// Header
+.header {
+  background-color: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: $spacing-md 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+.logo {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $primary-color;
+  text-decoration: none;
+  
+  &:hover {
+    color: $hover-green;
+  }
+}
+
+.searchBar {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: $spacing-md;
+  color: $subtext-color;
+  z-index: 2;
+}
+
+.searchInput {
+  width: 100%;
+  padding: $spacing-md $spacing-md $spacing-md 3rem;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-family: $font-main;
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: $subtext-color;
+  }
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  color: $dark-text;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+// Side Menu
+.sideMenu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+  animation: slideIn 0.3s ease-out;
+}
+
+.menuContent {
+  padding: $spacing-xl $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.menuItem {
+  font-family: $font-main;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: $dark-text;
+  text-decoration: none;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: $primary-color;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+// Main Content Layout
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-lg $spacing-md;
+}
+
+// Filter Bar
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.resetButton {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-family: $font-main;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    background-color: $hover-green;
+  }
+}
+
+.filterDropdowns {
+  display: flex;
+  gap: $spacing-md;
+  flex: 1;
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+}
+
+.filterDropdown {
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  background-color: white;
+  cursor: pointer;
+  flex: 1;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  padding-right: 32px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+// Sort Section
+.sortSection {
+  margin-bottom: $spacing-lg;
+}
+
+.sortDropdown {
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  background-color: white;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  padding-right: 32px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+// Provider Grid
+.providersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-lg;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-md;
+  }
+}
+
+.providerCard {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.providerImage {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+  
+  .providerCard:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.duration {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px $spacing-xs;
+  border-radius: 4px;
+  font-family: $font-main;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.providerInfo {
+  padding: $spacing-md;
+}
+
+.providerName {
+  font-family: $font-main;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.providerServices {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.providerLocation {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.providerRating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
+}
+
+.stars {
+  color: #fbbf24;
+  font-size: 0.875rem;
+}
+
+.ratingText {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  color: $subtext-color;
+}
+
+.startingPrice {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $primary-color;
+  margin: 0;
+} 

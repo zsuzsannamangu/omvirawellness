@@ -38,10 +38,21 @@
   border-radius: 8px;
   border: none;
   font-size: 1rem;
-  width: 100%;
-  max-width: 400px;
+  width: 100% !important;
+  max-width: 600px !important;
+  min-width: 500px !important;
   color: $dark-text;
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
   &::placeholder {
     color: $subtext-color;
   }
+}
+
+// Style the form wrapper to ensure it doesn't constrain the input
+.overlay form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }

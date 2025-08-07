@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from '@/styles/Home/ServiceCategories.module.scss';
 import Image from 'next/image';
 import {
@@ -78,6 +79,7 @@ const categories = [
 
 const ServiceCategories: React.FC = () => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     const scrollLeft = () => {
         if (scrollContainerRef.current) {
@@ -89,6 +91,10 @@ const ServiceCategories: React.FC = () => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
         }
+    };
+
+    const handleCategoryClick = (category: string) => {
+        router.push(`/search?service=${encodeURIComponent(category)}`);
     };
 
     return (
@@ -106,7 +112,12 @@ const ServiceCategories: React.FC = () => {
 
                     <div className={styles.scrollContainer} ref={scrollContainerRef}>
                         {categories.map((category, idx) => (
-                            <div key={idx} className={styles.categoryCard}>
+                            <div 
+                                key={idx} 
+                                className={styles.categoryCard}
+                                onClick={() => handleCategoryClick(category.label)}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <div className={styles.imageContainer}>
                                     <Image
                                         src={category.image}

@@ -1,7 +1,20 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from '@/styles/Home/Hero.module.scss';
 
 const Hero: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <section className={styles.hero}>
       <div className={styles.overlay}>
@@ -9,11 +22,15 @@ const Hero: React.FC = () => {
         <p className={styles.subtitle}>
         A platform that connects you to independent wellness, beauty, and fitness professionals - anytime, anywhere.  
         </p>
-        <input
-          type="text"
-          placeholder="Search services or providers"
-          className={styles.searchInput}
-        />
+        <form onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search services or providers"
+            className={styles.searchInput}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </form>
       </div>
     </section>
   );

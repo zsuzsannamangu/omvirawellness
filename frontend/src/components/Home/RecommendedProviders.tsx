@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from '@/styles/Home/RecommendedProviders.module.scss';
 import { FaStar, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -81,6 +82,7 @@ const mockProviders = [
 
 const RecommendedProviders: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -92,6 +94,10 @@ const RecommendedProviders: React.FC = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
     }
+  };
+
+  const handleSeeAllProviders = () => {
+    router.push('/search');
   };
 
   return (
@@ -124,7 +130,7 @@ const RecommendedProviders: React.FC = () => {
             ))}
             
             {/* See All Providers Card */}
-            <div className={styles.seeAllCard}>
+            <div className={styles.seeAllCard} onClick={handleSeeAllProviders} style={{ cursor: 'pointer' }}>
               <div className={styles.seeAllContent}>
                 <FaSearch className={styles.seeAllIcon} />
                 <h3>See all providers...</h3>
@@ -139,7 +145,7 @@ const RecommendedProviders: React.FC = () => {
         </div>
         
         <div className={styles.moreProvidersSection}>
-          <button className={styles.exploreButton}>
+          <button className={styles.exploreButton} onClick={handleSeeAllProviders}>
             <FaSearch className={styles.exploreIcon} />
             See all providers...
           </button>
