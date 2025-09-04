@@ -14,7 +14,7 @@
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba($primary-color, 0.15);
   width: 100%;
-  max-width: 450px;
+  max-width: 800px;
   overflow: hidden;
   border: 1px solid rgba($primary-color, 0.1);
 }
@@ -61,6 +61,57 @@
   }
 }
 
+// Progress Bar
+.progressContainer {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  margin-right: $spacing-md;
+  transition: color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: $primary-color;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.progressBar {
+  flex: 1;
+  height: 4px;
+  background: #e5e5e5;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $primary-color 0%, $accent-color 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+// Step Content
+.stepContent {
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
 // Main Form Content
 .formContent {
   padding: 2.5rem;
@@ -89,7 +140,7 @@
 }
 
 .inputGroup {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .label {
@@ -142,7 +193,7 @@
 .passwordManager {
   position: absolute;
   right: 1.25rem;
-  top: -0.5rem;
+  top: 100%;
   background: $dark-text;
   color: $light-text;
   padding: 0.25rem 0.75rem;
@@ -150,15 +201,16 @@
   font-size: 0.75rem;
   font-weight: 500;
   font-family: $font-main;
+  margin-top: $spacing-sm;
 }
 
 .continueButton {
   width: 100%;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   background: $primary-color;
   color: $light-text;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   font-family: $font-main;
   font-weight: 600;
   font-size: 0.875rem;
@@ -170,6 +222,7 @@
   gap: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  height: 48px;
   
   &:hover {
     background: $hover-green;
@@ -218,10 +271,10 @@
 
 .socialButton {
   width: 100%;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   background: white;
   border: 2px solid rgba($primary-color, 0.15);
-  border-radius: 12px;
+  border-radius: 8px;
   font-family: $font-main;
   font-weight: 500;
   font-size: 0.875rem;
@@ -231,6 +284,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  height: 48px;
   
   &:hover {
     background: rgba($primary-color, 0.05);
