@@ -1,0 +1,227 @@
+@import '../_variables.scss';
+
+.loginPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  font-family: $font-main;
+}
+
+.loginContainer {
+  background: $light-text;
+  border-radius: 16px;
+  padding: $spacing-xl;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+}
+
+.loginHeader {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.logo {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+  text-decoration: none;
+  display: block;
+  margin-bottom: $spacing-lg;
+  
+  &:hover {
+    color: $hover-green;
+  }
+}
+
+.title {
+  font-family: $font-heading;
+  font-size: 2rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+}
+
+.subtitle {
+  color: $subtext-color;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.textInput {
+  padding: $spacing-md;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $font-main;
+  transition: border-color 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+.formOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: 0.9rem;
+  color: $dark-text;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: $primary-color;
+}
+
+.forgotLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.loginButton {
+  background: $primary-color;
+  color: $light-text;
+  padding: $spacing-md $spacing-xl;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: $hover-green;
+    transform: translateY(-1px);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: $subtext-color;
+  font-size: 0.9rem;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e9ecef;
+  }
+  
+  span {
+    padding: 0 $spacing-md;
+    background: $light-text;
+  }
+}
+
+.socialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.socialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background: $light-text;
+  color: $dark-text;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 48px;
+  
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.02);
+  }
+}
+
+.signupPrompt {
+  text-align: center;
+  margin-top: $spacing-md;
+  
+  p {
+    margin: 0;
+    color: $subtext-color;
+    font-size: 0.9rem;
+  }
+}
+
+.signupLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 600;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .loginPage {
+    padding: $spacing-md;
+  }
+  
+  .loginContainer {
+    padding: $spacing-lg;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+}

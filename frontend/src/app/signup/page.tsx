@@ -16,20 +16,22 @@ export default function SignupPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.formContainer}>
-        {/* Navigation Tabs */}
-        <div className={styles.navTabs}>
-          <Link href="/login" className={styles.navTab}>
-            Login
-          </Link>
-          <Link href="/signup" className={`${styles.navTab} ${styles.active}`}>
-            Sign up
+    <div className={styles.signupPage}>
+      <div className={styles.header}>
+        <Link href="/" className={styles.logo}>
+          Omvira Wellness
+        </Link>
+        <div className={styles.headerRight}>
+          <Link href="/login" className={styles.loginLink}>
+            Log In
           </Link>
         </div>
+      </div>
 
-        {/* Main Form */}
-        <div className={styles.formContent}>
+      <div className={styles.content}>
+        <div className={styles.formContainer}>
+          {/* Main Form */}
+          <div className={styles.formContent}>
           <h1 className={styles.title}>Create an account</h1>
           
           <form onSubmit={handleEmailSubmit} className={styles.emailForm}>
@@ -108,6 +110,7 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 } 

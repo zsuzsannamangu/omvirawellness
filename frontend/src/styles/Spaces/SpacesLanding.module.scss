@@ -1,0 +1,720 @@
+@import '../_variables';
+
+.main {
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+// Hero Section - Peerspace style
+.hero {
+  background: $light-text;
+  color: $dark-text;
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-xxl $spacing-md;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    text-align: center;
+  }
+}
+
+.heroText {
+  position: relative;
+  margin-left: 50px;
+  z-index: 3;
+  
+  h1 {
+    font-family: $font-heading;
+    font-size: 6rem;
+    font-weight: 500;
+    line-height: 0.8;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: $dark-text;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    
+    @media (max-width: 768px) {
+      font-size: 4rem;
+    }
+  }
+  
+  h2 {
+    font-family: $font-heading;
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 0.7;
+    margin-bottom: 0;
+    color: $dark-text;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    
+    @media (max-width: 768px) {
+      font-size: 5rem;
+    }
+  }
+}
+
+.heroRight {
+  position: relative;
+  z-index: 3;
+  background: rgba($light-text, 0.95);
+  padding: $spacing-xl;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.heroRightContent {
+  h3 {
+    font-family: $font-heading;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: $spacing-md;
+    color: $dark-text;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+  
+  p {
+    font-family: $font-main;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: $spacing-xl;
+    color: $subtext-color;
+  }
+}
+
+.heroImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  
+  .heroImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.heroButtons {
+  display: flex;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.primaryButton {
+  background: $dark-text;
+  color: $light-text;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $primary-color;
+    transform: translateY(-1px);
+  }
+}
+
+.secondaryButton {
+  background: transparent;
+  color: $dark-text;
+  padding: 1rem 2rem;
+  border: 1px solid $dark-text;
+  border-radius: 6px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $dark-text;
+    color: $light-text;
+    transform: translateY(-1px);
+  }
+}
+
+// Featured Spaces Grid - Peerspace style
+// Featured Spaces Carousel - Peerspace style
+.featuredSpaces {
+  padding: $spacing-xxl 0;
+  background: $light-text;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-xl;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.headerLeft {
+  h2 {
+    font-family: $font-heading;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $subtext-color;
+    margin-bottom: $spacing-xs;
+  }
+  
+  h3 {
+    font-family: $font-heading;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: $dark-text;
+    margin: 0;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.viewAllBtn {
+  font-family: $font-main;
+  font-size: 1rem;
+  font-weight: 500;
+  color: $dark-text;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  border-radius: 4px;
+  
+  &:hover {
+    color: $primary-color;
+    background: rgba($primary-color, 0.05);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.carouselNav {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.navBtn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid $dark-text;
+  background: $light-text;
+  color: $dark-text;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  
+  &:hover {
+    background: $dark-text;
+    color: $light-text;
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      background: $light-text;
+      color: $dark-text;
+      transform: none;
+    }
+  }
+}
+
+.spacesCarousel {
+  display: flex;
+  gap: $spacing-lg;
+  overflow-x: auto;
+  padding-bottom: $spacing-md;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.spaceCard {
+  flex: 0 0 320px;
+  background: $light-text;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.spaceImage {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.spaceImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spaceInfo {
+  padding: $spacing-lg;
+  
+  .spaceCategory {
+    font-family: $font-main;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $subtext-color;
+    margin-bottom: $spacing-sm;
+    display: block;
+  }
+  
+  h4 {
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: $dark-text;
+    margin: 0 0 $spacing-sm 0;
+  }
+}
+
+.cardDivider {
+  width: 100%;
+  height: 1px;
+  background: rgba($subtext-color, 0.2);
+  margin-top: $spacing-sm;
+}
+
+// How It Works Section
+// How It Works Section - Peerspace style
+.howItWorks {
+  padding: $spacing-xl 0; // Reduced padding to bring closer to featured spaces
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($accent-color, 0.08) 50%, rgba($hover-green, 0.05) 100%);
+}
+
+.howItWorks h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  color: $dark-text;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xl;
+  max-width: 1000px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+.step {
+  text-align: left; // Left-aligned like Peerspace
+  padding: 0; // No padding for cleaner look
+  background: transparent; // No background
+  border: none; // No border
+  box-shadow: none; // No shadow
+  transition: none; // No hover effects
+  
+  &:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .stepNumber {
+    width: auto;
+    height: auto;
+    background: transparent;
+    color: $dark-text;
+    border-radius: 0;
+    display: block;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-family: $font-heading;
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 $spacing-sm 0;
+    line-height: 1;
+  }
+  
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    color: $dark-text;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  p {
+    font-family: $font-main;
+    color: $subtext-color;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+// Benefits Section
+// Benefits Section - Peerspace style
+.benefits {
+  padding: $spacing-xxl 0;
+  background: $light-text;
+}
+
+.benefits h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  color: $dark-text;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.benefitsContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xxl;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+  }
+}
+
+.benefitsText {
+  // No additional styles needed
+}
+
+.benefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  
+  .benefitIcon {
+    width: 24px;
+    height: 24px;
+    background: $primary-color;
+    color: $light-text;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    color: $dark-text;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  p {
+    font-family: $font-main;
+    color: $subtext-color;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.learnMore {
+  color: $primary-color;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  
+  &:hover {
+    color: $accent-color;
+  }
+}
+
+.benefitsImage {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.benefitImg {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: $spacing-md;
+  right: $spacing-md;
+  background: rgba(0, 0, 0, 0.7);
+  color: $light-text;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 4px;
+  
+  p {
+    margin: 0;
+    font-family: $font-main;
+    font-size: 0.9rem;
+    font-weight: 500;
+    
+    &:first-child {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+  }
+}
+
+// Pricing Section - with purple gradient background
+.pricing {
+  padding: $spacing-xl 0;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($accent-color, 0.08) 50%, rgba($hover-green, 0.05) 100%);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba($primary-color, 0.02) 0%, rgba($accent-color, 0.03) 100%);
+    z-index: 0;
+  }
+  
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Pricing Section - Statistics layout
+.pricing h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  color: $dark-text;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.pricingDescription {
+  font-family: $font-main;
+  color: $subtext-color;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 0 auto $spacing-xl auto;
+  max-width: 800px;
+  line-height: 1.6;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: $spacing-lg;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.statItem {
+  text-align: center;
+  
+  &:last-child {
+    grid-column: span 1;
+    
+    @media (max-width: 768px) {
+      grid-column: span 2;
+    }
+    
+    @media (max-width: 480px) {
+      grid-column: span 1;
+    }
+  }
+}
+
+.statNumber {
+  font-family: $font-heading;
+  font-size: 3rem;
+  font-weight: 700;
+  color: $primary-color;
+  line-height: 1;
+  margin-bottom: $spacing-xs;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.statLabel {
+  font-family: $font-main;
+  font-size: 1rem;
+  color: $dark-text;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.statText {
+  font-family: $font-main;
+  font-size: 0.9rem;
+  color: $subtext-color;
+  font-style: italic;
+  margin-top: $spacing-sm;
+}
+
+// CTA Section
+.cta {
+  padding: $spacing-xxl 0;
+  text-align: center;
+}
+
+.cta h2 {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  margin-bottom: $spacing-md;
+  color: $dark-text;
+  font-weight: 700;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.ctaButton {
+  display: inline-block;
+  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+  color: $light-text;
+  padding: 1.25rem 3rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: $font-main;
+  font-weight: 700;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+  
+  &:hover {
+    background: linear-gradient(135deg, $accent-color 0%, $primary-color 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba($primary-color, 0.4);
+  }
+}

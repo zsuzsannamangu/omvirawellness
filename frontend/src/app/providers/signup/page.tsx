@@ -114,48 +114,33 @@ export default function ProviderSignupPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.formContainer}>
-        {/* Navigation Tabs */}
-        <div className={styles.navTabs}>
-          <Link href="/providers/login" className={styles.navTab}>
-            Provider Login
-          </Link>
-          <Link href="/providers/signup" className={`${styles.navTab} ${styles.active}`}>
-            Join as Provider
+    <div className={styles.signupPage}>
+      <div className={styles.header}>
+        <Link href="/providers" className={styles.logo}>
+          Omvira Wellness
+        </Link>
+        <div className={styles.headerRight}>
+          <Link href="/providers/login" className={styles.loginLink}>
+            Log In
           </Link>
         </div>
+      </div>
 
-        {/* Progress Bar */}
+      <div className={styles.content}>
         <div className={styles.progressContainer}>
-          <button 
-            onClick={handleBack} 
-            className={styles.backButton}
-            disabled={currentStep === 1}
-          >
-            ←
-          </button>
           <div className={styles.progressBar}>
             <div 
               className={styles.progressFill} 
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             />
           </div>
+          <span className={styles.progressText}>
+            Step {currentStep} of {totalSteps}
+          </span>
         </div>
 
-        {/* Step Content */}
-        <div className={styles.stepContent}>
+        <div className={styles.stepContainer}>
           {renderStep()}
-        </div>
-
-        {/* Switch to Client Mode */}
-        <div className={styles.switchMode}>
-          <p className={styles.switchText}>
-            Looking to book services?{' '}
-            <Link href="/signup" className={styles.switchLink}>
-              Switch to client mode
-            </Link>
-          </p>
         </div>
       </div>
     </div>

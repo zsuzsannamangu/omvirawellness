@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import styles from '@/styles/Providers/ProviderNavbar.module.scss';
+import styles from '@/styles/Spaces/SpaceNavbar.module.scss';
 
-export default function ProviderNavbar() {
+export default function SpaceNavbar() {
   const scrollToSection = (sectionId: string) => {
     try {
       const element = document.getElementById(sectionId);
@@ -23,7 +23,7 @@ export default function ProviderNavbar() {
       if (hash) {
         const sectionId = hash.substring(1); // Remove the # symbol
         // Only scroll if it's a valid section
-        const validSections = ['who-is-omvira-for', 'work-where-clients-need-you', 'everything-you-need', 'our-mission', 'pricing', 'about'];
+        const validSections = ['what-types-of-spaces', 'how-space-rental-works', 'everything-you-need', 'our-mission', 'pricing', 'about'];
         if (validSections.includes(sectionId)) {
           setTimeout(() => {
             scrollToSection(sectionId);
@@ -36,17 +36,17 @@ export default function ProviderNavbar() {
   return (
     <header className={styles.navbar}>
       <div className={styles.logo}>
-        <Link href="/providers" className={styles.logoLink}>
+        <Link href="/spaces" className={styles.logoLink}>
           Omvira Wellness
         </Link>
       </div>
 
       <nav className={styles.mainNav}>
         <button
-          onClick={() => scrollToSection('who-is-omvira-for')}
+          onClick={() => scrollToSection('what-types-of-spaces')}
           className={styles.navLink}
         >
-          Providers
+          Spaces
         </button>
         <button
           onClick={() => scrollToSection('everything-you-need')}
@@ -78,14 +78,14 @@ export default function ProviderNavbar() {
         <Link href="/" className={styles.clientLink}>
           Find a Provider
         </Link>
-        <Link href="/spaces" className={styles.clientLink}>
-          For Spaces
+        <Link href="/providers" className={styles.providerLink}>
+          For Providers
         </Link>
-        <Link href="/providers/login" className={styles.loginLink}>
+        <Link href="/spaces/login" className={styles.loginLink}>
           Log In
         </Link>
-        <Link href="/providers/signup" className={styles.signupButton}>
-          Join
+        <Link href="/spaces/signup" className={styles.signupButton}>
+          List Your Space
         </Link>
       </div>
     </header>

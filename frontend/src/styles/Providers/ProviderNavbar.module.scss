@@ -72,15 +72,44 @@
 }
 
 .clientLink {
-  font-size: 1rem;
-  color: $dark-text;
-  font-weight: 500;
+  font-size: 0.9rem;
+  color: $primary-color;
+  font-weight: 600;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   font-family: $font-main;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba($primary-color, 0.08);
+  border: 1px solid rgba($primary-color, 0.2);
   
   &:hover {
-    color: $primary-color;
+    background: rgba($primary-color, 0.12);
+    border-color: rgba($primary-color, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.spacesLink {
+  font-size: 0.9rem;
+  color: $primary-color;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba($primary-color, 0.08);
+  border: 1px solid rgba($primary-color, 0.2);
+  
+  &:hover {
+    background: rgba($primary-color, 0.12);
+    border-color: rgba($primary-color, 0.3);
+    transform: translateY(-1px);
   }
   
   @media (max-width: 640px) {

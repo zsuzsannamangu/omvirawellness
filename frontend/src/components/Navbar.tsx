@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from '../styles/Navbar.module.scss';
 
 export default function Navbar() {
+  const pathname = usePathname();
+  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -44,6 +47,15 @@ export default function Navbar() {
         <Link href="/providers" className={styles.providerLink}>
           For Providers
         </Link>
+        {pathname?.startsWith('/spaces') ? (
+          <Link href="/providers" className={styles.spacesLink}>
+            Find a Provider
+          </Link>
+        ) : (
+          <Link href="/spaces" className={styles.spacesLink}>
+            For Spaces
+          </Link>
+        )}
         <Link href="/login" className={styles.loginLink}>
           Log In
         </Link>

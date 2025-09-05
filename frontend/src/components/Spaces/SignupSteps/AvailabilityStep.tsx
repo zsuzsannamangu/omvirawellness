@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import styles from '@/styles/Providers/SignupSteps.module.scss';
+import styles from '@/styles/Spaces/SignupSteps.module.scss';
 
-interface BusinessHoursStepProps {
-  onNext: (data: { businessHours: any }) => void;
+interface AvailabilityStepProps {
+  onNext: (data: { availability: any }) => void;
   onBack: () => void;
   initialData: any;
 }
 
 const daysOfWeek = [
-  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
 ];
 
 const timeSlots = [
@@ -21,49 +21,32 @@ const timeSlots = [
   '10:00 PM'
 ];
 
-const defaultBusinessHours = {
-  Sunday: { isOpen: false, startTime: '9:00 AM', endTime: '5:00 PM' },
-  Monday: { isOpen: true, startTime: '9:00 AM', endTime: '5:00 PM' },
-  Tuesday: { isOpen: true, startTime: '9:00 AM', endTime: '5:00 PM' },
-  Wednesday: { isOpen: true, startTime: '9:00 AM', endTime: '5:00 PM' },
-  Thursday: { isOpen: true, startTime: '9:00 AM', endTime: '5:00 PM' },
-  Friday: { isOpen: true, startTime: '9:00 AM', endTime: '5:00 PM' },
-  Saturday: { isOpen: false, startTime: '9:00 AM', endTime: '5:00 PM' }
-};
-
-export default function BusinessHoursStep({ onNext, onBack, initialData }: BusinessHoursStepProps) {
-  const [businessHours, setBusinessHours] = useState(() => {
-    const existingHours = initialData.businessHours || {};
-    // Merge existing hours with defaults to ensure all days are present
-    return {
-      ...defaultBusinessHours,
-      ...existingHours,
-      // Ensure each day has all required properties
-      ...Object.keys(defaultBusinessHours).reduce((acc, day) => {
-        acc[day] = {
-          ...defaultBusinessHours[day as keyof typeof defaultBusinessHours],
-          ...(existingHours[day] || {})
-        };
-        return acc;
-      }, {} as any)
-    };
+export default function AvailabilityStep({ onNext, onBack, initialData }: AvailabilityStepProps) {
+  const [availability, setAvailability] = useState(initialData.availability || {
+    Monday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
+    Tuesday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
+    Wednesday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
+    Thursday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
+    Friday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
+    Saturday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
+    Sunday: { isOpen: false, startTime: '9:00 AM', endTime: '9:00 PM' }
   });
 
   const handleToggleDay = (day: string) => {
-    setBusinessHours({
-      ...businessHours,
+    setAvailability({
+      ...availability,
       [day]: {
-        ...businessHours[day],
-        isOpen: !businessHours[day].isOpen
+        ...availability[day],
+        isOpen: !availability[day].isOpen
       }
     });
   };
 
   const handleTimeChange = (day: string, timeType: 'startTime' | 'endTime', time: string) => {
-    setBusinessHours({
-      ...businessHours,
+    setAvailability({
+      ...availability,
       [day]: {
-        ...businessHours[day],
+        ...availability[day],
         [timeType]: time
       }
     });
@@ -71,18 +54,18 @@ export default function BusinessHoursStep({ onNext, onBack, initialData }: Busin
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onNext({ businessHours });
+    onNext({ availability });
   };
 
   return (
     <div className={styles.stepContainer}>
-      <h1 className={styles.title}>When are you available?</h1>
-      <p className={styles.subtitle}>Set your availability so clients know when they can book with you.</p>
+      <h1 className={styles.title}>When is your space available?</h1>
+      <p className={styles.subtitle}>Set your availability so guests know when they can book.</p>
       
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.hoursContainer}>
           {daysOfWeek.map((day) => {
-            const dayHours = businessHours[day];
+            const dayHours = availability[day];
             if (!dayHours) return null;
             
             return (
@@ -136,12 +119,6 @@ export default function BusinessHoursStep({ onNext, onBack, initialData }: Busin
               </div>
             );
           })}
-        </div>
-
-        <div className={styles.hoursNote}>
-          <p className={styles.noteText}>
-            💡 <strong>Tip:</strong> You can always adjust your availability later in your provider dashboard.
-          </p>
         </div>
         
         <div className={styles.buttonContainer}>

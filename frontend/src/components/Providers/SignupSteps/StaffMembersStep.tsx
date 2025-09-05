@@ -33,7 +33,7 @@ export default function StaffMembersStep({ onNext, onBack, initialData }: StaffM
   };
 
   const handleRemoveMember = (id: number) => {
-    setStaffMembers(staffMembers.filter(member => member.id !== id));
+    setStaffMembers(staffMembers.filter((member: any) => member.id !== id));
   };
 
   const handleSubmit = (e: React.FormEvent) => {

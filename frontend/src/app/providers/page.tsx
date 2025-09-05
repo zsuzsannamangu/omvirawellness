@@ -256,7 +256,7 @@ export default function ProvidersPage() {
                 <section className={styles.ctaSection}>
                     <div className={styles.container}>
                         <h2>Ready to transform your wellness practice?</h2>
-                        <p>Join hundreds of providers who are already growing their businesses with Omvira.</p>
+                        <p>Join providers who are already growing their businesses with Omvira.</p>
                         <a href="/join" className={styles.ctaButtonLarge}>
                             Start Your Journey
                         </a>

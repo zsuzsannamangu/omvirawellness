@@ -1,5 +1,55 @@
 @import './_variables.scss';
 
+.signupPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  font-family: $font-main;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg $spacing-xl;
+  background: $light-text;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+  text-decoration: none;
+  
+  &:hover {
+    color: $hover-green;
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.loginLink {
+  color: $dark-text;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+}
+
 .container {
   min-height: 100vh;
   display: flex;
