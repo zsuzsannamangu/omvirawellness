@@ -5,7 +5,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: $light-text;
+  background: linear-gradient(135deg, $primary-color 0%, #3f4c77 100%);
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
@@ -24,12 +24,13 @@
 }
 
 .logoLink {
-  color: $primary-color;
+  color: $light-text;
   text-decoration: none;
   font-weight: 700;
   
   &:hover {
-    color: $hover-green;
+    transform: translateY(-1px);
+    text-decoration: underline;
   }
 }
 
@@ -44,9 +45,10 @@
   }
 }
 
+
 .navLink {
   font-size: 1rem;
-  color: $dark-text;
+  color: $light-text;
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s ease;
@@ -54,11 +56,14 @@
   background: none;
   border: none;
   cursor: pointer;
+  opacity: 0.9;
   
   &:hover {
-    color: $primary-color;
+    text-decoration: underline;
+    transform: translateY(-1px);
   }
 }
+
 
 // Right section with client link and auth buttons
 .rightSection {
@@ -73,19 +78,19 @@
 
 .clientLink {
   font-size: 0.9rem;
-  color: $primary-color;
+  color: $light-text;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
   font-family: $font-main;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  background: rgba($primary-color, 0.08);
-  border: 1px solid rgba($primary-color, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   
   &:hover {
-    background: rgba($primary-color, 0.12);
-    border-color: rgba($primary-color, 0.3);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-1px);
   }
   
@@ -119,14 +124,15 @@
 
 .loginLink {
   font-size: 1rem;
-  color: $dark-text;
+  color: $light-text;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s ease;
   font-family: $font-main;
+  opacity: 0.9;
   
   &:hover {
-    color: $primary-color;
+    transform: translateY(-1px);
   }
 }
 

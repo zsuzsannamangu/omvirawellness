@@ -481,7 +481,8 @@
 // CTA Section
 .ctaSection {
   padding: $spacing-xxl 2rem $spacing-xxl 2rem;
-  background: linear-gradient(135deg, $primary-color 0%, #0d5a5d 100%);
+  // background: linear-gradient(135deg, $primary-color 0%, #0d5a5d 100%);
+  background: linear-gradient(135deg, $primary-color 0%, #3f4c77 100%);
   color: $light-text;
   text-align: center;
   

@@ -1,0 +1,682 @@
+@import '../_variables.scss';
+
+.stepContainer {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title {
+  font-family: $font-heading;
+  font-size: 2rem;
+  font-weight: 700;
+  color: $dark-text;
+  text-align: center;
+  margin-bottom: $spacing-xs;
+  
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: $subtext-color;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  line-height: 1.4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+.textInput {
+  padding: $spacing-md;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $font-main;
+  transition: border-color 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+.textArea {
+  padding: $spacing-md;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $font-main;
+  resize: vertical;
+  min-height: 100px;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+.selectInput {
+  padding: $spacing-md $spacing-lg;
+  padding-right: 3rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $font-main;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &:hover {
+    border-color: $primary-color;
+  }
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.addressRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: $spacing-md;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Email step specific styles
+.inputContainer {
+  position: relative;
+}
+
+.emailInput {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba($primary-color, 0.15);
+  border-radius: 12px;
+  font-family: $font-main;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: rgba($subtext-color, 0.5);
+  }
+}
+
+.inputIcons {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: $subtext-color;
+}
+
+.passwordManager {
+  position: absolute;
+  right: 1.25rem;
+  top: 100%;
+  background: $dark-text;
+  color: $light-text;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: $font-main;
+  margin-top: $spacing-sm;
+}
+
+.continueButton {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 8px;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  height: 48px;
+  
+  &:hover:not(:disabled) {
+    background: $hover-green;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.envelopeIcon {
+  font-size: 1rem;
+}
+
+// Divider
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba($primary-color, 0.2);
+  }
+}
+
+.dividerText {
+  background: white;
+  padding: 0 1.5rem;
+  color: $subtext-color;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+// Social Buttons
+.socialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.socialButton {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: white;
+  border: 2px solid rgba($primary-color, 0.15);
+  border-radius: 8px;
+  font-family: $font-main;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  height: 48px;
+  
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+    transform: translateY(-1px);
+  }
+}
+
+.appleButton,
+.facebookButton,
+.googleButton {
+  color: $dark-text;
+}
+
+.appleIcon,
+.facebookIcon,
+.googleIcon {
+  width: 20px;
+  height: 20px;
+}
+
+// Legal Disclaimer
+.legalDisclaimer {
+  text-align: center;
+  font-family: $font-main;
+  font-size: 0.75rem;
+  color: $subtext-color;
+  line-height: 1.4;
+}
+
+.legalLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 600;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Password step specific styles
+.passwordStep {
+  max-width: 1200px !important;
+  width: 100% !important;
+  
+  .label {
+    text-align: center;
+  }
+}
+
+.passwordInputContainer {
+  position: relative;
+  max-width: 1200px !important;
+  width: 100% !important;
+  margin: 0 auto;
+  
+  .textInput {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+.passwordToggle {
+  position: absolute;
+  right: $spacing-lg;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: $subtext-color;
+  
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.passwordRequirements {
+  background: #f8f9fa;
+  padding: $spacing-md;
+  border-radius: 8px;
+  margin-top: $spacing-sm;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.requirementsTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+  text-align: center;
+}
+
+.requirementsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.requirementMet {
+  color: $primary-color;
+  font-size: 0.875rem;
+}
+
+.requirementUnmet {
+  color: $subtext-color;
+  font-size: 0.875rem;
+}
+
+// Goals and services grid
+.goalsGrid,
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.goalItem,
+.serviceItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+}
+
+.goalCheckbox,
+.serviceCheckbox {
+  margin: 0;
+  margin-top: 2px;
+}
+
+.goalContent,
+.serviceContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.goalName,
+.serviceName {
+  font-weight: 600;
+  color: $dark-text;
+  font-size: 0.95rem;
+}
+
+.goalDescription,
+.serviceDescription {
+  color: $subtext-color;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+// Section dividers
+.sectionDivider {
+  margin: $spacing-xl 0 $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid #e9ecef;
+  
+  h3 {
+    color: $dark-text;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.sectionTitle {
+  color: $dark-text;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+}
+
+.preferencesSection {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 2px solid #e9ecef;
+}
+
+// Checkbox groups
+.checkboxGroup {
+  margin-bottom: $spacing-md;
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin: 0;
+}
+
+.checkboxLabel {
+  font-size: 0.95rem;
+  color: $dark-text;
+  cursor: pointer;
+}
+
+// Travel section
+.travelSection {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 2px solid #e9ecef;
+}
+
+// Notes
+.locationNote {
+  margin-top: $spacing-md;
+}
+
+.noteText {
+  font-size: 0.875rem;
+  color: $subtext-color;
+  line-height: 1.5;
+  margin: 0;
+}
+
+// Button container
+.buttonContainer {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  align-items: center;
+}
+
+.backButton {
+  padding: $spacing-md $spacing-lg;
+  background: white;
+  color: $subtext-color;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+// Success page styles
+.successMessage {
+  text-align: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($hover-green, 0.1) 100%);
+  border-radius: 12px;
+  margin-bottom: $spacing-lg;
+}
+
+.successIcon {
+  font-size: 2.5rem;
+  margin-bottom: $spacing-sm;
+}
+
+.successMessage h2 {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  color: $dark-text;
+  margin-bottom: $spacing-xs;
+  text-align: center;
+}
+
+.successMessage p {
+  color: $subtext-color;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.nextSteps {
+  background: $light-text;
+  padding: $spacing-md;
+  border-radius: 8px;
+  margin-bottom: $spacing-md;
+  border: 1px solid #e9ecef;
+  
+  h3 {
+    color: $dark-text;
+    margin-bottom: $spacing-sm;
+    font-size: 1.1rem;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      padding: $spacing-xs 0;
+      color: $subtext-color;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.pricingSummary {
+  background: $light-text;
+  padding: $spacing-md;
+  border-radius: 8px;
+  margin-bottom: $spacing-md;
+  border: 1px solid #e9ecef;
+  
+  h3 {
+    color: $dark-text;
+    margin-bottom: $spacing-sm;
+    font-size: 1.1rem;
+  }
+}
+
+.pricingCard {
+  background: #f8f9fa;
+  padding: $spacing-md;
+  border-radius: 6px;
+}
+
+.pricingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  
+  h4 {
+    margin: 0;
+    color: $dark-text;
+    font-size: 1rem;
+  }
+}
+
+.pricingAmount {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.period {
+  color: $subtext-color;
+  font-size: 0.9rem;
+}
+
+.pricingFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    padding: $spacing-xs 0;
+    color: $dark-text;
+    font-size: 0.9rem;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .stepContainer {
+    max-width: 100%;
+  }
+  
+  .formRow {
+    flex-direction: column;
+  }
+  
+  .addressRow {
+    flex-direction: column;
+  }
+  
+  .goalsGrid,
+  .servicesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .buttonContainer {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  .backButton,
+  .continueButton {
+    width: 100%;
+  }
+}

@@ -69,7 +69,7 @@ const SpacesPage: React.FC = () => {
         </section>
 
         {/* Featured Spaces Carousel */}
-        <section className={styles.featuredSpaces}>
+        <section id="featured-spaces" className={styles.featuredSpaces}>
           <div className={styles.container}>
             <div className={styles.sectionHeader}>
               <div className={styles.headerLeft}>
@@ -183,7 +183,7 @@ const SpacesPage: React.FC = () => {
         </section>
 
         {/* How It Works */}
-        <section className={styles.howItWorks}>
+        <section id="how-it-works" className={styles.howItWorks}>
           <div className={styles.container}>
             <h2>How Hosting Works</h2>
             <div className={styles.stepsGrid}>
@@ -207,7 +207,7 @@ const SpacesPage: React.FC = () => {
         </section>
 
         {/* Benefits Section */}
-        <section className={styles.benefits}>
+        <section id="benefits" className={styles.benefits}>
           <div className={styles.container}>
             <h2>Why List Your Space on Omvira?</h2>
             <div className={styles.benefitsContent}>

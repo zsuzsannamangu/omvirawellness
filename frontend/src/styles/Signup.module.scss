@@ -50,6 +50,42 @@
   padding: $spacing-xl;
 }
 
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $primary-color 0%, $hover-green 100%);
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.stepContainer {
+  background: $light-text;
+  border-radius: 16px;
+  padding: $spacing-xl;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
 .container {
   min-height: 100vh;
   display: flex;

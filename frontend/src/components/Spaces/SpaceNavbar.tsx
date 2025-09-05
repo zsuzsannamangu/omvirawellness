@@ -23,7 +23,7 @@ export default function SpaceNavbar() {
       if (hash) {
         const sectionId = hash.substring(1); // Remove the # symbol
         // Only scroll if it's a valid section
-        const validSections = ['what-types-of-spaces', 'how-space-rental-works', 'everything-you-need', 'our-mission', 'pricing', 'about'];
+        const validSections = ['featured-spaces', 'how-it-works', 'benefits', 'pricing'];
         if (validSections.includes(sectionId)) {
           setTimeout(() => {
             scrollToSection(sectionId);
@@ -43,34 +43,28 @@ export default function SpaceNavbar() {
 
       <nav className={styles.mainNav}>
         <button
-          onClick={() => scrollToSection('what-types-of-spaces')}
+          onClick={() => scrollToSection('featured-spaces')}
           className={styles.navLink}
         >
           Spaces
         </button>
         <button
-          onClick={() => scrollToSection('everything-you-need')}
+          onClick={() => scrollToSection('how-it-works')}
           className={styles.navLink}
         >
-          Tools & Features
+          How It Works
         </button>
         <button
-          onClick={() => scrollToSection('our-mission')}
+          onClick={() => scrollToSection('benefits')}
           className={styles.navLink}
         >
-          Our Mission
+          Benefits
         </button>
         <button
           onClick={() => scrollToSection('pricing')}
           className={styles.navLink}
         >
           Pricing
-        </button>
-        <button
-          onClick={() => scrollToSection('about')}
-          className={styles.navLink}
-        >
-          About
         </button>
       </nav>
 
