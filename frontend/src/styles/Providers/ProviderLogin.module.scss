@@ -271,14 +271,10 @@
   gap: 0.75rem;
   
   &:hover {
-    background: rgba($primary-color, 0.05);
+    background: rgba($primary-color, 0.02);
     border-color: $primary-color;
     transform: translateY(-1px);
   }
-}
-
-.appleButton {
-  color: $dark-text;
 }
 
 .facebookButton {
@@ -289,7 +285,6 @@
   color: $dark-text;
 }
 
-.appleIcon,
 .facebookIcon,
 .googleIcon {
   width: 20px;

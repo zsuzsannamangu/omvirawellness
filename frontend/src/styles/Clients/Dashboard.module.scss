@@ -1,0 +1,676 @@
+@import '../_variables.scss';
+
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f9fa;
+  font-family: $font-main;
+}
+
+// Left Sidebar
+.sidebar {
+  width: 200px;
+  background: white;
+  border-right: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.sidebarHeader {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.logo {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $primary-color;
+  margin: 0;
+}
+
+.sidebarNav {
+  flex: 1;
+  padding: $spacing-sm 0;
+}
+
+.sidebarItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-lg;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  font-size: 0.9rem;
+  color: $dark-text;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+  }
+
+  &.active {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    border-right: 3px solid $primary-color;
+  }
+}
+
+.sidebarLabel {
+  font-weight: 500;
+}
+
+// Main Content Area
+.mainContent {
+  flex: 1;
+  margin-left: 200px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// Top Navigation
+.topNav {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.pageTitle {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.topNavRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  background: none;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  font-size: 0.8rem;
+  color: $dark-text;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+  }
+}
+
+// Submenu Navigation
+.submenu {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0 $spacing-lg;
+  display: flex;
+  gap: $spacing-lg;
+}
+
+.submenuItem {
+  padding: $spacing-sm 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: $font-main;
+  font-size: 0.9rem;
+  color: $subtext-color;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: $dark-text;
+  }
+
+  &.active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+    font-weight: 600;
+  }
+}
+
+// Main Content
+.content {
+  flex: 1;
+  padding: $spacing-lg;
+  background: #f8f9fa;
+}
+
+// Dashboard Section Styles
+.dashboardSection {
+  background: white;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.placeholderText {
+  color: $subtext-color;
+  font-style: italic;
+}
+
+// Overview Content
+.overviewContent {
+  .welcomeSection {
+    margin-bottom: $spacing-lg;
+  }
+
+  .welcomeTitle {
+    font-family: $font-heading;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .welcomeSubtitle {
+    font-size: 0.95rem;
+    color: $subtext-color;
+    margin: 0;
+  }
+}
+
+// Stats Grid
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statCard {
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: $spacing-md;
+  text-align: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+  }
+}
+
+.statNumber {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+// Recent Activity
+.recentActivity {
+  .sectionTitle {
+    font-size: 1rem;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.activityContent {
+  flex: 1;
+}
+
+.activityText {
+  font-weight: 500;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+  font-size: 0.9rem;
+}
+
+.activityTime {
+  font-size: 0.8rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+// Sessions List
+.sessionsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.sessionCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+  }
+}
+
+.sessionDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: $spacing-xs;
+  background: rgba($primary-color, 0.1);
+  border-radius: 4px;
+}
+
+.day {
+  font-family: $font-heading;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.month {
+  font-size: 0.7rem;
+  color: $subtext-color;
+  text-transform: uppercase;
+}
+
+.sessionDetails {
+  flex: 1;
+}
+
+.sessionTitle {
+  font-family: $font-heading;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.sessionProvider {
+  font-size: 0.85rem;
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.sessionTime {
+  font-size: 0.8rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-top: $spacing-xs;
+}
+
+.ratingText {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $dark-text;
+}
+
+.sessionActions {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.actionBtn {
+  padding: $spacing-xs $spacing-sm;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  font-size: 0.8rem;
+  color: $dark-text;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 180px;
+  }
+  
+  .mainContent {
+    margin-left: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 160px;
+  }
+  
+  .mainContent {
+    margin-left: 160px;
+  }
+  
+  .topNav {
+    padding: $spacing-sm $spacing-md;
+  }
+  
+  .content {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    
+    &.open {
+      transform: translateX(0);
+    }
+  }
+  
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .submenu {
+    padding: 0 $spacing-md;
+    overflow-x: auto;
+  }
+  
+  .datetimeRow {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  .confirmLayout {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  .bookingSummary {
+    min-width: auto;
+  }
+  
+  .confirmBookingBtn {
+    max-width: none;
+  }
+}
+
+// Book New Appointment Styles
+.bookNewContent {
+  .bookingSteps {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+    margin-top: $spacing-lg;
+  }
+  
+  .step {
+    display: flex;
+    gap: $spacing-lg;
+    padding: $spacing-lg;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stepNumber {
+    width: 40px;
+    height: 40px;
+    background: $primary-color;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  
+  .stepContent {
+    flex: 1;
+  }
+  
+  .stepTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: $dark-text;
+    margin-bottom: $spacing-md;
+  }
+  
+  // Service Selection
+  .serviceDropdown {
+    max-width: 400px;
+  }
+  
+  .serviceSelect {
+    width: 100%;
+    padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+  
+  // Provider Selection
+  .providerDropdown {
+    max-width: 400px;
+  }
+  
+  .providerSelect {
+    width: 100%;
+    padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+  
+  // Date & Time Selection
+  .datetimeRow {
+    display: flex;
+    gap: $spacing-lg;
+    max-width: 500px;
+  }
+  
+  .dateField, .timeField {
+    flex: 1;
+  }
+  
+  .fieldLabel {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $dark-text;
+    margin-bottom: $spacing-xs;
+  }
+  
+  .dateInput {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+  
+  .timeSelect {
+    width: 100%;
+    padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+  
+  // Booking Summary
+  .confirmLayout {
+    display: flex;
+    gap: $spacing-xl;
+    align-items: flex-start;
+  }
+  
+  .bookingSummary {
+    background: #f9fafb;
+    padding: $spacing-md;
+    border-radius: 6px;
+    min-width: 300px;
+    flex-shrink: 0;
+  }
+  
+  .summaryItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacing-xs;
+    font-size: 14px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .summaryTotal {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-sm;
+    padding-top: $spacing-sm;
+    border-top: 1px solid #e5e7eb;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .summaryLabel {
+    color: $light-text;
+  }
+  
+  .summaryValue {
+    color: $dark-text;
+    font-weight: 600;
+  }
+  
+  .confirmActions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .confirmBookingBtn {
+    padding: $spacing-sm $spacing-xl;
+    background: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+    
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}

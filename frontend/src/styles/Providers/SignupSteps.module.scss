@@ -509,30 +509,19 @@
   height: 48px;
 
   &:hover {
+    background: rgba($primary-color, 0.05);
     border-color: $primary-color;
     transform: translateY(-1px);
   }
 }
 
 .appleButton {
-  &:hover {
-    background: #000;
-    color: white;
-  }
+  color: $dark-text;
 }
 
-.facebookButton {
-  &:hover {
-    background: #1877f2;
-    color: white;
-  }
-}
-
+.facebookButton,
 .googleButton {
-  &:hover {
-    background: #4285f4;
-    color: white;
-  }
+  color: $dark-text;
 }
 
 .appleIcon, .facebookIcon, .googleIcon {
