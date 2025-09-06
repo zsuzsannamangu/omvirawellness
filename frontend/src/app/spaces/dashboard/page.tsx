@@ -1,19 +1,20 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import styles from '@/styles/Clients/Dashboard.module.scss';
+import styles from '@/styles/Spaces/Dashboard.module.scss';
 
 // Dashboard sections
-import Bookings from '@/components/Clients/Dashboard/Bookings';
-import History from '@/components/Clients/Dashboard/History';
-import Payments from '@/components/Clients/Dashboard/Payments';
-import Profile from '@/components/Clients/Dashboard/Profile';
+import Overview from '@/components/Spaces/Dashboard/Overview';
+import Bookings from '@/components/Spaces/Dashboard/Bookings';
+import Calendar from '@/components/Spaces/Dashboard/Calendar';
+import Analytics from '@/components/Spaces/Dashboard/Analytics';
+import Settings from '@/components/Spaces/Dashboard/Settings';
 
-export default function ClientDashboard() {
-  const [activeSection, setActiveSection] = useState('bookings');
-  const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
+export default function SpacesDashboard() {
+  const [activeSection, setActiveSection] = useState('overview');
+  const [activeSubmenu, setActiveSubmenu] = useState('dashboard');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [userName] = useState('John Doe'); // This would come from user data
+  const [spaceName] = useState('Zen Wellness Studio'); // This would come from space data
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,46 +42,54 @@ export default function ClientDashboard() {
   };
 
   const sidebarItems = [
+    { id: 'overview', label: 'Overview' },
     { id: 'bookings', label: 'Bookings' },
-    { id: 'history', label: 'History' },
-    { id: 'payments', label: 'Payments' },
-    { id: 'profile', label: 'Profile' },
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'analytics', label: 'Analytics' },
+    { id: 'settings', label: 'Settings' },
   ];
 
   const submenuItems = {
+    overview: [
+      { id: 'dashboard', label: 'Dashboard' },
+      { id: 'recent', label: 'Recent Activity' },
+    ],
     bookings: [
-      { id: 'upcoming', label: 'Upcoming Appointments' },
-      { id: 'book-new', label: 'Book New' },
+      { id: 'upcoming', label: 'Upcoming Bookings' },
+      { id: 'pending', label: 'Pending Requests' },
+      { id: 'history', label: 'Booking History' },
     ],
-    history: [
-      { id: 'history', label: 'History' },
-      { id: 'completed', label: 'Completed' },
-      { id: 'cancelled', label: 'Cancelled' },
+    calendar: [
+      { id: 'calendar', label: 'Calendar View' },
+      { id: 'availability', label: 'Availability' },
+      { id: 'blocked', label: 'Blocked Times' },
     ],
-    payments: [
-      { id: 'payments', label: 'Payments' },
-      { id: 'transactions', label: 'Transactions' },
-      { id: 'invoices', label: 'Invoices' },
+    analytics: [
+      { id: 'revenue', label: 'Revenue' },
+      { id: 'usage', label: 'Space Usage' },
+      { id: 'reviews', label: 'Reviews & Ratings' },
     ],
-    profile: [
-      { id: 'profile', label: 'Profile' },
-      { id: 'settings', label: 'Settings' },
-      { id: 'preferences', label: 'Preferences' },
+    settings: [
+      { id: 'profile', label: 'Space Profile' },
+      { id: 'pricing', label: 'Pricing' },
+      { id: 'amenities', label: 'Amenities' },
     ],
   };
 
   const renderMainContent = () => {
     switch (activeSection) {
+      case 'overview':
+        return <Overview activeSubmenu={activeSubmenu} />;
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
-      case 'history':
-        return <History activeSubmenu={activeSubmenu} />;
-      case 'payments':
-        return <Payments activeSubmenu={activeSubmenu} />;
-      case 'profile':
-        return <Profile activeSubmenu={activeSubmenu} />;
+      case 'calendar':
+        return <Calendar activeSubmenu={activeSubmenu} />;
+      case 'analytics':
+        return <Analytics activeSubmenu={activeSubmenu} />;
+      case 'settings':
+        return <Settings activeSubmenu={activeSubmenu} />;
       default:
-        return <Bookings activeSubmenu={activeSubmenu} />;
+        return <Overview activeSubmenu={activeSubmenu} />;
     }
   };
 
@@ -89,7 +98,7 @@ export default function ClientDashboard() {
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Omvira Wellness</h2>
+          <h2 className={styles.logo}>Omvira Spaces</h2>
         </div>
         
         <nav className={styles.sidebarNav}>
@@ -99,7 +108,9 @@ export default function ClientDashboard() {
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
                 setActiveSection(item.id);
-                setActiveSubmenu(item.id);
+                // Set the first submenu item as default for each section
+                const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
+                setActiveSubmenu(firstSubmenu?.id || item.id);
               }}
             >
               <span className={styles.sidebarLabel}>{item.label}</span>
@@ -116,23 +127,30 @@ export default function ClientDashboard() {
             <h1 className={styles.pageTitle}>
               {sidebarItems.find(item => item.id === activeSection)?.label}
             </h1>
+            <p className={styles.spaceName}>{spaceName}</p>
           </div>
           
           <div className={styles.topNavRight}>
+            <button 
+              className={styles.editProfileBtn}
+              onClick={() => setActiveSection('settings')}
+            >
+              Edit Profile
+            </button>
             <div className={styles.profileImageContainer} onClick={handleImageClick}>
               {profileImage ? (
                 <img 
                   src={profileImage} 
-                  alt="Profile" 
+                  alt="Space Profile" 
                   className={styles.profileImage}
                 />
               ) : (
                 <div className={styles.profileInitials}>
-                  {getInitials(userName)}
+                  {getInitials(spaceName)}
                 </div>
               )}
               <div className={styles.profileOverlay}>
-                <span className={styles.profileEditIcon}>📷</span>
+                <span className={styles.profileEditIcon}>Edit</span>
               </div>
             </div>
             <input

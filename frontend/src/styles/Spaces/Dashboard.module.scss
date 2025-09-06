@@ -1,0 +1,1016 @@
+@import '../_variables.scss';
+
+// Main Dashboard Layout
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+// Left Sidebar
+.sidebar {
+  width: 200px;
+  background: white;
+  border-right: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.sidebarHeader {
+  padding: $spacing-md;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.sidebarNav {
+  flex: 1;
+  padding: $spacing-md 0;
+}
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  font-size: 0.9rem;
+  color: $dark-text;
+  text-align: left;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    color: $primary-color;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($accent-color, 0.1) 100%);
+    color: $primary-color;
+    border-right: 3px solid $primary-color;
+    font-weight: 600;
+  }
+}
+
+.sidebarLabel {
+  font-weight: 500;
+}
+
+// Main Content Area
+.mainContent {
+  flex: 1;
+  margin-left: 200px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// Top Navigation
+.topNav {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.spaceName {
+  font-size: 0.9rem;
+  color: $light-text;
+  margin: 0;
+  font-weight: 500;
+}
+
+.topNavRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.editProfileBtn {
+  padding: $spacing-xs $spacing-sm;
+  background: none;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: $dark-text;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+// Profile Image Styles
+.profileImageContainer {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    
+    .profileOverlay {
+      opacity: 1;
+    }
+  }
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profileInitials {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 50%;
+}
+
+.profileOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 50%;
+}
+
+.profileEditIcon {
+  font-size: 12px;
+  color: white;
+  font-weight: 500;
+}
+
+// Submenu Navigation
+.submenu {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0 $spacing-xl;
+  display: flex;
+  gap: $spacing-lg;
+}
+
+.submenuItem {
+  padding: $spacing-md 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: $font-main;
+  font-size: 0.9rem;
+  color: $light-text;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  font-weight: 500;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  &.active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+    font-weight: 600;
+  }
+}
+
+// Main Content
+.content {
+  flex: 1;
+  padding: $spacing-lg;
+  background: #f8fafc;
+}
+
+// Dashboard Section
+.dashboardSection {
+  background: white;
+  border-radius: 6px;
+  padding: $spacing-lg;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: 0 0 $spacing-lg 0;
+  font-family: $font-main;
+}
+
+// Overview Styles
+.overviewContent {
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+  }
+
+  .statCard {
+    background: white;
+    border-radius: 6px;
+    padding: $spacing-md;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .statNumber {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .statLabel {
+    color: $dark-text;
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  .subsectionTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-md 0;
+  }
+
+  .bookingsList, .activityList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .bookingItem, .activityItem {
+    background: white;
+    border-radius: 6px;
+    padding: $spacing-sm;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .bookingTitle, .activityTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .bookingProvider, .activityDescription {
+    color: $light-text;
+    margin: 0 0 $spacing-xs 0;
+    font-size: 0.9rem;
+  }
+
+  .bookingTime, .activityTime {
+    color: $light-text;
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .bookingStatus {
+    margin-left: auto;
+  }
+
+  .statusConfirmed {
+    background: #10b981;
+    color: white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .statusPending {
+    background: #f59e0b;
+    color: white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+
+  .quickActions {
+    margin-top: $spacing-xl;
+  }
+
+  .actionsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+  }
+
+  .actionButton {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: $spacing-sm $spacing-md;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    color: $dark-text;
+
+    &:hover {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.05);
+      color: $primary-color;
+    }
+  }
+
+  .actionLabel {
+    font-weight: 500;
+  }
+}
+
+// Bookings Styles
+.bookingsContent, .pendingContent, .historyContent {
+  .bookingsList, .requestsList, .historyList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .bookingCard, .requestCard, .historyItem {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .bookingHeader {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+  }
+
+  .bookingDate, .historyDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+  }
+
+  .day {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $primary-color;
+  }
+
+  .month {
+    font-size: 0.8rem;
+    color: $light-text;
+    text-transform: uppercase;
+  }
+
+  .bookingDetails, .requestInfo, .historyDetails {
+    flex: 1;
+  }
+
+  .bookingTitle, .requestTitle, .historyTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .bookingProvider, .requestProvider, .historyProvider {
+    color: $light-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .bookingTime, .requestTime, .historyTime {
+    color: $light-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .bookingPrice, .requestPrice, .historyPrice {
+    font-weight: 600;
+    color: $primary-color;
+    margin: 0;
+  }
+
+  .bookingActions, .requestActions, .historyStatus {
+    display: flex;
+    gap: $spacing-sm;
+  }
+
+  .actionBtn {
+    padding: $spacing-xs $spacing-sm;
+    background: none;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: $dark-text;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  .approveBtn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    &:hover {
+      background: #059669;
+    }
+  }
+
+  .declineBtn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+
+  .statusCompleted {
+    background: #10b981;
+    color: white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+}
+
+// Calendar Styles
+.calendarContent, .availabilityContent, .blockedContent {
+  .calendarContainer {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+  }
+
+  .calendarMonth {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .calendarNavBtn {
+    background: none;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: $spacing-xs $spacing-sm;
+    cursor: pointer;
+    color: $dark-text;
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  .calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #e5e5e5;
+  }
+
+  .calendarDayHeader {
+    background: #f8fafc;
+    padding: $spacing-sm;
+    text-align: center;
+    font-weight: 600;
+    color: $dark-text;
+  }
+
+  .calendarDay {
+    background: white;
+    padding: $spacing-sm;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba($primary-color, 0.1);
+    }
+  }
+
+  .availabilityForm, .amenitiesForm {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .formSection {
+    margin-bottom: $spacing-xl;
+  }
+
+  .hoursGrid {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .hourRow {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  .dayName {
+    min-width: 100px;
+    font-weight: 500;
+    color: $dark-text;
+  }
+
+  .timeInput {
+    padding: $spacing-xs $spacing-sm;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  .timeSeparator {
+    color: $light-text;
+  }
+
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: $dark-text;
+  }
+
+  .blockedList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
+
+  .blockedItem {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-md;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .blockedTitle {
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .blockedDate, .blockedTime {
+    color: $light-text;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .removeBtn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+
+  .addBlockedBtn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Analytics Styles
+.revenueContent, .usageContent, .reviewsContent {
+  .revenueStats, .usageStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+  }
+
+  .revenueCard, .usageCard {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .revenueTitle, .usageTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-sm 0;
+  }
+
+  .revenueAmount, .usagePercentage, .usageTime, .usageDays {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $primary-color;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .revenueChange, .usageDescription {
+    color: $light-text;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .chartPlaceholder {
+    background: #f8fafc;
+    border: 2px dashed #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-xl;
+    text-align: center;
+    color: $light-text;
+  }
+
+  .ratingOverview {
+    display: flex;
+    gap: $spacing-xl;
+    margin-bottom: $spacing-xl;
+  }
+
+  .ratingSummary {
+    text-align: center;
+  }
+
+  .ratingNumber {
+    font-size: 3rem;
+    font-weight: 700;
+    color: $primary-color;
+    margin: 0 0 $spacing-sm 0;
+  }
+
+  .ratingStars {
+    font-size: 1.5rem;
+    margin-bottom: $spacing-sm;
+  }
+
+  .ratingCount {
+    color: $light-text;
+    margin: 0;
+  }
+
+  .ratingBreakdown {
+    flex: 1;
+  }
+
+  .ratingBar {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+  }
+
+  .ratingLabel {
+    min-width: 60px;
+    font-size: 0.9rem;
+    color: $dark-text;
+  }
+
+  .ratingBarBg {
+    flex: 1;
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .ratingBarFill {
+    height: 100%;
+    background: $primary-color;
+    border-radius: 4px;
+  }
+
+  .reviewsList {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .reviewItem {
+    padding: $spacing-md 0;
+    border-bottom: 1px solid #e5e5e5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-sm;
+  }
+
+  .reviewerName {
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .reviewStars {
+    font-size: 0.9rem;
+  }
+
+  .reviewDate {
+    color: $light-text;
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .reviewText {
+    color: $dark-text;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Settings Styles
+.profileContent, .pricingContent, .amenitiesContent {
+  .profileForm, .pricingForm, .amenitiesForm {
+    background: white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .formSection {
+    margin-bottom: $spacing-xl;
+  }
+
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
+  }
+
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .formLabel {
+    font-weight: 500;
+    color: $dark-text;
+    font-size: 0.9rem;
+  }
+
+  .formInput, .formSelect, .formTextarea {
+    padding: $spacing-sm;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+
+  .formTextarea {
+    resize: vertical;
+  }
+
+  .priceInput {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .currencySymbol {
+    position: absolute;
+    left: $spacing-sm;
+    color: $light-text;
+    font-weight: 500;
+  }
+
+  .priceInput .formInput {
+    padding-left: 2rem;
+  }
+
+  .amenitiesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+  }
+
+  .amenityItem {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    cursor: pointer;
+    padding: $spacing-sm;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba($primary-color, 0.05);
+    }
+  }
+
+  .amenityLabel {
+    font-size: 0.9rem;
+    color: $dark-text;
+  }
+
+  .formActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: $spacing-xl;
+  }
+
+  .saveBtn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 180px;
+  }
+  
+  .mainContent {
+    margin-left: 180px;
+  }
+  
+  .topNav {
+    padding: $spacing-sm $spacing-md;
+  }
+  
+  .content {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
+  
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .sidebarNav {
+    display: flex;
+    overflow-x: auto;
+    padding: $spacing-sm 0;
+  }
+  
+  .sidebarItem {
+    flex-shrink: 0;
+    padding: $spacing-sm $spacing-md;
+  }
+  
+  .topNav {
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: flex-start;
+  }
+  
+  .submenu {
+    padding: 0 $spacing-lg;
+    overflow-x: auto;
+  }
+  
+  .submenuItem {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .statsGrid, .revenueStats, .usageStats {
+    grid-template-columns: 1fr;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ratingOverview {
+    flex-direction: column;
+  }
+}
