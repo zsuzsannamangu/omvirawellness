@@ -10,6 +10,62 @@ interface BookingsProps {
 export default function Bookings({ activeSubmenu }: BookingsProps) {
   const renderContent = () => {
     switch (activeSubmenu) {
+      case 'requests':
+        return (
+          <div className={styles.historyContent}>
+            <h2 className={styles.sectionTitle}>Booking Requests</h2>
+            <div className={styles.compactList}>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>20</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Massage Therapy Session</h4>
+                  <p className={styles.compactClient}>Michael Brown • 2:00 PM - 3:00 PM • $120</p>
+                  <p className={styles.requestNote}>New client - First time booking</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <button className={styles.approveBtn}>Approve</button>
+                  <button className={styles.declineBtn}>Decline</button>
+                </div>
+              </div>
+
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>22</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Yoga Class</h4>
+                  <p className={styles.compactClient}>Emma Wilson • 6:00 PM - 7:00 PM • $45</p>
+                  <p className={styles.requestNote}>Regular client - Special request for evening class</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <button className={styles.approveBtn}>Approve</button>
+                  <button className={styles.declineBtn}>Decline</button>
+                </div>
+              </div>
+
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>25</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Personal Training</h4>
+                  <p className={styles.compactClient}>David Lee • 10:00 AM - 11:00 AM • $80</p>
+                  <p className={styles.requestNote}>Holiday booking - Confirmation needed</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <button className={styles.approveBtn}>Approve</button>
+                  <button className={styles.declineBtn}>Decline</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
       case 'upcoming':
         return (
           <div className={styles.historyContent}>

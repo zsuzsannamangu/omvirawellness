@@ -1,5 +1,6 @@
 'use client';
 
+import { FaEye, FaEnvelope, FaStickyNote, FaTrash } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 interface ClientsProps {
@@ -13,45 +14,100 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
         return (
           <div className={styles.clientsContent}>
             <h2 className={styles.sectionTitle}>Directory of Past Clients</h2>
-            <div className={styles.clientsList}>
-              <div className={styles.clientCard}>
-                <div className={styles.clientInfo}>
-                  <h4 className={styles.clientName}>John Smith</h4>
-                  <p className={styles.clientEmail}>john.smith@email.com</p>
-                  <p className={styles.clientPhone}>+1 (555) 123-4567</p>
-                  <p className={styles.clientSessions}>12 sessions completed</p>
-                </div>
-                <div className={styles.clientActions}>
-                  <button className={styles.actionBtn}>View Profile</button>
-                  <button className={styles.actionBtn}>Message</button>
-                </div>
-              </div>
+            <div className={styles.clientsTableContainer}>
+              <table className={styles.clientsTable}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Sessions</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className={styles.clientNameCell}>
+                      <div className={styles.clientNameInfo}>
+                        <span className={styles.clientName}>John Smith</span>
+                      </div>
+                    </td>
+                    <td className={styles.clientEmailCell}>john.smith@email.com</td>
+                    <td className={styles.clientPhoneCell}>+1 (555) 123-4567</td>
+                    <td className={styles.clientSessionsCell}>12 sessions</td>
+                    <td className={styles.clientActionsCell}>
+                      <div className={styles.actionButtons}>
+                        <button className={styles.actionBtn} title="View">
+                          <FaEye />
+                        </button>
+                        <button className={styles.actionBtn} title="Message">
+                          <FaEnvelope />
+                        </button>
+                        <button className={styles.actionBtn} title="Add Note">
+                          <FaStickyNote />
+                        </button>
+                        <button className={styles.actionBtn} title="Delete">
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
 
-              <div className={styles.clientCard}>
-                <div className={styles.clientInfo}>
-                  <h4 className={styles.clientName}>Emma Wilson</h4>
-                  <p className={styles.clientEmail}>emma.wilson@email.com</p>
-                  <p className={styles.clientPhone}>+1 (555) 234-5678</p>
-                  <p className={styles.clientSessions}>8 sessions completed</p>
-                </div>
-                <div className={styles.clientActions}>
-                  <button className={styles.actionBtn}>View Profile</button>
-                  <button className={styles.actionBtn}>Message</button>
-                </div>
-              </div>
+                  <tr>
+                    <td className={styles.clientNameCell}>
+                      <div className={styles.clientNameInfo}>
+                        <span className={styles.clientName}>Emma Wilson</span>
+                      </div>
+                    </td>
+                    <td className={styles.clientEmailCell}>emma.wilson@email.com</td>
+                    <td className={styles.clientPhoneCell}>+1 (555) 234-5678</td>
+                    <td className={styles.clientSessionsCell}>8 sessions</td>
+                    <td className={styles.clientActionsCell}>
+                      <div className={styles.actionButtons}>
+                        <button className={styles.actionBtn} title="View">
+                          <FaEye />
+                        </button>
+                        <button className={styles.actionBtn} title="Message">
+                          <FaEnvelope />
+                        </button>
+                        <button className={styles.actionBtn} title="Add Note">
+                          <FaStickyNote />
+                        </button>
+                        <button className={styles.actionBtn} title="Delete">
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
 
-              <div className={styles.clientCard}>
-                <div className={styles.clientInfo}>
-                  <h4 className={styles.clientName}>Mike Chen</h4>
-                  <p className={styles.clientEmail}>mike.chen@email.com</p>
-                  <p className={styles.clientPhone}>+1 (555) 345-6789</p>
-                  <p className={styles.clientSessions}>5 sessions completed</p>
-                </div>
-                <div className={styles.clientActions}>
-                  <button className={styles.actionBtn}>View Profile</button>
-                  <button className={styles.actionBtn}>Message</button>
-                </div>
-              </div>
+                  <tr>
+                    <td className={styles.clientNameCell}>
+                      <div className={styles.clientNameInfo}>
+                        <span className={styles.clientName}>Mike Chen</span>
+                      </div>
+                    </td>
+                    <td className={styles.clientEmailCell}>mike.chen@email.com</td>
+                    <td className={styles.clientPhoneCell}>+1 (555) 345-6789</td>
+                    <td className={styles.clientSessionsCell}>5 sessions</td>
+                    <td className={styles.clientActionsCell}>
+                      <div className={styles.actionButtons}>
+                        <button className={styles.actionBtn} title="View">
+                          <FaEye />
+                        </button>
+                        <button className={styles.actionBtn} title="Message">
+                          <FaEnvelope />
+                        </button>
+                        <button className={styles.actionBtn} title="Add Note">
+                          <FaStickyNote />
+                        </button>
+                        <button className={styles.actionBtn} title="Delete">
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         );

@@ -350,6 +350,17 @@
   margin: 0 0 $spacing-lg 0;
 }
 
+.placeholderText {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $subtext-color;
+  
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
 // Overview Styles
 .overviewContent {
   .statsGrid {
@@ -504,6 +515,8 @@
   gap: $spacing-md;
   transition: all 0.3s ease;
   position: relative;
+  min-height: 80px;
+  width: 100%;
 
   &:hover {
     border-color: $primary-color;
@@ -540,6 +553,7 @@
 .compactDetails {
   flex: 1;
   min-width: 0;
+  max-width: 300px;
 }
 
 .compactTitle {
@@ -557,26 +571,46 @@
   line-height: 1.3;
 }
 
+.requestNote {
+  color: $primary-color;
+  margin: $spacing-xs 0 0 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  font-weight: 500;
+}
+
 .compactActions {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
   flex-shrink: 0;
+  white-space: nowrap;
+  min-width: 280px;
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .messageBtn {
-  background: $primary-color;
+  background: $secondary-color;
   color: white;
-  border: none;
-  padding: $spacing-xs $spacing-sm;
+  border: 1px solid $secondary-color;
+  padding: $spacing-sm $spacing-lg;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 120px;
+  height: 36px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    background: $hover-green;
+    background: darken($secondary-color, 10%);
+    border-color: darken($secondary-color, 10%);
+    transform: translateY(-1px);
   }
 }
 
@@ -646,48 +680,74 @@
   }
 
   .actionBtn {
-    padding: $spacing-xs $spacing-sm;
-    background: none;
-    border: 1px solid #e5e5e5;
+    padding: $spacing-sm $spacing-lg;
+    background: $primary-color;
+    color: white;
+    border: 1px solid $primary-color;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8rem;
-    color: $dark-text;
+    font-size: 0.85rem;
+    font-weight: 500;
     transition: all 0.2s ease;
+    width: 120px;
+    height: 36px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-      border-color: $primary-color;
-      color: $primary-color;
+      background: $cta-hover-green;
+      border-color: $cta-hover-green;
+      transform: translateY(-1px);
     }
   }
 
   .approveBtn {
     background: #10b981;
     color: white;
-    border: none;
-    padding: $spacing-xs $spacing-sm;
+    border: 1px solid #10b981;
+    padding: $spacing-sm $spacing-lg;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 500;
+    width: 100px;
+    height: 36px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 
     &:hover {
       background: #059669;
+      border-color: #059669;
+      transform: translateY(-1px);
     }
   }
 
   .declineBtn {
     background: #ef4444;
     color: white;
-    border: none;
-    padding: $spacing-xs $spacing-sm;
+    border: 1px solid #ef4444;
+    padding: $spacing-sm $spacing-lg;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 500;
+    width: 100px;
+    height: 36px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 
     &:hover {
       background: #dc2626;
+      border-color: #dc2626;
+      transform: translateY(-1px);
     }
   }
 
@@ -1067,6 +1127,10 @@
     }
   }
 
+  .formSelect {
+    padding-right: 2rem;
+  }
+
   .formTextarea {
     resize: vertical;
   }
@@ -1345,6 +1409,10 @@
   }
 }
 
+.formSelect {
+  padding-right: 2rem;
+}
+
 .formTextarea {
   resize: vertical;
   min-height: 80px;
@@ -1437,7 +1505,7 @@
 }
 
 .filterSelect, .filterInput {
-  padding: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -1687,5 +1755,1840 @@
   .spaceActions,
   .favoriteActions {
     flex-direction: column;
+  }
+}
+
+// Calendar Component Styles
+.syncSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.syncDescription {
+  p {
+    margin: 0 0 $spacing-sm 0;
+    color: $subtext-color;
+    line-height: 1.5;
+  }
+}
+
+.syncOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-lg;
+}
+
+.syncCard {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+}
+
+.syncIcon {
+  font-size: 2rem;
+  color: $primary-color;
+  margin-bottom: $spacing-md;
+}
+
+.syncTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.syncDescription {
+  color: $subtext-color;
+  margin-bottom: $spacing-lg;
+}
+
+.syncBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin: 0 auto;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.syncStatus {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.syncStatusTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.syncStatusItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.statusIcon {
+  color: $success-color;
+  font-size: 1.1rem;
+}
+
+.disconnectBtn {
+  background: $error-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-left: auto;
+
+  &:hover {
+    background: $error-hover;
+  }
+}
+
+.syncSettings {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.syncSettingsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.settingItem {
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.settingLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-weight: 500;
+  color: $dark-text;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    margin: 0;
+  }
+}
+
+// Calendar Grid Styles
+.calendarContainer {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.calendarMonth {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.calendarNav {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.calendarNavBtn {
+  background: $background-light;
+  border: 1px solid $border-light;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background: $primary-color;
+    color: white;
+    border-color: $primary-color;
+  }
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: $border-light;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.calendarDayHeader {
+  background: $background-gray;
+  padding: $spacing-sm;
+  text-align: center;
+  font-weight: 600;
+  color: $dark-text;
+  font-size: 0.9rem;
+}
+
+.calendarDay {
+  background: white;
+  padding: $spacing-sm;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: $background-light;
+  }
+
+  &:empty {
+    background: $background-gray;
+    cursor: default;
+
+    &:hover {
+      background: $background-gray;
+    }
+  }
+}
+
+.upcomingAppointments {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.upcomingTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.appointmentList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.appointmentItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.appointmentTime {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-weight: 500;
+  color: $primary-color;
+  min-width: 120px;
+}
+
+.appointmentDetails {
+  flex: 1;
+}
+
+.appointmentTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.appointmentClient {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.appointmentStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusConfirmed {
+  background: $success-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+// Payments Component Styles
+.balanceCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.balanceCard {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+}
+
+.balanceIcon {
+  font-size: 2rem;
+  color: $primary-color;
+}
+
+.balanceInfo {
+  flex: 1;
+}
+
+.balanceTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.balanceAmount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.balanceSubtext {
+  font-size: 0.8rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+.recentTransactions {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.transactionsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.transactionList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.transactionItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.transactionIcon {
+  color: $success-color;
+  font-size: 1.2rem;
+}
+
+.transactionDetails {
+  flex: 1;
+}
+
+.transactionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.transactionDate {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.transactionAmount {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $success-color;
+}
+
+// Payouts Styles
+.payoutSettings {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.payoutSettingsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.payoutCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.payoutInfo {
+  flex: 1;
+}
+
+.payoutMethod {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.payoutDetails {
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+  font-size: 0.9rem;
+}
+
+.payoutSchedule {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.editPayoutBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.payoutHistory {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.payoutHistoryTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.payoutList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.payoutItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.payoutDate {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-weight: 500;
+  color: $primary-color;
+  min-width: 120px;
+}
+
+.payoutDetails {
+  flex: 1;
+}
+
+.payoutTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.payoutMethod {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.payoutAmount {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+}
+
+.payoutStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusCompleted {
+  background: $success-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.statusCanceled {
+  background: $error-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+// Reports Styles
+.reportsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.reportCard {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+}
+
+.reportIcon {
+  font-size: 2rem;
+  color: $primary-color;
+  margin-bottom: $spacing-md;
+}
+
+.reportTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.reportDescription {
+  color: $subtext-color;
+  margin-bottom: $spacing-lg;
+  line-height: 1.5;
+}
+
+.downloadBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin: 0 auto;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.reportFilters {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.filtersTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.filterRow {
+  display: flex;
+  gap: $spacing-md;
+  align-items: end;
+}
+
+.filterGroup {
+  flex: 1;
+}
+
+.filterLabel {
+  display: block;
+  font-weight: 500;
+  color: $dark-text;
+  margin-bottom: $spacing-xs;
+}
+
+.filterSelect {
+  width: 100%;
+  padding: $spacing-sm 2rem $spacing-sm $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.9rem;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.generateBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  height: fit-content;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+// Messages Component Styles
+.messagesContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+}
+
+.conversationsList {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.conversationsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.conversationItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: $spacing-sm;
+
+  &:hover {
+    background: $background-light;
+  }
+}
+
+.conversationAvatar {
+  width: 40px;
+  height: 40px;
+  background: $primary-color;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.conversationInfo {
+  flex: 1;
+}
+
+.conversationName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.conversationPreview {
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+  font-size: 0.9rem;
+}
+
+.conversationTime {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.conversationStatus {
+  display: flex;
+  align-items: center;
+}
+
+.unreadBadge {
+  background: $primary-color;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.readIcon {
+  color: $success-color;
+  font-size: 1.1rem;
+}
+
+.messageCompose {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.composeTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.composeForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formLabel {
+  font-weight: 500;
+  color: $dark-text;
+  margin-bottom: $spacing-xs;
+}
+
+.formSelect, .formInput, .formTextarea {
+  padding: $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: $font-main;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.formSelect {
+  padding-right: 2rem;
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.composeActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.sendBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.draftBtn {
+  background: $background-gray;
+  color: $dark-text;
+  border: 1px solid $border-light;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: $border-light;
+  }
+}
+
+// Reminders Styles
+.remindersContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.reminderTemplates {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.templatesTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.templateList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.templateItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.templateInfo {
+  flex: 1;
+}
+
+.templateName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.templateText {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.templateActions {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.editBtn, .deleteBtn {
+  padding: $spacing-xs;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.editBtn {
+  background: $info-color;
+  color: white;
+
+  &:hover {
+    background: $info-hover;
+  }
+}
+
+.deleteBtn {
+  background: $error-color;
+  color: white;
+
+  &:hover {
+    background: $error-hover;
+  }
+}
+
+.addTemplateBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.reminderSettings {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.settingsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.settingItem {
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.settingLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-weight: 500;
+  color: $dark-text;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    margin: 0;
+  }
+}
+
+.settingDescription {
+  color: $subtext-color;
+  margin: $spacing-xs 0 0 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.scheduledReminders {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.scheduledTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.reminderList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.reminderItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.reminderIcon {
+  color: $primary-color;
+  font-size: 1.2rem;
+}
+
+.reminderInfo {
+  flex: 1;
+}
+
+.reminderTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.reminderClient {
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+  font-size: 0.9rem;
+}
+
+.reminderTime {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.reminderStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusPending {
+  background: $warning-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.statusSent {
+  background: $success-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+// Profile Component Styles
+.servicesContainer {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.servicesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.servicesSubtitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.addServiceBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.servicesList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.serviceItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.serviceInfo {
+  flex: 1;
+}
+
+.serviceName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.serviceDescription {
+  color: $subtext-color;
+  margin: 0 0 $spacing-sm 0;
+  font-size: 0.9rem;
+}
+
+.serviceDetails {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.serviceDuration, .servicePrice {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.9rem;
+  color: $subtext-color;
+}
+
+.servicePrice {
+  color: $success-color;
+  font-weight: 600;
+}
+
+.serviceActions {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+// Availability Styles
+.availabilityContainer {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: $spacing-lg;
+}
+
+.availabilitySettings {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.availabilitySubtitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-lg 0;
+}
+
+.hoursGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+}
+
+.dayHours {
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.dayName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.timeInputs {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.timeInput {
+  flex: 1;
+  padding: $spacing-xs;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  font-size: 0.9rem;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.timeSeparator {
+  color: $subtext-color;
+  font-size: 0.9rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-weight: 500;
+  color: $dark-text;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    margin: 0;
+  }
+}
+
+.blockedTimes {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.blockedTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.blockedList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.blockedItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+}
+
+.blockedInfo {
+  flex: 1;
+}
+
+.blockedName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.blockedDate {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.removeBlockedBtn {
+  background: $error-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: $error-hover;
+  }
+}
+
+.addBlockedBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+// Clients Component Styles
+.clientsContent, .notesContent {
+  .clientsList, .notesList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+// Clients Table Styles
+.clientsTableContainer {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  overflow: visible;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.clientsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  thead {
+    background: $background-light;
+    border-bottom: 2px solid $border-medium;
+
+    th {
+      padding: $spacing-md $spacing-lg;
+      text-align: left;
+      font-weight: 600;
+      color: $dark-text;
+      font-family: $font-heading;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border-light;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: $background-light;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: $spacing-md $spacing-lg;
+      vertical-align: middle;
+    }
+  }
+}
+
+.clientNameCell {
+  font-weight: 600;
+  color: $dark-text;
+  font-family: $font-heading;
+}
+
+.clientNameInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.clientName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $dark-text;
+  font-family: $font-heading;
+}
+
+.clientEmailCell {
+  color: $subtext-color;
+  font-size: 0.9rem;
+}
+
+.clientPhoneCell {
+  color: $subtext-color;
+  font-size: 0.9rem;
+}
+
+.clientSessionsCell {
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.clientActionsCell {
+  text-align: right;
+}
+
+.actionButtons {
+  display: flex;
+  gap: $spacing-xs;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  background: transparent;
+  color: $subtext-color;
+  border: 1px solid $border-light;
+  padding: $spacing-xs;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  position: relative;
+
+  &:hover {
+    background: $primary-color;
+    color: white;
+    border-color: $primary-color;
+    transform: translateY(-1px);
+  }
+
+  &:nth-child(4):hover {
+    background: $error-color;
+    border-color: $error-color;
+  }
+
+  // Ensure tooltips are visible
+  &[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: normal;
+    z-index: 1000;
+    pointer-events: none;
+    margin-bottom: 8px;
+    max-width: 180px;
+    text-align: center;
+    word-wrap: break-word;
+    line-height: 1.3;
+  }
+}
+
+.clientCard {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    transform: translateY(-1px);
+  }
+}
+
+.clientInfo {
+  flex: 1;
+}
+
+.clientName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+  font-family: $font-heading;
+}
+
+.clientEmail, .clientPhone, .clientSessions {
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.clientSessions {
+  color: $success-color;
+  font-weight: 500;
+}
+
+.clientActions {
+  display: flex;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.notesList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.noteItem {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+}
+
+.noteHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $border-light;
+}
+
+.noteClient {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+  font-family: $font-heading;
+}
+
+.noteDate {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.noteText {
+  color: $dark-text;
+  margin: 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+// Bio Styles
+.bioContainer {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.bioForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.specialtiesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.specialtyTag {
+  background: $primary-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.bioActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.saveBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.previewBtn {
+  background: $background-gray;
+  color: $dark-text;
+  border: 1px solid $border-light;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: $border-light;
+  }
+}
+
+// Certifications Styles
+.certificationsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.certificationsList {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.certificationItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $background-light;
+  border-radius: 6px;
+  border: 1px solid $border-light;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.certIcon {
+  font-size: 1.5rem;
+  color: $primary-color;
+}
+
+.certInfo {
+  flex: 1;
+}
+
+.certName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.certIssuer {
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+  font-size: 0.9rem;
+}
+
+.certDate {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.certStatus {
+  margin-right: $spacing-md;
+}
+
+.statusValid {
+  background: $success-color;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.certActions {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.addCertification {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+}
+
+.addCertTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-lg 0;
+}
+
+.certForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.uploadArea {
+  border: 2px dashed $border-light;
+  border-radius: 6px;
+  padding: $spacing-lg;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.02);
+  }
+}
+
+.uploadIcon {
+  font-size: 2rem;
+  color: $primary-color;
+  margin-bottom: $spacing-sm;
+}
+
+.uploadText {
+  font-weight: 500;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.uploadSubtext {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.certActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.addCertBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.cancelBtn {
+  background: $background-gray;
+  color: $dark-text;
+  border: 1px solid $border-light;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: $border-light;
   }
 }

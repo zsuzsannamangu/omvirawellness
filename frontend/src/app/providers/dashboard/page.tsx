@@ -15,7 +15,7 @@ import Profile from '@/components/Providers/Dashboard/Profile';
 
 export default function ProvidersDashboard() {
   const [activeSection, setActiveSection] = useState('bookings');
-  const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
+  const [activeSubmenu, setActiveSubmenu] = useState('requests');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [providerName] = useState('Sarah Johnson'); // This would come from provider data
   const [providerRating] = useState(4.9); // This would come from provider data
@@ -54,12 +54,14 @@ export default function ProvidersDashboard() {
     { id: 'payments', label: 'Payments & Earnings' },
     { id: 'analytics', label: 'Analytics' },
     { id: 'messages', label: 'Messages' },
-    { id: 'profile', label: 'Profile & Settings' },
+    { id: 'profile', label: 'Profile' },
+    { id: 'settings', label: 'Account Settings' },
     { id: 'signout', label: 'Sign Out' },
   ];
 
   const submenuItems = {
     bookings: [
+      { id: 'requests', label: 'Requests' },
       { id: 'upcoming', label: 'Upcoming' },
       { id: 'past', label: 'Past' },
       { id: 'canceled', label: 'Canceled' },
@@ -72,6 +74,7 @@ export default function ProvidersDashboard() {
       { id: 'find', label: 'Find a Space' },
     ],
     calendar: [
+      { id: 'overview', label: 'Calendar Overview' },
       { id: 'sync', label: 'Sync with Google/Apple Calendar' },
     ],
     clients: [
@@ -98,6 +101,12 @@ export default function ProvidersDashboard() {
       { id: 'bio', label: 'Bio' },
       { id: 'certifications', label: 'Certifications' },
     ],
+    settings: [
+      { id: 'account', label: 'Account Information' },
+      { id: 'security', label: 'Security' },
+      { id: 'notifications', label: 'Notifications' },
+      { id: 'billing', label: 'Billing' },
+    ],
   };
 
   const renderMainContent = () => {
@@ -118,6 +127,16 @@ export default function ProvidersDashboard() {
         return <Messages activeSubmenu={activeSubmenu} />;
       case 'profile':
         return <Profile activeSubmenu={activeSubmenu} />;
+      case 'settings':
+        return (
+          <div className={styles.dashboardSection}>
+            <h2 className={styles.sectionTitle}>Account Settings</h2>
+            <div className={styles.placeholderText}>
+              <p>Account Settings will be implemented soon.</p>
+              <p>This section will include account information, security settings, notifications, and billing preferences.</p>
+            </div>
+          </div>
+        );
       default:
         return <Bookings activeSubmenu={activeSubmenu} />;
     }
