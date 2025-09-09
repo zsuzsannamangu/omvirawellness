@@ -5,8 +5,10 @@ import styles from '@/styles/Clients/Dashboard.module.scss';
 
 // Dashboard sections
 import Bookings from '@/components/Clients/Dashboard/Bookings';
-import History from '@/components/Clients/Dashboard/History';
+import Favorites from '@/components/Clients/Dashboard/Favorites';
 import Payments from '@/components/Clients/Dashboard/Payments';
+import Calendar from '@/components/Clients/Dashboard/Calendar';
+import Messages from '@/components/Clients/Dashboard/Messages';
 import Profile from '@/components/Clients/Dashboard/Profile';
 
 export default function ClientDashboard() {
@@ -14,6 +16,8 @@ export default function ClientDashboard() {
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userName] = useState('John Doe'); // This would come from user data
+  const [userRating] = useState(4.8); // This would come from user data
+  const [totalBookings] = useState(24); // This would come from user data
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,30 +46,38 @@ export default function ClientDashboard() {
 
   const sidebarItems = [
     { id: 'bookings', label: 'Bookings' },
-    { id: 'history', label: 'History' },
+    { id: 'favorites', label: 'Favorites' },
     { id: 'payments', label: 'Payments' },
-    { id: 'profile', label: 'Profile' },
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'messages', label: 'Messages' },
+    { id: 'profile', label: 'Profile & Settings' },
   ];
 
   const submenuItems = {
     bookings: [
-      { id: 'upcoming', label: 'Upcoming Appointments' },
-      { id: 'book-new', label: 'Book New' },
+      { id: 'upcoming', label: 'Upcoming' },
+      { id: 'past', label: 'Past' },
+      { id: 'canceled', label: 'Canceled' },
     ],
-    history: [
-      { id: 'history', label: 'History' },
-      { id: 'completed', label: 'Completed' },
-      { id: 'cancelled', label: 'Cancelled' },
+    favorites: [
+      { id: 'providers', label: 'Saved Providers' },
+      { id: 'services', label: 'Saved Services' },
     ],
     payments: [
-      { id: 'payments', label: 'Payments' },
-      { id: 'transactions', label: 'Transactions' },
-      { id: 'invoices', label: 'Invoices' },
+      { id: 'methods', label: 'Payment Methods' },
+      { id: 'receipts', label: 'Receipts & Invoices' },
+    ],
+    calendar: [
+      { id: 'view', label: 'Calendar View' },
+    ],
+    messages: [
+      { id: 'confirmations', label: 'Confirmations' },
+      { id: 'direct', label: 'Direct Communication' },
     ],
     profile: [
-      { id: 'profile', label: 'Profile' },
-      { id: 'settings', label: 'Settings' },
+      { id: 'personal', label: 'Personal Info' },
       { id: 'preferences', label: 'Preferences' },
+      { id: 'notifications', label: 'Notifications' },
     ],
   };
 
@@ -73,10 +85,14 @@ export default function ClientDashboard() {
     switch (activeSection) {
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
-      case 'history':
-        return <History activeSubmenu={activeSubmenu} />;
+      case 'favorites':
+        return <Favorites activeSubmenu={activeSubmenu} />;
       case 'payments':
         return <Payments activeSubmenu={activeSubmenu} />;
+      case 'calendar':
+        return <Calendar activeSubmenu={activeSubmenu} />;
+      case 'messages':
+        return <Messages activeSubmenu={activeSubmenu} />;
       case 'profile':
         return <Profile activeSubmenu={activeSubmenu} />;
       default:
@@ -89,7 +105,7 @@ export default function ClientDashboard() {
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Omvira Wellness</h2>
+          <h2 className={styles.logo}>Client Dashboard</h2>
         </div>
         
         <nav className={styles.sidebarNav}>
@@ -112,13 +128,7 @@ export default function ClientDashboard() {
       <div className={styles.mainContent}>
         {/* Top Navigation */}
         <div className={styles.topNav}>
-          <div className={styles.breadcrumb}>
-            <h1 className={styles.pageTitle}>
-              {sidebarItems.find(item => item.id === activeSection)?.label}
-            </h1>
-          </div>
-          
-          <div className={styles.topNavRight}>
+          <div className={styles.greetingSection}>
             <div className={styles.profileImageContainer} onClick={handleImageClick}>
               {profileImage ? (
                 <img 
@@ -131,10 +141,19 @@ export default function ClientDashboard() {
                   {getInitials(userName)}
                 </div>
               )}
-              <div className={styles.profileOverlay}>
-                <span className={styles.profileEditIcon}>📷</span>
+            </div>
+            <div className={styles.greetingInfo}>
+              <h1 className={styles.greeting}>Hello, {userName}</h1>
+              <div className={styles.userStats}>
+                <span className={styles.rating}>★ {userRating} (12 reviews)</span>
+                <span className={styles.bookings}>{totalBookings} bookings</span>
+                <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
             </div>
+          </div>
+          
+          <div className={styles.topNavRight}>
+            <button className={styles.signOutBtn}>Sign Out</button>
             <input
               type="file"
               ref={fileInputRef}

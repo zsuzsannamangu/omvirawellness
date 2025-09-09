@@ -11,137 +11,127 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     switch (activeSubmenu) {
       case 'upcoming':
         return (
-          <div className={styles.bookingsContent}>
+          <div className={styles.historyContent}>
             <h2 className={styles.sectionTitle}>Upcoming Bookings</h2>
-            <div className={styles.bookingsList}>
-              <div className={styles.bookingCard}>
-                <div className={styles.bookingHeader}>
-                  <div className={styles.bookingDate}>
-                    <span className={styles.day}>15</span>
-                    <span className={styles.month}>Dec</span>
-                  </div>
-                  <div className={styles.bookingDetails}>
-                    <h4 className={styles.bookingTitle}>Massage Therapy Session</h4>
-                    <p className={styles.bookingProvider}>with Sarah Johnson</p>
-                    <p className={styles.bookingTime}>2:00 PM - 3:00 PM</p>
-                    <p className={styles.bookingPrice}>$120</p>
-                  </div>
-                  <div className={styles.bookingActions}>
-                    <button className={styles.actionBtn}>View Details</button>
-                    <button className={styles.actionBtn}>Message</button>
-                  </div>
+            <div className={styles.compactList}>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>15</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Yoga Studio Rental</h4>
+                  <p className={styles.compactClient}>Sarah Johnson • 2:00 PM - 3:00 PM • $120</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
 
-              <div className={styles.bookingCard}>
-                <div className={styles.bookingHeader}>
-                  <div className={styles.bookingDate}>
-                    <span className={styles.day}>18</span>
-                    <span className={styles.month}>Dec</span>
-                  </div>
-                  <div className={styles.bookingDetails}>
-                    <h4 className={styles.bookingTitle}>Yoga Class</h4>
-                    <p className={styles.bookingProvider}>with Mike Chen</p>
-                    <p className={styles.bookingTime}>10:00 AM - 11:00 AM</p>
-                    <p className={styles.bookingPrice}>$80</p>
-                  </div>
-                  <div className={styles.bookingActions}>
-                    <button className={styles.actionBtn}>View Details</button>
-                    <button className={styles.actionBtn}>Message</button>
-                  </div>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>18</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Meditation Room</h4>
+                  <p className={styles.compactClient}>Mike Chen • 10:00 AM - 11:00 AM • $80</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
 
-              <div className={styles.bookingCard}>
-                <div className={styles.bookingHeader}>
-                  <div className={styles.bookingDate}>
-                    <span className={styles.day}>22</span>
-                    <span className={styles.month}>Dec</span>
-                  </div>
-                  <div className={styles.bookingDetails}>
-                    <h4 className={styles.bookingTitle}>Meditation Session</h4>
-                    <p className={styles.bookingProvider}>with Lisa Wang</p>
-                    <p className={styles.bookingTime}>7:00 PM - 8:00 PM</p>
-                    <p className={styles.bookingPrice}>$60</p>
-                  </div>
-                  <div className={styles.bookingActions}>
-                    <button className={styles.actionBtn}>View Details</button>
-                    <button className={styles.actionBtn}>Message</button>
-                  </div>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>22</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Conference Room</h4>
+                  <p className={styles.compactClient}>Emma Wilson • 7:00 PM - 8:00 PM • $60</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
             </div>
           </div>
         );
 
-      case 'pending':
-        return (
-          <div className={styles.pendingContent}>
-            <h2 className={styles.sectionTitle}>Pending Requests</h2>
-            <div className={styles.requestsList}>
-              <div className={styles.requestCard}>
-                <div className={styles.requestInfo}>
-                  <h4 className={styles.requestTitle}>Massage Therapy Session</h4>
-                  <p className={styles.requestProvider}>Requested by David Kim</p>
-                  <p className={styles.requestTime}>Dec 25, 3:00 PM - 4:00 PM</p>
-                  <p className={styles.requestPrice}>$120</p>
-                </div>
-                <div className={styles.requestActions}>
-                  <button className={styles.approveBtn}>Approve</button>
-                  <button className={styles.declineBtn}>Decline</button>
-                </div>
-              </div>
-
-              <div className={styles.requestCard}>
-                <div className={styles.requestInfo}>
-                  <h4 className={styles.requestTitle}>Personal Training</h4>
-                  <p className={styles.requestProvider}>Requested by Emma Wilson</p>
-                  <p className={styles.requestTime}>Dec 26, 11:00 AM - 12:00 PM</p>
-                  <p className={styles.requestPrice}>$100</p>
-                </div>
-                <div className={styles.requestActions}>
-                  <button className={styles.approveBtn}>Approve</button>
-                  <button className={styles.declineBtn}>Decline</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'history':
+      case 'past':
         return (
           <div className={styles.historyContent}>
-            <h2 className={styles.sectionTitle}>Booking History</h2>
-            <div className={styles.historyList}>
-              <div className={styles.historyItem}>
-                <div className={styles.historyDate}>
+            <h2 className={styles.sectionTitle}>Past Bookings</h2>
+            <div className={styles.compactList}>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
                   <span className={styles.day}>10</span>
                   <span className={styles.month}>Dec</span>
                 </div>
-                <div className={styles.historyDetails}>
-                  <h4 className={styles.historyTitle}>Massage Therapy Session</h4>
-                  <p className={styles.historyProvider}>with Sarah Johnson</p>
-                  <p className={styles.historyTime}>2:00 PM - 3:00 PM</p>
-                  <p className={styles.historyPrice}>$120</p>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Yoga Studio Rental</h4>
+                  <p className={styles.compactClient}>Sarah Johnson • 2:00 PM - 3:00 PM • $120</p>
                 </div>
-                <div className={styles.historyStatus}>
+                <div className={styles.compactActions}>
                   <span className={styles.statusCompleted}>Completed</span>
+                  <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
 
-              <div className={styles.historyItem}>
-                <div className={styles.historyDate}>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
                   <span className={styles.day}>8</span>
                   <span className={styles.month}>Dec</span>
                 </div>
-                <div className={styles.historyDetails}>
-                  <h4 className={styles.historyTitle}>Yoga Class</h4>
-                  <p className={styles.historyProvider}>with Mike Chen</p>
-                  <p className={styles.historyTime}>10:00 AM - 11:00 AM</p>
-                  <p className={styles.historyPrice}>$80</p>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Meditation Room</h4>
+                  <p className={styles.compactClient}>Mike Chen • 10:00 AM - 11:00 AM • $80</p>
                 </div>
-                <div className={styles.historyStatus}>
+                <div className={styles.compactActions}>
                   <span className={styles.statusCompleted}>Completed</span>
+                  <button className={styles.messageBtn}>Message</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'canceled':
+        return (
+          <div className={styles.historyContent}>
+            <h2 className={styles.sectionTitle}>Canceled Bookings</h2>
+            <div className={styles.compactList}>
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>5</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Conference Room</h4>
+                  <p className={styles.compactClient}>David Kim • 3:00 PM - 4:00 PM • $120</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <span className={styles.statusCanceled}>Canceled</span>
+                  <button className={styles.messageBtn}>Message</button>
+                </div>
+              </div>
+
+              <div className={styles.compactItem}>
+                <div className={styles.compactDate}>
+                  <span className={styles.day}>3</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.compactDetails}>
+                  <h4 className={styles.compactTitle}>Yoga Studio Rental</h4>
+                  <p className={styles.compactClient}>Lisa Wang • 11:00 AM - 12:00 PM • $100</p>
+                </div>
+                <div className={styles.compactActions}>
+                  <span className={styles.statusCanceled}>Canceled</span>
+                  <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
             </div>

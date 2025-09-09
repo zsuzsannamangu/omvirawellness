@@ -35,9 +35,9 @@
 }
 
 .subtitle {
+  font-family: $font-subheading;
   font-size: 1.1rem;
   color: $subtext-color;
-  font-family: $font-main;
 }
 
 .scrollWrapper {
@@ -169,7 +169,7 @@
     font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: $spacing-xs;
-    font-family: $font-main;
+    font-family: $font-subheading;
   }
 
   .specialty {
@@ -247,7 +247,7 @@
   
   h3 {
     font-size: 1.3rem;
-    font-family: $font-heading;
+    font-family: $font-subheading;
     margin-bottom: $spacing-sm;
     font-weight: 600;
   }

@@ -1,22 +1,27 @@
 // Import Tailwind CSS
 @import 'tailwind';
 
-@import "@fontsource/playfair-display/latin.css";
-@import "@fontsource/inter/latin.css";
+@import url('https://fonts.googleapis.com/css2?family=Forum&family=Avenir:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Forum', serif;
+  --font-body: 'Avenir', sans-serif;
 }
 
 // Import variables
 @import '_variables';
 
 // Global heading styles
-h2 {
+h1, h2, h3, h4, h5, h6 {
   font-family: $font-heading;
   color: $primary-color;
   text-align: left;
+}
+
+// Global paragraph styles
+p {
+  font-family: $font-main;
+  font-weight: $font-weight-light;
 }
 
 // Custom SCSS mixins

@@ -35,9 +35,9 @@
 }
 
 .subtitle {
+  font-family: $font-subheading;
   font-size: 1.1rem;
   color: $subtext-color;
-  font-family: $font-main;
 }
 
 .stepsContainer {
@@ -76,7 +76,7 @@
   
   h3 {
     font-size: 2rem;
-    font-family: $font-heading;
+    font-family: $font-subheading;
     color: $primary-color;
     margin-bottom: $spacing-lg;
     font-weight: 600;
@@ -87,10 +87,10 @@
   }
   
   p {
+    font-family: $font-main;
     font-size: 1.1rem;
     color: $subtext-color;
     line-height: 1.6;
-    font-family: $font-main;
   }
 }
 

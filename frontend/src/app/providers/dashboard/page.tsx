@@ -4,18 +4,22 @@ import { useState, useRef } from 'react';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 // Dashboard sections
-import Overview from '@/components/Providers/Dashboard/Overview';
 import Bookings from '@/components/Providers/Dashboard/Bookings';
+import Spaces from '@/components/Providers/Dashboard/Spaces';
 import Calendar from '@/components/Providers/Dashboard/Calendar';
 import Clients from '@/components/Providers/Dashboard/Clients';
+import Payments from '@/components/Providers/Dashboard/Payments';
 import Analytics from '@/components/Providers/Dashboard/Analytics';
-import Settings from '@/components/Providers/Dashboard/Settings';
+import Messages from '@/components/Providers/Dashboard/Messages';
+import Profile from '@/components/Providers/Dashboard/Profile';
 
 export default function ProvidersDashboard() {
-  const [activeSection, setActiveSection] = useState('overview');
-  const [activeSubmenu, setActiveSubmenu] = useState('dashboard');
+  const [activeSection, setActiveSection] = useState('bookings');
+  const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [providerName] = useState('Sarah Johnson'); // This would come from provider data
+  const [providerRating] = useState(4.9); // This would come from provider data
+  const [totalClients] = useState(156); // This would come from provider data
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,62 +47,78 @@ export default function ProvidersDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'overview', label: 'Overview' },
     { id: 'bookings', label: 'Bookings' },
+    { id: 'spaces', label: 'Space Rentals' },
     { id: 'calendar', label: 'Calendar' },
     { id: 'clients', label: 'Clients' },
+    { id: 'payments', label: 'Payments & Earnings' },
     { id: 'analytics', label: 'Analytics' },
-    { id: 'settings', label: 'Settings' },
+    { id: 'messages', label: 'Messages' },
+    { id: 'profile', label: 'Profile & Settings' },
   ];
 
   const submenuItems = {
-    overview: [
-      { id: 'dashboard', label: 'Dashboard' },
-      { id: 'recent', label: 'Recent Activity' },
-    ],
     bookings: [
-      { id: 'upcoming', label: 'Upcoming Sessions' },
-      { id: 'pending', label: 'Pending Requests' },
-      { id: 'history', label: 'Session History' },
+      { id: 'upcoming', label: 'Upcoming' },
+      { id: 'past', label: 'Past' },
+      { id: 'canceled', label: 'Canceled' },
+    ],
+    spaces: [
+      { id: 'upcoming', label: 'Upcoming Bookings' },
+      { id: 'favorites', label: 'Favorites' },
+      { id: 'past', label: 'Past Bookings' },
+      { id: 'request', label: 'Request a Space' },
+      { id: 'find', label: 'Find a Space' },
     ],
     calendar: [
-      { id: 'calendar', label: 'Calendar View' },
-      { id: 'availability', label: 'Availability' },
-      { id: 'blocked', label: 'Blocked Times' },
+      { id: 'sync', label: 'Sync with Google/Apple Calendar' },
     ],
     clients: [
-      { id: 'clients', label: 'Client List' },
-      { id: 'new', label: 'New Clients' },
-      { id: 'notes', label: 'Client Notes' },
+      { id: 'directory', label: 'Directory of Past Clients' },
+      { id: 'notes', label: 'Notes & Preferences' },
+    ],
+    payments: [
+      { id: 'balance', label: 'Balance Overview' },
+      { id: 'payouts', label: 'Payouts' },
+      { id: 'reports', label: 'Reports' },
     ],
     analytics: [
-      { id: 'revenue', label: 'Revenue' },
-      { id: 'sessions', label: 'Sessions' },
-      { id: 'reviews', label: 'Reviews & Ratings' },
+      { id: 'bookings', label: 'Bookings' },
+      { id: 'revenue', label: 'Revenue Trends' },
+      { id: 'retention', label: 'Retention' },
     ],
-    settings: [
-      { id: 'profile', label: 'Profile' },
-      { id: 'services', label: 'Services' },
-      { id: 'pricing', label: 'Pricing' },
+    messages: [
+      { id: 'communication', label: 'Client Communication' },
+      { id: 'reminders', label: 'Reminders' },
+    ],
+    profile: [
+      { id: 'services', label: 'Service Menu' },
+      { id: 'availability', label: 'Availability' },
+      { id: 'bio', label: 'Bio' },
+      { id: 'certifications', label: 'Certifications' },
     ],
   };
 
   const renderMainContent = () => {
     switch (activeSection) {
-      case 'overview':
-        return <Overview activeSubmenu={activeSubmenu} />;
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
+      case 'spaces':
+        return <Spaces activeSubmenu={activeSubmenu} />;
       case 'calendar':
         return <Calendar activeSubmenu={activeSubmenu} />;
       case 'clients':
         return <Clients activeSubmenu={activeSubmenu} />;
+      case 'payments':
+        return <Payments activeSubmenu={activeSubmenu} />;
       case 'analytics':
         return <Analytics activeSubmenu={activeSubmenu} />;
-      case 'settings':
-        return <Settings activeSubmenu={activeSubmenu} />;
+      case 'messages':
+        return <Messages activeSubmenu={activeSubmenu} />;
+      case 'profile':
+        return <Profile activeSubmenu={activeSubmenu} />;
       default:
-        return <Overview activeSubmenu={activeSubmenu} />;
+        return <Bookings activeSubmenu={activeSubmenu} />;
     }
   };
 
@@ -107,7 +127,7 @@ export default function ProvidersDashboard() {
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Omvira Providers</h2>
+          <h2 className={styles.logo}>Provider Dashboard</h2>
         </div>
         
         <nav className={styles.sidebarNav}>
@@ -132,20 +152,7 @@ export default function ProvidersDashboard() {
       <div className={styles.mainContent}>
         {/* Top Navigation */}
         <div className={styles.topNav}>
-          <div className={styles.breadcrumb}>
-            <h1 className={styles.pageTitle}>
-              {sidebarItems.find(item => item.id === activeSection)?.label}
-            </h1>
-            <p className={styles.providerName}>{providerName}</p>
-          </div>
-          
-          <div className={styles.topNavRight}>
-            <button 
-              className={styles.editProfileBtn}
-              onClick={() => setActiveSection('settings')}
-            >
-              Edit Profile
-            </button>
+          <div className={styles.greetingSection}>
             <div className={styles.profileImageContainer} onClick={handleImageClick}>
               {profileImage ? (
                 <img 
@@ -158,10 +165,19 @@ export default function ProvidersDashboard() {
                   {getInitials(providerName)}
                 </div>
               )}
-              <div className={styles.profileOverlay}>
-                <span className={styles.profileEditIcon}>Edit</span>
+            </div>
+            <div className={styles.greetingInfo}>
+              <h1 className={styles.greeting}>Hello, {providerName}</h1>
+              <div className={styles.userStats}>
+                <span className={styles.rating}>★ {providerRating} (47 reviews)</span>
+                <span className={styles.clients}>{totalClients} clients</span>
+                <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
             </div>
+          </div>
+          
+          <div className={styles.topNavRight}>
+            <button className={styles.signOutBtn}>Sign Out</button>
             <input
               type="file"
               ref={fileInputRef}

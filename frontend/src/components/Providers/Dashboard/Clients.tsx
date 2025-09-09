@@ -9,10 +9,10 @@ interface ClientsProps {
 export default function Clients({ activeSubmenu }: ClientsProps) {
   const renderContent = () => {
     switch (activeSubmenu) {
-      case 'clients':
+      case 'directory':
         return (
           <div className={styles.clientsContent}>
-            <h2 className={styles.sectionTitle}>Client List</h2>
+            <h2 className={styles.sectionTitle}>Directory of Past Clients</h2>
             <div className={styles.clientsList}>
               <div className={styles.clientCard}>
                 <div className={styles.clientInfo}>
@@ -56,42 +56,10 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
           </div>
         );
 
-      case 'new':
-        return (
-          <div className={styles.newClientsContent}>
-            <h2 className={styles.sectionTitle}>New Clients</h2>
-            <div className={styles.newClientsList}>
-              <div className={styles.newClientCard}>
-                <div className={styles.newClientInfo}>
-                  <h4 className={styles.newClientName}>David Kim</h4>
-                  <p className={styles.newClientEmail}>david.kim@email.com</p>
-                  <p className={styles.newClientDate}>Joined 2 days ago</p>
-                </div>
-                <div className={styles.newClientActions}>
-                  <button className={styles.approveBtn}>Welcome</button>
-                  <button className={styles.actionBtn}>View Profile</button>
-                </div>
-              </div>
-
-              <div className={styles.newClientCard}>
-                <div className={styles.newClientInfo}>
-                  <h4 className={styles.newClientName}>Lisa Wang</h4>
-                  <p className={styles.newClientEmail}>lisa.wang@email.com</p>
-                  <p className={styles.newClientDate}>Joined 1 week ago</p>
-                </div>
-                <div className={styles.newClientActions}>
-                  <button className={styles.approveBtn}>Welcome</button>
-                  <button className={styles.actionBtn}>View Profile</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
       case 'notes':
         return (
           <div className={styles.notesContent}>
-            <h2 className={styles.sectionTitle}>Client Notes</h2>
+            <h2 className={styles.sectionTitle}>Notes & Preferences</h2>
             <div className={styles.notesList}>
               <div className={styles.noteItem}>
                 <div className={styles.noteHeader}>

@@ -4,14 +4,14 @@
 .dashboard {
   display: flex;
   min-height: 100vh;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 // Left Sidebar
 .sidebar {
   width: 200px;
-  background: white;
-  border-right: 1px solid #e5e5e5;
+  background: linear-gradient(180deg, white 0%, #f8fafc 100%);
+  border-right: 1px solid rgba($primary-color, 0.1);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -19,11 +19,13 @@
   left: 0;
   top: 0;
   z-index: 100;
+  box-shadow: 2px 0 8px rgba($primary-color, 0.05);
 }
 
 .sidebarHeader {
   padding: $spacing-md;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+  background: rgba($primary-color, 0.02);
 }
 
 .logo {
@@ -47,27 +49,47 @@
   background: none;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-family: $font-main;
   font-size: 0.9rem;
   color: $dark-text;
   text-align: left;
 
   &:hover {
-    background: rgba($primary-color, 0.05);
+    background: linear-gradient(90deg, rgba($primary-color, 0.08) 0%, rgba($primary-color, 0.02) 100%);
     color: $primary-color;
+    transform: translateX(2px);
   }
 
   &.active {
-    background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($accent-color, 0.1) 100%);
+    background: linear-gradient(90deg, rgba($primary-color, 0.15) 0%, rgba($primary-color, 0.05) 100%);
     color: $primary-color;
     border-right: 3px solid $primary-color;
     font-weight: 600;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+    }
   }
 }
 
 .sidebarLabel {
   font-weight: 500;
+}
+
+.sidebarIcon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+  color: $dark-text;
+  font-weight: bold;
 }
 
 // Main Content Area
@@ -81,8 +103,8 @@
 
 // Top Navigation
 .topNav {
-  background: white;
-  border-bottom: 1px solid #e5e5e5;
+  background: linear-gradient(90deg, white 0%, rgba($primary-color, 0.02) 100%);
+  border-bottom: 1px solid rgba($primary-color, 0.1);
   padding: $spacing-md $spacing-lg;
   display: flex;
   justify-content: space-between;
@@ -90,6 +112,69 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 2px 4px rgba($primary-color, 0.05);
+}
+
+.greetingSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.greetingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.greeting {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.userStats {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  font-size: 0.9rem;
+  color: $subtext-color;
+}
+
+.rating, .clients {
+  font-weight: 500;
+}
+
+.rating {
+  color: $dark-text;
+}
+
+.profileLink {
+  color: $primary-color;
+  text-decoration: none;
+  cursor: pointer;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.signOutBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-family: $font-main;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
 }
 
 .breadcrumb {
@@ -108,7 +193,7 @@
 
 .providerName {
   font-size: 0.9rem;
-  color: $light-text;
+  color: $subtext-color;
   margin: 0;
   font-weight: 500;
 }
@@ -198,11 +283,12 @@
 
 // Submenu Navigation
 .submenu {
-  background: white;
-  border-bottom: 1px solid #e5e5e5;
+  background: linear-gradient(90deg, white 0%, rgba($primary-color, 0.01) 100%);
+  border-bottom: 1px solid rgba($primary-color, 0.1);
   padding: 0 $spacing-lg;
   display: flex;
   gap: $spacing-lg;
+  box-shadow: 0 1px 3px rgba($primary-color, 0.03);
 }
 
 .submenuItem {
@@ -214,17 +300,30 @@
   font-size: 0.9rem;
   color: $dark-text;
   border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-weight: 500;
+  position: relative;
 
   &:hover {
     color: $primary-color;
+    border-bottom-color: rgba($primary-color, 0.4);
+    transform: translateY(-1px);
   }
 
   &.active {
     color: $primary-color;
     border-bottom-color: $primary-color;
     font-weight: 600;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+    }
   }
 }
 
@@ -232,7 +331,7 @@
 .content {
   flex: 1;
   padding: $spacing-lg;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 // Dashboard Section
@@ -244,11 +343,11 @@
 }
 
 .sectionTitle {
+  font-family: $font-subheading;
   font-size: 1.5rem;
   font-weight: 700;
   color: $dark-text;
   margin: 0 0 $spacing-lg 0;
-  font-family: $font-main;
 }
 
 // Overview Styles
@@ -283,6 +382,7 @@
   }
 
   .subsectionTitle {
+    font-family: $font-subheading;
     font-size: 1.2rem;
     font-weight: 600;
     color: $dark-text;
@@ -313,13 +413,13 @@
   }
 
   .bookingProvider, .activityDescription {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0 0 $spacing-xs 0;
     font-size: 0.9rem;
   }
 
   .bookingTime, .activityTime {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0;
     font-size: 0.8rem;
   }
@@ -385,7 +485,102 @@
     flex-direction: column;
     gap: $spacing-md;
   }
+}
 
+// Compact List Styles for Past/Canceled Sessions
+.compactList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.compactItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm;
+  background: linear-gradient(135deg, white 0%, rgba($primary-color, 0.01) 100%);
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: 8px;
+  gap: $spacing-md;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    transform: translateY(-1px);
+  }
+}
+
+.compactDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: $spacing-xs;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.02) 100%);
+  border-radius: 6px;
+  border: 1px solid rgba($primary-color, 0.1);
+
+  .day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $primary-color;
+    line-height: 1;
+  }
+
+  .month {
+    font-size: 0.7rem;
+    color: $subtext-color;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+}
+
+.compactDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.compactTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+  font-family: $font-subheading;
+}
+
+.compactClient {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.compactActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.messageBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $hover-green;
+  }
+}
+
+.bookingsContent, .pendingContent, .historyContent {
   .bookingCard, .requestCard, .historyItem {
     background: white;
     border-radius: 6px;
@@ -414,7 +609,7 @@
 
   .month {
     font-size: 0.8rem;
-    color: $light-text;
+    color: $subtext-color;
     text-transform: uppercase;
   }
 
@@ -430,12 +625,12 @@
   }
 
   .bookingClient, .requestClient, .historyClient {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0 0 $spacing-xs 0;
   }
 
   .bookingTime, .requestTime, .historyTime {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0 0 $spacing-xs 0;
   }
 
@@ -607,7 +802,7 @@
   }
 
   .timeSeparator {
-    color: $light-text;
+    color: $subtext-color;
   }
 
   .checkboxLabel {
@@ -643,7 +838,7 @@
   }
 
   .blockedDate, .blockedTime {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0;
     font-size: 0.9rem;
   }
@@ -709,7 +904,7 @@
   }
 
   .revenueChange, .sessionsDescription {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0;
     font-size: 0.9rem;
   }
@@ -720,7 +915,7 @@
     border-radius: 6px;
     padding: $spacing-xl;
     text-align: center;
-    color: $light-text;
+    color: $subtext-color;
   }
 
   .ratingOverview {
@@ -746,7 +941,7 @@
   }
 
   .ratingCount {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0;
   }
 
@@ -815,7 +1010,7 @@
   }
 
   .reviewDate {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0;
     font-size: 0.8rem;
   }
@@ -885,7 +1080,7 @@
   .currencySymbol {
     position: absolute;
     left: $spacing-sm;
-    color: $light-text;
+    color: $subtext-color;
     font-weight: 500;
   }
 

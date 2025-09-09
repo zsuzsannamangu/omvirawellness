@@ -70,6 +70,14 @@
   font-weight: 500;
 }
 
+.sidebarIcon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+  color: $dark-text;
+  font-weight: bold;
+}
+
 // Main Content Area
 .mainContent {
   flex: 1;
@@ -92,6 +100,68 @@
   z-index: 50;
 }
 
+.greetingSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.greetingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.greeting {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.userStats {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  font-size: 0.9rem;
+  color: $subtext-color;
+}
+
+.rating, .bookings {
+  font-weight: 500;
+}
+
+.rating {
+  color: $dark-text;
+}
+
+.profileLink {
+  color: $primary-color;
+  text-decoration: none;
+  cursor: pointer;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.signOutBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-family: $font-main;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
 .breadcrumb {
   display: flex;
   flex-direction: column;
@@ -108,7 +178,7 @@
 
 .spaceName {
   font-size: 0.9rem;
-  color: $light-text;
+  color: $subtext-color;
   margin: 0;
   font-weight: 500;
 }
@@ -203,28 +273,33 @@
   padding: 0 $spacing-xl;
   display: flex;
   gap: $spacing-lg;
+  min-height: 50px;
+  align-items: center;
 }
 
 .submenuItem {
-  padding: $spacing-md 0;
+  padding: $spacing-sm $spacing-md;
   background: none;
   border: none;
   cursor: pointer;
   font-family: $font-main;
   font-size: 0.9rem;
-  color: $light-text;
+  color: $subtext-color;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
   font-weight: 500;
+  border-radius: 4px;
 
   &:hover {
     color: $primary-color;
+    background-color: rgba($primary-color, 0.05);
   }
 
   &.active {
     color: $primary-color;
     border-bottom-color: $primary-color;
     font-weight: 600;
+    background-color: rgba($primary-color, 0.08);
   }
 }
 
@@ -233,6 +308,133 @@
   flex: 1;
   padding: $spacing-lg;
   background: #f8fafc;
+}
+
+// Compact List Styles for Past/Canceled Sessions
+.compactList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.compactItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm;
+  background: linear-gradient(135deg, white 0%, rgba($primary-color, 0.01) 100%);
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: 8px;
+  gap: $spacing-md;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    transform: translateY(-1px);
+  }
+}
+
+.compactDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: $spacing-xs;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.02) 100%);
+  border-radius: 6px;
+  border: 1px solid rgba($primary-color, 0.1);
+
+  .day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $primary-color;
+    line-height: 1;
+  }
+
+  .month {
+    font-size: 0.7rem;
+    color: $subtext-color;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+}
+
+.compactDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.compactTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+  font-family: $font-subheading;
+}
+
+.compactClient {
+  color: $subtext-color;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.compactActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  padding: $spacing-xs $spacing-sm;
+  background: none;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: $dark-text;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+.messageBtn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $hover-green;
+  }
+}
+
+.statusCompleted {
+  background: #10b981;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.statusCanceled {
+  background: #ef4444;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 // Dashboard Section
@@ -244,11 +446,11 @@
 }
 
 .sectionTitle {
+  font-family: $font-subheading;
   font-size: 1.5rem;
   font-weight: 700;
   color: $dark-text;
   margin: 0 0 $spacing-lg 0;
-  font-family: $font-main;
 }
 
 // Overview Styles
@@ -283,6 +485,7 @@
   }
 
   .subsectionTitle {
+    font-family: $font-subheading;
     font-size: 1.2rem;
     font-weight: 600;
     color: $dark-text;
@@ -313,13 +516,13 @@
   }
 
   .bookingProvider, .activityDescription {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0 0 $spacing-xs 0;
     font-size: 0.9rem;
   }
 
   .bookingTime, .activityTime {
-    color: $light-text;
+    color: $subtext-color;
     margin: 0;
     font-size: 0.8rem;
   }
@@ -415,7 +618,7 @@
 
   .month {
     font-size: 0.8rem;
-    color: $light-text;
+    color: $subtext-color;
     text-transform: uppercase;
   }
 

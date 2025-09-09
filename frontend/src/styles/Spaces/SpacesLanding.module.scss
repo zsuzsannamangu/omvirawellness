@@ -48,7 +48,7 @@
   z-index: 3;
   
   h1 {
-    font-family: $font-heading;
+    font-family: $font-mainheading;
     font-size: 6rem;
     font-weight: 500;
     line-height: 0.8;
@@ -64,7 +64,7 @@
   }
   
   h2 {
-    font-family: $font-heading;
+    font-family: $font-mainheading;
     font-size: 8rem;
     font-weight: 700;
     line-height: 0.7;
@@ -90,7 +90,7 @@
 
 .heroRightContent {
   h3 {
-    font-family: $font-heading;
+    font-family: $font-subheading;
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1.2;
@@ -203,7 +203,7 @@
   }
   
   h3 {
-    font-family: $font-heading;
+    font-family: $font-subheading;
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1.2;
@@ -373,7 +373,7 @@
 }
 
 .howItWorks h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   color: $dark-text;
   text-align: center;
@@ -428,7 +428,7 @@
   }
   
   h3 {
-    font-family: $font-heading;
+    font-family: $font-subheading;
     font-size: 1.25rem;
     color: $dark-text;
     margin-bottom: $spacing-sm;
@@ -453,7 +453,7 @@
 }
 
 .benefits h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   color: $dark-text;
   text-align: center;
@@ -508,7 +508,7 @@
   }
   
   h3 {
-    font-family: $font-heading;
+    font-family: $font-subheading;
     font-size: 1.25rem;
     color: $dark-text;
     margin-bottom: $spacing-sm;
@@ -594,7 +594,7 @@
 
 // Pricing Section - Statistics layout
 .pricing h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   color: $dark-text;
   text-align: center;
@@ -687,7 +687,7 @@
 }
 
 .cta h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   margin-bottom: $spacing-md;
   color: $dark-text;

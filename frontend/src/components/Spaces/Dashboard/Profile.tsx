@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/styles/Clients/Dashboard.module.scss';
+import styles from '@/styles/Spaces/Dashboard.module.scss';
 
 interface ProfileProps {
   activeSubmenu: string;
@@ -9,35 +9,35 @@ interface ProfileProps {
 export default function Profile({ activeSubmenu }: ProfileProps) {
   const renderContent = () => {
     switch (activeSubmenu) {
-      case 'personal':
+      case 'host':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Personal Info</h2>
+            <h2 className={styles.sectionTitle}>Host Info</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your personal information and contact details.</p>
-              <p>Update your name, email, phone number, and address.</p>
+              <p>Manage your host profile and contact information.</p>
+              <p>Update your bio, contact details, and host verification status.</p>
             </div>
           </div>
         );
       
-      case 'preferences':
+      case 'policies':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Preferences</h2>
+            <h2 className={styles.sectionTitle}>Policies</h2>
             <div className={styles.placeholderText}>
-              <p>Customize your wellness preferences and settings.</p>
-              <p>Set your preferred services, times, and locations.</p>
+              <p>Set rental policies and terms for your spaces.</p>
+              <p>Define cancellation policies, house rules, and rental terms.</p>
             </div>
           </div>
         );
       
-      case 'notifications':
+      case 'instructions':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Notifications</h2>
+            <h2 className={styles.sectionTitle}>Instructions</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your notification preferences.</p>
-              <p>Choose how you want to be notified about appointments and updates.</p>
+              <p>Provide instructions for renters using your spaces.</p>
+              <p>Share access codes, parking info, and usage guidelines.</p>
             </div>
           </div>
         );
@@ -47,7 +47,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
           <div className={styles.dashboardSection}>
             <h2 className={styles.sectionTitle}>Profile & Settings</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your profile and account settings.</p>
+              <p>Manage your host profile and space settings.</p>
             </div>
           </div>
         );

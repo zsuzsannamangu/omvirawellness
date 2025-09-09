@@ -9,10 +9,10 @@ interface AnalyticsProps {
 export default function Analytics({ activeSubmenu }: AnalyticsProps) {
   const renderContent = () => {
     switch (activeSubmenu) {
-      case 'revenue':
+      case 'bookings':
         return (
-          <div className={styles.revenueContent}>
-            <h2 className={styles.sectionTitle}>Revenue Analytics</h2>
+          <div className={styles.sessionsContent}>
+            <h2 className={styles.sectionTitle}>Bookings</h2>
             
             <div className={styles.revenueStats}>
               <div className={styles.revenueCard}>
@@ -43,10 +43,10 @@ export default function Analytics({ activeSubmenu }: AnalyticsProps) {
           </div>
         );
 
-      case 'sessions':
+      case 'revenue':
         return (
-          <div className={styles.sessionsContent}>
-            <h2 className={styles.sectionTitle}>Session Analytics</h2>
+          <div className={styles.revenueContent}>
+            <h2 className={styles.sectionTitle}>Revenue Trends</h2>
             
             <div className={styles.sessionsStats}>
               <div className={styles.sessionsCard}>
@@ -77,10 +77,10 @@ export default function Analytics({ activeSubmenu }: AnalyticsProps) {
           </div>
         );
 
-      case 'reviews':
+      case 'retention':
         return (
           <div className={styles.reviewsContent}>
-            <h2 className={styles.sectionTitle}>Reviews & Ratings</h2>
+            <h2 className={styles.sectionTitle}>Retention</h2>
             
             <div className={styles.ratingOverview}>
               <div className={styles.ratingSummary}>

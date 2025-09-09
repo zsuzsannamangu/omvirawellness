@@ -2,31 +2,31 @@
 
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
-interface PaymentsProps {
+interface FavoritesProps {
   activeSubmenu: string;
 }
 
-export default function Payments({ activeSubmenu }: PaymentsProps) {
+export default function Favorites({ activeSubmenu }: FavoritesProps) {
   const renderContent = () => {
     switch (activeSubmenu) {
-      case 'methods':
+      case 'providers':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Payment Methods</h2>
+            <h2 className={styles.sectionTitle}>Saved Providers</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your payment methods and billing information.</p>
-              <p>Add, edit, or remove credit cards and other payment options.</p>
+              <p>Your saved providers will appear here.</p>
+              <p>Click the heart icon on any provider to save them for easy booking.</p>
             </div>
           </div>
         );
       
-      case 'receipts':
+      case 'services':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Receipts & Invoices</h2>
+            <h2 className={styles.sectionTitle}>Saved Services</h2>
             <div className={styles.placeholderText}>
-              <p>View and download your receipts and invoices.</p>
-              <p>Access your payment history and billing documents.</p>
+              <p>Your saved services will appear here.</p>
+              <p>Bookmark your favorite treatments for quick access.</p>
             </div>
           </div>
         );
@@ -34,9 +34,9 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
       default:
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Payments</h2>
+            <h2 className={styles.sectionTitle}>Favorites</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your payments and billing.</p>
+              <p>Manage your saved providers and services.</p>
             </div>
           </div>
         );

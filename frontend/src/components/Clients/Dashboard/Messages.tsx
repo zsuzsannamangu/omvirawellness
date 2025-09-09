@@ -2,31 +2,31 @@
 
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
-interface PaymentsProps {
+interface MessagesProps {
   activeSubmenu: string;
 }
 
-export default function Payments({ activeSubmenu }: PaymentsProps) {
+export default function Messages({ activeSubmenu }: MessagesProps) {
   const renderContent = () => {
     switch (activeSubmenu) {
-      case 'methods':
+      case 'confirmations':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Payment Methods</h2>
+            <h2 className={styles.sectionTitle}>Confirmations</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your payment methods and billing information.</p>
-              <p>Add, edit, or remove credit cards and other payment options.</p>
+              <p>Booking confirmations and appointment reminders.</p>
+              <p>Stay updated on your wellness appointments.</p>
             </div>
           </div>
         );
       
-      case 'receipts':
+      case 'direct':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Receipts & Invoices</h2>
+            <h2 className={styles.sectionTitle}>Direct Communication</h2>
             <div className={styles.placeholderText}>
-              <p>View and download your receipts and invoices.</p>
-              <p>Access your payment history and billing documents.</p>
+              <p>Direct messages with your wellness providers.</p>
+              <p>Communicate directly with your booked providers.</p>
             </div>
           </div>
         );
@@ -34,9 +34,9 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
       default:
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Payments</h2>
+            <h2 className={styles.sectionTitle}>Messages</h2>
             <div className={styles.placeholderText}>
-              <p>Manage your payments and billing.</p>
+              <p>All your wellness-related communications.</p>
             </div>
           </div>
         );

@@ -32,7 +32,7 @@
 
 .heroText {
   h1 {
-    font-family: $font-heading;
+    font-family: $font-mainheading;
     font-size: 3.5rem;
     font-weight: 600;
     line-height: 1.2;
@@ -346,7 +346,7 @@
 }
 
 .features h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   color: $dark-text;
   text-align: center;
@@ -385,7 +385,7 @@
 }
 
 .feature h3 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 1.5rem;
   color: $dark-text;
   margin-bottom: $spacing-sm;
@@ -420,7 +420,7 @@
 }
 
 .benefitsText h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   color: $dark-text;
   margin-bottom: $spacing-xl;
@@ -492,7 +492,7 @@
 }
 
 .ctaSection h2 {
-  font-family: $font-heading;
+  font-family: $font-subheading;
   font-size: 2.5rem;
   margin-bottom: $spacing-md;
   color: $light-text;

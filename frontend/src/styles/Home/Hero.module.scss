@@ -4,7 +4,6 @@
   background: url('/images/aesthetic.jpg') center/cover no-repeat;
   height: 100vh;
   position: relative;
-  font-family: $font-main;
 }
 
 .overlay {
@@ -19,7 +18,7 @@
 }
 
 .title {
-  font-family: $font-heading;
+  font-family: $font-mainheading;
   font-size: 3rem;
   font-weight: bold;
   color: $light-text;
@@ -31,6 +30,7 @@
   margin-bottom: $spacing-lg;
   font-size: 1.25rem;
   max-width: 600px;
+  font-family: $font-subheading;
 }
 
 .searchInput {

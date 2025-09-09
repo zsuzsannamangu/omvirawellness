@@ -12,7 +12,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       case 'upcoming':
         return (
           <div className={styles.upcomingContent}>
-            <h2 className={styles.sectionTitle}>Upcoming Appointments</h2>
+            <h2 className={styles.sectionTitle}>Upcoming</h2>
             <div className={styles.sessionsList}>
               <div className={styles.sessionCard}>
                 <div className={styles.sessionDate}>
@@ -165,6 +165,28 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        );
+
+      case 'past':
+        return (
+          <div className={styles.dashboardSection}>
+            <h2 className={styles.sectionTitle}>Past Appointments</h2>
+            <div className={styles.placeholderText}>
+              <p>Your completed appointments will appear here.</p>
+              <p>View details and leave reviews for past sessions.</p>
+            </div>
+          </div>
+        );
+
+      case 'canceled':
+        return (
+          <div className={styles.dashboardSection}>
+            <h2 className={styles.sectionTitle}>Canceled Appointments</h2>
+            <div className={styles.placeholderText}>
+              <p>Your canceled appointments will appear here.</p>
+              <p>Reschedule or rebook canceled sessions.</p>
             </div>
           </div>
         );

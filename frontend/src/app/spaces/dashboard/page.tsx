@@ -4,17 +4,21 @@ import { useState, useRef } from 'react';
 import styles from '@/styles/Spaces/Dashboard.module.scss';
 
 // Dashboard sections
-import Overview from '@/components/Spaces/Dashboard/Overview';
 import Bookings from '@/components/Spaces/Dashboard/Bookings';
 import Calendar from '@/components/Spaces/Dashboard/Calendar';
+import Payments from '@/components/Spaces/Dashboard/Payments';
+import Spaces from '@/components/Spaces/Dashboard/Spaces';
 import Analytics from '@/components/Spaces/Dashboard/Analytics';
-import Settings from '@/components/Spaces/Dashboard/Settings';
+import Messages from '@/components/Spaces/Dashboard/Messages';
+import Profile from '@/components/Spaces/Dashboard/Profile';
 
 export default function SpacesDashboard() {
-  const [activeSection, setActiveSection] = useState('overview');
-  const [activeSubmenu, setActiveSubmenu] = useState('dashboard');
+  const [activeSection, setActiveSection] = useState('bookings');
+  const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [spaceName] = useState('Zen Wellness Studio'); // This would come from space data
+  const [spaceRating] = useState(4.7); // This would come from space data
+  const [totalBookings] = useState(89); // This would come from space data
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,54 +46,68 @@ export default function SpacesDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'overview', label: 'Overview' },
     { id: 'bookings', label: 'Bookings' },
     { id: 'calendar', label: 'Calendar' },
+    { id: 'payments', label: 'Payments' },
+    { id: 'spaces', label: 'Spaces' },
     { id: 'analytics', label: 'Analytics' },
-    { id: 'settings', label: 'Settings' },
+    { id: 'messages', label: 'Messages' },
+    { id: 'profile', label: 'Profile & Settings' },
   ];
 
   const submenuItems = {
-    overview: [
-      { id: 'dashboard', label: 'Dashboard' },
-      { id: 'recent', label: 'Recent Activity' },
-    ],
     bookings: [
-      { id: 'upcoming', label: 'Upcoming Bookings' },
-      { id: 'pending', label: 'Pending Requests' },
-      { id: 'history', label: 'Booking History' },
+      { id: 'upcoming', label: 'Upcoming' },
+      { id: 'past', label: 'Past' },
+      { id: 'canceled', label: 'Canceled' },
     ],
     calendar: [
-      { id: 'calendar', label: 'Calendar View' },
       { id: 'availability', label: 'Availability' },
-      { id: 'blocked', label: 'Blocked Times' },
+      { id: 'reservations', label: 'Reservations' },
+    ],
+    payments: [
+      { id: 'earnings', label: 'Earnings' },
+      { id: 'payouts', label: 'Payout History' },
+    ],
+    spaces: [
+      { id: 'listings', label: 'Manage Listings' },
+      { id: 'pricing', label: 'Pricing' },
+      { id: 'photos', label: 'Photos' },
+      { id: 'amenities', label: 'Amenities' },
     ],
     analytics: [
-      { id: 'revenue', label: 'Revenue' },
-      { id: 'usage', label: 'Space Usage' },
-      { id: 'reviews', label: 'Reviews & Ratings' },
+      { id: 'occupancy', label: 'Occupancy Rates' },
+      { id: 'revenue', label: 'Revenue Insights' },
     ],
-    settings: [
-      { id: 'profile', label: 'Space Profile' },
-      { id: 'pricing', label: 'Pricing' },
-      { id: 'amenities', label: 'Amenities' },
+    messages: [
+      { id: 'inquiries', label: 'Inquiries' },
+      { id: 'confirmations', label: 'Confirmations' },
+    ],
+    profile: [
+      { id: 'host', label: 'Host Info' },
+      { id: 'policies', label: 'Policies' },
+      { id: 'instructions', label: 'Instructions' },
     ],
   };
 
   const renderMainContent = () => {
     switch (activeSection) {
-      case 'overview':
-        return <Overview activeSubmenu={activeSubmenu} />;
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
       case 'calendar':
         return <Calendar activeSubmenu={activeSubmenu} />;
+      case 'payments':
+        return <Payments activeSubmenu={activeSubmenu} />;
+      case 'spaces':
+        return <Spaces activeSubmenu={activeSubmenu} />;
       case 'analytics':
         return <Analytics activeSubmenu={activeSubmenu} />;
-      case 'settings':
-        return <Settings activeSubmenu={activeSubmenu} />;
+      case 'messages':
+        return <Messages activeSubmenu={activeSubmenu} />;
+      case 'profile':
+        return <Profile activeSubmenu={activeSubmenu} />;
       default:
-        return <Overview activeSubmenu={activeSubmenu} />;
+        return <Bookings activeSubmenu={activeSubmenu} />;
     }
   };
 
@@ -98,7 +116,7 @@ export default function SpacesDashboard() {
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Omvira Spaces</h2>
+          <h2 className={styles.logo}>Rental Manager</h2>
         </div>
         
         <nav className={styles.sidebarNav}>
@@ -123,20 +141,7 @@ export default function SpacesDashboard() {
       <div className={styles.mainContent}>
         {/* Top Navigation */}
         <div className={styles.topNav}>
-          <div className={styles.breadcrumb}>
-            <h1 className={styles.pageTitle}>
-              {sidebarItems.find(item => item.id === activeSection)?.label}
-            </h1>
-            <p className={styles.spaceName}>{spaceName}</p>
-          </div>
-          
-          <div className={styles.topNavRight}>
-            <button 
-              className={styles.editProfileBtn}
-              onClick={() => setActiveSection('settings')}
-            >
-              Edit Profile
-            </button>
+          <div className={styles.greetingSection}>
             <div className={styles.profileImageContainer} onClick={handleImageClick}>
               {profileImage ? (
                 <img 
@@ -149,10 +154,19 @@ export default function SpacesDashboard() {
                   {getInitials(spaceName)}
                 </div>
               )}
-              <div className={styles.profileOverlay}>
-                <span className={styles.profileEditIcon}>Edit</span>
+            </div>
+            <div className={styles.greetingInfo}>
+              <h1 className={styles.greeting}>Hello, {spaceName}</h1>
+              <div className={styles.userStats}>
+                <span className={styles.rating}>★ {spaceRating} (23 reviews)</span>
+                <span className={styles.bookings}>{totalBookings} bookings</span>
+                <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
             </div>
+          </div>
+          
+          <div className={styles.topNavRight}>
+            <button className={styles.signOutBtn}>Sign Out</button>
             <input
               type="file"
               ref={fileInputRef}
