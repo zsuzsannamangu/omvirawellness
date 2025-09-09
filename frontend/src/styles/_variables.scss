@@ -58,6 +58,29 @@ $font-weight-bold: 700;
 // $font-main: 'Helvetica', sans-serif; 
 // $font-heading: 'Playfair Display', serif;
 
+// Additional Colors for Dashboard
+$border-light: #e5e5e5;              // Light border color
+$border-medium: #e0e0e0;             // Medium border color
+$border-color: #d0d0d0;               // Dark border color
+$border-dark: #d0d0d0;              // Dark border color
+$background-light: #f8fafc;          // Very light background
+$background-gray: #f0f0f0;           // Light gray background
+$success-color: #10b981;             // Success green
+$success-hover: #059669;             // Success hover
+$success-light: #22c55e;             // Light success
+$success-bg: #16a34a;                // Success background
+$warning-color: #f59e0b;             // Warning orange
+$error-color: #ef4444;               // Error red
+$error-hover: #dc2626;               // Error hover
+$error-bg: #dc2626;                  // Error background
+$info-color: #4a90e2;                // Info blue
+$info-hover: #357abd;                // Info hover
+$info-bg: #f0f8ff;                   // Info background
+$info-bg-hover: #e6f3ff;             // Info background hover
+$shadow-color: rgba(0, 0, 0, 0.1);   // Standard shadow
+$overlay-color: rgba(0, 0, 0, 0.5);  // Overlay color
+$overlay-dark: rgba(0, 0, 0, 0.7);   // Dark overlay
+
 // Spacing
 $spacing-xs: 8px;
 $spacing-sm: 16px;

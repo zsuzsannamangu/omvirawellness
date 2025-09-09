@@ -1,5 +1,6 @@
 'use client';
 
+import { FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 interface BookingsProps {
@@ -171,22 +172,116 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
 
       case 'past':
         return (
-          <div className={styles.dashboardSection}>
+          <div className={styles.pastContent}>
             <h2 className={styles.sectionTitle}>Past Appointments</h2>
-            <div className={styles.placeholderText}>
-              <p>Your completed appointments will appear here.</p>
-              <p>View details and leave reviews for past sessions.</p>
+            <div className={styles.sessionsList}>
+              <div className={styles.sessionCard}>
+                <div className={styles.sessionDate}>
+                  <span className={styles.day}>10</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.sessionDetails}>
+                  <h4 className={styles.sessionTitle}>Massage Therapy</h4>
+                  <p className={styles.sessionProvider}>with Sarah Johnson</p>
+                  <p className={styles.sessionTime}>2:00 PM - 3:00 PM</p>
+                  <div className={styles.sessionStatus}>
+                    <span className={styles.statusCompleted}>Completed</span>
+                    <span className={styles.sessionRating}><FaStar /> 5.0</span>
+                  </div>
+                </div>
+                <div className={styles.sessionActions}>
+                  <button className={styles.actionBtn}>Leave Review</button>
+                  <button className={styles.bookAgainBtn}>Book Again</button>
+                </div>
+              </div>
+
+              <div className={styles.sessionCard}>
+                <div className={styles.sessionDate}>
+                  <span className={styles.day}>8</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.sessionDetails}>
+                  <h4 className={styles.sessionTitle}>Yoga Class</h4>
+                  <p className={styles.sessionProvider}>with Mike Chen</p>
+                  <p className={styles.sessionTime}>10:00 AM - 11:00 AM</p>
+                  <div className={styles.sessionStatus}>
+                    <span className={styles.statusCompleted}>Completed</span>
+                    <span className={styles.sessionRating}><FaStar /> 4.8</span>
+                  </div>
+                </div>
+                <div className={styles.sessionActions}>
+                  <button className={styles.actionBtn}>Leave Review</button>
+                  <button className={styles.bookAgainBtn}>Book Again</button>
+                </div>
+              </div>
+
+              <div className={styles.sessionCard}>
+                <div className={styles.sessionDate}>
+                  <span className={styles.day}>5</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.sessionDetails}>
+                  <h4 className={styles.sessionTitle}>Meditation Session</h4>
+                  <p className={styles.sessionProvider}>with Lisa Wang</p>
+                  <p className={styles.sessionTime}>7:00 PM - 8:00 PM</p>
+                  <div className={styles.sessionStatus}>
+                    <span className={styles.statusCompleted}>Completed</span>
+                    <span className={styles.sessionRating}><FaStar /> 4.9</span>
+                  </div>
+                </div>
+                <div className={styles.sessionActions}>
+                  <button className={styles.actionBtn}>Leave Review</button>
+                  <button className={styles.bookAgainBtn}>Book Again</button>
+                </div>
+              </div>
             </div>
           </div>
         );
 
       case 'canceled':
         return (
-          <div className={styles.dashboardSection}>
+          <div className={styles.canceledContent}>
             <h2 className={styles.sectionTitle}>Canceled Appointments</h2>
-            <div className={styles.placeholderText}>
-              <p>Your canceled appointments will appear here.</p>
-              <p>Reschedule or rebook canceled sessions.</p>
+            <div className={styles.sessionsList}>
+              <div className={styles.sessionCard}>
+                <div className={styles.sessionDate}>
+                  <span className={styles.day}>12</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.sessionDetails}>
+                  <h4 className={styles.sessionTitle}>Personal Training</h4>
+                  <p className={styles.sessionProvider}>with David Kim</p>
+                  <p className={styles.sessionTime}>3:00 PM - 4:00 PM</p>
+                  <div className={styles.sessionStatus}>
+                    <span className={styles.statusCanceled}>Canceled</span>
+                    <span className={styles.cancelReason}>Client requested</span>
+                  </div>
+                </div>
+                <div className={styles.sessionActions}>
+                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.bookAgainBtn}>Book Again</button>
+                </div>
+              </div>
+
+              <div className={styles.sessionCard}>
+                <div className={styles.sessionDate}>
+                  <span className={styles.day}>6</span>
+                  <span className={styles.month}>Dec</span>
+                </div>
+                <div className={styles.sessionDetails}>
+                  <h4 className={styles.sessionTitle}>Massage Therapy</h4>
+                  <p className={styles.sessionProvider}>with Sarah Johnson</p>
+                  <p className={styles.sessionTime}>1:00 PM - 2:00 PM</p>
+                  <div className={styles.sessionStatus}>
+                    <span className={styles.statusCanceled}>Canceled</span>
+                    <span className={styles.cancelReason}>Provider unavailable</span>
+                  </div>
+                </div>
+                <div className={styles.sessionActions}>
+                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.bookAgainBtn}>Book Again</button>
+                </div>
+              </div>
             </div>
           </div>
         );

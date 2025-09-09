@@ -107,6 +107,13 @@
   gap: $spacing-xs;
 }
 
+.greetingRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
 .greeting {
   font-family: $font-heading;
   font-size: 1.5rem;
@@ -115,15 +122,16 @@
   margin: 0;
 }
 
-.userStats {
+.statsRow {
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  font-size: 0.9rem;
-  color: $subtext-color;
+  flex-wrap: wrap;
 }
 
 .rating, .bookings {
+  font-size: 0.9rem;
+  color: $subtext-color;
   font-weight: 500;
 }
 
@@ -141,7 +149,7 @@
   }
 }
 
-.signOutBtn {
+.findProviderBtn {
   background: $primary-color;
   color: white;
   border: none;
@@ -149,6 +157,7 @@
   border-radius: 4px;
   font-family: $font-main;
   font-weight: 500;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   
@@ -156,6 +165,7 @@
     background: darken($primary-color, 10%);
   }
 }
+
 
 .breadcrumb {
   display: flex;
@@ -506,7 +516,15 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) and (min-width: 481px) {
+  .userStats {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: $spacing-sm;
+  }
+}
+
+@media (max-width: 480px) {
   .sidebar {
     width: 160px;
   }
@@ -517,6 +535,19 @@
   
   .topNav {
     padding: $spacing-sm $spacing-md;
+  }
+  
+  .greetingSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+  
+  .userStats {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: $spacing-sm;
+    overflow-x: auto;
   }
   
   .content {
@@ -780,6 +811,1029 @@
     
     &:hover {
       background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Past and Canceled Bookings Styles
+.pastContent, .canceledContent {
+  .sessionsList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  .sessionCard {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-md;
+    gap: $spacing-md;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .sessionStatus {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    margin-top: $spacing-xs;
+  }
+  
+  .statusCompleted {
+    color: #10b981;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .statusCanceled {
+    color: #ef4444;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .sessionRating {
+    color: #f59e0b;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .cancelReason {
+    color: $subtext-color;
+    font-size: 0.8rem;
+  }
+  
+  .bookAgainBtn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Favorites Styles
+.favoritesContent {
+  .providersGrid, .servicesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+  
+  .providerCard, .serviceCard {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .providerImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $spacing-md;
+  }
+  
+  .providerInitials {
+    color: white;
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+  
+  .providerName, .serviceName {
+    font-family: $font-heading;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .providerSpecialty, .serviceDescription {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0 0 $spacing-sm 0;
+  }
+  
+  .providerRating {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-xs;
+  }
+  
+  .stars {
+    color: #f59e0b;
+    font-size: 0.875rem;
+  }
+  
+  .ratingText {
+    color: $subtext-color;
+    font-size: 0.8rem;
+  }
+  
+  .providerLocation {
+    color: $subtext-color;
+    font-size: 0.8rem;
+    margin: 0 0 $spacing-md 0;
+  }
+  
+  .serviceIcon {
+    font-size: 2rem;
+    margin-bottom: $spacing-md;
+    color: $subtext-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .serviceDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: $spacing-sm;
+  }
+  
+  .serviceDuration, .servicePrice {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .serviceDuration {
+    color: $subtext-color;
+  }
+  
+  .servicePrice {
+    color: $primary-color;
+    font-size: 1rem;
+  }
+  
+  .providerActions, .serviceActions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+  }
+  
+  .bookBtn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex: 1;
+    
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+  
+  .removeBtn {
+    background: #f3f4f6;
+    color: $subtext-color;
+    border: 1px solid #e5e5e5;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #ef4444;
+      color: white;
+      border-color: #ef4444;
+    }
+  }
+  
+  .favoritesOverview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+  
+  .overviewCard {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    text-align: center;
+    
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0 0 $spacing-sm 0;
+    }
+    
+    .count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin: 0 0 $spacing-md 0;
+    }
+    
+    .viewBtn {
+      background: $primary-color;
+      color: white;
+      border: none;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+// Payments Styles
+.paymentsContent {
+  .paymentMethods {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+  }
+  
+  .paymentCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .cardInfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+  
+  .cardIcon {
+    font-size: 1.5rem;
+    color: $subtext-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cardName {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .cardExpiry {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+  
+  .cardActions {
+    display: flex;
+    gap: $spacing-sm;
+  }
+  
+  .addPaymentBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: #f3f4f6;
+    color: $dark-text;
+    border: 2px dashed #d1d5db;
+    padding: $spacing-lg;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+    
+    &:hover {
+      background: $primary-color;
+      color: white;
+      border-color: $primary-color;
+    }
+  }
+  
+  .addIcon {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .receiptsList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+  }
+  
+  .receiptItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .receiptTitle {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .receiptDate {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .receiptAmount {
+    color: $primary-color;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .receiptActions {
+    display: flex;
+    gap: $spacing-sm;
+  }
+  
+  .downloadBtn {
+    background: #f3f4f6;
+    color: $dark-text;
+    border: 1px solid #e5e5e5;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: $primary-color;
+      color: white;
+      border-color: $primary-color;
+    }
+  }
+  
+  .paymentsOverview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+  
+  .overviewCard {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    text-align: center;
+    
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0 0 $spacing-sm 0;
+    }
+    
+    .amount {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin: 0 0 $spacing-xs 0;
+    }
+    
+    .subtext {
+      color: $subtext-color;
+      font-size: 0.875rem;
+      margin: 0 0 $spacing-md 0;
+    }
+    
+    .count {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin: 0 0 $spacing-md 0;
+    }
+    
+    .viewBtn {
+      background: $primary-color;
+      color: white;
+      border: none;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+// Calendar Styles
+.calendarContent {
+  .calendarContainer {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+  
+  .calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+  }
+  
+  .calendarNav {
+    background: #f3f4f6;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: $spacing-xs $spacing-sm;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: $primary-color;
+      color: white;
+      border-color: $primary-color;
+    }
+  }
+  
+  .calendarMonth {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+  
+  .calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .calendarWeekdays {
+    display: contents;
+  }
+  
+  .weekday {
+    background: #f9fafb;
+    padding: $spacing-sm;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $subtext-color;
+  }
+  
+  .calendarDays {
+    display: contents;
+  }
+  
+  .calendarDay {
+    background: white;
+    padding: $spacing-sm;
+    text-align: center;
+    font-size: 0.875rem;
+    color: $dark-text;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    position: relative;
+    
+    &:hover {
+      background: #f3f4f6;
+    }
+  }
+  
+  .hasAppointment {
+    background: #fef3c7;
+    
+    &:hover {
+      background: #fde68a;
+    }
+  }
+  
+  .appointmentDot {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: $primary-color;
+    border-radius: 50%;
+  }
+  
+  .upcomingAppointments {
+    margin-top: $spacing-xl;
+  }
+  
+  .upcomingTitle {
+    font-family: $font-heading;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-lg 0;
+  }
+  
+  .appointmentList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  .appointmentItem {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-md;
+    gap: $spacing-md;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .appointmentDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+  }
+  
+  .appointmentDay {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $primary-color;
+  }
+  
+  .appointmentMonth {
+    font-size: 0.75rem;
+    color: $subtext-color;
+    text-transform: uppercase;
+  }
+  
+  .appointmentTitle {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .appointmentProvider, .appointmentTime {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0 0 $spacing-xs 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Messages Styles
+.messagesContent {
+  .messagesList, .conversationsList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+  }
+  
+  .messageItem, .conversationItem {
+    display: flex;
+    align-items: flex-start;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    gap: $spacing-md;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .messageIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    color: $subtext-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .messageContent {
+    flex: 1;
+  }
+  
+  .messageTitle {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .messageText {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0 0 $spacing-xs 0;
+  }
+  
+  .messageTime {
+    color: $light-text;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+  
+  .messageActions {
+    display: flex;
+    gap: $spacing-sm;
+    flex-shrink: 0;
+  }
+  
+  .conversationAvatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-size: 1.25rem;
+  }
+  
+  .avatarInitials {
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  
+  .conversationContent {
+    flex: 1;
+    position: relative;
+  }
+  
+  .conversationHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-xs;
+  }
+  
+  .conversationName {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+  
+  .conversationTime {
+    color: $light-text;
+    font-size: 0.8rem;
+  }
+  
+  .conversationPreview {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+  
+  .conversationBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .unreadCount {
+    background: $primary-color;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .messagesOverview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+  
+  .overviewCard {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    text-align: center;
+    
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0 0 $spacing-sm 0;
+    }
+    
+    .count {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin: 0 0 $spacing-md 0;
+    }
+    
+    .viewBtn {
+      background: $primary-color;
+      color: white;
+      border: none;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+// Profile Styles
+.profileContent {
+  .profileForm, .preferencesForm, .notificationsForm {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-xl;
+    margin-top: $spacing-lg;
+  }
+  
+  .formSection {
+    margin-bottom: $spacing-xl;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .formSectionTitle {
+    font-family: $font-heading;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-lg 0;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    
+    .formGroup {
+      margin-bottom: 0;
+    }
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $spacing-md;
+  }
+  
+  .formLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin-bottom: $spacing-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .formInput, .formSelect {
+    padding: $spacing-sm;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: $dark-text;
+    transition: border-color 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+  }
+  
+  .checkboxGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    cursor: pointer;
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: $primary-color;
+    }
+  }
+  
+  .checkboxText {
+    font-size: 0.875rem;
+    color: $dark-text;
+  }
+  
+  .formActions {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: flex-end;
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+    border-top: 1px solid #e5e5e5;
+  }
+  
+  .saveBtn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+  
+  .cancelBtn {
+    background: #f3f4f6;
+    color: $dark-text;
+    border: 1px solid #d1d5db;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+    }
+  }
+  
+  .profileOverview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+  
+  .profileOverview .overviewCard {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    text-align: center;
+    
+    .cardIcon {
+      font-size: 2rem;
+      color: $subtext-color;
+      margin-bottom: $spacing-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0 0 $spacing-sm 0;
+    }
+    
+    .subtext {
+      color: $subtext-color;
+      font-size: 0.875rem;
+      margin: 0 0 $spacing-md 0;
+    }
+    
+    .viewBtn {
+      background: $primary-color;
+      color: white;
+      border: none;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
     }
   }
 }

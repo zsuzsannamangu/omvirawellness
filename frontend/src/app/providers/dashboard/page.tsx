@@ -55,6 +55,7 @@ export default function ProvidersDashboard() {
     { id: 'analytics', label: 'Analytics' },
     { id: 'messages', label: 'Messages' },
     { id: 'profile', label: 'Profile & Settings' },
+    { id: 'signout', label: 'Sign Out' },
   ];
 
   const submenuItems = {
@@ -136,10 +137,16 @@ export default function ProvidersDashboard() {
               key={item.id}
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
-                setActiveSection(item.id);
-                // Set the first submenu item as default for each section
-                const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
-                setActiveSubmenu(firstSubmenu?.id || item.id);
+                if (item.id === 'signout') {
+                  // Handle sign out action
+                  console.log('Sign out clicked');
+                  // Add your sign out logic here
+                } else {
+                  setActiveSection(item.id);
+                  // Set the first submenu item as default for each section
+                  const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
+                  setActiveSubmenu(firstSubmenu?.id || item.id);
+                }
               }}
             >
               <span className={styles.sidebarLabel}>{item.label}</span>
@@ -177,7 +184,6 @@ export default function ProvidersDashboard() {
           </div>
           
           <div className={styles.topNavRight}>
-            <button className={styles.signOutBtn}>Sign Out</button>
             <input
               type="file"
               ref={fileInputRef}

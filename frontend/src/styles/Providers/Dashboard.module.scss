@@ -1208,3 +1208,484 @@
     flex-direction: column;
   }
 }
+
+// ===== NEW PROVIDERS DASHBOARD SUBMENU STYLES =====
+
+// Favorites Grid
+.favoritesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.favoriteCard {
+  background: $bg-white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: $spacing-md;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.favoriteImage {
+  width: 60px;
+  height: 60px;
+  background: $bg-light;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: $primary-color;
+  margin-bottom: $spacing-sm;
+}
+
+.favoriteInfo {
+  margin-bottom: $spacing-sm;
+}
+
+.favoriteName {
+  font-family: $font-heading;
+  font-size: 1.1rem;
+  color: $dark-text;
+  margin-bottom: 0.25rem;
+}
+
+.favoriteLocation {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin-bottom: $spacing-sm;
+}
+
+.favoriteRating {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.favoritePrice {
+  font-family: $font-heading;
+  font-size: 1.1rem;
+  color: $primary-color;
+  font-weight: $font-weight-semibold;
+}
+
+.favoriteActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+// Request Form
+.requestForm {
+  background: $bg-white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formSection {
+  margin-bottom: $spacing-lg;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formSectionTitle {
+  font-family: $font-heading;
+  font-size: 1.1rem;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.formGroup {
+  margin-bottom: $spacing-md;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin-bottom: 0.25rem;
+  font-weight: $font-weight-medium;
+}
+
+.formInput, .formSelect, .formTextarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba(108, 79, 112, 0.1);
+  }
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid #e0e0e0;
+}
+
+// Search Form
+.searchForm {
+  background: $bg-white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: $spacing-lg;
+}
+
+.searchBar {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.searchInput {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: $font-main;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba(108, 79, 112, 0.1);
+    }
+  }
+  
+  svg {
+    position: absolute;
+    left: 0.75rem;
+    color: $subtext-color;
+    font-size: 1rem;
+  }
+}
+
+.searchBtn {
+  background: $primary-color;
+  color: $cta-text;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  
+  &:hover {
+    background: $cta-hover-green;
+  }
+}
+
+.searchFilters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.filterLabel {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin-bottom: 0.25rem;
+  font-weight: $font-weight-medium;
+}
+
+.filterSelect, .filterInput {
+  padding: 0.5rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+// Spaces Grid
+.spacesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-md;
+}
+
+.spaceCard {
+  background: $bg-white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: $spacing-md;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.spaceImage {
+  width: 100%;
+  height: 150px;
+  background: $bg-light;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: $subtext-color;
+  margin-bottom: $spacing-sm;
+}
+
+.spaceInfo {
+  margin-bottom: $spacing-sm;
+}
+
+.spaceName {
+  font-family: $font-heading;
+  font-size: 1.1rem;
+  color: $dark-text;
+  margin-bottom: 0.25rem;
+}
+
+.spaceLocation {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin-bottom: $spacing-sm;
+}
+
+.spaceRating {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.spacePrice {
+  font-family: $font-heading;
+  font-size: 1.1rem;
+  color: $primary-color;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-sm;
+}
+
+.spaceAmenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: $spacing-sm;
+}
+
+.amenity {
+  background: $bg-light;
+  color: $subtext-color;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.spaceActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+// Button Styles (reusing from Spaces Dashboard)
+.primaryBtn, .secondaryBtn, .actionBtn, .messageBtn, .viewBtn, .replyBtn, .bookBtn, .removeBtn, .favoriteBtn, .editBtn, .deleteBtn, .saveBtn, .cancelBtn, .uploadBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.primaryBtn {
+  background: $primary-color;
+  color: $cta-text;
+  
+  &:hover {
+    background: $cta-hover-green;
+  }
+}
+
+.secondaryBtn {
+  background: $bg-light;
+  color: $dark-text;
+  border: 1px solid #d0d0d0;
+  
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.actionBtn {
+  background: $bg-light;
+  color: $dark-text;
+  border: 1px solid #d0d0d0;
+  
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.messageBtn {
+  background: $primary-color;
+  color: $cta-text;
+  
+  &:hover {
+    background: $cta-hover-green;
+  }
+}
+
+.viewBtn, .replyBtn {
+  background: $bg-light;
+  color: $dark-text;
+  border: 1px solid #d0d0d0;
+  
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.bookBtn {
+  background: $primary-color;
+  color: $cta-text;
+  
+  &:hover {
+    background: $cta-hover-green;
+  }
+}
+
+.removeBtn, .deleteBtn {
+  background: #ef4444;
+  color: white;
+  
+  &:hover {
+    background: #dc2626;
+  }
+}
+
+.favoriteBtn {
+  background: $bg-light;
+  color: $dark-text;
+  border: 1px solid #d0d0d0;
+  
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.editBtn {
+  background: $accent-color;
+  color: white;
+  
+  &:hover {
+    background: #9a6b66;
+  }
+}
+
+.saveBtn {
+  background: $primary-color;
+  color: $cta-text;
+  
+  &:hover {
+    background: $cta-hover-green;
+  }
+}
+
+.cancelBtn {
+  background: $bg-light;
+  color: $dark-text;
+  border: 1px solid #d0d0d0;
+  
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.uploadBtn {
+  background: $primary-color;
+  color: $cta-text;
+  
+  &:hover {
+    background: $cta-hover-green;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .favoritesGrid,
+  .spacesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .searchFilters {
+    grid-template-columns: 1fr;
+  }
+  
+  .searchBar {
+    flex-direction: column;
+  }
+  
+  .spaceActions,
+  .favoriteActions {
+    flex-direction: column;
+  }
+}

@@ -13,7 +13,7 @@ import Profile from '@/components/Clients/Dashboard/Profile';
 
 export default function ClientDashboard() {
   const [activeSection, setActiveSection] = useState('bookings');
-  const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
+  const [activeSubmenu, setActiveSubmenu] = useState('upcoming'); // This will be the first submenu of bookings
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userName] = useState('John Doe'); // This would come from user data
   const [userRating] = useState(4.8); // This would come from user data
@@ -51,6 +51,7 @@ export default function ClientDashboard() {
     { id: 'calendar', label: 'Calendar' },
     { id: 'messages', label: 'Messages' },
     { id: 'profile', label: 'Profile & Settings' },
+    { id: 'signout', label: 'Sign Out' },
   ];
 
   const submenuItems = {
@@ -114,8 +115,18 @@ export default function ClientDashboard() {
               key={item.id}
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
-                setActiveSection(item.id);
-                setActiveSubmenu(item.id);
+                if (item.id === 'signout') {
+                  // Handle sign out action
+                  console.log('Sign out clicked');
+                  // Add your sign out logic here
+                } else {
+                  setActiveSection(item.id);
+                  // Automatically set the first submenu item as active
+                  const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
+                  if (firstSubmenu) {
+                    setActiveSubmenu(firstSubmenu.id);
+                  }
+                }
               }}
             >
               <span className={styles.sidebarLabel}>{item.label}</span>
@@ -143,9 +154,11 @@ export default function ClientDashboard() {
               )}
             </div>
             <div className={styles.greetingInfo}>
-              <h1 className={styles.greeting}>Hello, {userName}</h1>
-              <div className={styles.userStats}>
+              <div className={styles.greetingRow}>
+                <h1 className={styles.greeting}>Hello, {userName}</h1>
                 <span className={styles.rating}>★ {userRating} (12 reviews)</span>
+              </div>
+              <div className={styles.statsRow}>
                 <span className={styles.bookings}>{totalBookings} bookings</span>
                 <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
@@ -153,7 +166,7 @@ export default function ClientDashboard() {
           </div>
           
           <div className={styles.topNavRight}>
-            <button className={styles.signOutBtn}>Sign Out</button>
+            <button className={styles.findProviderBtn}>Find a Provider</button>
             <input
               type="file"
               ref={fileInputRef}

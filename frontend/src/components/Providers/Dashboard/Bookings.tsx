@@ -1,5 +1,6 @@
 'use client';
 
+import { FaCheckCircle, FaTimesCircle, FaStar, FaUser, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 interface BookingsProps {

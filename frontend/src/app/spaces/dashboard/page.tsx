@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from '@/styles/Spaces/Dashboard.module.scss';
 
 // Dashboard sections
@@ -49,31 +49,29 @@ export default function SpacesDashboard() {
     { id: 'bookings', label: 'Bookings' },
     { id: 'calendar', label: 'Calendar' },
     { id: 'payments', label: 'Payments' },
-    { id: 'spaces', label: 'Spaces' },
+    { id: 'spaces', label: 'Listings' },
     { id: 'analytics', label: 'Analytics' },
     { id: 'messages', label: 'Messages' },
     { id: 'profile', label: 'Profile & Settings' },
+    { id: 'signout', label: 'Sign Out' },
   ];
 
   const submenuItems = {
     bookings: [
+      { id: 'requests', label: 'Requests' },
       { id: 'upcoming', label: 'Upcoming' },
       { id: 'past', label: 'Past' },
       { id: 'canceled', label: 'Canceled' },
     ],
     calendar: [
-      { id: 'availability', label: 'Availability' },
-      { id: 'reservations', label: 'Reservations' },
+      { id: 'calendar', label: 'Calendar View' },
     ],
     payments: [
       { id: 'earnings', label: 'Earnings' },
       { id: 'payouts', label: 'Payout History' },
     ],
     spaces: [
-      { id: 'listings', label: 'Manage Listings' },
-      { id: 'pricing', label: 'Pricing' },
-      { id: 'photos', label: 'Photos' },
-      { id: 'amenities', label: 'Amenities' },
+      { id: 'listings', label: 'Listings' },
     ],
     analytics: [
       { id: 'occupancy', label: 'Occupancy Rates' },
@@ -125,10 +123,16 @@ export default function SpacesDashboard() {
               key={item.id}
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
-                setActiveSection(item.id);
-                // Set the first submenu item as default for each section
-                const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
-                setActiveSubmenu(firstSubmenu?.id || item.id);
+                if (item.id === 'signout') {
+                  // Handle sign out action
+                  console.log('Sign out clicked');
+                  // Add your sign out logic here
+                } else {
+                  setActiveSection(item.id);
+                  // Set the first submenu item as default for each section
+                  const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
+                  setActiveSubmenu(firstSubmenu?.id || item.id);
+                }
               }}
             >
               <span className={styles.sidebarLabel}>{item.label}</span>
@@ -166,7 +170,6 @@ export default function SpacesDashboard() {
           </div>
           
           <div className={styles.topNavRight}>
-            <button className={styles.signOutBtn}>Sign Out</button>
             <input
               type="file"
               ref={fileInputRef}
