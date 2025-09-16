@@ -1,0 +1,934 @@
+@import './_variables.scss';
+
+.bookingConfirmationPage {
+  min-height: 100vh;
+  background: $bg-light;
+  font-family: $font-main;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: $dark-text;
+}
+
+.header {
+  background: $bg-white;
+  border-bottom: 1px solid $border-light;
+  padding: $spacing-md 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backButton {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $muted-bg;
+  }
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-heading;
+  color: $primary-color;
+  text-decoration: none;
+}
+
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+}
+
+.bookingContainer {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: $spacing-xl;
+  align-items: start;
+}
+
+.bookingDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin: 0 0 $spacing-lg 0;
+}
+
+.providerCard {
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px $shadow-color;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.providerImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.providerInfo {
+  flex: 1;
+}
+
+.providerName {
+  font-size: 1.3rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
+}
+
+.stars {
+  color: $stars-color;
+  font-size: 1rem;
+}
+
+.ratingText {
+  color: $dark-text;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.providerLocation {
+  color: $subtext-color;
+  margin: 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.serviceCard,
+.appointmentCard,
+.locationCard,
+.addOnsCard {
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px $shadow-color;
+}
+
+.serviceCard h3,
+.appointmentCard h3,
+.locationCard h3,
+.addOnsCard h3 {
+  font-size: 1.2rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.serviceInfo h4 {
+  font-size: 1.1rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.serviceDescription {
+  color: $subtext-color;
+  margin: 0 0 $spacing-sm 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.serviceMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.duration {
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-family: $font-main;
+}
+
+.price {
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  font-size: 1.1rem;
+  font-family: $font-main;
+}
+
+.appointmentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.appointmentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  font-family: $font-main;
+}
+
+.value {
+  color: $subtext-color;
+  font-family: $font-main;
+}
+
+.locationOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.locationOption {
+  border: 2px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-md;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  position: relative;
+
+  &:hover:not(.disabled) {
+    border-color: $primary-color;
+    background-color: $muted-bg;
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.05);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: $muted-bg;
+    
+    &:hover {
+      border-color: $border-light;
+      background-color: $muted-bg;
+    }
+  }
+}
+
+.locationIcon {
+  color: $primary-color;
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.locationInfo h4 {
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.locationInfo p {
+  color: $subtext-color;
+  margin: 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.locationFee {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: $primary-color;
+  color: $light-text;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+}
+
+.addressSection {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.inputGroup {
+  margin-bottom: $spacing-md;
+}
+
+.addressInputGroup {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.addressInput {
+  flex: 1;
+}
+
+.inputLabel {
+  display: block;
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  margin-bottom: $spacing-lg;
+  font-family: $font-main;
+}
+
+.addressInput {
+  width: 100%;
+  padding: $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: $font-main;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+  margin-top: $spacing-xs;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &.error {
+    border-color: $error-color;
+  }
+}
+
+.errorText {
+  color: $error-color;
+  font-size: 0.8rem;
+  font-family: $font-main;
+  display: block;
+  margin-top: $spacing-xs;
+}
+
+.radiusSelector {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.radiusSlider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: $border-light;
+  outline: none;
+  -webkit-appearance: none;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $primary-color;
+    cursor: pointer;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $primary-color;
+    cursor: pointer;
+    border: none;
+  }
+}
+
+.radiusValue {
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  font-family: $font-main;
+  min-width: 60px;
+  text-align: right;
+}
+
+.addOnsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.addOnItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $primary-color;
+    background-color: $muted-bg;
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.05);
+  }
+}
+
+.addOnInfo {
+  flex: 1;
+}
+
+.addOnInfo h4 {
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.addOnInfo p {
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.addOnPrice {
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  font-family: $font-main;
+}
+
+.addOnToggle {
+  display: flex;
+  align-items: center;
+}
+
+.addOnCheckbox {
+  display: none;
+}
+
+.addOnLabel {
+  width: 48px;
+  height: 28px;
+  background: $border-light;
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    background: $bg-white;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.addOnCheckbox:checked + .addOnLabel {
+  background: $primary-color;
+
+  &::after {
+    transform: translateX(20px);
+  }
+}
+
+.paymentSummary {
+  position: sticky;
+  top: 100px;
+}
+
+.summaryCard {
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px $shadow-color;
+  border: 1px solid $border-light;
+}
+
+.summaryCard h3 {
+  font-size: 1.2rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $border-light;
+  font-family: $font-main;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md 0;
+  font-weight: $font-weight-bold;
+  font-size: 1.1rem;
+  color: $dark-text;
+  font-family: $font-main;
+  border-top: 2px solid $border-light;
+  margin-top: $spacing-sm;
+}
+
+.depositInfo {
+  background: $muted-bg;
+  border-radius: 6px;
+  padding: $spacing-md;
+  margin: $spacing-md 0;
+}
+
+.depositText {
+  color: $subtext-color;
+  margin: 0 0 $spacing-sm 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.depositAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xs 0;
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+  font-family: $font-main;
+}
+
+.remainingAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xs 0;
+  color: $subtext-color;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.bookButton {
+  width: 100%;
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 8px;
+  padding: $spacing-sm;
+  font-size: 1.1rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: $spacing-sm;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.bookingInfo {
+  font-size: 0.8rem;
+  color: $subtext-color;
+  line-height: 1.4;
+  font-family: $font-main;
+}
+
+.bookingInfo p {
+  margin: 0.25rem 0;
+}
+
+.validationMessage {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  margin-top: $spacing-sm;
+
+  &.valid {
+    background-color: rgba($success-color, 0.1);
+    color: $success-color;
+    border: 1px solid rgba($success-color, 0.2);
+  }
+
+  &.invalid {
+    background-color: rgba($error-color, 0.1);
+    color: $error-color;
+    border: 1px solid rgba($error-color, 0.2);
+  }
+}
+
+.checkmark {
+  font-weight: $font-weight-bold;
+}
+
+.xmark {
+  font-weight: $font-weight-bold;
+}
+
+// Compact Booking Summary Card
+.bookingSummaryCard {
+  background: $bg-white;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid $border-color;
+}
+
+.bookingSummaryContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-lg;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.bookingDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.serviceTitle {
+  font-size: 1.3rem;
+  font-weight: $font-weight-semibold;
+  color: $dark-text;
+  margin: 0;
+  font-family: $font-main;
+  line-height: 1.3;
+}
+
+.appointmentDateTime {
+  font-size: 1.1rem;
+  color: $subtext-color;
+  font-family: $font-main;
+  font-weight: $font-weight-medium;
+  margin: 0;
+}
+
+.providerLink {
+  font-size: 1.1rem;
+  color: $primary-color;
+  font-family: $font-main;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  margin: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  
+  &:hover {
+    color: $cta-hover-green;
+    text-decoration: underline;
+  }
+}
+
+.locationText {
+  font-size: 1rem;
+  color: $subtext-color;
+  font-family: $font-main;
+  margin: 0;
+}
+
+.summaryActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $spacing-sm;
+  
+  @media (max-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
+}
+
+.modifyButton {
+  background: $primary-color;
+  color: $light-text;
+  border: 1px solid $primary-color;
+  border-radius: 6px;
+  padding: $spacing-xs $spacing-md;
+  font-size: 0.9rem;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: $cta-hover-green;
+    border-color: $cta-hover-green;
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: $light-text;
+  }
+}
+
+.totalPrice {
+  font-size: 1.3rem;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  font-family: $font-main;
+}
+
+.checkAddressButton {
+  background: $primary-color;
+  color: $light-text;
+  border: 1px solid $primary-color;
+  border-radius: 6px;
+  padding: 6px $spacing-md;
+  font-size: 0.9rem;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 120px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 200px;
+
+  &:hover:not(:disabled) {
+    background: $cta-hover-green;
+    border-color: $cta-hover-green;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: $subtext-color;
+    border-color: $subtext-color;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+  }
+}
+
+// Provider Modal Styles
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-lg;
+}
+
+.modalContent {
+  background: $bg-white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: $spacing-sm $spacing-lg $spacing-xs $spacing-lg;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  line-height: 1;
+  
+  &:hover {
+    color: $dark-text;
+  }
+}
+
+.modalBody {
+  padding: $spacing-sm $spacing-lg $spacing-lg $spacing-lg;
+}
+
+.providerModalInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.modalProviderImage {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid $border-color;
+  flex-shrink: 0;
+}
+
+.modalProviderDetails {
+  flex: 1;
+  
+  h4 {
+    font-size: 1.4rem;
+    font-weight: $font-weight-semibold;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+    font-family: $font-main;
+  }
+}
+
+.modalRating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
+  
+  .stars {
+    color: $stars-color;
+    font-size: 1rem;
+  }
+  
+  span:last-child {
+    font-size: 1rem;
+    color: $subtext-color;
+    font-family: $font-main;
+  }
+}
+
+.modalProviderDetails p {
+  font-size: 1rem;
+  color: $subtext-color;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.modalBio {
+  margin-bottom: $spacing-md;
+  
+  p {
+    font-size: 1rem;
+    color: $subtext-color;
+    line-height: 1.5;
+    margin: 0;
+    font-family: $font-main;
+  }
+}
+
+.modalServices {
+  h5 {
+    font-size: 1.1rem;
+    font-weight: $font-weight-semibold;
+    color: $dark-text;
+    margin: 0 0 $spacing-sm 0;
+    font-family: $font-main;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  li {
+    padding: $spacing-xs 0;
+    font-size: 0.95rem;
+    font-family: $font-main;
+    
+    strong {
+      color: $dark-text;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .bookingContainer {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+
+  .paymentSummary {
+    position: static;
+  }
+
+  .mainContent {
+    padding: $spacing-md;
+  }
+
+  .headerContent {
+    padding: 0 $spacing-md;
+  }
+}

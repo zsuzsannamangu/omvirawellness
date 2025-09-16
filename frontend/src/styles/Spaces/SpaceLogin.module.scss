@@ -2,7 +2,7 @@
 
 .loginPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, $section-bg-1 0%, $section-bg-3 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +14,7 @@
   background: $light-text;
   border-radius: 16px;
   padding: $spacing-xl;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px $shadow-color;
   width: 100%;
   max-width: 450px;
 }
@@ -74,7 +74,7 @@
 
 .textInput {
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -86,7 +86,7 @@
   }
   
   &::placeholder {
-    color: #adb5bd;
+    color: $signup-color;
   }
 }
 
@@ -152,7 +152,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: #e9ecef;
+    background: $section-bg-3;
   }
   
   span {
@@ -173,7 +173,7 @@
   justify-content: center;
   gap: $spacing-sm;
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
   color: $dark-text;

@@ -290,29 +290,31 @@ export default function SearchPage() {
         {/* Provider Grid */}
         <div className={styles.providersGrid}>
           {sampleProviders.map((provider) => (
-            <div key={provider.id} className={styles.providerCard}>
-              <div className={styles.providerImage}>
-                <Image
-                  src={provider.image}
-                  alt={provider.name}
-                  width={300}
-                  height={200}
-                  className={styles.image}
-                />
-                <div className={styles.duration}>60 Min</div>
-              </div>
-              
-              <div className={styles.providerInfo}>
-                <h3 className={styles.providerName}>{provider.name}</h3>
-                <p className={styles.providerServices}>{provider.services.join(' • ')}</p>
-                <p className={styles.providerLocation}>{provider.location}</p>
-                <div className={styles.providerRating}>
-                  <span className={styles.stars}>★★★★★</span>
-                  <span className={styles.ratingText}>{provider.rating} ({provider.reviewCount})</span>
+            <Link key={provider.id} href={`/search/${provider.id}`} className={styles.providerCardLink}>
+              <div className={styles.providerCard}>
+                <div className={styles.providerImage}>
+                  <Image
+                    src={provider.image}
+                    alt={provider.name}
+                    width={300}
+                    height={200}
+                    className={styles.image}
+                  />
+                  <div className={styles.duration}>60 Min</div>
                 </div>
-                <p className={styles.startingPrice}>From ${provider.startingPrice}</p>
+                
+                <div className={styles.providerInfo}>
+                  <h3 className={styles.providerName}>{provider.name}</h3>
+                  <p className={styles.providerServices}>{provider.services.join(' • ')}</p>
+                  <p className={styles.providerLocation}>{provider.location}</p>
+                  <div className={styles.providerRating}>
+                    <span className={styles.stars}>★★★★★</span>
+                    <span className={styles.ratingText}>{provider.rating} ({provider.reviewCount})</span>
+                  </div>
+                  <p className={styles.startingPrice}>From ${provider.startingPrice}</p>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

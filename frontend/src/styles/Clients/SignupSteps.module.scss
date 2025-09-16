@@ -51,7 +51,7 @@
 
 .textInput {
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -63,13 +63,13 @@
   }
   
   &::placeholder {
-    color: #adb5bd;
+    color: $signup-color;
   }
 }
 
 .textArea {
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -82,18 +82,18 @@
   }
   
   &::placeholder {
-    color: #adb5bd;
+    color: $signup-color;
   }
 }
 
 .selectInput {
   padding: $spacing-md $spacing-lg;
   padding-right: 3rem;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
-  background: white;
+  background: $bg-white;
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -144,7 +144,7 @@
   border-radius: 12px;
   font-family: $font-main;
   font-size: 1rem;
-  background: white;
+  background: $bg-white;
   transition: all 0.3s ease;
   
   &:focus {
@@ -237,7 +237,7 @@
 }
 
 .dividerText {
-  background: white;
+  background: $bg-white;
   padding: 0 1.5rem;
   color: $subtext-color;
   font-family: $font-main;
@@ -256,7 +256,7 @@
 .socialButton {
   width: 100%;
   padding: 0.75rem 1.25rem;
-  background: white;
+  background: $bg-white;
   border: 2px solid rgba($primary-color, 0.15);
   border-radius: 8px;
   font-family: $font-main;
@@ -348,7 +348,7 @@
 }
 
 .passwordRequirements {
-  background: #f8f9fa;
+  background: $section-bg-1;
   padding: $spacing-md;
   border-radius: 8px;
   margin-top: $spacing-sm;
@@ -399,7 +399,7 @@
   align-items: flex-start;
   gap: $spacing-sm;
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -441,7 +441,7 @@
 .sectionDivider {
   margin: $spacing-xl 0 $spacing-lg;
   padding-bottom: $spacing-md;
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid $section-bg-3;
   
   h3 {
     color: $dark-text;
@@ -462,7 +462,7 @@
 .preferencesSection {
   margin-top: $spacing-lg;
   padding-top: $spacing-lg;
-  border-top: 2px solid #e9ecef;
+  border-top: 2px solid $section-bg-3;
 }
 
 // Checkbox groups
@@ -491,7 +491,7 @@
 .travelSection {
   margin-top: $spacing-lg;
   padding-top: $spacing-lg;
-  border-top: 2px solid #e9ecef;
+  border-top: 2px solid $section-bg-3;
 }
 
 // Notes
@@ -516,9 +516,9 @@
 
 .backButton {
   padding: $spacing-md $spacing-lg;
-  background: white;
+  background: $bg-white;
   color: $subtext-color;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-family: $font-main;
   font-weight: 600;
@@ -570,7 +570,7 @@
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-md;
-  border: 1px solid #e9ecef;
+  border: 1px solid $section-bg-3;
   
   h3 {
     color: $dark-text;
@@ -596,7 +596,7 @@
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-md;
-  border: 1px solid #e9ecef;
+  border: 1px solid $section-bg-3;
   
   h3 {
     color: $dark-text;
@@ -606,7 +606,7 @@
 }
 
 .pricingCard {
-  background: #f8f9fa;
+  background: $section-bg-1;
   padding: $spacing-md;
   border-radius: 6px;
 }

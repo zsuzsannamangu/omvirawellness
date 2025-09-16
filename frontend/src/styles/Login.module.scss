@@ -10,9 +10,9 @@
 }
 
 .formContainer {
-  background: white;
+  background: $bg-white;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px $shadow-color;
   width: 100%;
   max-width: 400px;
   overflow: hidden;
@@ -43,7 +43,7 @@
   }
   
   &.active {
-    background: white;
+    background: $bg-white;
     color: $dark-text;
     font-weight: 600;
   }
@@ -95,7 +95,7 @@
   border-radius: 8px;
   font-family: $font-main;
   font-size: 1rem;
-  background: white;
+  background: $bg-white;
   transition: border-color 0.2s ease;
   
   &:focus {
@@ -216,7 +216,7 @@
 }
 
 .dividerText {
-  background: white;
+  background: $bg-white;
   padding: 0 1rem;
   color: $subtext-color;
   font-family: $font-main;
@@ -235,7 +235,7 @@
 .socialButton {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: white;
+  background: $bg-white;
   border: 1px solid rgba($primary-color, 0.2);
   border-radius: 8px;
   font-family: $font-main;

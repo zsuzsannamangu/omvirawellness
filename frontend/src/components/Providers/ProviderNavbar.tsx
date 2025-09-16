@@ -75,7 +75,7 @@ export default function ProviderNavbar() {
       </nav>
 
       <div className={styles.rightSection}>
-        <Link href="/" className={styles.clientLink}>
+        <Link href="/search" className={styles.clientLink}>
           Find a Provider
         </Link>
         <Link href="/spaces" className={styles.clientLink}>

@@ -8,6 +8,8 @@ $dark-text: #070707;             // Dark text (unchanged)
 $light-text: #FAFAFA;            // Light text (unchanged)
 $muted-bg: #FAFAFA;              // Soft background (unchanged)
 $subtext-color: #444444;
+$placeholder-grey: #999999;
+$disabled-button-grey: #cccccc;
 
 $hover-green: #5C3E5B;           // Plum Hover
 $cta-green: #6C4F70;             // CTA background
@@ -18,6 +20,10 @@ $cta-hover-border: #5C3E5B;      // CTA border on hover
 $cta-text-hover: #FFFFFF;        // Optional bright hover text
 
 $logo-yellow: #E6C27A;           // Soft Gold (more cohesive with plum)
+$stars-color: #ffc107;           // Star color for ratings
+$signup-color: #adb5bd;          // Color used at the signup pages
+$calendar-has-appointment: #fef3c7;
+$calendar-has-appointment-hover: #fde68a;
 
 // Background Colors
 $bg-primary: #6C4F70;            // Primary background
@@ -62,10 +68,9 @@ $font-weight-bold: 700;
 $border-light: #e5e5e5;              // Light border color
 $border-medium: #e0e0e0;             // Medium border color
 $border-color: #d0d0d0;               // Dark border color
-$border-dark: #d0d0d0;              // Dark border color
 $background-light: #f8fafc;          // Very light background
 $background-gray: #f0f0f0;           // Light gray background
-$success-color: #10b981;             // Success green
+$success-color: #0f9c6d;             // Success green
 $success-hover: #059669;             // Success hover
 $success-light: #22c55e;             // Light success
 $success-bg: #16a34a;                // Success background

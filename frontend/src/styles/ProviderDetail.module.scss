@@ -1,0 +1,993 @@
+@import './_variables.scss';
+
+.providerDetailPage {
+  min-height: 100vh;
+  background: $muted-bg;
+  font-family: $font-main;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: $dark-text;
+}
+
+.header {
+  background: $bg-white;
+  border-bottom: 1px solid $border-light;
+  padding: $spacing-sm 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backButton {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $muted-bg;
+  }
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-heading;
+  color: $primary-color;
+  text-decoration: none;
+}
+
+.headerActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.shareButton {
+  background: none;
+  border: 1px solid $border-light;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: $font-main;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $muted-bg;
+  }
+}
+
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-md;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: $spacing-md;
+}
+
+.photoSection {
+  grid-column: 1;
+}
+
+.providerMainSection {
+  grid-column: 2;
+}
+
+.photoGallery {
+  position: relative;
+  margin-bottom: $spacing-sm;
+  border-radius: 1px;
+  overflow: hidden;
+  background: $bg-white;
+  box-shadow: 0 2px 8px $shadow-color;
+  aspect-ratio: 3/2;
+}
+
+.mainPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: $overlay-color;
+  color: $light-text;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: $overlay-dark;
+  }
+
+  &:first-child {
+    left: $spacing-sm;
+  }
+
+  &:last-child {
+    right: $spacing-sm;
+  }
+}
+
+.photoThumbnails {
+  display: flex;
+  gap: $spacing-xs;
+  overflow-x: auto;
+  padding: $spacing-xs 0;
+}
+
+.thumbnail {
+  flex-shrink: 0;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  width: 80px;
+  height: 60px;
+  padding: 0;
+  transition: border-color 0.2s ease;
+
+  &.active {
+    border-color: $primary-color;
+  }
+
+  &:hover {
+    border-color: $primary-color;
+  }
+}
+
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.providerInfo {
+  grid-column: 1;
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px $shadow-color;
+}
+
+.providerHeader {
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $border-light;
+}
+
+.providerName {
+  font-size: 2rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
+}
+
+.stars {
+  color: $stars-color;
+  font-size: 1.1rem;
+}
+
+.ratingText {
+  color: $dark-text;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+}
+
+.providerTitle {
+  font-size: 1.1rem;
+  color: $primary-color;
+  margin: 0 0 0.25rem 0;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+}
+
+.providerLocation {
+  color: $subtext-color;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.bioSection {
+  margin-bottom: $spacing-md;
+}
+
+.bioSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: $spacing-sm;
+  color: $dark-text;
+  font-family: $font-heading;
+  font-weight: $font-weight-semibold;
+}
+
+.bio {
+  line-height: 1.6;
+  color: $dark-text;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.servicesSection {
+  margin-bottom: $spacing-md;
+}
+
+.servicesSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: $spacing-sm;
+  color: $dark-text;
+  font-family: $font-heading;
+  font-weight: $font-weight-semibold;
+}
+
+.servicesList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.serviceItem {
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-sm;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 2px 8px $shadow-color;
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background-color: $muted-bg;
+  }
+}
+
+.serviceInfo h3 {
+  margin: 0 0 $spacing-xs 0;
+  color: $dark-text;
+  font-size: 1.1rem;
+  font-family: $font-main;
+  font-weight: $font-weight-semibold;
+}
+
+.serviceDescription {
+  color: $subtext-color;
+  margin: 0 0 $spacing-sm 0;
+  font-size: 0.9rem;
+  font-family: $font-main;
+}
+
+.serviceMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.duration {
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-family: $font-main;
+}
+
+.price {
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  font-size: 1.1rem;
+  font-family: $font-main;
+}
+
+.availabilitySection {
+  margin-bottom: $spacing-md;
+}
+
+.availabilitySection h2 {
+  font-size: 1.5rem;
+  margin-bottom: $spacing-md;
+  color: $dark-text;
+  font-family: $font-heading;
+  font-weight: $font-weight-semibold;
+}
+
+.dateSelection {
+  margin-bottom: $spacing-md;
+  position: relative;
+}
+
+.dateLabel {
+  display: block;
+  font-size: 1rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin-bottom: $spacing-xs;
+}
+
+.dateInputContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.dateInput {
+  width: 250px;
+  padding: $spacing-sm;
+  padding-right: 40px;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: $font-main;
+  color: $dark-text;
+  background: $bg-white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &::placeholder {
+    color: $subtext-color;
+  }
+}
+
+.calendarButton {
+  position: absolute;
+  right: $spacing-sm;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $dark-text;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.calendarWidget {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px $shadow-color;
+  padding: $spacing-md;
+  z-index: 1000;
+  min-width: 300px;
+  margin-top: $spacing-xs;
+  transform: translateX(0);
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.calendarNavButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: $dark-text;
+  padding: $spacing-xs;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: $muted-bg;
+  }
+}
+
+.calendarMonth {
+  font-size: 1.1rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0;
+}
+
+.calendarLegend {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.85rem;
+  font-family: $font-main;
+  color: $dark-text;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.calendarGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.calendarWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: $spacing-xs;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  color: $subtext-color;
+  padding: $spacing-xs;
+}
+
+.calendarDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendarDay {
+  background: $bg-white;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: $spacing-xs;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  color: $dark-text;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: $muted-bg;
+    border-color: $primary-color;
+  }
+
+  &.otherMonth {
+    color: $subtext-color;
+    opacity: 0.5;
+  }
+
+  &.available {
+    background: $success-color;
+    color: $light-text;
+    font-weight: $font-weight-medium;
+
+    &:hover:not(:disabled) {
+      background: darken($success-color, 10%);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.unavailable {
+    background: $bg-white;
+    color: $subtext-color;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &.selected {
+    background: $dark-text;
+    color: $light-text;
+    font-weight: $font-weight-bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.timeSelection {
+  margin-top: $spacing-md;
+}
+
+.timeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.timeHeader h3 {
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0;
+}
+
+
+.timeSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: $spacing-xs;
+  max-width: 600px;
+}
+
+.timeSlot {
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  padding: $spacing-xs;
+  font-size: 0.85rem;
+  font-family: $font-main;
+  color: $dark-text;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: $primary-color;
+    background-color: $muted-bg;
+  }
+
+  &.selected {
+    background-color: $primary-color;
+    color: $light-text;
+    border-color: $primary-color;
+  }
+}
+
+.reviewsSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: $spacing-sm;
+  color: $dark-text;
+  font-family: $font-heading;
+  font-weight: $font-weight-semibold;
+}
+
+.overallRating {
+  margin-bottom: $spacing-sm;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.ratingSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ratingDisplay {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  color: $stars-color;
+  font-size: 1.2rem;
+}
+
+.ratingNumber {
+  font-size: 1.5rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  color: $dark-text;
+}
+
+.ratingOutOf {
+  font-size: 1rem;
+  font-family: $font-main;
+  color: $dark-text;
+}
+
+.reviewCount {
+  font-size: 1rem;
+  font-family: $font-main;
+  color: $subtext-color;
+}
+
+.verifiedText {
+  font-size: 0.9rem;
+  font-family: $font-main;
+  color: $subtext-color;
+  margin: 0;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid $border-light;
+  margin-top: $spacing-sm;
+}
+
+.reviewItem {
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-light;
+  background: $bg-white;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-xs;
+}
+
+.reviewRating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex: 1;
+}
+
+.stars {
+  color: $stars-color;
+  font-size: 1rem;
+}
+
+.ratingNumber {
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  color: $dark-text;
+}
+
+.itemTag {
+  background: $muted-bg;
+  color: $dark-text;
+  padding: 2px $spacing-xs;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-family: $font-main;
+  font-weight: $font-weight-medium;
+}
+
+.recommends {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: $success-color;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  font-weight: $font-weight-medium;
+}
+
+.checkmark {
+  font-size: 0.8rem;
+}
+
+.reviewerInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $primary-color;
+  color: $light-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+}
+
+.reviewerDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.reviewerName {
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  color: $dark-text;
+  font-size: 0.9rem;
+}
+
+.reviewDate {
+  color: $subtext-color;
+  font-size: 0.8rem;
+  font-family: $font-main;
+}
+
+.reviewComment {
+  color: $dark-text;
+  line-height: 1.5;
+  margin: 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.reviewPagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-top: $spacing-md;
+  padding: $spacing-sm 0;
+}
+
+.paginationButton {
+  background: none;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  padding: $spacing-xs;
+  cursor: pointer;
+  font-size: 1rem;
+  color: $dark-text;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: $muted-bg;
+    border-color: $primary-color;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.paginationPage {
+  background: $muted-bg;
+  border: 1px solid $border-light;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  color: $dark-text;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $primary-color;
+    color: $light-text;
+    border-color: $primary-color;
+  }
+
+  &.active {
+    background: $dark-text;
+    color: $light-text;
+    border-color: $dark-text;
+  }
+}
+
+.bookingSidebar {
+  grid-column: 2;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.bookingCard {
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px $shadow-color;
+  border: 1px solid $border-light;
+}
+
+.priceInfo {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-sm;
+}
+
+.priceLabel {
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-family: $font-main;
+}
+
+.priceAmount {
+  font-size: 2rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  color: $primary-color;
+}
+
+.selectedService {
+  margin-bottom: $spacing-sm;
+  padding: $spacing-sm;
+  background: $muted-bg;
+  border-radius: 4px;
+}
+
+.selectedService h3 {
+  margin: 0 0 0.25rem 0;
+  color: $dark-text;
+  font-size: 1.1rem;
+  font-family: $font-main;
+  font-weight: $font-weight-semibold;
+}
+
+.selectedService p {
+  margin: 0;
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-family: $font-main;
+}
+
+.selectedTime {
+  margin-bottom: $spacing-sm;
+  padding: $spacing-sm;
+  background: $muted-bg;
+  border-radius: 6px;
+  border-left: 4px solid $success-color;
+}
+
+.selectedTime h4 {
+  margin: 0 0 $spacing-xs 0;
+  color: $dark-text;
+  font-size: 0.9rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+}
+
+.selectedDate {
+  margin: 0 0 2px 0;
+  color: $dark-text;
+  font-weight: $font-weight-medium;
+  font-family: $font-main;
+  font-size: 0.9rem;
+}
+
+.selectedTimeSlot {
+  margin: 0;
+  color: $success-color;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  font-size: 1rem;
+}
+
+.bookButton {
+  width: 100%;
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 8px;
+  padding: $spacing-sm;
+  font-size: 1.1rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: $spacing-sm;
+  text-align: center;
+
+  &:hover:not(:disabled) {
+    background: $hover-green;
+    transform: translateY(-1px);
+  }
+
+  &:disabled,
+  &.disabled {
+    background: $subtext-color;
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.6;
+  }
+}
+
+.bookingInfo {
+  font-size: 0.8rem;
+  color: $subtext-color;
+  line-height: 1.4;
+  font-family: $font-main;
+}
+
+.bookingInfo p {
+  margin: 0.25rem 0;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .bookingSidebar {
+    grid-column: 1;
+    position: static;
+  }
+
+  .availabilityGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .headerContent {
+    padding: 0 1rem;
+  }
+
+  .providerInfo {
+    padding: 1rem;
+  }
+
+  .bookingCard {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .availabilityGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .photoThumbnails {
+    justify-content: center;
+  }
+}

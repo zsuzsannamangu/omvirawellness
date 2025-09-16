@@ -69,7 +69,7 @@ export default function SpaceNavbar() {
       </nav>
 
       <div className={styles.rightSection}>
-        <Link href="/" className={styles.clientLink}>
+        <Link href="/search" className={styles.clientLink}>
           Find a Provider
         </Link>
         <Link href="/providers" className={styles.providerLink}>

@@ -1,0 +1,518 @@
+@import './_variables.scss';
+
+.bookingSuccessPage {
+  min-height: 100vh;
+  background: $bg-light;
+  font-family: $font-main;
+  font-size: 1.1rem; // Increase base font size
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: $dark-text;
+}
+
+.header {
+  background: $bg-white;
+  border-bottom: 1px solid $border-light;
+  padding: $spacing-md 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: $font-weight-bold;
+  font-family: $font-heading;
+  color: $primary-color;
+  text-decoration: none;
+}
+
+.mainContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-lg $spacing-lg;
+}
+
+.successContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.successHeader {
+  margin-bottom: $spacing-xl;
+}
+
+.successIcon {
+  font-size: 4rem;
+  color: $success-color;
+  margin-bottom: $spacing-md;
+}
+
+.successTitle {
+  font-size: 2.8rem; // Increased from 2.5rem
+  font-weight: $font-weight-bold;
+  font-family: $font-heading;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+  text-align: center;
+}
+
+.successSubtitle {
+  font-size: 1.3rem; // Increased from 1.1rem
+  color: $subtext-color;
+  margin: 0;
+  font-family: $font-main;
+  line-height: 1.5;
+}
+
+.bookingDetailsCard {
+  background: $bg-white;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin-bottom: $spacing-lg;
+  text-align: left;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-lg 0;
+  text-align: center;
+}
+
+.bookingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.infoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $muted-bg;
+  border-radius: 8px;
+}
+
+.infoIcon {
+  color: $primary-color;
+  font-size: 1.5rem;
+  margin-top: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.infoContent h3 {
+  font-size: 1.3rem; // Increased from 1.1rem
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.infoContent p {
+  margin: 0;
+  font-family: $font-main;
+  color: $subtext-color;
+}
+
+.appointmentDate {
+  font-weight: $font-weight-medium;
+  color: $dark-text !important;
+  font-size: 1rem;
+}
+
+.appointmentTime {
+  font-weight: $font-weight-medium;
+  color: $primary-color !important;
+  font-size: 1.1rem;
+}
+
+.sessionDuration {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin: $spacing-xs 0 0 0;
+  font-style: italic;
+}
+
+.locationText {
+  font-weight: $font-weight-medium;
+  color: $dark-text !important;
+}
+
+.userAddress {
+  font-size: 0.9rem;
+  color: $subtext-color !important;
+  margin-top: $spacing-xs !important;
+}
+
+.addressNote {
+  font-size: 0.9rem;
+  color: $primary-color;
+  margin-top: $spacing-xs;
+  font-style: italic;
+}
+
+.paymentAmount {
+  font-weight: $font-weight-medium;
+  color: $dark-text !important;
+  line-height: 1.4;
+}
+
+.amount {
+  color: $primary-color;
+  font-weight: $font-weight-bold;
+}
+
+.paymentAmount .amount:last-child {
+  font-size: 1.1rem;
+  color: $dark-text;
+  font-weight: $font-weight-bold;
+}
+
+.paymentSummary {
+  border-top: 1px solid $border-light;
+  padding-top: $spacing-md;
+  margin-bottom: $spacing-md;
+  
+  h3 {
+    font-size: 1.3rem; // Increased from 1.1rem
+    font-weight: $font-weight-semibold;
+    font-family: $font-main;
+    color: $dark-text;
+    margin: 0 0 $spacing-sm 0;
+  }
+}
+
+.paymentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.paymentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm;
+  background: $muted-bg;
+  border-radius: 6px;
+}
+
+.paymentItemRemaining {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm;
+  background: $muted-bg;
+  border-radius: 6px;
+  margin-top: $spacing-sm;
+}
+
+.paymentLabel {
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  font-family: $font-main;
+}
+
+.paymentLabelRemaining {
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  font-family: $font-main;
+}
+
+.paymentValue {
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+  font-family: $font-main;
+}
+
+.paymentValueRemaining {
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+  font-size: 1rem;
+  font-family: $font-main;
+}
+
+// Compact Service Booked Styles
+.serviceItemCompact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xs $spacing-sm;
+  background: $muted-bg;
+  border-radius: 4px;
+  margin-bottom: $spacing-xs;
+}
+
+.serviceNameCompact {
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  font-family: $font-main;
+  font-size: 1.2rem; // Increased from 1rem
+  flex: 1;
+}
+
+.servicePriceCompact {
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+  font-family: $font-main;
+  font-size: 1.2rem; // Increased from 1rem
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+}
+
+.addOnsSectionCompact {
+  margin-top: $spacing-xs;
+}
+
+.addOnsListCompact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.addOnItemCompact {
+  padding: 2px $spacing-sm;
+  border-radius: 3px;
+  margin-bottom: 2px;
+  font-size: 1.1rem; // Increased from 0.9rem
+  color: $dark-text;
+  font-family: $font-main;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.addOnPriceCompact {
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+  font-size: 1.1rem; // Increased from 0.9rem
+}
+
+
+.serviceItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: $spacing-sm;
+  background: $muted-bg;
+  border-radius: 6px;
+  gap: $spacing-sm;
+}
+
+.addOnsSection {
+  margin-top: $spacing-sm;
+  
+  h4 {
+    font-size: 0.95rem;
+    font-weight: $font-weight-semibold;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+    font-family: $font-main;
+  }
+}
+
+.addOnsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.addOnItem {
+  padding: $spacing-xs $spacing-sm;
+  background: $bg-white;
+  border-radius: 4px;
+  margin-bottom: $spacing-xs;
+  font-size: 0.9rem;
+  color: $dark-text;
+  font-family: $font-main;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.addOnPrice {
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+}
+
+.serviceName {
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+  font-family: $font-main;
+  flex: 1;
+}
+
+.servicePrice {
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  font-family: $font-main;
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+}
+
+.nextSteps {
+  border-top: 1px solid $border-light;
+  padding-top: $spacing-md;
+}
+
+.nextSteps h3 {
+  font-size: 1.3rem; // Increased from 1.1rem
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.stepsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stepsList li {
+  padding: $spacing-xs 0;
+  color: $subtext-color;
+  font-family: $font-main;
+  position: relative;
+  padding-left: $spacing-lg;
+
+  &::before {
+    content: '•';
+    color: $primary-color;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+}
+
+.actionButtons {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.primaryButton,
+.secondaryButton {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  transition: all 0.2s ease;
+  display: inline-block;
+  min-width: 180px;
+  text-align: center;
+}
+
+.primaryButton {
+  background: $primary-color;
+  color: $light-text;
+  border: 1px solid $primary-color;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    border-color: darken($primary-color, 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.secondaryButton {
+  background: $bg-white;
+  color: $primary-color;
+  border: 1px solid $primary-color;
+
+  &:hover {
+    background: $primary-color;
+    color: $light-text;
+    transform: translateY(-1px);
+  }
+}
+
+.contactInfo {
+  text-align: center;
+  color: $subtext-color;
+  font-family: $font-main;
+}
+
+.contactInfo p {
+  margin: $spacing-xs 0;
+}
+
+.contactLink {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding: $spacing-lg $spacing-md;
+  }
+
+  .bookingDetailsCard {
+    padding: $spacing-lg;
+  }
+
+  .successTitle {
+    font-size: 2rem;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .infoItem {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .infoIcon {
+    margin-top: 0;
+    margin-bottom: $spacing-xs;
+  }
+}

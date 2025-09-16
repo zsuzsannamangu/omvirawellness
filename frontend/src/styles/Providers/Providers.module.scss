@@ -6,7 +6,7 @@
 
 // Hero Section
 .hero {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, $dark-text 0%, #2d2d2d 100%);
   padding: $spacing-xxl 2rem;
   color: $light-text;
   
@@ -78,7 +78,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a1a1a;
+  color: $dark-text;
   cursor: pointer;
   transition: all 0.3s ease;
   
@@ -651,7 +651,7 @@
   width: 100%;
   height: auto;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px $shadow-color;
   object-fit: cover;
   transition: transform 0.3s ease;
   
@@ -902,7 +902,7 @@
 // Mission/Vision Section
 .missionSection {
   padding: $spacing-xxl 2rem $spacing-xxl 2rem;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, $dark-text 0%, #2d2d2d 100%);
   color: $light-text;
   margin-top: 100px;
   

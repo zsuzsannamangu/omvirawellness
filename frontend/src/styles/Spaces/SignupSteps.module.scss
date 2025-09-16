@@ -62,7 +62,7 @@
 
 .textInput {
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -74,7 +74,7 @@
   }
   
   &::placeholder {
-    color: #adb5bd;
+    color: $signup-color;
   }
 }
 
@@ -96,7 +96,7 @@
   }
   
   &:disabled {
-    background: #adb5bd;
+    background: $signup-color;
     cursor: not-allowed;
   }
 }
@@ -113,7 +113,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: #e9ecef;
+    background: $section-bg-3;
   }
   
   span {
@@ -134,7 +134,7 @@
   justify-content: center;
   gap: $spacing-sm;
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
   color: $dark-text;
@@ -179,7 +179,7 @@
   background: transparent;
   color: $subtext-color;
   padding: $spacing-md $spacing-lg;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 500;
@@ -203,7 +203,7 @@
 
 .card {
   background: $light-text;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 12px;
   padding: $spacing-lg;
   cursor: pointer;
@@ -213,7 +213,7 @@
   &:hover {
     border-color: $primary-color;
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px $shadow-color;
   }
   
   &.selected {
@@ -277,7 +277,7 @@
 }
 
 .passwordRequirements {
-  background: #f8f9fa;
+  background: $section-bg-1;
   padding: $spacing-md;
   border-radius: 8px;
   margin-top: $spacing-sm;
@@ -333,7 +333,7 @@
 
 .amenityButton {
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
   color: $dark-text;
@@ -367,7 +367,7 @@
   align-items: center;
   justify-content: space-between;
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
 }
@@ -401,7 +401,7 @@
 
 .timeSelect {
   padding: $spacing-sm $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 6px;
   font-size: 0.9rem;
   background: $light-text;
@@ -423,7 +423,7 @@
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   padding: $spacing-md;
   background: $light-text;
@@ -444,7 +444,7 @@
   width: 100px;
   
   &::placeholder {
-    color: #adb5bd;
+    color: $signup-color;
   }
 }
 
@@ -455,7 +455,7 @@
 
 .selectInput {
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -469,7 +469,7 @@
 }
 
 .pricingNote {
-  background: #f8f9fa;
+  background: $section-bg-1;
   padding: $spacing-md;
   border-radius: 8px;
   margin-top: $spacing-sm;
@@ -497,9 +497,9 @@
   align-items: center;
   justify-content: center;
   padding: $spacing-xl;
-  border: 2px dashed #e9ecef;
+  border: 2px dashed $section-bg-3;
   border-radius: 12px;
-  background: #f8f9fa;
+  background: $section-bg-1;
   cursor: pointer;
   transition: all 0.2s ease;
   
@@ -564,7 +564,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
+  background: $overlay-dark;
   color: $light-text;
   border: none;
   cursor: pointer;
@@ -579,7 +579,7 @@
 }
 
 .photoTips {
-  background: #f8f9fa;
+  background: $section-bg-1;
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-lg;
@@ -635,7 +635,7 @@
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-md;
-  border: 1px solid #e9ecef;
+  border: 1px solid $section-bg-3;
   
   h3 {
     color: $dark-text;
@@ -661,7 +661,7 @@
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-md;
-  border: 1px solid #e9ecef;
+  border: 1px solid $section-bg-3;
   
   h3 {
     color: $dark-text;
@@ -671,7 +671,7 @@
 }
 
 .pricingCard {
-  background: #f8f9fa;
+  background: $section-bg-1;
   padding: $spacing-md;
   border-radius: 6px;
 }
@@ -728,7 +728,7 @@
 
 .spaceTypeCard {
   padding: $spacing-lg;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -770,7 +770,7 @@
   align-items: center;
   gap: $spacing-sm;
   padding: $spacing-sm;
-  border: 1px solid #e9ecef;
+  border: 1px solid $section-bg-3;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -808,7 +808,7 @@
 .priceInput {
   width: 100%;
   padding: $spacing-md $spacing-md $spacing-md 2rem;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -831,11 +831,11 @@
 .selectInput {
   width: 100%;
   padding: $spacing-md;
-  border: 2px solid #e9ecef;
+  border: 2px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
-  background: white;
+  background: $bg-white;
   cursor: pointer;
   
   &:focus {
@@ -858,7 +858,7 @@
   align-items: center;
   justify-content: center;
   padding: $spacing-xl;
-  border: 2px dashed #e9ecef;
+  border: 2px dashed $section-bg-3;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -914,8 +914,8 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+  background: $overlay-dark;
+  color: $bg-white;
   border: none;
   cursor: pointer;
   display: flex;

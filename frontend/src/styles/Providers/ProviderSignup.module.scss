@@ -2,7 +2,7 @@
 
 .signupPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, $section-bg-1 0%, $section-bg-3 100%);
   font-family: $font-main;
 }
 
@@ -12,7 +12,7 @@
   align-items: center;
   padding: $spacing-lg $spacing-xl;
   background: $light-text;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px $shadow-color;
 }
 
 .logo {
@@ -60,7 +60,7 @@
 .progressBar {
   flex: 1;
   height: 8px;
-  background: #e9ecef;
+  background: $section-bg-3;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -82,7 +82,7 @@
   background: $light-text;
   border-radius: 16px;
   padding: $spacing-xl;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px $shadow-color;
   min-height: 500px;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .formContainer {
-  background: white;
+  background: $bg-white;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba($primary-color, 0.15);
   width: 100%;
@@ -131,7 +131,7 @@
   }
   
   &.active {
-    background: white;
+    background: $bg-white;
     color: $dark-text;
     font-weight: 600;
     
@@ -152,8 +152,8 @@
   display: flex;
   align-items: center;
   padding: $spacing-md;
-  background: white;
-  border-bottom: 1px solid #e5e5e5;
+  background: $bg-white;
+  border-bottom: 1px solid $border-light;
 }
 
 .backButton {
@@ -179,7 +179,7 @@
 .progressBar {
   flex: 1;
   height: 4px;
-  background: #e5e5e5;
+  background: $border-light;
   border-radius: 2px;
   overflow: hidden;
 }
@@ -251,7 +251,7 @@
   border-radius: 12px;
   font-family: $font-main;
   font-size: 1rem;
-  background: white;
+  background: $bg-white;
   transition: all 0.3s ease;
   
   &:focus {
@@ -339,7 +339,7 @@
 }
 
 .dividerText {
-  background: white;
+  background: $bg-white;
   padding: 0 1.5rem;
   color: $subtext-color;
   font-family: $font-main;
@@ -358,7 +358,7 @@
 .socialButton {
   width: 100%;
   padding: 0.75rem 1.25rem;
-  background: white;
+  background: $bg-white;
   border: 2px solid rgba($primary-color, 0.15);
   border-radius: 8px;
   font-family: $font-main;
