@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Link from 'next/link';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 // Dashboard sections
@@ -62,7 +63,6 @@ export default function ClientDashboard() {
     ],
     favorites: [
       { id: 'providers', label: 'Saved Providers' },
-      { id: 'services', label: 'Saved Services' },
     ],
     payments: [
       { id: 'methods', label: 'Payment Methods' },
@@ -166,7 +166,9 @@ export default function ClientDashboard() {
           </div>
           
           <div className={styles.topNavRight}>
-            <button className={styles.findProviderBtn}>Find a Provider</button>
+            <Link href="/search" className={styles.findProviderBtn}>
+              Book a Provider
+            </Link>
             <input
               type="file"
               ref={fileInputRef}

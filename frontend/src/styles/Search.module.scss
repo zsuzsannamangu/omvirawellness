@@ -259,10 +259,11 @@
 .providerCard {
   background: $bg-white;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible; // Allow tooltips to show outside the card
   box-shadow: 0 2px 8px $shadow-color;
   transition: all 0.2s ease;
   cursor: pointer;
+  position: relative;
   
   &:hover {
     transform: translateY(-2px);
@@ -301,6 +302,75 @@
   font-weight: 500;
 }
 
+.providerNameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+}
+
+.favoriteButton {
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: $accent-color;
+  font-size: 1.1rem;
+  padding: $spacing-xs;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.1);
+    color: $favorite-red; // Red color for hover when not favorited
+  }
+
+  &.favorited {
+    color: $favorite-red; // Red color when favorited
+    
+    &:hover {
+      color: $favorite-red; // Darker red on hover when already favorited
+    }
+  }
+
+  // Custom tooltip styling
+  &[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: $bg-white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 9999;
+    margin-bottom: 8px;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    margin-bottom: 3px;
+    pointer-events: none;
+    z-index: 9999;
+  }
+}
+
 .providerInfo {
   padding: $spacing-md;
 }
@@ -310,7 +380,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: $dark-text;
-  margin: 0 0 $spacing-xs 0;
+  margin: 0;
 }
 
 .providerServices {

@@ -184,12 +184,80 @@
   border-bottom: 1px solid $border-light;
 }
 
+.providerNameRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+}
+
 .providerName {
   font-size: 2rem;
   font-weight: $font-weight-bold;
   font-family: $font-heading;
   color: $dark-text;
-  margin: 0 0 $spacing-xs 0;
+  margin: 0;
+}
+
+.favoriteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $accent-color;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  padding: $spacing-xs;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &:hover {
+    color: $favorite-red; // Red color for hover when not favorited
+    transform: scale(1.1);
+  }
+
+  &.favorited {
+    color: $favorite-red; // Red color when favorited
+    
+    &:hover {
+      color: $favorite-red; // Darker red on hover when already favorited
+    }
+  }
+
+  // Custom tooltip styling
+  &[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: $bg-white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 99999;
+    margin-top: 8px;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &[title]:hover::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+    margin-top: 3px;
+    pointer-events: none;
+    z-index: 99999;
+  }
 }
 
 .rating {

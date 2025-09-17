@@ -23,7 +23,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                   <p className={styles.messageTime}>2 hours ago</p>
                 </div>
                 <div className={styles.messageActions}>
-                  <button className={styles.viewBtn}>View Details</button>
+                  <button className={styles.viewBtn}>View</button>
                 </div>
               </div>
 
@@ -35,7 +35,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                   <p className={styles.messageTime}>1 day ago</p>
                 </div>
                 <div className={styles.messageActions}>
-                  <button className={styles.viewBtn}>View Details</button>
+                  <button className={styles.viewBtn}>View</button>
                 </div>
               </div>
 

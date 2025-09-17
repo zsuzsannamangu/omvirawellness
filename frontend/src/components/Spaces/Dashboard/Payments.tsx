@@ -110,7 +110,7 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
                 </div>
                 <div className={styles.payoutActions}>
                   <button className={styles.actionBtn}><FaDownload /> Download</button>
-                  <button className={styles.viewBtn}><FaEye /> View Details</button>
+                  <button className={styles.viewBtn}><FaEye /> View</button>
                 </div>
               </div>
 
@@ -128,7 +128,7 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
                 </div>
                 <div className={styles.payoutActions}>
                   <button className={styles.actionBtn}><FaDownload /> Download</button>
-                  <button className={styles.viewBtn}><FaEye /> View Details</button>
+                  <button className={styles.viewBtn}><FaEye /> View</button>
                 </div>
               </div>
 
@@ -146,7 +146,7 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
                 </div>
                 <div className={styles.payoutActions}>
                   <button className={styles.actionBtn}><FaDownload /> Download</button>
-                  <button className={styles.viewBtn}><FaEye /> View Details</button>
+                  <button className={styles.viewBtn}><FaEye /> View</button>
                 </div>
               </div>
             </div>

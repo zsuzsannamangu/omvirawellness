@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { FaCalendarAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/ProviderDetail.module.scss';
 
 // Sample provider data
@@ -168,6 +168,7 @@ export default function ProviderDetailPage() {
   const [currentReviewPage, setCurrentReviewPage] = useState(1);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false); // Closed by default, opens when clicked
   const [currentMonth, setCurrentMonth] = useState(new Date(2024, 11, 1)); // December 2024
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
     if (params?.id) {
@@ -178,6 +179,16 @@ export default function ProviderDetailPage() {
       }
     }
   }, [params?.id]);
+
+  // Load favorites from localStorage on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFavorites = localStorage.getItem('favoriteProviders');
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+    }
+  }, []);
 
   // Close calendar when clicking outside
   useEffect(() => {
@@ -348,6 +359,23 @@ export default function ProviderDetailPage() {
     });
   };
 
+  const toggleFavorite = () => {
+    if (!provider) return;
+    
+    setFavorites(prev => {
+      const newFavorites = prev.includes(provider.id) 
+        ? prev.filter(id => id !== provider.id)
+        : [...prev, provider.id];
+      
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('favoriteProviders', JSON.stringify(newFavorites));
+      }
+      
+      return newFavorites;
+    });
+  };
+
   return (
     <div className={styles.providerDetailPage}>
       {/* Header */}
@@ -402,7 +430,16 @@ export default function ProviderDetailPage() {
           </div>
         </div>
         <div className={styles.providerMainSection}>
-          <h1 className={styles.providerName}>{provider.name}</h1>
+          <div className={styles.providerNameRow}>
+            <h1 className={styles.providerName}>{provider.name}</h1>
+            <button
+              className={`${styles.favoriteButton} ${favorites.includes(provider.id) ? styles.favorited : ''}`}
+              onClick={toggleFavorite}
+              title={favorites.includes(provider.id) ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              {favorites.includes(provider.id) ? <FaHeart /> : <FaRegHeart />}
+            </button>
+          </div>
           <div className={styles.rating}>
             <span className={styles.stars}>★★★★★</span>
             <span className={styles.ratingText}>{provider.rating} ({provider.reviewCount} reviews)</span>
@@ -652,13 +689,22 @@ export default function ProviderDetailPage() {
               </div>
             )}
 
-             <Link
-               href={`/search/${params?.id}/book?service=${selectedService?.name}&date=${selectedDate}&time=${selectedSlot}`}
-               className={`${styles.bookButton} ${(!selectedService || !selectedDate || !selectedSlot) ? styles.disabled : ''}`}
-               style={{ textDecoration: 'none', display: 'block' }}
-             >
-               Book Now
-             </Link>
+            {(!selectedService || !selectedDate || !selectedSlot) ? (
+              <button
+                className={`${styles.bookButton} ${styles.disabled}`}
+                disabled
+              >
+                Book Now
+              </button>
+            ) : (
+              <Link
+                href={`/search/${params?.id}/book?service=${selectedService?.name}&date=${selectedDate}&time=${selectedSlot}`}
+                className={styles.bookButton}
+                style={{ textDecoration: 'none', display: 'block' }}
+              >
+                Book Now
+              </Link>
+            )}
 
             <div className={styles.bookingInfo}>
               <p>• Free cancellation up to 24 hours before</p>

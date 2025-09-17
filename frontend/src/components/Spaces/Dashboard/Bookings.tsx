@@ -28,7 +28,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                 <div className={styles.compactActions}>
                   <button className={styles.confirmBtn}>Confirm</button>
                   <button className={styles.declineBtn}>Decline</button>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                 </div>
               </div>
 
@@ -45,7 +45,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                 <div className={styles.compactActions}>
                   <button className={styles.confirmBtn}>Confirm</button>
                   <button className={styles.declineBtn}>Decline</button>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                 </div>
               </div>
 
@@ -62,7 +62,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                 <div className={styles.compactActions}>
                   <button className={styles.confirmBtn}>Confirm</button>
                   <button className={styles.declineBtn}>Decline</button>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   <p className={styles.compactClient}>Sarah Johnson • 2:00 PM - 3:00 PM • $120</p>
                 </div>
                 <div className={styles.compactActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
@@ -99,7 +99,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   <p className={styles.compactClient}>Mike Chen • 10:00 AM - 11:00 AM • $80</p>
                 </div>
                 <div className={styles.compactActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
@@ -114,7 +114,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   <p className={styles.compactClient}>Emma Wilson • 7:00 PM - 8:00 PM • $60</p>
                 </div>
                 <div className={styles.compactActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>

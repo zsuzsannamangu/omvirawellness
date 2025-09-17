@@ -25,7 +25,7 @@ export default function Spaces({ activeSubmenu }: SpacesProps) {
                   <p className={styles.compactClient}>Zen Wellness Center • 9:00 AM - 11:00 AM • $150</p>
                 </div>
                 <div className={styles.compactActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>
@@ -40,7 +40,7 @@ export default function Spaces({ activeSubmenu }: SpacesProps) {
                   <p className={styles.compactClient}>Peaceful Space • 2:00 PM - 4:00 PM • $80</p>
                 </div>
                 <div className={styles.compactActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.messageBtn}>Message</button>
                 </div>
               </div>

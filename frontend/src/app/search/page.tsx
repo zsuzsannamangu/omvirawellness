@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/Search.module.scss';
 
 // Sample providers data
@@ -131,8 +132,19 @@ export default function SearchPage() {
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [sortBy, setSortBy] = useState('Most Relevant');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [favorites, setFavorites] = useState<number[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Load favorites from localStorage on component mount
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFavorites = localStorage.getItem('favoriteProviders');
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+    }
+  }, []);
 
   // Handle URL parameters on component mount
   React.useEffect(() => {
@@ -177,6 +189,24 @@ export default function SearchPage() {
         ? prev.filter(c => c !== category)
         : [...prev, category]
     );
+  };
+
+  const toggleFavorite = (providerId: number, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    setFavorites(prev => {
+      const newFavorites = prev.includes(providerId) 
+        ? prev.filter(id => id !== providerId)
+        : [...prev, providerId];
+      
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('favoriteProviders', JSON.stringify(newFavorites));
+      }
+      
+      return newFavorites;
+    });
   };
 
   return (
@@ -304,7 +334,16 @@ export default function SearchPage() {
                 </div>
                 
                 <div className={styles.providerInfo}>
-                  <h3 className={styles.providerName}>{provider.name}</h3>
+                  <div className={styles.providerNameRow}>
+                    <h3 className={styles.providerName}>{provider.name}</h3>
+                    <button
+                      className={`${styles.favoriteButton} ${favorites.includes(provider.id) ? styles.favorited : ''}`}
+                      onClick={(e) => toggleFavorite(provider.id, e)}
+                      title={favorites.includes(provider.id) ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      {favorites.includes(provider.id) ? <FaHeart /> : <FaRegHeart />}
+                    </button>
+                  </div>
                   <p className={styles.providerServices}>{provider.services.join(' • ')}</p>
                   <p className={styles.providerLocation}>{provider.location}</p>
                   <div className={styles.providerRating}>

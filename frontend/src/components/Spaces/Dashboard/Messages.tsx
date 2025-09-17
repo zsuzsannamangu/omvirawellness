@@ -104,7 +104,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                   <p className={styles.confirmationTime}>Sent 2 hours ago</p>
                 </div>
                 <div className={styles.confirmationActions}>
-                  <button className={styles.viewBtn}>View Details</button>
+                  <button className={styles.viewBtn}>View</button>
                 </div>
               </div>
 
@@ -121,7 +121,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                   <p className={styles.confirmationTime}>Sent 1 day ago</p>
                 </div>
                 <div className={styles.confirmationActions}>
-                  <button className={styles.viewBtn}>View Details</button>
+                  <button className={styles.viewBtn}>View</button>
                 </div>
               </div>
 
@@ -138,7 +138,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                   <p className={styles.confirmationTime}>Sent 3 days ago</p>
                 </div>
                 <div className={styles.confirmationActions}>
-                  <button className={styles.viewBtn}>View Details</button>
+                  <button className={styles.viewBtn}>View</button>
                 </div>
               </div>
             </div>

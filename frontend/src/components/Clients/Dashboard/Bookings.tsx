@@ -258,7 +258,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   </div>
                 </div>
                 <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.bookAgainBtn}>Book Again</button>
                 </div>
               </div>
@@ -278,7 +278,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   </div>
                 </div>
                 <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>View Details</button>
+                  <button className={styles.actionBtn}>View</button>
                   <button className={styles.bookAgainBtn}>Book Again</button>
                 </div>
               </div>
