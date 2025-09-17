@@ -1,13 +1,18 @@
 'use client';
 
-import { FaPlus, FaEdit, FaTrash, FaClock, FaDollarSign, FaUpload, FaFileAlt, FaCheckCircle, FaStar } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaPlus, FaEdit, FaTrash, FaClock, FaDollarSign, FaUpload, FaFileAlt, FaCheckCircle, FaStar, FaTimes, FaVideo, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import AvailabilityManager from './AvailabilityManager';
 
 interface ProfileProps {
   activeSubmenu: string;
 }
 
 export default function Profile({ activeSubmenu }: ProfileProps) {
+  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
+  const [editingService, setEditingService] = useState<any>(null);
+
   const renderContent = () => {
     switch (activeSubmenu) {
       case 'services':
@@ -18,7 +23,10 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
             <div className={styles.servicesContainer}>
               <div className={styles.servicesHeader}>
                 <h3 className={styles.servicesSubtitle}>Your Services</h3>
-                <button className={styles.addServiceBtn}>
+                <button 
+                  className={styles.addServiceBtn}
+                  onClick={() => setShowAddServiceModal(true)}
+                >
                   <FaPlus /> Add New Service
                 </button>
               </div>
@@ -34,7 +42,27 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                     </div>
                   </div>
                   <div className={styles.serviceActions}>
-                    <button className={styles.editBtn}><FaEdit /></button>
+                    <button 
+                      className={styles.editBtn}
+                      onClick={() => {
+                        setEditingService({
+                          id: '1',
+                          name: 'Massage Therapy',
+                          description: 'Deep tissue and Swedish massage therapy sessions',
+                          duration: 60,
+                          basePrice: '120',
+                          locationOptions: {
+                            online: false,
+                            inPerson: true
+                          },
+                          addOns: [
+                            { id: 1, name: 'Hot Stone Therapy', price: '25' },
+                            { id: 2, name: 'Aromatherapy', price: '15' }
+                          ]
+                        });
+                        setShowAddServiceModal(true);
+                      }}
+                    ><FaEdit /></button>
                     <button className={styles.deleteBtn}><FaTrash /></button>
                   </div>
                 </div>
@@ -49,7 +77,26 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                     </div>
                   </div>
                   <div className={styles.serviceActions}>
-                    <button className={styles.editBtn}><FaEdit /></button>
+                    <button 
+                      className={styles.editBtn}
+                      onClick={() => {
+                        setEditingService({
+                          id: '2',
+                          name: 'Yoga Class',
+                          description: 'Hatha and Vinyasa yoga classes for all levels',
+                          duration: 45,
+                          basePrice: '80',
+                          locationOptions: {
+                            online: true,
+                            inPerson: true
+                          },
+                          addOns: [
+                            { id: 1, name: 'Extended Session', price: '20' }
+                          ]
+                        });
+                        setShowAddServiceModal(true);
+                      }}
+                    ><FaEdit /></button>
                     <button className={styles.deleteBtn}><FaTrash /></button>
                   </div>
                 </div>
@@ -64,7 +111,24 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                     </div>
                   </div>
                   <div className={styles.serviceActions}>
-                    <button className={styles.editBtn}><FaEdit /></button>
+                    <button 
+                      className={styles.editBtn}
+                      onClick={() => {
+                        setEditingService({
+                          id: '3',
+                          name: 'Meditation Session',
+                          description: 'Guided meditation and mindfulness sessions',
+                          duration: 30,
+                          basePrice: '60',
+                          locationOptions: {
+                            online: true,
+                            inPerson: false
+                          },
+                          addOns: []
+                        });
+                        setShowAddServiceModal(true);
+                      }}
+                    ><FaEdit /></button>
                     <button className={styles.deleteBtn}><FaTrash /></button>
                   </div>
                 </div>
@@ -74,125 +138,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         );
       
       case 'availability':
-        return (
-          <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Availability</h2>
-            
-            <div className={styles.availabilityContainer}>
-              <div className={styles.availabilitySettings}>
-                <h3 className={styles.availabilitySubtitle}>Working Hours</h3>
-                <div className={styles.hoursGrid}>
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Monday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="09:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="17:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" defaultChecked />
-                      Available
-                    </label>
-                  </div>
-
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Tuesday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="09:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="17:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" defaultChecked />
-                      Available
-                    </label>
-                  </div>
-
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Wednesday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="09:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="17:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" defaultChecked />
-                      Available
-                    </label>
-                  </div>
-
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Thursday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="09:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="17:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" defaultChecked />
-                      Available
-                    </label>
-                  </div>
-
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Friday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="09:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="17:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" defaultChecked />
-                      Available
-                    </label>
-                  </div>
-
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Saturday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="10:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="15:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" />
-                      Available
-                    </label>
-                  </div>
-
-                  <div className={styles.dayHours}>
-                    <h4 className={styles.dayName}>Sunday</h4>
-                    <div className={styles.timeInputs}>
-                      <input type="time" className={styles.timeInput} defaultValue="10:00" />
-                      <span className={styles.timeSeparator}>to</span>
-                      <input type="time" className={styles.timeInput} defaultValue="15:00" />
-                    </div>
-                    <label className={styles.checkboxLabel}>
-                      <input type="checkbox" />
-                      Available
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.blockedTimes}>
-                <h3 className={styles.blockedTitle}>Blocked Times</h3>
-                <div className={styles.blockedList}>
-                  <div className={styles.blockedItem}>
-                    <div className={styles.blockedInfo}>
-                      <h4 className={styles.blockedName}>Vacation</h4>
-                      <p className={styles.blockedDate}>Dec 25 - Jan 2, 2025</p>
-                    </div>
-                    <button className={styles.removeBlockedBtn}><FaTrash /></button>
-                  </div>
-                </div>
-                <button className={styles.addBlockedBtn}>
-                  <FaPlus /> Add Blocked Time
-                </button>
-              </div>
-            </div>
-          </div>
-        );
+        return <AvailabilityManager />;
       
       case 'bio':
         return (
@@ -363,6 +309,261 @@ I'm committed to continuing education and staying current with the latest techni
   return (
     <div className={styles.dashboardSection}>
       {renderContent()}
+      {showAddServiceModal && (
+        <AddServiceModal 
+          onClose={() => {
+            setShowAddServiceModal(false);
+            setEditingService(null);
+          }} 
+          editingService={editingService}
+        />
+      )}
+    </div>
+  );
+}
+
+interface AddServiceModalProps {
+  onClose: () => void;
+  editingService?: any;
+}
+
+function AddServiceModal({ onClose, editingService }: AddServiceModalProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [serviceData, setServiceData] = useState({
+    name: '',
+    description: '',
+    duration: 60,
+    basePrice: '',
+    locationOptions: {
+      online: false,
+      inPerson: false
+    },
+    addOns: [
+      { id: 1, name: '', price: '' }
+    ]
+  });
+
+  // Initialize form data when component mounts or editingService changes
+  React.useEffect(() => {
+    if (editingService) {
+      setServiceData({
+        name: editingService.name || '',
+        description: editingService.description || '',
+        duration: editingService.duration || 60,
+        basePrice: editingService.basePrice || '',
+        locationOptions: editingService.locationOptions || {
+          online: false,
+          inPerson: false
+        },
+        addOns: editingService.addOns?.length > 0 ? editingService.addOns : [
+          { id: 1, name: '', price: '' }
+        ]
+      });
+    }
+    setIsLoading(false);
+  }, [editingService]);
+
+  const handleInputChange = (field: string, value: any) => {
+    setServiceData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleLocationChange = (location: string, checked: boolean) => {
+    setServiceData(prev => ({
+      ...prev,
+      locationOptions: {
+        ...prev.locationOptions,
+        [location]: checked
+      }
+    }));
+  };
+
+  const handleAddOnChange = (index: number, field: string, value: string) => {
+    setServiceData(prev => ({
+      ...prev,
+      addOns: prev.addOns.map((addOn, i) => 
+        i === index ? { ...addOn, [field]: value } : addOn
+      )
+    }));
+  };
+
+  const addNewAddOn = () => {
+    setServiceData(prev => ({
+      ...prev,
+      addOns: [...prev.addOns, { id: prev.addOns.length + 1, name: '', price: '' }]
+    }));
+  };
+
+  const removeAddOn = (index: number) => {
+    setServiceData(prev => ({
+      ...prev,
+      addOns: prev.addOns.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log('Service data:', serviceData);
+    onClose();
+  };
+
+  // Don't render until loading is complete
+  if (isLoading) {
+    return null;
+  }
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
+          <h3>{editingService ? 'Edit Service' : 'Add New Service'}</h3>
+          <button className={styles.closeBtn} onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className={styles.serviceForm}>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Service Name *</label>
+              <input
+                type="text"
+                value={serviceData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className={styles.formInput}
+                placeholder="e.g., Private Yoga Session"
+                required
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Duration (minutes) *</label>
+              <select
+                value={serviceData.duration}
+                onChange={(e) => handleInputChange('duration', parseInt(e.target.value))}
+                className={styles.formSelect}
+              >
+                <option value={30}>30 minutes</option>
+                <option value={45}>45 minutes</option>
+                <option value={60}>60 minutes</option>
+                <option value={75}>75 minutes</option>
+                <option value={90}>90 minutes</option>
+                <option value={120}>120 minutes</option>
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Description *</label>
+            <textarea
+              value={serviceData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              className={styles.formTextarea}
+              rows={3}
+              placeholder="Describe your service in detail..."
+              required
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Base Price *</label>
+            <div className={styles.priceInput}>
+              <span className={styles.dollarSign}>$</span>
+              <input
+                type="number"
+                value={serviceData.basePrice}
+                onChange={(e) => handleInputChange('basePrice', e.target.value)}
+                className={styles.formInput}
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Location Options (Check all that apply) *</label>
+            <div className={styles.locationOptions}>
+              <label className={styles.locationOption}>
+                <input
+                  type="checkbox"
+                  checked={serviceData.locationOptions.online}
+                  onChange={(e) => handleLocationChange('online', e.target.checked)}
+                />
+                <span className={styles.locationIcon}><FaVideo /></span>
+                <span className={styles.locationText}>Online</span>
+              </label>
+              
+              <label className={styles.locationOption}>
+                <input
+                  type="checkbox"
+                  checked={serviceData.locationOptions.inPerson}
+                  onChange={(e) => handleLocationChange('inPerson', e.target.checked)}
+                />
+                <span className={styles.locationIcon}><FaMapMarkerAlt /></span>
+                <span className={styles.locationText}>In-Person</span>
+              </label>
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Add-ons</label>
+            <div className={styles.addOnsList}>
+              {serviceData.addOns.map((addOn, index) => (
+                <div key={addOn.id} className={styles.addOnItem}>
+                  <div className={styles.addOnInputs}>
+                    <input
+                      type="text"
+                      value={addOn.name}
+                      onChange={(e) => handleAddOnChange(index, 'name', e.target.value)}
+                      className={styles.formInput}
+                      placeholder="Add-on name"
+                    />
+                    <div className={styles.priceInput}>
+                      <span className={styles.dollarSign}>$</span>
+                      <input
+                        type="number"
+                        value={addOn.price}
+                        onChange={(e) => handleAddOnChange(index, 'price', e.target.value)}
+                        className={styles.formInput}
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.removeAddOnBtn}
+                    onClick={() => removeAddOn(index)}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className={styles.addAddOnBtn}
+                onClick={addNewAddOn}
+              >
+                <FaPlus /> Add Another Add-on
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.formActions}>
+            <button type="button" className={styles.cancelBtn} onClick={onClose}>
+              Cancel
+            </button>
+            <button type="submit" className={styles.saveBtn}>
+              {editingService ? 'Update Service' : 'Create Service'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

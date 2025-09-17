@@ -151,7 +151,7 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
               <div className={styles.providersGrid}>
                 {favoriteProviders.map((provider) => (
                   <div key={provider.id} className={styles.providerCard}>
-                    <div className={styles.providerImage}>
+                    <div className={styles.providerImageContainer}>
                       <Image
                         src={provider.image}
                         alt={provider.name}

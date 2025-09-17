@@ -1,0 +1,92 @@
+@import '_variables';
+
+.bookingOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.bookButton {
+  background: $primary-color;
+  color: $bg-white;
+  border: none;
+  border-radius: 8px;
+  padding: $spacing-md $spacing-lg;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+
+  &:hover:not(.disabled) {
+    background: darken($primary-color, 10%);
+    transform: translateY(-1px);
+  }
+
+  &.disabled {
+    background: $disabled-button-grey;
+    color: $subtext-color;
+    cursor: not-allowed;
+    transform: none;
+    padding: $spacing-sm $spacing-md; // Use thinner padding like other buttons
+  }
+}
+
+.authButton {
+  background: $primary-color;
+  color: $bg-white;
+  border: none;
+  border-radius: 6px;
+  padding: $spacing-sm $spacing-md;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.guestButton {
+  background: $bg-white;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+  border-radius: 6px;
+  padding: $spacing-sm $spacing-md;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: block;
+  width: 100%;
+
+  &:hover {
+    background: $primary-color;
+    color: $bg-white;
+    transform: translateY(-1px);
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .bookingOptionsContainer {
+    gap: $spacing-xs;
+  }
+  
+  .bookButton,
+  .authButton,
+  .guestButton {
+    padding: $spacing-sm;
+    font-size: 0.9rem;
+  }
+}

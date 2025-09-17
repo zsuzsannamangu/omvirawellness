@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { FaCalendarAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/ProviderDetail.module.scss';
+import BookingOptions from '@/components/BookingOptions';
 
 // Sample provider data
 const getProviderData = (id: string) => {
@@ -169,6 +170,7 @@ export default function ProviderDetailPage() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false); // Closed by default, opens when clicked
   const [currentMonth, setCurrentMonth] = useState(new Date(2024, 11, 1)); // December 2024
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     if (params?.id) {
@@ -689,22 +691,14 @@ export default function ProviderDetailPage() {
               </div>
             )}
 
-            {(!selectedService || !selectedDate || !selectedSlot) ? (
-              <button
-                className={`${styles.bookButton} ${styles.disabled}`}
-                disabled
-              >
-                Book Now
-              </button>
-            ) : (
-              <Link
-                href={`/search/${params?.id}/book?service=${selectedService?.name}&date=${selectedDate}&time=${selectedSlot}`}
-                className={styles.bookButton}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                Book Now
-              </Link>
-            )}
+            <BookingOptions
+              isAuthenticated={isAuthenticated}
+              canBook={selectedService && selectedDate && selectedSlot}
+              bookingUrl={`/search/${params?.id}/book?service=${selectedService?.name}&date=${selectedDate}&time=${selectedSlot}`}
+              serviceName={selectedService?.name}
+              selectedDate={selectedDate}
+              selectedSlot={selectedSlot}
+            />
 
             <div className={styles.bookingInfo}>
               <p>• Free cancellation up to 24 hours before</p>

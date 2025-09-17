@@ -915,15 +915,22 @@
     }
   }
   
-  .providerImage {
-    width: 60px;
-    height: 60px;
+  .providerImageContainer {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: $primary-color;
+    overflow: hidden;
+    margin-bottom: $spacing-md;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: $spacing-md;
+  }
+
+  .providerImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
   
   .providerInitials {

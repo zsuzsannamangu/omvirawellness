@@ -1,0 +1,301 @@
+@import '_variables';
+
+// Review Modal Styles
+.reviewModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: $spacing-md;
+}
+
+.reviewModalContent {
+  background: $bg-white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.reviewModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-light;
+}
+
+.reviewModalTitle {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.reviewModalClose {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $section-bg-1;
+    color: $dark-text;
+  }
+}
+
+.reviewModalBody {
+  padding: $spacing-lg;
+}
+
+.reviewLayout {
+  display: flex;
+  gap: $spacing-xl;
+  align-items: flex-start;
+}
+
+.reviewLeftSection {
+  flex: 0 0 200px;
+  border-right: 1px solid $border-light;
+  padding-right: $spacing-lg;
+}
+
+.reviewRightSection {
+  flex: 1;
+}
+
+.reviewProviderInfo {
+  text-align: left;
+}
+
+.reviewProviderName {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.reviewServiceName {
+  font-size: 1rem;
+  color: $subtext-color;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.reviewPurchaseInfo {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin: 0;
+  font-style: italic;
+}
+
+.reviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.reviewSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.reviewLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.optionalText {
+  font-weight: 400;
+  color: $subtext-color;
+  font-size: 0.9rem;
+}
+
+.starsContainer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.starButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.1s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.star {
+  font-size: 1.75rem;
+  transition: color 0.2s ease;
+}
+
+.starFilled {
+  color: $stars-color;
+}
+
+.starEmpty {
+  color: $border-light;
+}
+
+.ratingText {
+  font-size: 1rem;
+  font-weight: 500;
+  color: $primary-color;
+  margin-left: $spacing-sm;
+}
+
+.reviewTextarea {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 2px solid $border-light;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $font-main;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  min-height: 80px;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &::placeholder {
+    color: $placeholder-grey;
+  }
+}
+
+.recommendationButtons {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.recommendButton {
+  padding: $spacing-xs $spacing-md;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  background: $bg-white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $subtext-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  text-align: center;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+.recommendButtonActive {
+  border-color: $primary-color;
+  background: $primary-color;
+  color: $bg-white;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    color: $light-text;
+  }
+}
+
+.reviewModalActions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.reviewCancelButton {
+  padding: $spacing-xs $spacing-md;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  background: $bg-white;
+  color: $subtext-color;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $subtext-color;
+    color: $dark-text;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.reviewSubmitButton {
+  padding: $spacing-xs $spacing-md;
+  border: none;
+  border-radius: 6px;
+  background: $primary-color;
+  color: $bg-white;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: darken($primary-color, 10%);
+  }
+
+  &:disabled {
+    background: $disabled-button-grey;
+    cursor: not-allowed;
+  }
+}
+
+// Mobile responsive design
+@media (max-width: 768px) {
+  .reviewModalContent {
+    max-width: 95vw;
+    margin: $spacing-sm;
+  }
+
+  .reviewLayout {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .reviewLeftSection {
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid $border-light;
+    padding-right: 0;
+    padding-bottom: $spacing-md;
+  }
+
+  .reviewProviderInfo {
+    text-align: center;
+  }
+}

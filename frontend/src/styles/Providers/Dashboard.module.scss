@@ -4,7 +4,7 @@
 .dashboard {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, $background-light 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, $background-light 0%, $bg-white 100%);
 }
 
 // Left Sidebar
@@ -331,7 +331,7 @@
 .content {
   flex: 1;
   padding: $spacing-lg;
-  background: linear-gradient(135deg, $background-light 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, $background-light 0%, $bg-white 100%);
 }
 
 // Dashboard Section
@@ -3590,5 +3590,342 @@
 
   &:hover {
     background: $border-light;
+  }
+}
+
+// Service Modal Styles
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-md;
+}
+
+.modalContent {
+  background: $bg-white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid $border-light;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $border-light;
+  background: $section-bg-1;
+  border-radius: 16px 16px 0 0;
+
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: $section-bg-1;
+    color: $dark-text;
+  }
+}
+
+.serviceForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+}
+
+// Compact form styling
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-sm;
+}
+
+.formGroup {
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin-bottom: $spacing-xs;
+}
+
+.formInput, .formSelect, .formTextarea {
+  width: 100%;
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: $bg-white;
+  color: $dark-text;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+  }
+
+  &::placeholder {
+    color: $subtext-color;
+  }
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.priceInput {
+  display: flex;
+  align-items: center;
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  padding: $spacing-xs $spacing-sm;
+  gap: $spacing-xs;
+
+  .dollarSign {
+    color: $subtext-color;
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .formInput {
+    border: none;
+    background: transparent;
+    padding: 0;
+    flex: 1;
+    font-size: 0.9rem;
+    color: $dark-text;
+    outline: none;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: $subtext-color;
+    }
+  }
+}
+
+.locationOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  margin-top: $spacing-xs;
+}
+
+.locationOption {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $section-bg-5;
+  }
+
+  input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:has(input:checked) {
+    border-color: $dark-text;
+    background: $section-bg-1;
+  }
+}
+
+.locationIcon {
+  color: $primary-color;
+  font-size: 0.9rem;
+  width: 16px;
+  text-align: center;
+}
+
+.locationText {
+  font-weight: 500;
+  color: $dark-text;
+  font-size: 0.9rem;
+}
+
+.addOnsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  margin-top: $spacing-xs;
+}
+
+.addOnItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs;
+  background: $section-bg-1;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+}
+
+.addOnInputs {
+  display: flex;
+  gap: $spacing-xs;
+  flex: 1;
+
+  .formInput {
+    flex: 2;
+    padding: $spacing-xs $spacing-sm;
+  }
+
+  .priceInput {
+    flex: 0 0 80px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 6px;
+    padding: $spacing-xs $spacing-sm;
+    gap: $spacing-xs;
+
+    .dollarSign {
+      color: $subtext-color;
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .formInput {
+      border: none;
+      background: transparent;
+      padding: 0;
+      flex: 1;
+      font-size: 0.9rem;
+      color: $dark-text;
+      outline: none;
+      width: auto;
+
+      &:focus {
+        box-shadow: none;
+      }
+
+      &::placeholder {
+        color: $subtext-color;
+      }
+    }
+  }
+}
+
+.removeAddOnBtn {
+  background: $primary-color;
+  color: $bg-white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.addAddOnBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: $section-bg-1;
+  border: 2px dashed $border-light;
+  border-radius: 6px;
+  color: $subtext-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+    background: lighten($primary-color, 45%);
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.saveBtn {
+  background: $primary-color;
+  color: $bg-white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($primary-color, 10%);
   }
 }

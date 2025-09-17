@@ -1,13 +1,37 @@
 'use client';
 
+import { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
+import ReviewPopup from './ReviewPopup';
 
 interface BookingsProps {
   activeSubmenu: string;
 }
 
 export default function Bookings({ activeSubmenu }: BookingsProps) {
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<{
+    providerName: string;
+    serviceName: string;
+  } | null>(null);
+
+  const handleLeaveReview = (providerName: string, serviceName: string) => {
+    setSelectedBooking({ providerName, serviceName });
+    setReviewModalOpen(true);
+  };
+
+  const handleReviewSubmit = (reviewData: any) => {
+    console.log('Review submitted:', reviewData);
+    // Here you would typically send the review to your backend
+    setReviewModalOpen(false);
+    setSelectedBooking(null);
+  };
+
+  const handleReviewClose = () => {
+    setReviewModalOpen(false);
+    setSelectedBooking(null);
+  };
   const renderContent = () => {
     switch (activeSubmenu) {
       case 'upcoming':
@@ -190,7 +214,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   </div>
                 </div>
                 <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>Leave Review</button>
+                  <button 
+                    className={styles.actionBtn}
+                    onClick={() => handleLeaveReview('Sarah Johnson', 'Massage Therapy')}
+                  >
+                    Leave Review
+                  </button>
                   <button className={styles.bookAgainBtn}>Book Again</button>
                 </div>
               </div>
@@ -210,7 +239,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   </div>
                 </div>
                 <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>Leave Review</button>
+                  <button 
+                    className={styles.actionBtn}
+                    onClick={() => handleLeaveReview('Mike Chen', 'Yoga Class')}
+                  >
+                    Leave Review
+                  </button>
                   <button className={styles.bookAgainBtn}>Book Again</button>
                 </div>
               </div>
@@ -230,7 +264,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   </div>
                 </div>
                 <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>Leave Review</button>
+                  <button 
+                    className={styles.actionBtn}
+                    onClick={() => handleLeaveReview('Lisa Wang', 'Meditation Session')}
+                  >
+                    Leave Review
+                  </button>
                   <button className={styles.bookAgainBtn}>Book Again</button>
                 </div>
               </div>
@@ -294,6 +333,13 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
   return (
     <div className={styles.dashboardSection}>
       {renderContent()}
+      <ReviewPopup
+        isOpen={reviewModalOpen}
+        onClose={handleReviewClose}
+        providerName={selectedBooking?.providerName || ''}
+        serviceName={selectedBooking?.serviceName || ''}
+        onSubmit={handleReviewSubmit}
+      />
     </div>
   );
 }
