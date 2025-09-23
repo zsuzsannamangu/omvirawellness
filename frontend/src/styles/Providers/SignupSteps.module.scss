@@ -1427,6 +1427,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0 0 $spacing-xs 0;
+  color: $secondary-color;
 }
 
 .trialDescription {
@@ -1453,7 +1454,7 @@
   flex: 1;
   padding: $spacing-sm $spacing-md;
   border: none;
-  background: transparent;
+  background: rgba($primary-color, 0.05);
   border-radius: 6px;
   font-family: $font-main;
   font-size: 0.875rem;

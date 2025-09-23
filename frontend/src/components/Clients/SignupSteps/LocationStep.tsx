@@ -111,7 +111,7 @@ export default function LocationStep({ onSubmit, onBack, initialData }: Location
                 className={styles.checkbox}
               />
               <span className={styles.checkboxLabel}>
-                I'm willing to travel to providers
+                I'm willing to travel for appointments.
               </span>
             </label>
           </div>
@@ -124,12 +124,12 @@ export default function LocationStep({ onSubmit, onBack, initialData }: Location
                 onChange={(e) => setLocation({...location, travelRadius: e.target.value})}
                 className={styles.selectInput}
               >
-                <option value="5">5 miles</option>
-                <option value="10">10 miles</option>
-                <option value="15">15 miles</option>
-                <option value="25">25 miles</option>
-                <option value="50">50 miles</option>
-                <option value="100">100+ miles</option>
+                <option value="5">1-2 miles</option>
+                <option value="10">up to 5 miles</option>
+                <option value="15">up to 10 miles</option>
+                <option value="25">up to 15 miles</option>
+                <option value="50">up to 20 miles</option>
+                <option value="100">I'm flexible</option>
               </select>
             </div>
           )}

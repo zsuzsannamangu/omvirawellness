@@ -51,7 +51,7 @@ export default function Spaces({ activeSubmenu }: SpacesProps) {
       case 'favorites':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Favorite Spaces</h2>
+            <h2 className={styles.sectionTitle}>Saved Spaces</h2>
             
             <div className={styles.favoritesGrid}>
               <div className={styles.favoriteCard}>

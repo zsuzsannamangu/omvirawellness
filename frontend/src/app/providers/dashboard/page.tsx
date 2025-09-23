@@ -68,7 +68,7 @@ export default function ProvidersDashboard() {
     ],
     spaces: [
       { id: 'upcoming', label: 'Upcoming Bookings' },
-      { id: 'favorites', label: 'Favorites' },
+      { id: 'favorites', label: 'Saved Spaces' },
       { id: 'past', label: 'Past Bookings' },
       { id: 'request', label: 'Request a Space' },
       { id: 'find', label: 'Find a Space' },
