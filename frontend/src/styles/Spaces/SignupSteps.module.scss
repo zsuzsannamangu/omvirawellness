@@ -1,8 +1,10 @@
 @import '../_variables.scss';
 
-.stepContainer {
-  max-width: 600px;
+.stepContent {
+  max-width: 800px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .title {
@@ -30,12 +32,16 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .label {
@@ -61,12 +67,34 @@
 }
 
 .textInput {
+  padding: $spacing-sm;
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+  line-height: 0.9rem;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: $signup-color;
+  }
+}
+
+.textArea {
   padding: $spacing-md;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
   font-size: 1rem;
   font-family: $font-main;
   transition: border-color 0.2s ease;
+  resize: vertical;
   
   &:focus {
     outline: none;
@@ -81,9 +109,9 @@
 .continueButton {
   background: $primary-color;
   color: $light-text;
-  padding: $spacing-md $spacing-xl;
+  padding: $spacing-xs $spacing-lg;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
   font-family: $font-main;
@@ -134,7 +162,7 @@
   justify-content: center;
   gap: $spacing-sm;
   padding: $spacing-md;
-  border: 2px solid $section-bg-3;
+  border: 1px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
   color: $dark-text;
@@ -178,9 +206,9 @@
 .backButton {
   background: transparent;
   color: $subtext-color;
-  padding: $spacing-md $spacing-lg;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
+  padding: $spacing-xs $spacing-md;
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 500;
   font-family: $font-main;
@@ -203,7 +231,7 @@
 
 .card {
   background: $light-text;
-  border: 2px solid $section-bg-3;
+  border: 1px solid $section-bg-3;
   border-radius: 12px;
   padding: $spacing-lg;
   cursor: pointer;
@@ -333,7 +361,7 @@
 
 .amenityButton {
   padding: $spacing-md;
-  border: 2px solid $section-bg-3;
+  border: 1px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
   color: $dark-text;
@@ -364,18 +392,41 @@
 
 .dayRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: $spacing-md;
-  border: 2px solid $section-bg-3;
+  padding: $spacing-sm;
+  border: 1px solid $section-bg-3;
   border-radius: 8px;
   background: $light-text;
+  margin-bottom: $spacing-sm;
+  min-height: 50px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dayInfo {
   display: flex;
   align-items: center;
+  gap: $spacing-xs;
+  min-width: 120px;
+  flex-shrink: 0;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+}
+
+.closedText {
+  color: $subtext-color;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-left: $spacing-md;
+}
+
+.dayContent {
+  display: flex;
+  flex-direction: column;
   gap: $spacing-sm;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .dayLabel {
@@ -400,12 +451,20 @@
 }
 
 .timeSelect {
-  padding: $spacing-sm $spacing-md;
-  border: 2px solid $section-bg-3;
+  padding: $spacing-sm $spacing-lg $spacing-xs $spacing-md;
+  border: 1px solid $section-bg-3;
   border-radius: 6px;
   font-size: 0.9rem;
   background: $light-text;
   cursor: pointer;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23070707' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 1.2em 1.2em;
   
   &:focus {
     outline: none;
@@ -418,53 +477,165 @@
   font-size: 0.9rem;
 }
 
-// Pricing styles
-.priceInputContainer {
+.firstTimeSlotRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.additionalTimeSlots {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.timeSlotRow {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
-  padding: $spacing-md;
-  background: $light-text;
 }
 
-.currencySymbol {
-  font-size: 1.2rem;
-  font-weight: 600;
+.addSlotButton {
+  background: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;
+  position: relative;
+  
+  &:hover {
+    background: $hover-green;
+  }
+}
+
+.customTooltip {
+  position: fixed;
+  background: $bg-primary;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 99999;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.removeSlotButton {
+  background: $favorite-red;
+  color: $light-text;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-left: auto;
+  
+  &:hover {
+    background: darken($favorite-red, 10%);
+  }
+}
+
+// Pricing styles
+.priceInputWrapper {
+  display: flex;
+  align-items: center;
+  background: $light-text;
+  overflow: hidden;
+}
+
+.dollarSign {
+  padding: $spacing-sm;
+  background: $light-text;
   color: $dark-text;
+  font-weight: 600;
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
 .priceInput {
+  flex: 1;
   border: none;
   outline: none;
-  font-size: 1.2rem;
-  font-weight: 600;
+  padding: $spacing-sm;
+  font-size: 0.9rem;
+  font-family: $font-main;
   color: $dark-text;
-  width: 100px;
+  background: transparent;
+  background: white;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+  width: 100%;
+  
+  // Hide number input arrows
+  -moz-appearance: textfield;
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   
   &::placeholder {
     color: $signup-color;
   }
 }
 
-.rateText {
-  color: $subtext-color;
+.currencySymbol {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin-right: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.currencyText {
   font-size: 0.9rem;
+  color: $subtext-color;
+  margin-left: $spacing-sm;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .selectInput {
-  padding: $spacing-md;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: $spacing-sm 30px $spacing-sm $spacing-sm !important;
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-family: $font-main;
-  background: $light-text;
-  cursor: pointer;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+  line-height: 0.9rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 1.2em 1.2em;
   
   &:focus {
     outline: none;
     border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: $signup-color;
   }
 }
 
@@ -497,7 +668,7 @@
   align-items: center;
   justify-content: center;
   padding: $spacing-xl;
-  border: 2px dashed $section-bg-3;
+  border: 1px dashed $section-bg-3;
   border-radius: 12px;
   background: $section-bg-1;
   cursor: pointer;
@@ -718,6 +889,40 @@
   }
 }
 
+// Address form styles - only apply to rows that don't have cityStateRow
+.addressRow:not(.cityStateRow) {
+  display: grid !important;
+  grid-template-columns: 1.5fr 0.6fr 0.8fr !important;
+  gap: $spacing-xs !important;
+  margin-bottom: $spacing-sm;
+}
+
+// Even more specific selector - only for non-cityStateRow addressRows
+.stepContent .form .addressRow:not(.cityStateRow) {
+  display: grid !important;
+  grid-template-columns: 1.5fr 0.6fr 0.8fr !important;
+  gap: $spacing-sm !important;
+}
+
+// City and State row - same width as capacity and square footage
+.cityStateRow {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important; // Same as detailsRow - equal width
+  gap: $spacing-sm !important; // Same gap as detailsRow
+  margin-bottom: $spacing-sm !important;
+}
+
+// Zipcode field - shorter since it's on its own line
+.zipcodeField {
+  max-width: 200px !important; // Make zipcode field shorter
+}
+
+.detailsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
 // Space-specific styles
 .spaceTypeGrid {
   display: grid;
@@ -728,11 +933,11 @@
 
 .spaceTypeCard {
   padding: $spacing-lg;
-  border: 2px solid $section-bg-3;
+  border: 1px solid $section-bg-3;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-align: center;
+  text-align: left;
   
   &:hover {
     border-color: $primary-color;
@@ -808,7 +1013,7 @@
 .priceInput {
   width: 100%;
   padding: $spacing-md $spacing-md $spacing-md 2rem;
-  border: 2px solid $section-bg-3;
+  border: 1px solid $section-bg-3;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $font-main;
@@ -828,22 +1033,6 @@
   z-index: 1;
 }
 
-.selectInput {
-  width: 100%;
-  padding: $spacing-md;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: $font-main;
-  background: $bg-white;
-  cursor: pointer;
-  
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-  }
-}
-
 .photoUploadArea {
   margin-bottom: $spacing-lg;
 }
@@ -858,7 +1047,7 @@
   align-items: center;
   justify-content: center;
   padding: $spacing-xl;
-  border: 2px dashed $section-bg-3;
+  border: 1px dashed $section-bg-3;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -930,7 +1119,7 @@
 
 // Responsive design
 @media (max-width: 768px) {
-  .stepContainer {
+  .stepContent {
     max-width: 100%;
   }
   
@@ -946,5 +1135,61 @@
   .backButton,
   .continueButton {
     width: 100%;
+  }
+  
+  .addressRow:not(.cityStateRow) {
+    grid-template-columns: 1.5fr 0.6fr 0.8fr;
+    gap: $spacing-sm;
+  }
+  
+  .cityStateRow {
+    grid-template-columns: 1fr 1fr !important; // Same as detailsRow on mobile
+    gap: $spacing-sm !important; // Same gap as detailsRow on mobile
+  }
+  
+  .zipcodeField {
+    max-width: 150px !important; // Even shorter on mobile
+  }
+  
+  .detailsRow {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+  
+  // Availability section mobile styles
+  .dayRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+  }
+  
+  .dayInfo {
+    min-width: auto;
+    justify-content: flex-start;
+    height: auto;
+  }
+  
+  .dayContent {
+    width: 100%;
+  }
+  
+  .firstTimeSlotRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+  }
+  
+  .timeSelectors {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .timeSelect {
+    width: 100%;
+  }
+  
+  .addSlotButton {
+    align-self: flex-end;
   }
 }

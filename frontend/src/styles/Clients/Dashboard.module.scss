@@ -1871,6 +1871,31 @@
     }
   }
   
+  .formSelect {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    padding-right: 40px;
+  }
+  
+  .formTextarea {
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: $dark-text;
+    font-family: $font-main;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+  }
+  
   .checkboxGroup {
     display: flex;
     flex-direction: column;
@@ -1935,6 +1960,47 @@
       background: $border-light;
       border-color: $signup-color;
     }
+  }
+  
+  .saveMessage {
+    padding: $spacing-sm $spacing-md;
+    background: rgba($success-color, 0.1);
+    color: $success-color;
+    border: 1px solid $success-color;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: $spacing-md;
+  }
+  
+  .infoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-md;
+    padding: $spacing-lg;
+    background: $section-bg-1;
+    border-radius: 8px;
+    margin-bottom: $spacing-lg;
+  }
+  
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+  
+  .infoLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $light-text;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .infoValue {
+    font-size: 1rem;
+    font-weight: 500;
+    color: $dark-text;
   }
   
   .profileOverview {

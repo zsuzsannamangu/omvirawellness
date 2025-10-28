@@ -44,7 +44,7 @@ export default function AmenitiesStep({ onNext, onBack, initialData }: Amenities
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>What amenities does your space offer?</h1>
       <p className={styles.subtitle}>Select all that apply to help guests know what to expect.</p>
       

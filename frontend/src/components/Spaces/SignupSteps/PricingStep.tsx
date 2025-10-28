@@ -22,15 +22,15 @@ export default function PricingStep({ onNext, onBack, initialData }: PricingStep
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>Set your pricing</h1>
       <p className={styles.subtitle}>How much do you want to charge for your space?</p>
       
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.inputGroup}>
           <label className={styles.label}>HOURLY RATE *</label>
-          <div className={styles.priceInputContainer}>
-            <span className={styles.currencySymbol}>$</span>
+          <div className={styles.priceInputWrapper}>
+            <span className={styles.dollarSign}>$</span>
             <input
               type="number"
               value={pricing.hourlyRate}
@@ -41,7 +41,6 @@ export default function PricingStep({ onNext, onBack, initialData }: PricingStep
               step="0.01"
               required
             />
-            <span className={styles.currencyText}>per hour</span>
           </div>
         </div>
 
@@ -81,7 +80,7 @@ export default function PricingStep({ onNext, onBack, initialData }: PricingStep
 
         <div className={styles.pricingNote}>
           <p className={styles.noteText}>
-            💡 <strong>Tip:</strong> You can always adjust your pricing later in your space dashboard.
+            💡 You can always adjust your pricing later in your space dashboard.
           </p>
         </div>
         

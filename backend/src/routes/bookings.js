@@ -4,7 +4,7 @@ const pool = require('../db');
 const router = Router();
 
 // GET all bookings
-router.get('/', async (req: any, res: any) => {
+router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM bookings ORDER BY appointment_time ASC');
     res.json(result.rows);
@@ -15,7 +15,7 @@ router.get('/', async (req: any, res: any) => {
 });
 
 // POST a new booking
-router.post('/', async (req: any, res: any) => {
+router.post('/', async (req, res) => {
   const { provider_id, client_name, client_email, appointment_time, service, notes } = req.body;
 
   if (!provider_id || !client_name || !client_email || !appointment_time) {

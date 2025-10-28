@@ -22,14 +22,37 @@ const timeSlots = [
 ];
 
 export default function AvailabilityStep({ onNext, onBack, initialData }: AvailabilityStepProps) {
-  const [availability, setAvailability] = useState(initialData.availability || {
-    Monday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
-    Tuesday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
-    Wednesday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
-    Thursday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
-    Friday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
-    Saturday: { isOpen: true, startTime: '9:00 AM', endTime: '9:00 PM' },
-    Sunday: { isOpen: false, startTime: '9:00 AM', endTime: '9:00 PM' }
+  // Migrate old data format to new format
+  const migrateAvailability = (data: any) => {
+    const migrated: any = {};
+    Object.keys(data || {}).forEach(day => {
+      const dayData = data[day];
+      if (dayData.timeSlots) {
+        // Already in new format
+        migrated[day] = dayData;
+      } else {
+        // Old format - convert to new format
+        migrated[day] = {
+          isOpen: dayData.isOpen,
+          timeSlots: [{ startTime: dayData.startTime || '9:00 AM', endTime: dayData.endTime || '9:00 PM' }]
+        };
+      }
+    });
+    return migrated;
+  };
+
+  const [availability, setAvailability] = useState(() => {
+    const defaultAvailability = {
+      Monday: { isOpen: true, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] },
+      Tuesday: { isOpen: true, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] },
+      Wednesday: { isOpen: true, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] },
+      Thursday: { isOpen: true, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] },
+      Friday: { isOpen: true, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] },
+      Saturday: { isOpen: true, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] },
+      Sunday: { isOpen: false, timeSlots: [{ startTime: '9:00 AM', endTime: '9:00 PM' }] }
+    };
+    
+    return migrateAvailability(initialData.availability) || defaultAvailability;
   });
 
   const handleToggleDay = (day: string) => {
@@ -42,12 +65,52 @@ export default function AvailabilityStep({ onNext, onBack, initialData }: Availa
     });
   };
 
-  const handleTimeChange = (day: string, timeType: 'startTime' | 'endTime', time: string) => {
+  const handleTimeChange = (day: string, slotIndex: number, timeType: 'startTime' | 'endTime', time: string) => {
+    if (!availability[day] || !availability[day].timeSlots || slotIndex >= availability[day].timeSlots.length) {
+      return;
+    }
+    
+    const newTimeSlots = [...availability[day].timeSlots];
+    newTimeSlots[slotIndex] = {
+      ...newTimeSlots[slotIndex],
+      [timeType]: time
+    };
+    
     setAvailability({
       ...availability,
       [day]: {
         ...availability[day],
-        [timeType]: time
+        timeSlots: newTimeSlots
+      }
+    });
+  };
+
+  const addTimeSlot = (day: string) => {
+    if (!availability[day] || !availability[day].timeSlots) {
+      return;
+    }
+    
+    const newTimeSlots = [...availability[day].timeSlots, { startTime: '9:00 AM', endTime: '5:00 PM' }];
+    setAvailability({
+      ...availability,
+      [day]: {
+        ...availability[day],
+        timeSlots: newTimeSlots
+      }
+    });
+  };
+
+  const removeTimeSlot = (day: string, slotIndex: number) => {
+    if (!availability[day] || !availability[day].timeSlots || availability[day].timeSlots.length <= 1) {
+      return;
+    }
+    
+    const newTimeSlots = availability[day].timeSlots.filter((_, index) => index !== slotIndex);
+    setAvailability({
+      ...availability,
+      [day]: {
+        ...availability[day],
+        timeSlots: newTimeSlots
       }
     });
   };
@@ -58,7 +121,7 @@ export default function AvailabilityStep({ onNext, onBack, initialData }: Availa
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>When is your space available?</h1>
       <p className={styles.subtitle}>Set your availability so guests know when they can book.</p>
       
@@ -71,7 +134,6 @@ export default function AvailabilityStep({ onNext, onBack, initialData }: Availa
             return (
               <div key={day} className={styles.dayRow}>
                 <div className={styles.dayInfo}>
-                  <span className={styles.dayName}>{day}</span>
                   <div className={styles.checkboxContainer}>
                     <input
                       type="checkbox"
@@ -81,40 +143,105 @@ export default function AvailabilityStep({ onNext, onBack, initialData }: Availa
                       className={styles.dayCheckbox}
                     />
                   </div>
+                  <span className={styles.dayName}>{day}</span>
+                  {!dayHours.isOpen && (
+                    <span className={styles.closedText}>Closed</span>
+                  )}
                 </div>
                 
-                {dayHours.isOpen ? (
-                  <div className={styles.timeSelectors}>
-                    <div className={styles.timeSelector}>
-                      <select
-                        value={dayHours.startTime}
-                        onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
-                        className={styles.timeSelect}
+                {dayHours.isOpen && dayHours.timeSlots && dayHours.timeSlots.length > 0 && (
+                  <div className={styles.dayContent}>
+                    <div className={styles.firstTimeSlotRow}>
+                      <div className={styles.timeSelectors}>
+                        <select
+                          value={dayHours.timeSlots[0].startTime}
+                          onChange={(e) => handleTimeChange(day, 0, 'startTime', e.target.value)}
+                          className={styles.timeSelect}
+                        >
+                          {timeSlots.map(time => (
+                            <option key={time} value={time}>{time}</option>
+                          ))}
+                        </select>
+                        
+                        <span className={styles.timeSeparator}>to</span>
+                        
+                        <select
+                          value={dayHours.timeSlots[0].endTime}
+                          onChange={(e) => handleTimeChange(day, 0, 'endTime', e.target.value)}
+                          className={styles.timeSelect}
+                        >
+                          {timeSlots.map(time => (
+                            <option key={time} value={time}>{time}</option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <button
+                        type="button"
+                        onClick={() => addTimeSlot(day)}
+                        className={styles.addSlotButton}
+                        onMouseEnter={(e) => {
+                          const tooltip = document.createElement('div');
+                          tooltip.textContent = 'Add another time slot';
+                          tooltip.className = styles.customTooltip;
+                          tooltip.id = 'custom-tooltip';
+                          document.body.appendChild(tooltip);
+                          
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          tooltip.style.left = (rect.left + rect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+                          tooltip.style.top = (rect.top - tooltip.offsetHeight - 5) + 'px';
+                        }}
+                        onMouseLeave={() => {
+                          const tooltip = document.getElementById('custom-tooltip');
+                          if (tooltip) {
+                            tooltip.remove();
+                          }
+                        }}
                       >
-                        {timeSlots.map(time => (
-                          <option key={time} value={time}>{time}</option>
-                        ))}
-                      </select>
-                      <span className={styles.timeLabel}>Start</span>
+                        +
+                      </button>
                     </div>
                     
-                    <span className={styles.timeSeparator}>to</span>
-                    
-                    <div className={styles.timeSelector}>
-                      <select
-                        value={dayHours.endTime}
-                        onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
-                        className={styles.timeSelect}
-                      >
-                        {timeSlots.map(time => (
-                          <option key={time} value={time}>{time}</option>
+                    {dayHours.timeSlots.length > 1 && (
+                      <div className={styles.additionalTimeSlots}>
+                        {dayHours.timeSlots.slice(1).map((slot, slotIndex) => (
+                          <div key={slotIndex + 1} className={styles.timeSlotRow}>
+                            <div className={styles.timeSelectors}>
+                              <select
+                                value={slot.startTime}
+                                onChange={(e) => handleTimeChange(day, slotIndex + 1, 'startTime', e.target.value)}
+                                className={styles.timeSelect}
+                              >
+                                {timeSlots.map(time => (
+                                  <option key={time} value={time}>{time}</option>
+                                ))}
+                              </select>
+                              
+                              <span className={styles.timeSeparator}>to</span>
+                              
+                              <select
+                                value={slot.endTime}
+                                onChange={(e) => handleTimeChange(day, slotIndex + 1, 'endTime', e.target.value)}
+                                className={styles.timeSelect}
+                              >
+                                {timeSlots.map(time => (
+                                  <option key={time} value={time}>{time}</option>
+                                ))}
+                              </select>
+                            </div>
+                            
+                            <button
+                              type="button"
+                              onClick={() => removeTimeSlot(day, slotIndex + 1)}
+                              className={styles.removeSlotButton}
+                            >
+                              ×
+                            </button>
+                          </div>
                         ))}
-                      </select>
-                      <span className={styles.timeLabel}>End</span>
-                    </div>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <span className={styles.closedText}>Closed</span>
                 )}
               </div>
             );

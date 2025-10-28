@@ -2,21 +2,49 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { login } from '@/services/auth';
 import styles from '@/styles/Providers/ProviderLogin.module.scss';
 
 export default function ProviderLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle provider login logic
-    console.log('Provider Login:', { email, password });
+    setError('');
+    setLoading(true);
+
+    try {
+      const data = await login(email, password);
+      
+      // Verify it's a provider account
+      if (data.user.user_type !== 'provider') {
+        setError('This account is not a provider account. Please use the client login.');
+        setLoading(false);
+        return;
+      }
+      
+      router.push(`/providers/dashboard/${data.user.id}`);
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.container}>
+      {/* Top Bar */}
+      <div className={styles.topBar}>
+        <Link href="/" className={styles.backLink}>
+          ← Back to Homepage
+        </Link>
+      </div>
+      
       <div className={styles.formContainer}>
         {/* Navigation Tabs */}
         <div className={styles.navTabs}>
@@ -32,6 +60,12 @@ export default function ProviderLoginPage() {
         <div className={styles.formContent}>
           <h1 className={styles.title}>Welcome back, Provider</h1>
           <p className={styles.subtitle}>Access your wellness practice dashboard</p>
+          
+          {error && (
+            <div className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleLoginSubmit} className={styles.loginForm}>
             <div className={styles.inputGroup}>
@@ -82,9 +116,9 @@ export default function ProviderLoginPage() {
               </div>
             </div>
             
-            <button type="submit" className={styles.loginButton}>
+            <button type="submit" className={styles.loginButton} disabled={loading}>
               <span className={styles.envelopeIcon}>✉️</span>
-              ACCESS PROVIDER DASHBOARD
+              {loading ? 'LOGGING IN...' : 'ACCESS PROVIDER DASHBOARD'}
             </button>
           </form>
 

@@ -14,6 +14,22 @@ export default function BusinessInfoStep({ onNext, onBack, initialData }: Busine
   const [contactName, setContactName] = useState(initialData.contactName || '');
   const [phoneNumber, setPhoneNumber] = useState(initialData.phoneNumber || '');
 
+  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Allow: backspace, delete, tab, escape, enter, home, end, left, right, up, down
+    if ([8, 9, 27, 13, 46, 35, 36, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+        // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        (e.keyCode === 65 && e.ctrlKey === true) ||
+        (e.keyCode === 67 && e.ctrlKey === true) ||
+        (e.keyCode === 86 && e.ctrlKey === true) ||
+        (e.keyCode === 88 && e.ctrlKey === true)) {
+      return;
+    }
+    // Ensure that it is a number and stop the keypress
+    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (contactName && phoneNumber) {
@@ -22,7 +38,7 @@ export default function BusinessInfoStep({ onNext, onBack, initialData }: Busine
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>Tell us about your business</h1>
       <p className={styles.subtitle}>Help us understand your space rental business.</p>
       
@@ -56,6 +72,7 @@ export default function BusinessInfoStep({ onNext, onBack, initialData }: Busine
             type="tel"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
+            onKeyDown={handlePhoneKeyDown}
             className={styles.textInput}
             placeholder="Enter phone number"
             required

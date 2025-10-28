@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 // Dashboard sections
@@ -14,13 +15,51 @@ import Messages from '@/components/Providers/Dashboard/Messages';
 import Profile from '@/components/Providers/Dashboard/Profile';
 
 export default function ProvidersDashboard() {
+  const params = useParams();
+  const router = useRouter();
+  const userId = params.userId as string;
+  
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('requests');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [providerName] = useState('Sarah Johnson'); // This would come from provider data
-  const [providerRating] = useState(4.9); // This would come from provider data
-  const [totalClients] = useState(156); // This would come from provider data
+  const [providerName] = useState('Sarah Johnson');
+  const [providerRating] = useState(4.9);
+  const [totalClients] = useState(156);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      router.push('/providers/login');
+      return;
+    }
+    
+    try {
+      const userData = JSON.parse(user);
+      // Verify the userId matches the logged-in user
+      if (userData.id !== userId) {
+        console.error('User ID mismatch');
+        router.push('/providers/login');
+        return;
+      }
+      
+      // Verify user is a provider
+      if (userData.user_type !== 'provider') {
+        router.push('/providers/login');
+        return;
+      }
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      router.push('/providers/login');
+      return;
+    }
+    
+    setLoading(false);
+  }, [userId, router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -142,6 +181,14 @@ export default function ProvidersDashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dashboard}>
       {/* Left Sidebar */}
@@ -157,12 +204,11 @@ export default function ProvidersDashboard() {
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
                 if (item.id === 'signout') {
-                  // Handle sign out action
-                  console.log('Sign out clicked');
-                  // Add your sign out logic here
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  router.push('/providers');
                 } else {
                   setActiveSection(item.id);
-                  // Set the first submenu item as default for each section
                   const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
                   setActiveSubmenu(firstSubmenu?.id || item.id);
                 }
@@ -234,3 +280,4 @@ export default function ProvidersDashboard() {
     </div>
   );
 }
+

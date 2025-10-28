@@ -30,7 +30,7 @@ export default function PhotosStep({ onNext, onBack, initialData }: PhotosStepPr
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>Add photos of your space</h1>
       <p className={styles.subtitle}>High-quality photos help guests see what to expect.</p>
       
@@ -70,7 +70,7 @@ export default function PhotosStep({ onNext, onBack, initialData }: PhotosStepPr
 
         <div className={styles.photoNote}>
           <p className={styles.noteText}>
-            💡 <strong>Tip:</strong> Add at least 3-5 photos showing different angles of your space. 
+            💡 Add at least 3-5 photos showing different angles of your space. 
             Good lighting and clean spaces attract more bookings.
           </p>
         </div>

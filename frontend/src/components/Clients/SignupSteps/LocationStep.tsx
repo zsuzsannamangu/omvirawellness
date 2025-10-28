@@ -7,9 +7,10 @@ interface LocationStepProps {
   onSubmit: (data: { location: any }) => void;
   onBack: () => void;
   initialData: any;
+  isSubmitting?: boolean;
 }
 
-export default function LocationStep({ onSubmit, onBack, initialData }: LocationStepProps) {
+export default function LocationStep({ onSubmit, onBack, initialData, isSubmitting }: LocationStepProps) {
   const [location, setLocation] = useState(initialData.location || {
     address: '',
     city: '',
@@ -148,9 +149,9 @@ export default function LocationStep({ onSubmit, onBack, initialData }: Location
           <button 
             type="submit" 
             className={styles.continueButton}
-            disabled={!location.address || !location.city || !location.state || !location.zipCode || !location.country}
+            disabled={!location.address || !location.city || !location.state || !location.zipCode || !location.country || isSubmitting}
           >
-            Complete Setup
+            {isSubmitting ? 'Creating Account...' : 'Complete Setup'}
           </button>
         </div>
       </form>

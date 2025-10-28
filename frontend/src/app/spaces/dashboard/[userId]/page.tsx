@@ -1,25 +1,64 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import Link from 'next/link';
-import styles from '@/styles/Clients/Dashboard.module.scss';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import styles from '@/styles/Spaces/Dashboard.module.scss';
 
 // Dashboard sections
-import Bookings from '@/components/Clients/Dashboard/Bookings';
-import Favorites from '@/components/Clients/Dashboard/Favorites';
-import Payments from '@/components/Clients/Dashboard/Payments';
-import Calendar from '@/components/Clients/Dashboard/Calendar';
-import Messages from '@/components/Clients/Dashboard/Messages';
-import Profile from '@/components/Clients/Dashboard/Profile';
+import Bookings from '@/components/Spaces/Dashboard/Bookings';
+import Calendar from '@/components/Spaces/Dashboard/Calendar';
+import Payments from '@/components/Spaces/Dashboard/Payments';
+import Spaces from '@/components/Spaces/Dashboard/Spaces';
+import Analytics from '@/components/Spaces/Dashboard/Analytics';
+import Messages from '@/components/Spaces/Dashboard/Messages';
+import Profile from '@/components/Spaces/Dashboard/Profile';
 
-export default function ClientDashboard() {
+export default function SpacesDashboard() {
+  const params = useParams();
+  const router = useRouter();
+  const userId = params.userId as string;
+  
   const [activeSection, setActiveSection] = useState('bookings');
-  const [activeSubmenu, setActiveSubmenu] = useState('upcoming'); // This will be the first submenu of bookings
+  const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [userName] = useState('John Doe'); // This would come from user data
-  const [userRating] = useState(4.8); // This would come from user data
-  const [totalBookings] = useState(24); // This would come from user data
+  const [spaceName] = useState('Zen Wellness Studio');
+  const [spaceRating] = useState(4.7);
+  const [totalBookings] = useState(89);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      router.push('/spaces/login');
+      return;
+    }
+    
+    try {
+      const userData = JSON.parse(user);
+      // Verify the userId matches the logged-in user
+      if (userData.id !== userId) {
+        console.error('User ID mismatch');
+        router.push('/spaces/login');
+        return;
+      }
+      
+      // Verify user is a space owner
+      if (userData.user_type !== 'space_owner') {
+        router.push('/spaces/login');
+        return;
+      }
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      router.push('/spaces/login');
+      return;
+    }
+    
+    setLoading(false);
+  }, [userId, router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -47,9 +86,10 @@ export default function ClientDashboard() {
 
   const sidebarItems = [
     { id: 'bookings', label: 'Bookings' },
-    { id: 'favorites', label: 'Favorites' },
-    { id: 'payments', label: 'Payments' },
     { id: 'calendar', label: 'Calendar' },
+    { id: 'payments', label: 'Payments' },
+    { id: 'spaces', label: 'Listings' },
+    { id: 'analytics', label: 'Analytics' },
     { id: 'messages', label: 'Messages' },
     { id: 'profile', label: 'Profile & Settings' },
     { id: 'signout', label: 'Sign Out' },
@@ -57,28 +97,33 @@ export default function ClientDashboard() {
 
   const submenuItems = {
     bookings: [
+      { id: 'requests', label: 'Requests' },
       { id: 'upcoming', label: 'Upcoming' },
       { id: 'past', label: 'Past' },
       { id: 'canceled', label: 'Canceled' },
     ],
-    favorites: [
-      { id: 'providers', label: 'Saved Providers' },
+    calendar: [
+      { id: 'calendar', label: 'Calendar View' },
     ],
     payments: [
-      { id: 'methods', label: 'Payment Methods' },
-      { id: 'receipts', label: 'Receipts & Invoices' },
+      { id: 'earnings', label: 'Earnings' },
+      { id: 'payouts', label: 'Payout History' },
     ],
-    calendar: [
-      { id: 'view', label: 'Calendar View' },
+    spaces: [
+      { id: 'listings', label: 'Listings' },
+    ],
+    analytics: [
+      { id: 'occupancy', label: 'Occupancy Rates' },
+      { id: 'revenue', label: 'Revenue Insights' },
     ],
     messages: [
+      { id: 'inquiries', label: 'Inquiries' },
       { id: 'confirmations', label: 'Confirmations' },
-      { id: 'direct', label: 'Direct Communication' },
     ],
     profile: [
-      { id: 'personal', label: 'Personal Info' },
-      { id: 'preferences', label: 'Preferences' },
-      { id: 'notifications', label: 'Notifications' },
+      { id: 'host', label: 'Host Info' },
+      { id: 'policies', label: 'Policies' },
+      { id: 'instructions', label: 'Instructions' },
     ],
   };
 
@@ -86,12 +131,14 @@ export default function ClientDashboard() {
     switch (activeSection) {
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
-      case 'favorites':
-        return <Favorites activeSubmenu={activeSubmenu} />;
-      case 'payments':
-        return <Payments activeSubmenu={activeSubmenu} />;
       case 'calendar':
         return <Calendar activeSubmenu={activeSubmenu} />;
+      case 'payments':
+        return <Payments activeSubmenu={activeSubmenu} />;
+      case 'spaces':
+        return <Spaces activeSubmenu={activeSubmenu} />;
+      case 'analytics':
+        return <Analytics activeSubmenu={activeSubmenu} />;
       case 'messages':
         return <Messages activeSubmenu={activeSubmenu} />;
       case 'profile':
@@ -101,12 +148,20 @@ export default function ClientDashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dashboard}>
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Client Dashboard</h2>
+          <h2 className={styles.logo}>Rental Manager</h2>
         </div>
         
         <nav className={styles.sidebarNav}>
@@ -116,16 +171,13 @@ export default function ClientDashboard() {
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
                 if (item.id === 'signout') {
-                  // Handle sign out action
-                  console.log('Sign out clicked');
-                  // Add your sign out logic here
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  router.push('/spaces');
                 } else {
                   setActiveSection(item.id);
-                  // Automatically set the first submenu item as active
                   const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
-                  if (firstSubmenu) {
-                    setActiveSubmenu(firstSubmenu.id);
-                  }
+                  setActiveSubmenu(firstSubmenu?.id || item.id);
                 }
               }}
             >
@@ -144,21 +196,19 @@ export default function ClientDashboard() {
               {profileImage ? (
                 <img 
                   src={profileImage} 
-                  alt="Profile" 
+                  alt="Space Profile" 
                   className={styles.profileImage}
                 />
               ) : (
                 <div className={styles.profileInitials}>
-                  {getInitials(userName)}
+                  {getInitials(spaceName)}
                 </div>
               )}
             </div>
             <div className={styles.greetingInfo}>
-              <div className={styles.greetingRow}>
-                <h1 className={styles.greeting}>Hello, {userName}</h1>
-                <span className={styles.rating}>★ {userRating} (12 reviews)</span>
-              </div>
-              <div className={styles.statsRow}>
+              <h1 className={styles.greeting}>Hello, {spaceName}</h1>
+              <div className={styles.userStats}>
+                <span className={styles.rating}>★ {spaceRating} (23 reviews)</span>
                 <span className={styles.bookings}>{totalBookings} bookings</span>
                 <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
@@ -166,9 +216,6 @@ export default function ClientDashboard() {
           </div>
           
           <div className={styles.topNavRight}>
-            <Link href="/search" className={styles.findProviderBtn}>
-              Book a Provider
-            </Link>
             <input
               type="file"
               ref={fileInputRef}
@@ -200,3 +247,4 @@ export default function ClientDashboard() {
     </div>
   );
 }
+

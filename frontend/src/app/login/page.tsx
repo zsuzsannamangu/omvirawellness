@@ -2,21 +2,49 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { login } from '@/services/auth';
 import styles from '@/styles/Login.module.scss';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic
-    console.log('Login:', { email, password });
+    setError('');
+    setLoading(true);
+
+    try {
+      const data = await login(email, password);
+      
+      // Redirect based on user type with user ID
+      if (data.user.user_type === 'client') {
+        router.push(`/dashboard/${data.user.id}`);
+      } else if (data.user.user_type === 'provider') {
+        router.push(`/providers/dashboard/${data.user.id}`);
+      } else if (data.user.user_type === 'space_owner') {
+        router.push(`/spaces/dashboard/${data.user.id}`);
+      }
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.container}>
+      {/* Top Bar */}
+      <div className={styles.topBar}>
+        <Link href="/" className={styles.backLink}>
+          ← Back to Homepage
+        </Link>
+      </div>
+      
       <div className={styles.formContainer}>
         {/* Navigation Tabs */}
         <div className={styles.navTabs}>
@@ -31,6 +59,12 @@ export default function LoginPage() {
         {/* Main Form */}
         <div className={styles.formContent}>
           <h1 className={styles.title}>Welcome back</h1>
+          
+          {error && (
+            <div className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleLoginSubmit} className={styles.loginForm}>
             <div className={styles.inputGroup}>
@@ -81,9 +115,9 @@ export default function LoginPage() {
               </div>
             </div>
             
-            <button type="submit" className={styles.loginButton}>
+            <button type="submit" className={styles.loginButton} disabled={loading}>
               <span className={styles.envelopeIcon}>✉️</span>
-              LOG IN WITH EMAIL
+              {loading ? 'LOGGING IN...' : 'LOG IN WITH EMAIL'}
             </button>
           </form>
 

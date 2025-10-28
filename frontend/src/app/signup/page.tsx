@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { registerClient } from '@/services/auth';
 import styles from '@/styles/Signup.module.scss';
 
 // Step components
@@ -13,7 +15,10 @@ import ServicePreferencesStep from '@/components/Clients/SignupSteps/ServicePref
 import LocationStep from '@/components/Clients/SignupSteps/LocationStep';
 
 export default function SignupPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     signupMethod: '',
@@ -72,10 +77,55 @@ export default function SignupPage() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (finalData: any) => {
-    console.log('Client signup data:', { ...formData, ...finalData });
-    // Here you would typically send the data to your backend
-    alert('Client signup completed! (This is a demo)');
+  const handleSubmit = async (finalData: any) => {
+    const allData = { ...formData, ...finalData };
+    
+    setIsSubmitting(true);
+    setError('');
+    
+    try {
+      // Prepare registration data
+      const registrationData = {
+        email: allData.email,
+        password: allData.password,
+        firstName: allData.personalInfo.firstName,
+        lastName: allData.personalInfo.lastName,
+        phoneNumber: allData.personalInfo.phoneNumber || null,
+        dateOfBirth: allData.personalInfo.dateOfBirth || null,
+        gender: allData.personalInfo.gender || null,
+        pronoun: allData.personalInfo.pronoun || null,
+        emergencyContactName: allData.personalInfo.emergencyContact.name || null,
+        emergencyContactPhone: allData.personalInfo.emergencyContact.phone || null,
+        emergencyContactRelationship: allData.personalInfo.emergencyContact.relationship || null,
+        wellnessGoals: allData.wellnessGoals.selectedGoals || null,
+        otherGoal: allData.wellnessGoals.otherGoal || null,
+        address: allData.location.address || null,
+        city: allData.location.city || null,
+        state: allData.location.state || null,
+        zipCode: allData.location.zipCode || null,
+        country: allData.location.country || 'USA',
+        preferredServices: allData.servicePreferences.selectedServices || null,
+        sessionLength: allData.servicePreferences.sessionLength || null,
+        frequency: allData.servicePreferences.frequency || null,
+        budget: allData.servicePreferences.budget || null,
+        locationPreference: allData.servicePreferences.locationPreference || null,
+        timePreference: allData.servicePreferences.timePreference || null,
+        specialRequirements: allData.servicePreferences.specialRequirements || null,
+        travelWillingness: allData.location.allowTravel || false,
+        maxTravelDistance: allData.location.travelRadius || null,
+      };
+
+      // Register the client
+      const data = await registerClient(registrationData);
+      
+      // Registration successful - user is logged in
+      // Redirect to their dashboard
+      router.push(`/dashboard/${data.user.id}`);
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Registration failed. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   const renderStep = () => {
@@ -91,7 +141,7 @@ export default function SignupPage() {
       case 5:
         return <ServicePreferencesStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 6:
-        return <LocationStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} />;
+        return <LocationStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} isSubmitting={isSubmitting} />;
       default:
         return <EmailStep onNext={handleNext} initialData={formData} />;
     }
@@ -122,6 +172,20 @@ export default function SignupPage() {
             Step {currentStep} of {totalSteps}
           </span>
         </div>
+
+        {error && (
+          <div style={{ 
+            padding: '12px 24px', 
+            margin: '16px auto', 
+            maxWidth: '600px', 
+            backgroundColor: '#fee', 
+            border: '1px solid #fcc', 
+            borderRadius: '8px',
+            color: '#c33'
+          }}>
+            {error}
+          </div>
+        )}
 
         <div className={styles.stepContainer}>
           {renderStep()}

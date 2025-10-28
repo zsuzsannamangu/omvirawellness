@@ -1,25 +1,92 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import styles from '@/styles/Spaces/Dashboard.module.scss';
+import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
+import styles from '@/styles/Clients/Dashboard.module.scss';
 
 // Dashboard sections
-import Bookings from '@/components/Spaces/Dashboard/Bookings';
-import Calendar from '@/components/Spaces/Dashboard/Calendar';
-import Payments from '@/components/Spaces/Dashboard/Payments';
-import Spaces from '@/components/Spaces/Dashboard/Spaces';
-import Analytics from '@/components/Spaces/Dashboard/Analytics';
-import Messages from '@/components/Spaces/Dashboard/Messages';
-import Profile from '@/components/Spaces/Dashboard/Profile';
+import Bookings from '@/components/Clients/Dashboard/Bookings';
+import Favorites from '@/components/Clients/Dashboard/Favorites';
+import Payments from '@/components/Clients/Dashboard/Payments';
+import Calendar from '@/components/Clients/Dashboard/Calendar';
+import Messages from '@/components/Clients/Dashboard/Messages';
+import Profile from '@/components/Clients/Dashboard/Profile';
 
-export default function SpacesDashboard() {
+export default function ClientDashboard() {
+  const params = useParams();
+  const router = useRouter();
+  const userId = params.userId as string;
+  
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [spaceName] = useState('Zen Wellness Studio'); // This would come from space data
-  const [spaceRating] = useState(4.7); // This would come from space data
-  const [totalBookings] = useState(89); // This would come from space data
+  const [userName, setUserName] = useState('User'); // Will be loaded from user data
+  const [userRating] = useState(4.8);
+  const [totalBookings] = useState(24);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const loadUserData = () => {
+      // Check if user is authenticated
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      
+      if (!token || !user) {
+        router.push('/login');
+        return;
+      }
+      
+      try {
+        const userData = JSON.parse(user);
+        // Verify the userId matches the logged-in user
+        if (userData.id !== userId) {
+          console.error('User ID mismatch');
+          router.push('/login');
+          return;
+        }
+        
+        // Load user profile data
+        if (userData.profile?.first_name && userData.profile?.last_name) {
+          setUserName(`${userData.profile.first_name} ${userData.profile.last_name}`);
+        } else if (userData.email) {
+          // Extract first part of email as fallback name
+          setUserName(userData.email.split('@')[0]);
+        }
+        
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        router.push('/login');
+        return;
+      }
+      
+      setLoading(false);
+    };
+
+    loadUserData();
+
+    // Listen for profile update events to refresh name
+    const handleProfileUpdate = () => {
+      const user = localStorage.getItem('user');
+      if (user) {
+        try {
+          const userData = JSON.parse(user);
+          if (userData.profile?.first_name && userData.profile?.last_name) {
+            setUserName(`${userData.profile.first_name} ${userData.profile.last_name}`);
+          }
+        } catch (error) {
+          console.error('Error parsing user data on profile update:', error);
+        }
+      }
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
+  }, [userId, router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -47,44 +114,37 @@ export default function SpacesDashboard() {
 
   const sidebarItems = [
     { id: 'bookings', label: 'Bookings' },
-    { id: 'calendar', label: 'Calendar' },
+    { id: 'favorites', label: 'Favorites' },
     { id: 'payments', label: 'Payments' },
-    { id: 'spaces', label: 'Listings' },
-    { id: 'analytics', label: 'Analytics' },
+    { id: 'calendar', label: 'Calendar' },
     { id: 'messages', label: 'Messages' },
-    { id: 'profile', label: 'Profile & Settings' },
+    { id: 'profile', label: 'Profile & Preferences' },
     { id: 'signout', label: 'Sign Out' },
   ];
 
   const submenuItems = {
     bookings: [
-      { id: 'requests', label: 'Requests' },
       { id: 'upcoming', label: 'Upcoming' },
       { id: 'past', label: 'Past' },
       { id: 'canceled', label: 'Canceled' },
     ],
-    calendar: [
-      { id: 'calendar', label: 'Calendar View' },
+    favorites: [
+      { id: 'providers', label: 'Saved Providers' },
     ],
     payments: [
-      { id: 'earnings', label: 'Earnings' },
-      { id: 'payouts', label: 'Payout History' },
+      { id: 'methods', label: 'Payment Methods' },
+      { id: 'receipts', label: 'Receipts & Invoices' },
     ],
-    spaces: [
-      { id: 'listings', label: 'Listings' },
-    ],
-    analytics: [
-      { id: 'occupancy', label: 'Occupancy Rates' },
-      { id: 'revenue', label: 'Revenue Insights' },
+    calendar: [
+      { id: 'view', label: 'Calendar View' },
     ],
     messages: [
-      { id: 'inquiries', label: 'Inquiries' },
       { id: 'confirmations', label: 'Confirmations' },
+      { id: 'direct', label: 'Direct Communication' },
     ],
     profile: [
-      { id: 'host', label: 'Host Info' },
-      { id: 'policies', label: 'Policies' },
-      { id: 'instructions', label: 'Instructions' },
+      { id: 'personal', label: 'Personal Info' },
+      { id: 'preferences', label: 'Preferences' },
     ],
   };
 
@@ -92,14 +152,12 @@ export default function SpacesDashboard() {
     switch (activeSection) {
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
-      case 'calendar':
-        return <Calendar activeSubmenu={activeSubmenu} />;
+      case 'favorites':
+        return <Favorites activeSubmenu={activeSubmenu} />;
       case 'payments':
         return <Payments activeSubmenu={activeSubmenu} />;
-      case 'spaces':
-        return <Spaces activeSubmenu={activeSubmenu} />;
-      case 'analytics':
-        return <Analytics activeSubmenu={activeSubmenu} />;
+      case 'calendar':
+        return <Calendar activeSubmenu={activeSubmenu} />;
       case 'messages':
         return <Messages activeSubmenu={activeSubmenu} />;
       case 'profile':
@@ -109,12 +167,20 @@ export default function SpacesDashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dashboard}>
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Rental Manager</h2>
+          <h2 className={styles.logo}>Client Dashboard</h2>
         </div>
         
         <nav className={styles.sidebarNav}>
@@ -124,14 +190,16 @@ export default function SpacesDashboard() {
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
                 if (item.id === 'signout') {
-                  // Handle sign out action
-                  console.log('Sign out clicked');
-                  // Add your sign out logic here
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  router.push('/');
                 } else {
                   setActiveSection(item.id);
-                  // Set the first submenu item as default for each section
+                  // Automatically set the first submenu item as active
                   const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
-                  setActiveSubmenu(firstSubmenu?.id || item.id);
+                  if (firstSubmenu) {
+                    setActiveSubmenu(firstSubmenu.id);
+                  }
                 }
               }}
             >
@@ -150,19 +218,21 @@ export default function SpacesDashboard() {
               {profileImage ? (
                 <img 
                   src={profileImage} 
-                  alt="Space Profile" 
+                  alt="Profile" 
                   className={styles.profileImage}
                 />
               ) : (
                 <div className={styles.profileInitials}>
-                  {getInitials(spaceName)}
+                  {getInitials(userName)}
                 </div>
               )}
             </div>
             <div className={styles.greetingInfo}>
-              <h1 className={styles.greeting}>Hello, {spaceName}</h1>
-              <div className={styles.userStats}>
-                <span className={styles.rating}>★ {spaceRating} (23 reviews)</span>
+              <div className={styles.greetingRow}>
+                <h1 className={styles.greeting}>Hello, {userName}</h1>
+                <span className={styles.rating}>★ {userRating} (12 reviews)</span>
+              </div>
+              <div className={styles.statsRow}>
                 <span className={styles.bookings}>{totalBookings} bookings</span>
                 <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
@@ -170,6 +240,9 @@ export default function SpacesDashboard() {
           </div>
           
           <div className={styles.topNavRight}>
+            <Link href="/search" className={styles.findProviderBtn}>
+              Book a Provider
+            </Link>
             <input
               type="file"
               ref={fileInputRef}
@@ -201,3 +274,4 @@ export default function SpacesDashboard() {
     </div>
   );
 }
+

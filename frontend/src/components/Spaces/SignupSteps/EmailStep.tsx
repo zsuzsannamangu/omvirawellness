@@ -13,8 +13,12 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('EmailStep handleSubmit called with email:', email);
     if (email) {
+      console.log('Calling onNext with:', { email, signupMethod: 'email' });
       onNext({ email, signupMethod: 'email' });
+    } else {
+      console.log('Email is empty, not calling onNext');
     }
   };
 
@@ -25,7 +29,7 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>Let's get started</h1>
       <p className={styles.subtitle}>Enter your email address to begin listing your space</p>
       

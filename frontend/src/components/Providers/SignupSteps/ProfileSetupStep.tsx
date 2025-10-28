@@ -232,7 +232,7 @@ export default function ProfileSetupStep({ onNext, onBack, initialData }: Profil
 
         <div className={styles.profileNote}>
           <p className={styles.noteText}>
-            💡 <strong>Tip:</strong> A complete profile helps clients find and trust you. You can always update this information later.
+            💡 A complete profile helps clients find and trust you. You can always update this information later.
           </p>
         </div>
         

@@ -23,7 +23,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData }: PaymentSt
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>You're all set!</h1>
       <p className={styles.subtitle}>Your space is now live and searchable.</p>
 

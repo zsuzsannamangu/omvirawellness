@@ -3,10 +3,35 @@
 .container {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: $muted-bg;
   padding: 1rem;
+}
+
+.topBar {
+  width: 100%;
+  max-width: 400px;
+  padding: 0 0 1rem 0;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.backLink {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $subtext-color;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  
+  &:hover {
+    color: $primary-color;
+  }
 }
 
 .formContainer {

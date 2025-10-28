@@ -297,7 +297,7 @@ I'm committed to continuing education and staying current with the latest techni
       default:
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Profile & Settings</h2>
+            <h2 className={styles.sectionTitle}>Profile & Preferences</h2>
             <div className={styles.placeholderText}>
               <p>Manage your profile and account settings.</p>
             </div>

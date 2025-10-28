@@ -61,8 +61,14 @@ export default function SpaceSignupPage() {
   const totalSteps = 10;
 
   const handleNext = (stepData: any) => {
+    console.log('SpaceSignupPage handleNext called with stepData:', stepData);
+    console.log('Current step before:', currentStep);
     setFormData(prev => ({ ...prev, ...stepData }));
-    setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+    setCurrentStep(prev => {
+      const newStep = Math.min(prev + 1, totalSteps);
+      console.log('New step:', newStep);
+      return newStep;
+    });
   };
 
   const handleBack = () => {
@@ -80,11 +86,11 @@ export default function SpaceSignupPage() {
       case 1:
         return <EmailStep onNext={handleNext} initialData={formData} />;
       case 2:
-        return <BusinessInfoStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-      case 3:
-        return <SpaceTypeStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-      case 4:
         return <PasswordStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
+      case 3:
+        return <BusinessInfoStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
+      case 4:
+        return <SpaceTypeStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 5:
         return <SpaceDetailsStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 6:

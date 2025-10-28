@@ -50,12 +50,15 @@
 }
 
 .textInput {
-  padding: $spacing-md;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: $spacing-sm;
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-family: $font-main;
   transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+  line-height: 0.9rem;
   
   &:focus {
     outline: none;
@@ -68,10 +71,10 @@
 }
 
 .textArea {
-  padding: $spacing-md;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: $spacing-sm;
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-family: $font-main;
   resize: vertical;
   min-height: 100px;
@@ -87,19 +90,22 @@
 }
 
 .selectInput {
-  padding: $spacing-md $spacing-lg;
-  padding-right: 3rem;
-  border: 2px solid $section-bg-3;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: $spacing-sm;
+  padding-right: calc(#{$spacing-sm} + 1.2em + #{$spacing-sm});
+  border: 1px solid $section-bg-3;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-family: $font-main;
   background: $bg-white;
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
+  background-position: right 12px center;
+  background-size: 1.2em 1.2em;
+  box-sizing: border-box;
+  height: calc(0.9rem + #{$spacing-sm} * 2 + 2px);
+  line-height: 0.9rem;
   
   &:focus {
     outline: none;

@@ -29,7 +29,7 @@ export default function SpaceTypeStep({ onNext, onBack, initialData }: SpaceType
   };
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={styles.stepContent}>
       <h1 className={styles.title}>What type of space do you have?</h1>
       <p className={styles.subtitle}>Select the type that best describes your space.</p>
       

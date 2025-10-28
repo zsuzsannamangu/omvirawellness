@@ -12,11 +12,30 @@ interface PasswordStepProps {
 export default function PasswordStep({ onNext, onBack, initialData }: PasswordStepProps) {
   const [password, setPassword] = useState(initialData.password || '');
   const [showPassword, setShowPassword] = useState(false);
+  const [showError, setShowError] = useState(false);
+
+  // Password validation function
+  const isPasswordValid = (pwd: string) => {
+    return pwd.length >= 8 &&
+           /[A-Z]/.test(pwd) &&
+           /[a-z]/.test(pwd) &&
+           /\d/.test(pwd);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password) {
+    if (password && isPasswordValid(password)) {
+      setShowError(false);
       onNext({ password });
+    } else {
+      setShowError(true);
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (showError) {
+      setShowError(false);
     }
   };
 
@@ -25,7 +44,7 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
   };
 
   return (
-    <div className={`${styles.stepContainer} ${styles.passwordStep}`}>
+    <div className={`${styles.stepContent} ${styles.passwordStep}`}>
       <h1 className={styles.title}>Create a secure password</h1>
       <p className={styles.subtitle}>Choose a strong password to protect your account</p>
       
@@ -36,7 +55,7 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               className={styles.textInput}
               placeholder="Enter your password"
               required
@@ -68,6 +87,12 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
             </li>
           </ul>
         </div>
+
+        {showError && (
+          <div className={styles.errorMessage}>
+            Please ensure your password meets all the requirements above.
+          </div>
+        )}
         
         <div className={styles.buttonContainer}>
           <button type="button" onClick={onBack} className={styles.backButton}>
@@ -76,7 +101,7 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
           <button 
             type="submit" 
             className={styles.continueButton}
-            disabled={!password || password.length < 8}
+            disabled={!password || !isPasswordValid(password)}
           >
             CONTINUE
           </button>

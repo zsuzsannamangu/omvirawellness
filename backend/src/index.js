@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 
 const providerRoutes = require('./routes/providers');
 const bookingRoutes = require('./routes/bookings');
+const authRoutes = require('./routes/auth');
 
 dotenv.config();
 
@@ -11,10 +12,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-app.get('/', (req: any, res: any) => {
+app.get('/', (req, res) => {
   res.send('Omvira backend is running!');
 });
 
