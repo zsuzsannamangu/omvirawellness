@@ -171,15 +171,60 @@ export default function ProviderDetailPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date(2024, 11, 1)); // December 2024
   const [favorites, setFavorites] = useState<number[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (params?.id) {
-      const providerData = getProviderData(params.id as string);
-      setProvider(providerData);
-      if (providerData?.serviceDetails?.length > 0) {
-        setSelectedService(providerData.serviceDetails[0]);
+    const fetchProvider = async () => {
+      if (params?.id) {
+        try {
+          const response = await fetch(`http://localhost:4000/api/providers/${params.id}`);
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Transform API data to match the expected structure
+            const mainPhoto = data.profile_photo_url || '/images/default-provider.jpg';
+            
+            const transformedProvider = {
+              id: data.id,
+              name: data.contact_name || data.business_name,
+              image: mainPhoto,
+              location: `${data.city}, ${data.state}`,
+              startingPrice: data.services && data.services.length > 0 ? data.services[0].price : 0,
+              services: [data.business_type],
+              rating: data.average_rating || 4.5,
+              reviewCount: data.total_reviews || 0,
+              bio: data.bio || '',
+              photos: [mainPhoto], // Only use the actual photo if it exists
+              serviceDetails: data.services || [],
+            };
+            
+            setProvider(transformedProvider);
+            if (transformedProvider?.serviceDetails?.length > 0) {
+              setSelectedService(transformedProvider.serviceDetails[0]);
+            }
+          } else {
+            // Fallback to sample data
+            const providerData = getProviderData(params.id as string);
+            setProvider(providerData);
+            if (providerData?.serviceDetails?.length > 0) {
+              setSelectedService(providerData.serviceDetails[0]);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching provider:', error);
+          // Fallback to sample data
+          const providerData = getProviderData(params.id as string);
+          setProvider(providerData);
+          if (providerData?.serviceDetails?.length > 0) {
+            setSelectedService(providerData.serviceDetails[0]);
+          }
+        } finally {
+          setLoading(false);
+        }
       }
-    }
+    };
+    
+    fetchProvider();
   }, [params?.id]);
 
   // Load favorites from localStorage on component mount
@@ -220,7 +265,7 @@ export default function ProviderDetailPage() {
     };
   }, [isCalendarOpen]);
 
-  if (!provider) {
+  if (loading || !provider) {
     return (
       <div className={styles.loading}>
         <div>Loading...</div>
@@ -399,9 +444,11 @@ export default function ProviderDetailPage() {
         {/* Photo Gallery */}
         <div className={styles.photoSection}>
           <div className={styles.photoGallery}>
-            <button className={styles.photoNav} onClick={prevPhoto}>
-              ‹
-            </button>
+            {provider.photos.length > 1 && (
+              <button className={styles.photoNav} onClick={prevPhoto}>
+                ‹
+              </button>
+            )}
             <Image
               src={provider.photos[currentPhotoIndex]}
               alt={provider.name}
@@ -409,27 +456,31 @@ export default function ProviderDetailPage() {
               height={450}
               className={styles.mainPhoto}
             />
-            <button className={styles.photoNav} onClick={nextPhoto}>
-              ›
-            </button>
-          </div>
-          <div className={styles.photoThumbnails}>
-            {provider.photos.map((photo: string, index: number) => (
-              <button
-                key={index}
-                onClick={() => setCurrentPhotoIndex(index)}
-                className={`${styles.thumbnail} ${index === currentPhotoIndex ? styles.active : ''}`}
-              >
-                <Image
-                  src={photo}
-                  alt={`${provider.name} photo ${index + 1}`}
-                  width={80}
-                  height={60}
-                  className={styles.thumbnailImage}
-                />
+            {provider.photos.length > 1 && (
+              <button className={styles.photoNav} onClick={nextPhoto}>
+                ›
               </button>
-            ))}
+            )}
           </div>
+          {provider.photos.length > 1 && (
+            <div className={styles.photoThumbnails}>
+              {provider.photos.map((photo: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPhotoIndex(index)}
+                  className={`${styles.thumbnail} ${index === currentPhotoIndex ? styles.active : ''}`}
+                >
+                  <Image
+                    src={photo}
+                    alt={`${provider.name} photo ${index + 1}`}
+                    width={80}
+                    height={60}
+                    className={styles.thumbnailImage}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className={styles.providerMainSection}>
           <div className={styles.providerNameRow}>

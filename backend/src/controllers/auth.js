@@ -1,5 +1,6 @@
 // src/controllers/auth.js
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const pool = require('../db');
 const { generateToken } = require('../utils/jwt');
 
@@ -678,7 +679,8 @@ async function login(req, res) {
           travel_policy,
           travel_fee,
           max_distance,
-          team_members
+          team_members,
+          profile_photo_url
         FROM provider_profiles WHERE user_id = $1`,
         [user.id]
       );
@@ -890,11 +892,74 @@ async function updateClientProfile(req, res) {
   }
 }
 
+/**
+ * Update provider profile (specifically for profile photo URL)
+ */
+async function updateProviderProfile(req, res) {
+  try {
+    // Get user ID from token
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided',
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
+    let userId;
+    
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
+      userId = decoded.id;
+    } catch (error) {
+      console.error('JWT verification error:', error);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid token',
+        error: error.message,
+      });
+    }
+
+    const { profile_photo_url } = req.body;
+
+    const result = await pool.query(
+      `UPDATE provider_profiles 
+       SET profile_photo_url = COALESCE($1, profile_photo_url),
+           updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = $2
+       RETURNING *`,
+      [profile_photo_url || null, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Provider profile not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile photo updated successfully',
+      profile: result.rows[0],
+    });
+  } catch (error) {
+    console.error('Error updating provider profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   registerClient,
   registerProvider,
   registerSpaceOwner,
   login,
   updateClientProfile,
+  updateProviderProfile,
 };
 

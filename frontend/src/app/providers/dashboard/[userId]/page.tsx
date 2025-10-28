@@ -61,6 +61,11 @@ export default function ProvidersDashboard() {
       } else if (userData.email) {
         setProviderName(userData.email.split('@')[0]);
       }
+      
+      // Load profile image if available
+      if (userData.profile?.profile_photo_url) {
+        setProfileImage(userData.profile.profile_photo_url);
+      }
     } catch (error) {
       console.error('Error parsing user data:', error);
       router.push('/providers/login');
@@ -70,12 +75,52 @@ export default function ProvidersDashboard() {
     setLoading(false);
   }, [userId, router]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target?.result as string);
+      reader.onload = async (e) => {
+        const imageDataUrl = e.target?.result as string;
+        setProfileImage(imageDataUrl);
+        
+        // Save to localStorage
+        try {
+          const user = localStorage.getItem('user');
+          if (user) {
+            const userData = JSON.parse(user);
+            if (userData.profile) {
+              userData.profile.profile_photo_url = imageDataUrl;
+              localStorage.setItem('user', JSON.stringify(userData));
+            }
+          }
+        } catch (error) {
+          console.error('Error saving profile image to localStorage:', error);
+        }
+        
+        // Save to database
+        try {
+          const token = localStorage.getItem('token');
+          if (token) {
+            const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                profile_photo_url: imageDataUrl
+              })
+            });
+            
+            if (!response.ok) {
+              console.error('Failed to save profile image to database');
+            } else {
+              console.log('Profile image saved successfully to database');
+            }
+          }
+        } catch (error) {
+          console.error('Error saving profile image to database:', error);
+        }
       };
       reader.readAsDataURL(file);
     }

@@ -133,8 +133,41 @@ export default function SearchPage() {
   const [sortBy, setSortBy] = useState('Most Relevant');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [providers, setProviders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Fetch providers from API
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        console.log('Fetching providers from API...');
+        const response = await fetch('http://localhost:4000/api/providers');
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched providers from API:', data);
+          console.log('Number of providers:', data.length);
+          
+          setProviders(data || []);
+        } else {
+          console.error('API failed with status:', response.status);
+          const errorData = await response.text();
+          console.error('Error data:', errorData);
+          setProviders([]);
+        }
+      } catch (error) {
+        console.error('Error fetching providers:', error);
+        setProviders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProviders();
+  }, []);
 
   // Load favorites from localStorage on component mount
   React.useEffect(() => {
@@ -318,44 +351,60 @@ export default function SearchPage() {
         </div>
 
         {/* Provider Grid */}
-        <div className={styles.providersGrid}>
-          {sampleProviders.map((provider) => (
-            <Link key={provider.id} href={`/search/${provider.id}`} className={styles.providerCardLink}>
-              <div className={styles.providerCard}>
-                <div className={styles.providerImage}>
-                  <Image
-                    src={provider.image}
-                    alt={provider.name}
-                    width={300}
-                    height={200}
-                    className={styles.image}
-                  />
-                  <div className={styles.duration}>60 Min</div>
-                </div>
-                
-                <div className={styles.providerInfo}>
-                  <div className={styles.providerNameRow}>
-                    <h3 className={styles.providerName}>{provider.name}</h3>
-                    <button
-                      className={`${styles.favoriteButton} ${favorites.includes(provider.id) ? styles.favorited : ''}`}
-                      onClick={(e) => toggleFavorite(provider.id, e)}
-                      title={favorites.includes(provider.id) ? 'Remove from favorites' : 'Add to favorites'}
-                    >
-                      {favorites.includes(provider.id) ? <FaHeart /> : <FaRegHeart />}
-                    </button>
+        {loading ? (
+          <div className={styles.loading}>Loading providers...</div>
+        ) : (
+          <div className={styles.providersGrid}>
+            {providers.length === 0 ? (
+              <div className={styles.noResults}>No providers found</div>
+            ) : (
+              providers.map((provider: any) => (
+                <Link key={provider.id} href={`/search/${provider.id}`} className={styles.providerCardLink}>
+                  <div className={styles.providerCard}>
+                    <div className={styles.providerImage}>
+                      <Image
+                        src={provider.profile_photo_url || '/images/default-provider.jpg'}
+                        alt={provider.contact_name || provider.business_name || 'Provider'}
+                        width={300}
+                        height={200}
+                        className={styles.image}
+                      />
+                      {provider.services && provider.services.length > 0 && (
+                        <div className={styles.duration}>
+                          {provider.services[0].duration || '60 Min'}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className={styles.providerInfo}>
+                      <div className={styles.providerNameRow}>
+                        <h3 className={styles.providerName}>{provider.contact_name || provider.business_name}</h3>
+                        <button
+                          className={`${styles.favoriteButton} ${favorites.includes(provider.id) ? styles.favorited : ''}`}
+                          onClick={(e) => toggleFavorite(provider.id, e)}
+                          title={favorites.includes(provider.id) ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                          {favorites.includes(provider.id) ? <FaHeart /> : <FaRegHeart />}
+                        </button>
+                      </div>
+                      <p className={styles.providerServices}>{provider.business_type || 'Wellness Services'}</p>
+                      <p className={styles.providerLocation}>{provider.city}, {provider.state}</p>
+                      <div className={styles.providerRating}>
+                        <span className={styles.stars}>★★★★★</span>
+                        <span className={styles.ratingText}>
+                          {provider.average_rating || '4.5'} ({provider.total_reviews || 0} reviews)
+                        </span>
+                      </div>
+                      {provider.services && provider.services.length > 0 && (
+                        <p className={styles.startingPrice}>From ${provider.services[0].price}</p>
+                      )}
+                    </div>
                   </div>
-                  <p className={styles.providerServices}>{provider.services.join(' • ')}</p>
-                  <p className={styles.providerLocation}>{provider.location}</p>
-                  <div className={styles.providerRating}>
-                    <span className={styles.stars}>★★★★★</span>
-                    <span className={styles.ratingText}>{provider.rating} ({provider.reviewCount})</span>
-                  </div>
-                  <p className={styles.startingPrice}>From ${provider.startingPrice}</p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+                </Link>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

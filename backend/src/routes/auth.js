@@ -7,6 +7,7 @@ const {
   registerSpaceOwner,
   login,
   updateClientProfile,
+  updateProviderProfile,
 } = require('../controllers/auth');
 
 /**
@@ -43,6 +44,13 @@ router.post('/login', login);
  * @access  Protected
  */
 router.put('/profile/client', updateClientProfile);
+
+/**
+ * @route   PUT /api/auth/profile/provider
+ * @desc    Update provider profile
+ * @access  Protected
+ */
+router.put('/profile/provider', updateProviderProfile);
 
 module.exports = router;
 
