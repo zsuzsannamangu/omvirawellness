@@ -141,20 +141,6 @@ export default function ProfileSetupStep({ onNext, onBack, initialData }: Profil
           </div>
         </div>
 
-        {/* Certifications */}
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>CERTIFICATIONS</label>
-            <textarea
-              value={profile.certifications}
-              onChange={(e) => handleInputChange('certifications', e.target.value)}
-              className={styles.textareaInput}
-              placeholder="e.g., Licensed Massage Therapist, RYT-500"
-              rows={4}
-              maxLength={500}
-            />
-          </div>
-        </div>
 
         {/* Languages Section */}
         <div className={styles.formRow}>

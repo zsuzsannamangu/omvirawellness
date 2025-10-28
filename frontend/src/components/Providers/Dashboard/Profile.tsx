@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaClock, FaDollarSign, FaUpload, FaFileAlt, FaCheckCircle, FaStar, FaTimes, FaVideo, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 import AvailabilityManager from './AvailabilityManager';
@@ -12,169 +12,702 @@ interface ProfileProps {
 export default function Profile({ activeSubmenu }: ProfileProps) {
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
   const [editingService, setEditingService] = useState<any>(null);
+  const [userData, setUserData] = useState<any>(null);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [teamMembers, setTeamMembers] = useState<Array<{ name: string; email: string; role: string }>>([]);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [otherLanguage, setOtherLanguage] = useState('');
+  const [showAddTeamMember, setShowAddTeamMember] = useState(false);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [travelFeeType, setTravelFeeType] = useState<'free' | 'fee'>('free');
+  const [travelFee, setTravelFee] = useState('');
+  const [services, setServices] = useState<Array<{ name: string; type: string; duration: string; price: string; priceType: string }>>([]);
+  const [showAddService, setShowAddService] = useState(false);
+  const [newService, setNewService] = useState({ name: '', type: '', duration: '60', price: '', priceType: 'fixed' });
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const parsed = JSON.parse(user);
+      setUserData(parsed);
+      
+      // Load languages from credentials if available
+      if (parsed.profile?.credentials && Array.isArray(parsed.profile.credentials)) {
+        setSelectedLanguages(parsed.profile.credentials);
+      }
+      
+      // Load services if available
+      if (parsed.profile?.services && Array.isArray(parsed.profile.services)) {
+        setServices(parsed.profile.services);
+      }
+      
+      // Load team members if available
+      if (parsed.profile?.team_members && Array.isArray(parsed.profile.team_members)) {
+        setTeamMembers(parsed.profile.team_members);
+      }
+      
+      // Load travel fee type
+      if (parsed.profile?.travel_fee !== undefined && parsed.profile.travel_fee !== null && parseFloat(parsed.profile.travel_fee) > 0) {
+        setTravelFeeType('fee');
+        setTravelFee(parsed.profile.travel_fee.toString());
+      }
+    }
+  }, []);
 
   const renderContent = () => {
     switch (activeSubmenu) {
       case 'services':
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Service Menu</h2>
-            
-            <div className={styles.servicesContainer}>
-              <div className={styles.servicesHeader}>
-                <h3 className={styles.servicesSubtitle}>Your Services</h3>
-                <button 
-                  className={styles.addServiceBtn}
-                  onClick={() => setShowAddServiceModal(true)}
-                >
-                  <FaPlus /> Add New Service
-                </button>
-              </div>
-
-              <div className={styles.servicesList}>
-                <div className={styles.serviceItem}>
-                  <div className={styles.serviceInfo}>
-                    <h4 className={styles.serviceName}>Massage Therapy</h4>
-                    <p className={styles.serviceDescription}>Deep tissue and Swedish massage therapy sessions</p>
-                    <div className={styles.serviceDetails}>
-                      <span className={styles.serviceDuration}><FaClock /> 60 minutes</span>
-                      <span className={styles.servicePrice}><FaDollarSign /> $120</span>
-                    </div>
-                  </div>
-                  <div className={styles.serviceActions}>
-                    <button 
-                      className={styles.editBtn}
-                      onClick={() => {
-                        setEditingService({
-                          id: '1',
-                          name: 'Massage Therapy',
-                          description: 'Deep tissue and Swedish massage therapy sessions',
-                          duration: 60,
-                          basePrice: '120',
-                          locationOptions: {
-                            online: false,
-                            inPerson: true
-                          },
-                          addOns: [
-                            { id: 1, name: 'Hot Stone Therapy', price: '25' },
-                            { id: 2, name: 'Aromatherapy', price: '15' }
-                          ]
-                        });
-                        setShowAddServiceModal(true);
-                      }}
-                    ><FaEdit /></button>
-                    <button className={styles.deleteBtn}><FaTrash /></button>
-                  </div>
-                </div>
-
-                <div className={styles.serviceItem}>
-                  <div className={styles.serviceInfo}>
-                    <h4 className={styles.serviceName}>Yoga Class</h4>
-                    <p className={styles.serviceDescription}>Hatha and Vinyasa yoga classes for all levels</p>
-                    <div className={styles.serviceDetails}>
-                      <span className={styles.serviceDuration}><FaClock /> 45 minutes</span>
-                      <span className={styles.servicePrice}><FaDollarSign /> $80</span>
-                    </div>
-                  </div>
-                  <div className={styles.serviceActions}>
-                    <button 
-                      className={styles.editBtn}
-                      onClick={() => {
-                        setEditingService({
-                          id: '2',
-                          name: 'Yoga Class',
-                          description: 'Hatha and Vinyasa yoga classes for all levels',
-                          duration: 45,
-                          basePrice: '80',
-                          locationOptions: {
-                            online: true,
-                            inPerson: true
-                          },
-                          addOns: [
-                            { id: 1, name: 'Extended Session', price: '20' }
-                          ]
-                        });
-                        setShowAddServiceModal(true);
-                      }}
-                    ><FaEdit /></button>
-                    <button className={styles.deleteBtn}><FaTrash /></button>
-                  </div>
-                </div>
-
-                <div className={styles.serviceItem}>
-                  <div className={styles.serviceInfo}>
-                    <h4 className={styles.serviceName}>Meditation Session</h4>
-                    <p className={styles.serviceDescription}>Guided meditation and mindfulness sessions</p>
-                    <div className={styles.serviceDetails}>
-                      <span className={styles.serviceDuration}><FaClock /> 30 minutes</span>
-                      <span className={styles.servicePrice}><FaDollarSign /> $60</span>
-                    </div>
-                  </div>
-                  <div className={styles.serviceActions}>
-                    <button 
-                      className={styles.editBtn}
-                      onClick={() => {
-                        setEditingService({
-                          id: '3',
-                          name: 'Meditation Session',
-                          description: 'Guided meditation and mindfulness sessions',
-                          duration: 30,
-                          basePrice: '60',
-                          locationOptions: {
-                            online: true,
-                            inPerson: false
-                          },
-                          addOns: []
-                        });
-                        setShowAddServiceModal(true);
-                      }}
-                    ><FaEdit /></button>
-                    <button className={styles.deleteBtn}><FaTrash /></button>
-                  </div>
-                </div>
-              </div>
+            <div className={styles.servicesHeader}>
+              <h2 className={styles.sectionTitle}>Services</h2>
+              <button
+                className={styles.addServiceBtn}
+                onClick={() => setShowAddService(true)}
+              >
+                + Add Service
+              </button>
             </div>
+
+            {services.length > 0 && (
+              <div className={styles.servicesList}>
+                {services.map((service, index) => (
+                  <div key={index} className={styles.serviceCard}>
+                    <div className={styles.serviceCardInfo}>
+                      <h4 className={styles.serviceCardName}>{service.name}</h4>
+                      <p className={styles.serviceCardDetails}>{service.type} • {service.duration} • ${service.price} {service.priceType}</p>
+                    </div>
+                    <button
+                      className={styles.removeServiceBtn}
+                      onClick={() => setServices(services.filter((_, i) => i !== index))}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {showAddService && (
+              <div className={styles.addServiceModal}>
+                <h3 className={styles.modalTitle}>Add New Service</h3>
+                <div className={styles.modalForm}>
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>SERVICE NAME</label>
+                    <input
+                      type="text"
+                      className={styles.modalInput}
+                      placeholder="e.g., Deep Tissue Massage"
+                      maxLength={50}
+                      value={newService.name}
+                      onChange={(e) => setNewService({ ...newService, name: e.target.value })}
+                    />
+                    <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newService.name.length}/50</span>
+                  </div>
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>SERVICE TYPE</label>
+                    <select
+                      className={styles.modalInput}
+                      value={newService.type}
+                      onChange={(e) => setNewService({ ...newService, type: e.target.value })}
+                    >
+                      <option value="">Select type</option>
+                      <option value="Massage Therapy">Massage Therapy</option>
+                      <option value="Yoga Instruction">Yoga Instruction</option>
+                      <option value="Aesthetics & Skincare">Aesthetics & Skincare</option>
+                      <option value="Reiki & Energy Work">Reiki & Energy Work</option>
+                      <option value="Nutrition Counseling">Nutrition Counseling</option>
+                      <option value="Life Coaching">Life Coaching</option>
+                      <option value="Meditation Instruction">Meditation Instruction</option>
+                      <option value="Physical Therapy">Physical Therapy</option>
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className={styles.modalFormGroup} style={{ flex: 1 }}>
+                      <label className={styles.modalLabel}>DURATION</label>
+                      <select
+                        className={styles.modalInput}
+                        value={newService.duration}
+                        onChange={(e) => setNewService({ ...newService, duration: e.target.value })}
+                      >
+                        <option value="30">30 min</option>
+                        <option value="45">45 min</option>
+                        <option value="60">1 hour</option>
+                        <option value="90">1.5 hours</option>
+                        <option value="120">2 hours</option>
+                      </select>
+                    </div>
+                    <div className={styles.modalFormGroup} style={{ flex: 1 }}>
+                      <label className={styles.modalLabel}>PRICE</label>
+                      <input
+                        type="text"
+                        className={styles.modalInput}
+                        placeholder="$0"
+                        value={newService.price}
+                        onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>PRICE TYPE</label>
+                    <select
+                      className={styles.modalInput}
+                      value={newService.priceType}
+                      onChange={(e) => setNewService({ ...newService, priceType: e.target.value })}
+                    >
+                      <option value="fixed">Fixed Price</option>
+                      <option value="hourly">Per Hour</option>
+                      <option value="session">Per Session</option>
+                    </select>
+                  </div>
+                  <div className={styles.modalActions}>
+                    <button
+                      type="button"
+                      className={styles.modalCancelBtn}
+                      onClick={() => {
+                        setShowAddService(false);
+                        setNewService({ name: '', type: '', duration: '60', price: '', priceType: 'fixed' });
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.modalAddBtn}
+                      disabled={!newService.name || !newService.type || !newService.price}
+                      onClick={() => {
+                        if (newService.name && newService.type && newService.price) {
+                          setServices([...services, { ...newService }]);
+                          setShowAddService(false);
+                          setNewService({ name: '', type: '', duration: '60', price: '', priceType: 'fixed' });
+                        }
+                      }}
+                    >
+                      Add Service
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
-      
+
       case 'availability':
         return <AvailabilityManager />;
-      
-      case 'bio':
+
+      case 'basic':
+        if (!userData) {
+          return <div className={styles.dashboardSection}>Loading...</div>;
+        }
+
+        const profileBasic = userData.profile || {};
+        const credentialsBasic = profileBasic.credentials || [];
+        
+        // Convert years_experience from integer back to string format
+        let yearsExp = '';
+        if (profileBasic.years_experience) {
+          const yearsNum = parseInt(profileBasic.years_experience);
+          if (yearsNum <= 1) yearsExp = '0-1';
+          else if (yearsNum <= 5) yearsExp = '2-5';
+          else if (yearsNum <= 10) yearsExp = '6-10';
+          else if (yearsNum <= 15) yearsExp = '11-15';
+          else yearsExp = '16+';
+        }
+
+        // Available wellness practices with mapping
+        const wellnessPracticeMap: { [key: string]: string } = {
+          'massage': 'Massage Therapy',
+          'yoga': 'Yoga Instruction',
+          'aesthetics': 'Aesthetics & Skincare',
+          'reiki': 'Reiki & Energy Work',
+          'doulas': 'Doula Services',
+          'nutrition': 'Nutrition Counseling'
+        };
+        
+        const wellnessPractices = [
+          'Massage Therapy',
+          'Yoga Instruction',
+          'Aesthetics & Skincare',
+          'Reiki & Energy Work',
+          'Doula Services',
+          'Nutrition Counseling',
+          'Physical Therapy',
+          'Mental Health Counseling',
+          'Life Coaching',
+          'Fitness Training',
+          'Meditation Instruction',
+          'Sound Healing',
+          'Craniosacral Therapy',
+          'Reflexology'
+        ];
+
+        const commonLanguages = [
+          'English',
+          'Spanish',
+          'French',
+          'German',
+          'Italian',
+          'Portuguese',
+          'Mandarin',
+          'Japanese',
+          'Korean',
+          'Arabic'
+        ];
+
         return (
           <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Bio</h2>
-            
+            <h2 className={styles.sectionTitle}>Basic Information</h2>
+
             <div className={styles.bioContainer}>
               <div className={styles.bioForm}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Professional Title</label>
-                  <input type="text" className={styles.formInput} defaultValue="Licensed Massage Therapist & Yoga Instructor" />
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Business Name</label>
+                    <input type="text" className={styles.formInput} defaultValue={profileBasic.business_name || ''} />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Your Name</label>
+                    <input type="text" className={styles.formInput} defaultValue={profileBasic.contact_name || ''} />
+                  </div>
                 </div>
-                
+
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Phone Number</label>
+                    <input type="text" className={styles.formInput} defaultValue={profileBasic.phone_number || ''} />
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Wellness Practice (Select all that apply)</label>
+                  <div className={styles.practiceOptions}>
+                    {wellnessPractices.map((practice) => {
+                      // Check if this practice matches the stored business_type
+                      const businessType = profileBasic.business_type?.toLowerCase() || '';
+                      const mappedName = wellnessPracticeMap[businessType];
+                      const isSelected = mappedName === practice || businessType === practice.toLowerCase();
+                      
+                      return (
+                        <button
+                          key={practice}
+                          type="button"
+                          className={`${styles.practiceOption} ${isSelected ? styles.practiceSelected : ''}`}
+                        >
+                          {practice.toUpperCase()}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Address</label>
+                  <input type="text" className={styles.formInput} defaultValue={profileBasic.address_line1 || ''} placeholder="Street address" />
+                </div>
+
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>City</label>
+                    <input type="text" className={styles.formInput} defaultValue={profileBasic.city || ''} />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>State</label>
+                    <input type="text" className={styles.formInput} defaultValue={profileBasic.state || ''} />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Zip Code</label>
+                    <input type="text" className={styles.formInput} defaultValue={profileBasic.zip_code || ''} />
+                  </div>
+                </div>
+
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Bio</label>
-                  <textarea 
-                    className={styles.formTextarea} 
-                    rows={8} 
-                    defaultValue="With over 8 years of experience in wellness and healing, I specialize in therapeutic massage and mindful yoga practices. I'm passionate about helping clients achieve physical and mental well-being through personalized treatment plans and holistic approaches.
-
-My journey began with a deep interest in alternative healing methods, leading me to pursue certifications in Swedish massage, deep tissue therapy, and various yoga traditions. I believe in creating a safe, nurturing environment where clients can relax, heal, and reconnect with their bodies.
-
-I'm committed to continuing education and staying current with the latest techniques in massage therapy and yoga instruction. My goal is to empower each client to take an active role in their wellness journey."
+                  <textarea
+                    className={styles.formTextarea}
+                    rows={6}
+                    defaultValue={profileBasic.bio || ''}
                   ></textarea>
                 </div>
 
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Specialties</label>
-                  <div className={styles.specialtiesList}>
-                    <span className={styles.specialtyTag}>Deep Tissue Massage</span>
-                    <span className={styles.specialtyTag}>Swedish Massage</span>
-                    <span className={styles.specialtyTag}>Hatha Yoga</span>
-                    <span className={styles.specialtyTag}>Vinyasa Yoga</span>
-                    <span className={styles.specialtyTag}>Meditation</span>
-                    <span className={styles.specialtyTag}>Stress Relief</span>
+                  <textarea
+                    className={styles.formTextarea}
+                    rows={3}
+                    defaultValue={profileBasic.specialties || ''}
+                    placeholder="Describe your specialties and techniques..."
+                  ></textarea>
+                </div>
+
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Years of Experience</label>
+                    <select className={styles.formSelect} defaultValue={yearsExp || ''}>
+                      <option value="">Select experience level</option>
+                      <option value="0-1">0-1 years</option>
+                      <option value="2-5">2-5 years</option>
+                      <option value="6-10">6-10 years</option>
+                      <option value="11-15">11-15 years</option>
+                      <option value="16+">16+ years</option>
+                    </select>
                   </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Languages Spoken</label>
+                  <div className={styles.languagesContainer}>
+                    <div className={styles.languagesList}>
+                      {(selectedLanguages.length > 0 || credentialsBasic.length > 0) ? (
+                        (selectedLanguages.length > 0 ? selectedLanguages : credentialsBasic).map((lang: string, index: number) => (
+                          <span key={index} className={styles.languageTag}>
+                            <button
+                              type="button"
+                              className={styles.removeTag}
+                              onClick={() => {
+                                setSelectedLanguages(prev => prev.filter((_, i) => i !== index));
+                              }}
+                            >
+                              ×
+                            </button>
+                            <span className={styles.languageName}>{lang}</span>
+                          </span>
+                        ))
+                      ) : (
+                        <span className={styles.noData}>No languages added yet</span>
+                      )}
+                    </div>
+                    <div className={styles.languageSuggestions}>
+                      {commonLanguages
+                        .filter(l => !selectedLanguages.includes(l) && !credentialsBasic.includes(l))
+                        .slice(0, 5)
+                        .map(language => (
+                          <button
+                            key={language}
+                            type="button"
+                            className={styles.suggestionButton}
+                            onClick={() => {
+                              if (!selectedLanguages.includes(language)) {
+                                setSelectedLanguages(prev => [...prev, language]);
+                              }
+                            }}
+                          >
+                            + {language}
+                          </button>
+                        ))}
+                      <button
+                        type="button"
+                        className={styles.suggestionButton}
+                        onClick={() => setShowOtherInput(true)}
+                      >
+                        + Other
+                      </button>
+                      {showOtherInput && (
+                        <div className={styles.otherLanguageInput}>
+                          <input
+                            type="text"
+                            value={otherLanguage}
+                            onChange={(e) => setOtherLanguage(e.target.value)}
+                            placeholder="Enter language name"
+                            className={styles.formInput}
+                            style={{ width: '200px', marginRight: '8px' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (otherLanguage.trim()) {
+                                setSelectedLanguages([...selectedLanguages, otherLanguage.trim()]);
+                                setOtherLanguage('');
+                                setShowOtherInput(false);
+                              }
+                            }}
+                            className={styles.secondaryBtn}
+                            style={{ marginRight: '8px' }}
+                          >
+                            Add
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowOtherInput(false);
+                              setOtherLanguage('');
+                            }}
+                            className={styles.secondaryBtn}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Team Members</label>
+                  <div className={styles.teamMembersList}>
+                    {teamMembers.length > 0 ? (
+                      teamMembers.map((member, index) => (
+                        <div key={index} className={styles.teamMemberCard}>
+                          <div className={styles.teamMemberInfo}>
+                            <h4 className={styles.memberName}>{member.name}</h4>
+                            <p className={styles.memberDetails}>{member.email} • {member.role}</p>
+                          </div>
+                          <button
+                            className={styles.removeMemberBtn}
+                            onClick={() => setTeamMembers(teamMembers.filter((_, i) => i !== index))}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className={styles.noTeamMembers}>No team members added yet</div>
+                    )}
+
+                    {!showAddTeamMember && (
+                      <button
+                        type="button"
+                        className={styles.addTeamMemberBtn}
+                        onClick={() => setShowAddTeamMember(true)}
+                      >
+                        <span className={styles.addIcon}>+</span> Add Team Member
+                      </button>
+                    )}
+                  </div>
+
+                  {showAddTeamMember && (
+                    <div className={styles.addTeamMemberModal}>
+                      <h3 className={styles.modalTitle}>Add Team Member</h3>
+                      <div className={styles.modalForm}>
+                        <div className={styles.modalFormGroup}>
+                          <label className={styles.modalLabel}>FULL NAME</label>
+                          <input
+                            type="text"
+                            className={styles.modalInput}
+                            placeholder="Enter full name"
+                            value={newMemberName}
+                            onChange={(e) => setNewMemberName(e.target.value)}
+                          />
+                        </div>
+                        <div className={styles.modalFormGroup}>
+                          <label className={styles.modalLabel}>EMAIL ADDRESS</label>
+                          <input
+                            type="email"
+                            className={styles.modalInput}
+                            placeholder="Enter email address"
+                            value={newMemberEmail}
+                            onChange={(e) => setNewMemberEmail(e.target.value)}
+                          />
+                        </div>
+                        <div className={styles.modalActions}>
+                          <button
+                            className={styles.modalCancelBtn}
+                            onClick={() => {
+                              setShowAddTeamMember(false);
+                              setNewMemberName('');
+                              setNewMemberEmail('');
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className={styles.modalAddBtn}
+                            onClick={() => {
+                              if (newMemberName && newMemberEmail) {
+                                setTeamMembers([...teamMembers, { name: newMemberName, email: newMemberEmail, role: 'Team Member' }]);
+                                setShowAddTeamMember(false);
+                                setNewMemberName('');
+                                setNewMemberEmail('');
+                              }
+                            }}
+                          >
+                            Add Member
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.bioActions}>
+                  <button className={styles.saveBtn}>Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'preferences':
+        if (!userData) {
+          return <div className={styles.dashboardSection}>Loading...</div>;
+        }
+        
+        const profilePrefs = userData.profile || {};
+        const workLocations = profilePrefs.work_location || [];
+        
+        return (
+          <div className={styles.dashboardSection}>
+            <h2 className={styles.sectionTitle}>Preferences</h2>
+
+            <div className={styles.bioContainer}>
+              <div className={styles.bioForm}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Where do you work? (Select all that apply)</label>
+                  <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input type="checkbox" defaultChecked={workLocations.includes('at-my-place')} /> My Place
+                    </label>
+                    <label className={styles.checkboxLabel}>
+                      <input type="checkbox" defaultChecked={workLocations.includes('at-client-location')} /> Clients Location
+                    </label>
+                    <label className={styles.checkboxLabel}>
+                      <input type="checkbox" defaultChecked={workLocations.includes('online')} /> Online
+                    </label>
+                    <label className={styles.checkboxLabel}>
+                      <input type="checkbox" defaultChecked={workLocations.includes('from-booked-studio')} /> Booked Studio
+                    </label>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>TRAVEL FEE</label>
+                  <div className={styles.feeTypeContainer}>
+                    <div className={styles.feeTypeTabs}>
+                      <button
+                        type="button"
+                        className={`${styles.feeTypeTab} ${travelFeeType === 'free' ? styles.active : ''}`}
+                        onClick={() => setTravelFeeType('free')}
+                      >
+                        <span className={styles.tabIcon}>✓</span>
+                        Free Travel
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.feeTypeTab} ${travelFeeType === 'fee' ? styles.active : ''}`}
+                        onClick={() => setTravelFeeType('fee')}
+                      >
+                        <span className={styles.tabIcon}>$</span>
+                        Travel Fee
+                      </button>
+                    </div>
+                    {travelFeeType === 'fee' && (
+                      <div style={{ marginTop: '2px', width: '50%' }}>
+                        <input
+                          type="text"
+                          className={styles.formInput}
+                          placeholder="$0.00"
+                          value={travelFee}
+                          onChange={(e) => setTravelFee(e.target.value)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>MAXIMUM TRAVEL DISTANCE</label>
+                  <select className={styles.formSelect} defaultValue={profilePrefs.max_distance || '15'} style={{ width: '50%' }}>
+                    <option value="5">5 miles</option>
+                    <option value="10">10 miles</option>
+                    <option value="15">15 miles</option>
+                    <option value="20">20 miles</option>
+                    <option value="25">25 miles</option>
+                    <option value="30">30 miles</option>
+                    <option value="50">50 miles</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Additional Travel Policy</label>
+                  <textarea
+                    className={styles.formTextarea}
+                    rows={3}
+                    placeholder="Describe your travel policy..."
+                    defaultValue={profilePrefs.travel_policy || ''}
+                  ></textarea>
+                </div>
+
+                <div className={styles.bioActions}>
+                  <button className={styles.saveBtn}>Save Preferences</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'bio':
+        if (!userData) {
+          return <div className={styles.dashboardSection}>Loading...</div>;
+        }
+
+        const profile = userData.profile || {};
+        const credentials = profile.credentials || [];
+        const yearsExperience = profile.years_experience || '';
+
+        return (
+          <div className={styles.dashboardSection}>
+            <h2 className={styles.sectionTitle}>Bio</h2>
+
+            <div className={styles.bioContainer}>
+              <div className={styles.bioForm}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Business Name</label>
+                  <input type="text" className={styles.formInput} defaultValue={profile.business_name || ''} />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Your Name</label>
+                  <input type="text" className={styles.formInput} defaultValue={profile.contact_name || ''} />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Phone Number</label>
+                  <input type="text" className={styles.formInput} defaultValue={profile.phone_number || ''} />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Practice Type</label>
+                  <input type="text" className={styles.formInput} defaultValue={profile.business_type || ''} />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Bio</label>
+                  <textarea
+                    className={styles.formTextarea}
+                    rows={6}
+                    defaultValue={profile.bio || ''}
+                  ></textarea>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Years of Experience</label>
+                  <select className={styles.formSelect} defaultValue="">
+                    <option value="">Select experience level</option>
+                    <option value="0-1">0-1 years</option>
+                    <option value="2-5">2-5 years</option>
+                    <option value="6-10">6-10 years</option>
+                    <option value="11-15">11-15 years</option>
+                    <option value="16+">16+ years</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Languages</label>
+                  <div className={styles.specialtiesList}>
+                    {credentials.length > 0 ? (
+                      credentials.map((lang: string, index: number) => (
+                        <span key={index} className={styles.specialtyTag}>{lang}</span>
+                      ))
+                    ) : (
+                      <span className={styles.noData}>No languages added yet</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Address</label>
+                  <input type="text" className={styles.formInput} defaultValue={`${profile.address_line1 || ''} ${profile.city || ''}, ${profile.state || ''} ${profile.zip_code || ''}`.trim()} />
                 </div>
 
                 <div className={styles.bioActions}>
@@ -185,12 +718,12 @@ I'm committed to continuing education and staying current with the latest techni
             </div>
           </div>
         );
-      
+
       case 'certifications':
         return (
           <div className={styles.dashboardSection}>
             <h2 className={styles.sectionTitle}>Certifications</h2>
-            
+
             <div className={styles.certificationsContainer}>
               <div className={styles.certificationsList}>
                 <div className={styles.certificationItem}>
@@ -203,7 +736,6 @@ I'm committed to continuing education and staying current with the latest techni
                     <p className={styles.certDate}>Issued: March 2018 • Expires: March 2025</p>
                   </div>
                   <div className={styles.certStatus}>
-                    <span className={styles.statusValid}>Valid</span>
                   </div>
                   <div className={styles.certActions}>
                     <button className={styles.editBtn}><FaEdit /></button>
@@ -221,7 +753,6 @@ I'm committed to continuing education and staying current with the latest techni
                     <p className={styles.certDate}>Issued: June 2020 • No expiration</p>
                   </div>
                   <div className={styles.certStatus}>
-                    <span className={styles.statusValid}>Valid</span>
                   </div>
                   <div className={styles.certActions}>
                     <button className={styles.editBtn}><FaEdit /></button>
@@ -239,7 +770,6 @@ I'm committed to continuing education and staying current with the latest techni
                     <p className={styles.certDate}>Issued: January 2024 • Expires: January 2026</p>
                   </div>
                   <div className={styles.certStatus}>
-                    <span className={styles.statusValid}>Valid</span>
                   </div>
                   <div className={styles.certActions}>
                     <button className={styles.editBtn}><FaEdit /></button>
@@ -261,7 +791,7 @@ I'm committed to continuing education and staying current with the latest techni
                       <input type="text" className={styles.formInput} placeholder="e.g., National Certification Board" />
                     </div>
                   </div>
-                  
+
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Issue Date</label>
@@ -293,7 +823,7 @@ I'm committed to continuing education and staying current with the latest techni
             </div>
           </div>
         );
-      
+
       default:
         return (
           <div className={styles.dashboardSection}>
@@ -310,11 +840,11 @@ I'm committed to continuing education and staying current with the latest techni
     <div className={styles.dashboardSection}>
       {renderContent()}
       {showAddServiceModal && (
-        <AddServiceModal 
+        <AddServiceModal
           onClose={() => {
             setShowAddServiceModal(false);
             setEditingService(null);
-          }} 
+          }}
           editingService={editingService}
         />
       )}
@@ -383,7 +913,7 @@ function AddServiceModal({ onClose, editingService }: AddServiceModalProps) {
   const handleAddOnChange = (index: number, field: string, value: string) => {
     setServiceData(prev => ({
       ...prev,
-      addOns: prev.addOns.map((addOn, i) => 
+      addOns: prev.addOns.map((addOn, i) =>
         i === index ? { ...addOn, [field]: value } : addOn
       )
     }));
@@ -496,7 +1026,7 @@ function AddServiceModal({ onClose, editingService }: AddServiceModalProps) {
                 <span className={styles.locationIcon}><FaVideo /></span>
                 <span className={styles.locationText}>Online</span>
               </label>
-              
+
               <label className={styles.locationOption}>
                 <input
                   type="checkbox"
@@ -567,3 +1097,4 @@ function AddServiceModal({ onClose, editingService }: AddServiceModalProps) {
     </div>
   );
 }
+

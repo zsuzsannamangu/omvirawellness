@@ -7,6 +7,7 @@ interface PaymentStepProps {
   onSubmit: (data: { payment: any }) => void;
   onBack: () => void;
   initialData: any;
+  isSubmitting?: boolean;
 }
 
 const planOptions = [
@@ -56,7 +57,7 @@ const planOptions = [
   }
 ];
 
-export default function PaymentStep({ onSubmit, onBack, initialData }: PaymentStepProps) {
+export default function PaymentStep({ onSubmit, onBack, initialData, isSubmitting }: PaymentStepProps) {
   const [selectedPlan, setSelectedPlan] = useState(initialData.payment?.selectedPlan || 'professional');
   const [billingCycle, setBillingCycle] = useState(initialData.payment?.billingCycle || 'monthly');
 
@@ -211,8 +212,8 @@ export default function PaymentStep({ onSubmit, onBack, initialData }: PaymentSt
           <button type="button" onClick={onBack} className={styles.backButton}>
             Back
           </button>
-          <button type="submit" className={styles.continueButton}>
-            CREATE ACCOUNT
+          <button type="submit" className={styles.continueButton} disabled={isSubmitting}>
+            {isSubmitting ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
           </button>
         </div>
       </form>

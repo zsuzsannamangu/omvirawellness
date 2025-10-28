@@ -23,7 +23,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
   const [travelSettings, setTravelSettings] = useState(() => {
     const existingSettings = initialData.travelSettings || {};
     return {
-      travelFee: existingSettings.travelFee || '0',
+      travelFee: existingSettings.travelFee === '0' ? '' : (existingSettings.travelFee || ''),
       feeType: existingSettings.feeType || 'free',
       maxDistance: existingSettings.maxDistance || '15',
       travelPolicy: existingSettings.travelPolicy || '',
@@ -38,7 +38,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
     setTravelSettings({
       ...travelSettings,
       feeType,
-      travelFee: feeType === 'free' ? '0' : travelSettings.travelFee
+      travelFee: feeType === 'free' ? '' : travelSettings.travelFee
     });
   };
 
@@ -90,13 +90,16 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
               <div className={styles.priceInput}>
                 <span className={styles.dollarSign}>$</span>
                 <input
-                  type="number"
-                  value={travelSettings.travelFee || '0'}
-                  onChange={(e) => handleInputChange('travelFee', e.target.value)}
+                  type="text"
+                  value={travelSettings.travelFee || ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Only allow numbers and decimal point
+                    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                      handleInputChange('travelFee', value);
+                    }
+                  }}
                   className={styles.textInput}
-                  placeholder="0"
-                  min="0"
-                  step="0.01"
                 />
               </div>
             </div>

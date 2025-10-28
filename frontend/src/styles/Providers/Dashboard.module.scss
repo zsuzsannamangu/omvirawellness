@@ -1086,53 +1086,71 @@
 .profileContent, .servicesContent, .pricingContent {
   .profileForm, .servicesForm, .pricingForm {
     background: $bg-white;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: $spacing-lg;
     box-shadow: 0 1px 3px $shadow-color;
+    border: 1px solid $border-color;
   }
 
   .formSection {
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-md;
   }
 
   .formRow {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $spacing-lg;
-    margin-bottom: $spacing-lg;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
   }
 
   .formGroup {
     display: flex;
     flex-direction: column;
     gap: $spacing-xs;
+    margin-bottom: $spacing-sm;
   }
 
   .formLabel {
-    font-weight: 500;
+    font-weight: 700;
     color: $dark-text;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
   }
 
   .formInput, .formSelect, .formTextarea {
-    padding: $spacing-sm;
-    border: 1px solid $border-light;
+    padding: 8px 12px;
+    border: 1px solid $border-color;
     border-radius: 4px;
     font-size: 0.9rem;
-    transition: border-color 0.2s ease;
+    font-family: $font-main;
+    color: $dark-text;
+    transition: all 0.2s ease;
+    background: $bg-white;
+    height: auto;
 
     &:focus {
       outline: none;
       border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.05);
+    }
+
+    &::placeholder {
+      color: $placeholder-grey;
+      font-style: italic;
     }
   }
 
   .formSelect {
-    padding-right: 2rem;
+    padding-right: 2.5rem;
   }
 
   .formTextarea {
     resize: vertical;
+    min-height: 80px;
+    font-family: $font-main;
+    padding: 8px 12px;
   }
 
   .priceInput {
@@ -1180,23 +1198,547 @@
   .formActions {
     display: flex;
     justify-content: flex-end;
-    margin-top: $spacing-xl;
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid rgba($primary-color, 0.1);
+    gap: $spacing-sm;
   }
 
-  .saveBtn {
+  .saveBtn, .secondaryBtn {
     background: $primary-color;
     color: $bg-white;
     border: none;
-    padding: $spacing-sm $spacing-lg;
+    padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s ease;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    font-family: $font-main;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: $hover-green;
+      transform: translateY(-1px);
+    }
+
+    &.secondaryBtn {
+      background: $background-light;
+      color: $dark-text;
+      border: 1px solid $border-color;
+
+      &:hover {
+        background: $background-gray;
+      }
     }
   }
+
+  // Checkbox Group Styles
+  .checkboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+    background: $background-light;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+  }
+
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background: $bg-white;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: $dark-text;
+
+    &:hover {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.05);
+    }
+
+    input[type="checkbox"] {
+      margin: 0;
+      cursor: pointer;
+      accent-color: $primary-color;
+    }
+
+    &:has(input:checked) {
+      background: rgba($primary-color, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  // Languages Styles
+  .languagesContainer {
+    padding: $spacing-sm;
+    background: $background-light;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+  }
+
+  .languagesList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px !important;
+    margin-bottom: $spacing-md;
+    min-height: 40px;
+  }
+
+  .languageTag {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background: $primary-color;
+    color: $bg-white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-right: 15px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .removeTag {
+    background: none;
+    border: none;
+    color: $bg-white !important;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 8px !important;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .languageName {
+    display: inline-block;
+  }
+
+  .noData {
+    color: $subtext-color;
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  .languageSuggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px !important;
+  }
+
+  .suggestionButton {
+    padding: 8px 16px !important;
+    border: 2px solid $primary-color !important;
+    border-radius: 25px !important;
+    background: $bg-white !important;
+    font-size: 0.85rem !important;
+    color: $primary-color !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-weight: 600 !important;
+    font-family: $font-main !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 36px !important;
+    box-shadow: 0 2px 4px rgba($primary-color, 0.15) !important;
+
+    &:hover {
+      border-color: $hover-green !important;
+      background: rgba($primary-color, 0.08) !important;
+      box-shadow: 0 4px 8px rgba($primary-color, 0.2) !important;
+      transform: translateY(-2px) !important;
+      color: $hover-green !important;
+    }
+
+    &:active {
+      transform: scale(0.95) !important;
+    }
+  }
+
+}
+
+// Fee Type Toggle Styles
+
+.feeTypeTabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.feeTypeTab {
+  flex: 1;
+  padding: $spacing-md;
+  border: 2px solid $border-light;
+  border-radius: 8px;
+  background: $bg-white;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  &:hover {
+    border-color: $primary-color;
+  }
+
+  &.active {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+    color: $primary-color;
+  }
+}
+
+.tabIcon {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+// Team Members Styles
+.teamMembersList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.teamMemberCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md;
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.teamMemberInfo {
+  flex: 1;
+}
+
+.memberName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 4px 0;
+}
+
+.memberDetails {
+  font-size: 0.85rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+.removeMemberBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $dark-text;
+  }
+}
+
+.addTeamMemberBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  background: $bg-white;
+  border: 2px dashed $border-color;
+  border-radius: 6px;
+  color: $primary-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: $font-main;
+
+  .addIcon {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+}
+
+.noTeamMembers {
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-style: italic;
+  padding: $spacing-sm 0;
+}
+
+.addTeamMemberModal {
+  margin-top: $spacing-md;
+  padding: $spacing-lg;
+  background: $bg-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modalTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+  text-align: center;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.modalFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.modalLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $dark-text;
+}
+
+.modalInput {
+  padding: 10px 12px;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: $dark-text;
+  font-family: $font-main;
+  transition: border-color 0.2s ease;
+  height: 40px;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $subtext-color;
+    font-style: italic;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.modalCancelBtn {
+  flex: 1;
+  padding: 10px 20px;
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  color: $dark-text;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $subtext-color;
+    background: $background-light;
+  }
+}
+
+.modalAddBtn {
+  flex: 1;
+  padding: 10px 20px;
+  background: $subtext-color;
+  border: none;
+  border-radius: 4px;
+  color: $bg-white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($subtext-color, 10%);
+  }
+}
+
+// Services Styles
+.servicesList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.serviceCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md;
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.serviceCardInfo {
+  flex: 1;
+}
+
+.serviceCardName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 4px 0;
+}
+
+.serviceCardDetails {
+  font-size: 0.85rem;
+  color: $subtext-color;
+  margin: 0;
+}
+
+.removeServiceBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $dark-text;
+  }
+}
+
+.addServiceBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: 6px $spacing-md;
+  background: $bg-white;
+  border: 2px dashed $border-color;
+  border-radius: 6px;
+  color: $primary-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: $font-main;
+  width: fit-content;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+}
+
+.addServiceModal {
+  margin-top: $spacing-md;
+  padding: $spacing-lg;
+  background: $bg-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// Language buttons in Dashboard Profile
+.languagesContainer .languagesList {
+  gap: 30px !important;
+}
+
+.languageSuggestions {
+  gap: 30px !important;
+}
+
+.languageTag {
+  padding: 8px 16px !important;
+  border: none !important;
+  border-radius: 25px !important;
+  background: $primary-color !important;
+  font-size: 0.85rem !important;
+  color: $bg-white !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 36px !important;
+  margin-right: 15px !important;
+  margin-bottom: 15px !important;
+}
+
+.suggestionButton {
+  padding: 8px 16px !important;
+  border: 2px solid $primary-color !important;
+  border-radius: 25px !important;
+  background: $bg-white !important;
+  font-size: 0.85rem !important;
+  color: $primary-color !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-weight: 600 !important;
+  font-family: $font-main !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 36px !important;
+  box-shadow: 0 2px 4px rgba($primary-color, 0.15) !important;
+  margin-right: 15px !important;
+  margin-bottom: 15px !important;
+}
+
+.otherLanguageInput {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: $spacing-sm;
 }
 
 // Responsive Design
@@ -3365,21 +3907,64 @@
 // Bio Styles
 .bioContainer {
   background: $bg-white;
-  border: 1px solid $border-light;
+  border: 1px solid $border-color;
   border-radius: 8px;
   padding: $spacing-lg;
+  box-shadow: 0 1px 3px $shadow-color;
 }
 
 .bioForm {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-sm;
+}
+
+.bioForm .formGroup {
+  margin-bottom: $spacing-sm;
+}
+
+.bioForm .formLabel {
+  font-weight: 700;
+  color: $dark-text;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.bioForm .formInput,
+.bioForm .formTextarea {
+  padding: 8px 12px;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  color: $dark-text;
+  transition: all 0.2s ease;
+  background: $bg-white;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.05);
+  }
+
+  &::placeholder {
+    color: $placeholder-grey;
+    font-style: italic;
+  }
+}
+
+.bioForm .formTextarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .formRow {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-md;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: $spacing-sm;
 }
 
 .specialtiesList {
@@ -3400,19 +3985,25 @@
 .bioActions {
   display: flex;
   gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-color;
 }
 
 .saveBtn {
   background: $primary-color;
   color: $bg-white;
   border: none;
-  padding: $spacing-sm $spacing-md;
-  border-radius: 6px;
-  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
+  font-family: $font-main;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $hover-green;
+    transform: translateY(-1px);
   }
 }
 
@@ -3928,4 +4519,83 @@
   &:hover {
     background: darken($primary-color, 10%);
   }
+}
+
+// Subscription Styles
+.planInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm;
+  background: linear-gradient(135deg, $primary-color 0%, $hover-green 100%);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.2);
+  margin-top: $spacing-xs;
+}
+
+.planName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $bg-white;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.planPrice {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $bg-white;
+  letter-spacing: 0.3px;
+}
+
+.cancelBtn {
+  background: $bg-white;
+  color: $error-color;
+  border: 1px solid $error-color;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $error-color;
+    color: $bg-white;
+  }
+}
+
+// Wellness Practice Selection Styles
+.practiceOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xs;
+}
+
+.practiceOption {
+  padding: 6px $spacing-sm;
+  background: $bg-white;
+  border: 1px solid $primary-color;
+  border-radius: 4px;
+  color: $dark-text;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-main;
+  text-align: center;
+
+  &:hover {
+    background: $primary-color;
+    color: $bg-white;
+    border-color: $primary-color;
+  }
+}
+
+.practiceSelected {
+  background: $primary-color !important;
+  color: $bg-white !important;
+  border-color: $primary-color !important;
 }

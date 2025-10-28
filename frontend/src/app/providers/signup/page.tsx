@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from '@/styles/Providers/ProviderSignup.module.scss';
+import { registerProvider } from '@/services/auth';
 
 // Step components
 import EmailStep from '@/components/Providers/SignupSteps/EmailStep';
@@ -10,16 +12,16 @@ import BusinessInfoStep from '@/components/Providers/SignupSteps/BusinessInfoSte
 import ServiceCategoryStep from '@/components/Providers/SignupSteps/ServiceCategoryStep';
 import PasswordStep from '@/components/Providers/SignupSteps/PasswordStep';
 import LocationStep from '@/components/Providers/SignupSteps/LocationStep';
-import ScheduleStep from '@/components/Providers/SignupSteps/ScheduleStep';
 import ServicesStep from '@/components/Providers/SignupSteps/ServicesStep';
-import BusinessHoursStep from '@/components/Providers/SignupSteps/BusinessHoursStep';
 import TravelSettingsStep from '@/components/Providers/SignupSteps/TravelSettingsStep';
 import StaffMembersStep from '@/components/Providers/SignupSteps/StaffMembersStep';
 import ProfileSetupStep from '@/components/Providers/SignupSteps/ProfileSetupStep';
 import PaymentStep from '@/components/Providers/SignupSteps/PaymentStep';
 
 export default function ProviderSignupPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     businessName: '',
@@ -40,7 +42,7 @@ export default function ProviderSignupPage() {
       Saturday: { isOpen: false, startTime: '9:00 AM', endTime: '5:00 PM' }
     },
     travelSettings: {
-      travelFee: '0',
+      travelFee: '',
       feeType: 'free',
       maxDistance: '15',
       travelPolicy: '',
@@ -65,7 +67,7 @@ export default function ProviderSignupPage() {
     }
   });
 
-  const totalSteps = 12;
+  const totalSteps = 10;
 
   const handleNext = (stepData: any) => {
     setFormData(prev => ({ ...prev, ...stepData }));
@@ -76,10 +78,57 @@ export default function ProviderSignupPage() {
     setCurrentStep(prev => prev - 1);
   };
 
-  const handleSubmit = (finalData: any) => {
-    setFormData(prev => ({ ...prev, ...finalData }));
-    console.log('Complete signup data:', { ...formData, ...finalData });
-    // Handle final submission
+  const handleSubmit = async (finalData: any) => {
+    const completeData = { ...formData, ...finalData };
+    setFormData(completeData);
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Prepare registration data
+      const registrationData = {
+        email: completeData.email,
+        password: completeData.password,
+        businessName: completeData.businessName,
+        contactName: completeData.fullName,
+        phoneNumber: completeData.phoneNumber,
+        businessType: completeData.serviceCategory,
+        bio: completeData.profile?.bio,
+        specialties: completeData.profile?.specialties,
+        yearsExperience: completeData.profile?.experience,
+        languages: completeData.profile?.languages || [],
+        address_line1: completeData.travelSettings?.serviceAddress,
+        city: completeData.travelSettings?.city,
+        state: completeData.travelSettings?.state,
+        zip_code: completeData.travelSettings?.zipCode,
+        country: 'USA',
+        workLocation: completeData.workLocation || [],
+        services: completeData.services || [],
+        travelPolicy: completeData.travelSettings?.travelPolicy || '',
+        travelFee: completeData.travelSettings?.feeType === 'free' ? 0 : parseFloat(completeData.travelSettings?.travelFee || '0'),
+        maxDistance: parseInt(completeData.travelSettings?.maxDistance || '15'),
+        teamMembers: completeData.staffMembers || [],
+      };
+
+      const result = await registerProvider(registrationData);
+      
+      console.log('Registration successful:', result);
+      
+      // Store token and user data in localStorage
+      if (result.token) {
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
+      }
+      
+      // Redirect to provider dashboard
+      if (result.user?.id) {
+        router.push(`/providers/dashboard/${result.user.id}`);
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      alert(`Registration failed: ${error.message}`);
+      setIsSubmitting(false);
+    }
   };
 
   const renderStep = () => {
@@ -95,21 +144,17 @@ export default function ProviderSignupPage() {
       case 5:
         return <LocationStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 6:
-        return <ScheduleStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-      case 7:
         return <ServicesStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-      case 8:
-        return <BusinessHoursStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-      case 9:
+      case 7:
         return <TravelSettingsStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-      case 10:
+      case 8:
         return <StaffMembersStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-                case 11:
-            return <ProfileSetupStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
-          case 12:
-            return <PaymentStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} />;
-          default:
-            return <EmailStep onNext={handleNext} initialData={formData} />;
+      case 9:
+        return <ProfileSetupStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
+      case 10:
+        return <PaymentStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} isSubmitting={isSubmitting} />;
+      default:
+        return <EmailStep onNext={handleNext} initialData={formData} />;
     }
   };
 

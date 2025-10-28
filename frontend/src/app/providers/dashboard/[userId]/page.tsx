@@ -22,7 +22,7 @@ export default function ProvidersDashboard() {
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('requests');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [providerName] = useState('Sarah Johnson');
+  const [providerName, setProviderName] = useState('Loading...');
   const [providerRating] = useState(4.9);
   const [totalClients] = useState(156);
   const [loading, setLoading] = useState(true);
@@ -51,6 +51,15 @@ export default function ProvidersDashboard() {
       if (userData.user_type !== 'provider') {
         router.push('/providers/login');
         return;
+      }
+
+      // Set provider name from profile
+      if (userData.profile?.contact_name) {
+        setProviderName(userData.profile.contact_name);
+      } else if (userData.profile?.business_name) {
+        setProviderName(userData.profile.business_name);
+      } else if (userData.email) {
+        setProviderName(userData.email.split('@')[0]);
       }
     } catch (error) {
       console.error('Error parsing user data:', error);
@@ -135,15 +144,15 @@ export default function ProvidersDashboard() {
       { id: 'reminders', label: 'Reminders' },
     ],
     profile: [
-      { id: 'services', label: 'Service Menu' },
+      { id: 'basic', label: 'Basic Information' },
+      { id: 'preferences', label: 'Preferences' },
+      { id: 'services', label: 'Services' },
       { id: 'availability', label: 'Availability' },
-      { id: 'bio', label: 'Bio' },
       { id: 'certifications', label: 'Certifications' },
     ],
     settings: [
       { id: 'account', label: 'Account Information' },
-      { id: 'security', label: 'Security' },
-      { id: 'notifications', label: 'Notifications' },
+      { id: 'subscription', label: 'Subscription' },
       { id: 'billing', label: 'Billing' },
     ],
   };
@@ -167,15 +176,122 @@ export default function ProvidersDashboard() {
       case 'profile':
         return <Profile activeSubmenu={activeSubmenu} />;
       case 'settings':
-        return (
-          <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Account Settings</h2>
-            <div className={styles.placeholderText}>
-              <p>Account Settings will be implemented soon.</p>
-              <p>This section will include account information, security settings, notifications, and billing preferences.</p>
-            </div>
-          </div>
-        );
+        const user = localStorage.getItem('user');
+        const userData = user ? JSON.parse(user) : null;
+        const profile = userData?.profile || {};
+        const email = userData?.email || '';
+        
+        // Render different settings submenus
+        switch (activeSubmenu) {
+          case 'account':
+            return (
+              <div className={styles.dashboardSection}>
+                <h2 className={styles.sectionTitle}>Account Information</h2>
+                
+                <div className={styles.settingsForm}>
+                  <div className={styles.formSection}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Email Address</label>
+                      <input type="email" className={styles.formInput} defaultValue={email} disabled />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Password</label>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <input 
+                          type="password" 
+                          className={styles.formInput} 
+                          defaultValue="••••••••" 
+                          disabled 
+                          style={{ flex: 1, opacity: 0.5 }}
+                        />
+                        <button className={styles.secondaryBtn}>Change Password</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+            
+          case 'subscription':
+            return (
+              <div className={styles.dashboardSection}>
+                <h2 className={styles.sectionTitle}>Subscription</h2>
+                
+                <div className={styles.settingsForm}>
+                  <div className={styles.formSection}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Current Plan</label>
+                      <div className={styles.planInfo}>
+                        <span className={styles.planName}>Professional Plan</span>
+                        <span className={styles.planPrice}>$59/month</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Billing Cycle</label>
+                      <input type="text" className={styles.formInput} defaultValue="Monthly" disabled />
+                    </div>
+                  </div>
+
+                  <div className={styles.formActions}>
+                    <button className={styles.saveBtn}>Change Plan</button>
+                    <button className={styles.cancelBtn}>Cancel Subscription</button>
+                  </div>
+                </div>
+              </div>
+            );
+            
+          case 'billing':
+            return (
+              <div className={styles.dashboardSection}>
+                <h2 className={styles.sectionTitle}>Billing</h2>
+                
+                <div className={styles.settingsForm}>
+                  <div className={styles.formSection}>
+                    <h3 className={styles.subsectionTitle}>Payment Method</h3>
+                    
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Card Number</label>
+                      <input type="text" className={styles.formInput} placeholder="**** **** **** 1234" disabled />
+                    </div>
+
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Expiry Date</label>
+                        <input type="text" className={styles.formInput} placeholder="MM/YY" />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>CVV</label>
+                        <input type="text" className={styles.formInput} placeholder="***" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.formSection}>
+                    <h3 className={styles.subsectionTitle}>Billing History</h3>
+                    <div className={styles.billingHistory}>
+                      <p>No billing history available</p>
+                    </div>
+                  </div>
+
+                  <div className={styles.formActions}>
+                    <button className={styles.saveBtn}>Update Payment Method</button>
+                  </div>
+                </div>
+              </div>
+            );
+            
+          default:
+            return (
+              <div className={styles.dashboardSection}>
+                <h2 className={styles.sectionTitle}>Account Settings</h2>
+                <div className={styles.placeholderText}>
+                  <p>Select a settings option from the submenu above.</p>
+                </div>
+              </div>
+            );
+        }
       default:
         return <Bookings activeSubmenu={activeSubmenu} />;
     }

@@ -209,14 +209,26 @@ async function registerClient(req, res) {
  */
 async function registerProvider(req, res) {
   try {
-    const { 
-      email, 
-      password, 
-      businessName, 
-      contactName, 
-      phoneNumber,
-      businessType 
-    } = req.body;
+    console.log('Provider registration request body:', JSON.stringify(req.body, null, 2));
+    
+      const { 
+        email, 
+        password, 
+        businessName, 
+        contactName, 
+        phoneNumber,
+        businessType,
+        bio,
+        specialties,
+        certifications,
+        yearsExperience,
+        languages,
+        address_line1,
+        city,
+        state,
+        zip_code,
+        country
+      } = req.body;
 
     // Validate required fields
     if (!email || !password || !contactName || !phoneNumber) {
@@ -258,17 +270,147 @@ async function registerProvider(req, res) {
 
       const userId = userResult.rows[0].id;
 
-      // Insert provider profile
-      await client.query(
-        `INSERT INTO provider_profiles (user_id, business_name, contact_name, phone_number, business_type) 
-         VALUES ($1, $2, $3, $4, $5)`,
-        [userId, businessName || null, contactName, phoneNumber, businessType || null]
+      // Prepare languages array for credentials field
+      let credentialsArray = null;
+      if (languages && Array.isArray(languages) && languages.length > 0) {
+        credentialsArray = languages;
+      }
+
+      // Convert years experience from string range to integer
+      let yearsExperienceNum = null;
+      if (yearsExperience) {
+        // Handle different formats: "6-10", "16+", "0-1", etc.
+        if (yearsExperience.includes('+')) {
+          // "16+" -> 16
+          yearsExperienceNum = parseInt(yearsExperience.replace('+', '')) || null;
+        } else if (yearsExperience.includes('-')) {
+          // "6-10" -> 10 (take the max)
+          const parts = yearsExperience.split('-');
+          yearsExperienceNum = parseInt(parts[parts.length - 1]) || null;
+        } else {
+          // Try to parse as integer
+          yearsExperienceNum = parseInt(yearsExperience) || null;
+        }
+      }
+
+      // Insert provider profile with all fields
+      console.log('Inserting provider profile with data:', {
+        userId,
+        businessName,
+        contactName,
+        phoneNumber,
+        businessType,
+        bio,
+        credentialsArray,
+        yearsExperienceNum,
+        address_line1,
+        city,
+        state,
+        zip_code,
+        country
+      });
+      
+      // Parse additional fields from request body
+      const { 
+        workLocation = [], 
+        services = [], 
+        travelPolicy = '', 
+        travelFee = 0, 
+        maxDistance = 15,
+        teamMembers = []
+      } = req.body;
+      
+      const profileResult = await client.query(
+        `INSERT INTO provider_profiles (
+          user_id, 
+          business_name, 
+          contact_name, 
+          phone_number, 
+          business_type,
+          bio,
+          specialties,
+          credentials,
+          years_experience,
+          address_line1,
+          city,
+          state,
+          zip_code,
+          country,
+          work_location,
+          services,
+          travel_policy,
+          travel_fee,
+          max_distance,
+          team_members
+        ) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+         RETURNING *`,
+        [
+          userId, 
+          businessName || null, 
+          contactName, 
+          phoneNumber, 
+          businessType || null,
+          bio || null,
+          specialties || null,
+          credentialsArray, // Store languages in credentials array
+          yearsExperienceNum, // Converted to integer
+          address_line1 || null,
+          city || null,
+          state || null,
+          zip_code || null,
+          country || 'USA',
+          workLocation.length > 0 ? JSON.stringify(workLocation) : null,
+          services.length > 0 ? JSON.stringify(services) : null,
+          travelPolicy || null,
+          parseFloat(travelFee) || 0,
+          parseInt(maxDistance) || 15,
+          teamMembers.length > 0 ? JSON.stringify(teamMembers) : null
+        ]
       );
+      
+      console.log('Provider profile inserted successfully:', profileResult.rows[0]);
 
       await client.query('COMMIT');
 
       const user = userResult.rows[0];
+      const profile = profileResult.rows[0];
       const token = generateToken(user);
+
+      // Parse JSONB fields if they're strings
+      let work_location_parsed = [];
+      let services_parsed = [];
+      let team_members_parsed = [];
+      
+      if (typeof profile.work_location === 'string') {
+        try {
+          work_location_parsed = JSON.parse(profile.work_location);
+        } catch (e) {
+          work_location_parsed = [];
+        }
+      } else {
+        work_location_parsed = profile.work_location || [];
+      }
+      
+      if (typeof profile.services === 'string') {
+        try {
+          services_parsed = JSON.parse(profile.services);
+        } catch (e) {
+          services_parsed = [];
+        }
+      } else {
+        services_parsed = profile.services || [];
+      }
+      
+      if (typeof profile.team_members === 'string') {
+        try {
+          team_members_parsed = JSON.parse(profile.team_members);
+        } catch (e) {
+          team_members_parsed = [];
+        }
+      } else {
+        team_members_parsed = profile.team_members || [];
+      }
 
       res.status(201).json({
         success: true,
@@ -278,18 +420,42 @@ async function registerProvider(req, res) {
             id: user.id,
             email: user.email,
             user_type: user.user_type,
+            profile: {
+              business_name: profile.business_name,
+              contact_name: profile.contact_name,
+              phone_number: profile.phone_number,
+              business_type: profile.business_type,
+              bio: profile.bio,
+              specialties: profile.specialties,
+              credentials: profile.credentials,
+              years_experience: profile.years_experience,
+              address_line1: profile.address_line1,
+              city: profile.city,
+              state: profile.state,
+              zip_code: profile.zip_code,
+              country: profile.country,
+              work_location: work_location_parsed,
+              services: services_parsed,
+              travel_policy: profile.travel_policy,
+              travel_fee: profile.travel_fee,
+              max_distance: profile.max_distance,
+              team_members: team_members_parsed,
+            }
           },
           token,
         },
       });
     } catch (error) {
       await client.query('ROLLBACK');
+      console.error('Database error:', error);
+      console.error('Error stack:', error.stack);
       throw error;
     } finally {
       client.release();
     }
   } catch (error) {
     console.error('Registration error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -487,6 +653,59 @@ async function login(req, res) {
       );
       if (profileResult.rows.length > 0) {
         profile = profileResult.rows[0];
+      }
+    } else if (user.user_type === 'provider') {
+      const profileResult = await pool.query(
+        `SELECT 
+          business_name,
+          contact_name,
+          phone_number,
+          bio,
+          specialties,
+          credentials,
+          years_experience,
+          license_number,
+          address_line1,
+          city,
+          state,
+          zip_code,
+          country,
+          business_type,
+          accepts_insurance,
+          insurance_providers,
+          work_location,
+          services,
+          travel_policy,
+          travel_fee,
+          max_distance,
+          team_members
+        FROM provider_profiles WHERE user_id = $1`,
+        [user.id]
+      );
+      if (profileResult.rows.length > 0) {
+        profile = profileResult.rows[0];
+        // Parse JSONB fields if they're strings
+        if (typeof profile.work_location === 'string') {
+          try {
+            profile.work_location = JSON.parse(profile.work_location);
+          } catch (e) {
+            profile.work_location = [];
+          }
+        }
+        if (typeof profile.services === 'string') {
+          try {
+            profile.services = JSON.parse(profile.services);
+          } catch (e) {
+            profile.services = [];
+          }
+        }
+        if (typeof profile.team_members === 'string') {
+          try {
+            profile.team_members = JSON.parse(profile.team_members);
+          } catch (e) {
+            profile.team_members = [];
+          }
+        }
       }
     }
 
