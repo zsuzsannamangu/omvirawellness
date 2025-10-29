@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaCheckCircle, FaCircle } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface PasswordStepProps {
@@ -63,7 +64,7 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
           <ul className={styles.requirementsList}>
             {passwordRequirements.map((req, index) => (
               <li key={index} className={`${styles.requirement} ${req.met ? styles.met : ''}`}>
-                <span className={styles.checkmark}>{req.met ? '✓' : '○'}</span>
+                <span className={styles.checkmark}>{req.met ? <FaCheckCircle /> : <FaCircle />}</span>
                 {req.text}
               </li>
             ))}

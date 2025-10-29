@@ -6,108 +6,148 @@ import Image from 'next/image';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/Search.module.scss';
 
-// Sample providers data
-const sampleProviders = [
-  {
-    id: 1,
-    name: 'Sarah Chen',
-    image: '/images/yoga4.jpg',
-    location: 'Los Angeles',
-    startingPrice: 85,
-    services: ['Private Yoga', 'Yoga Therapy'],
-    tags: ['Your Place', 'Pro\'s Studio'],
-    rating: 4.9,
-    reviewCount: 127
-  },
-  {
-    id: 2,
-    name: 'Maria Rodriguez',
-    image: '/images/massage2.jpg',
-    location: 'Los Angeles',
-    startingPrice: 120,
-    services: ['Massage', 'Energy Work'],
-    tags: ['Your Place', 'Pro\'s Home Studio'],
-    rating: 4.8,
-    reviewCount: 89
-  },
-  {
-    id: 3,
-    name: 'Jennifer Kim',
-    image: '/images/facial.jpg',
-    location: 'Los Angeles',
-    startingPrice: 95,
-    services: ['Skincare', 'Facial Treatments'],
-    tags: ['Your Place'],
-    rating: 4.7,
-    reviewCount: 156
-  },
-  {
-    id: 4,
-    name: 'Amanda Foster',
-    image: '/images/massage3.jpg',
-    location: 'Los Angeles',
-    startingPrice: 110,
-    services: ['Reiki', 'Energy Healing'],
-    tags: ['Pro\'s Home Studio', 'Your Place'],
-    rating: 4.9,
-    reviewCount: 203
-  },
-  {
-    id: 5,
-    name: 'Priya Patel',
-    image: '/images/ayurveda.jpg',
-    location: 'Los Angeles',
-    startingPrice: 150,
-    services: ['Ayurveda', 'Holistic Healing'],
-    tags: ['Your Place', 'Pro\'s Studio'],
-    rating: 4.8,
-    reviewCount: 94
-  },
-  {
-    id: 6,
-    name: 'Dr. Lisa Wang',
-    image: '/images/acupuncture2.jpg',
-    location: 'Los Angeles',
-    startingPrice: 130,
-    services: ['Acupuncture', 'Traditional Chinese Medicine'],
-    tags: ['Pro\'s Studio'],
-    rating: 4.9,
-    reviewCount: 178
-  },
-  {
-    id: 7,
-    name: 'Tyler Johnson',
-    image: '/images/personaltrainer.jpg',
-    location: 'Los Angeles',
-    startingPrice: 75,
-    services: ['Personal Training', 'Fitness Coaching'],
-    tags: ['Your Place', 'Pro\'s Studio'],
-    rating: 4.6,
-    reviewCount: 112
-  },
-  {
-    id: 8,
-    name: 'Natalie Goodman',
-    image: '/images/hair.jpg',
-    location: 'Los Angeles',
-    startingPrice: 85,
-    services: ['Hair Styling', 'Hair Treatments'],
-    tags: ['Your Place', 'Pro\'s Home Studio'],
-    rating: 4.7,
-    reviewCount: 145
-  },
-  {
-    id: 9,
-    name: 'Sophia Martinez',
-    image: '/images/nail.jpg',
-    location: 'Los Angeles',
-    startingPrice: 65,
-    services: ['Nail Care', 'Manicures & Pedicures'],
-    tags: ['Your Place'],
-    rating: 4.5,
-    reviewCount: 98
+// Helper function to find next available date from availability slots
+const getNextAvailableDate = (availability: any): string | null => {
+  if (!availability || !Array.isArray(availability) || availability.length === 0) {
+    return null;
   }
-];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  // Normalize date string to YYYY-MM-DD
+  const normalizeDateString = (value: string): string => {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const d = new Date(value);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  // Collect all available dates (one-time and recurring)
+  const availableDates: string[] = [];
+  const maxDate = new Date(today);
+  maxDate.setMonth(maxDate.getMonth() + 6); // Look up to 6 months ahead
+
+  availability.forEach((slot: any) => {
+    if (!slot.date || !slot.time) return;
+
+    const normalizedSlotDate = normalizeDateString(slot.date);
+
+    if (!slot.isRecurring) {
+      // One-time availability - parse as local date to avoid timezone issues
+      const [slotYear, slotMonth, slotDay] = normalizedSlotDate.split('-').map(Number);
+      const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
+      slotDate.setHours(0, 0, 0, 0);
+      // Include today and future dates
+      if (slotDate >= today) {
+        availableDates.push(normalizedSlotDate);
+      }
+    } else if (slot.recurringPattern) {
+      // Recurring availability
+      if (slot.recurringPattern.frequency === 'weekly' && slot.recurringPattern.daysOfWeek) {
+        const [slotYear, slotMonth, slotDay] = normalizedSlotDate.split('-').map(Number);
+        const startDate = new Date(slotYear, slotMonth - 1, slotDay);
+        startDate.setHours(0, 0, 0, 0);
+
+        // Check end date limit
+        let endDate = maxDate;
+        if (slot.recurringPattern.endDate) {
+          const normalizedEndDate = normalizeDateString(slot.recurringPattern.endDate);
+          const [endYear, endMonth, endDay] = normalizedEndDate.split('-').map(Number);
+          const calculatedEndDate = new Date(endYear, endMonth - 1, endDay);
+          calculatedEndDate.setHours(0, 0, 0, 0);
+          if (calculatedEndDate < endDate) {
+            endDate = calculatedEndDate;
+          }
+        }
+
+        // Generate dates that match the pattern
+        const currentDate = new Date(Math.max(startDate.getTime(), today.getTime()));
+        
+        while (currentDate <= endDate) {
+          const dayOfWeek = currentDate.getDay();
+          if (slot.recurringPattern.daysOfWeek.includes(dayOfWeek)) {
+            const dateStr = normalizeDateString(
+              `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+            );
+            availableDates.push(dateStr);
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      }
+    }
+  });
+
+  // Remove duplicates, sort, and find the first one today or after
+  const uniqueDates = Array.from(new Set(availableDates)).sort();
+  
+  // Parse today as local date (YYYY-MM-DD components)
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth() + 1;
+  const todayDay = today.getDate();
+  
+  const nextDate = uniqueDates.find(date => {
+    // Parse date string as local date to avoid timezone issues
+    const [year, month, day] = date.split('-').map(Number);
+    
+    // Compare year, month, day directly
+    // Find the first date that is today or later (but we'll handle "today" separately in display)
+    if (year > todayYear) return true;
+    if (year < todayYear) return false;
+    if (month > todayMonth) return true;
+    if (month < todayMonth) return false;
+    // Include today and future days
+    return day >= todayDay;
+  });
+
+  return nextDate || null;
+};
+
+// Format date for display
+const formatNextAvailability = (dateString: string | null): string => {
+  if (!dateString) return 'No availability';
+  
+  // Parse date string as local date to avoid timezone issues
+  const [year, month, day] = dateString.split('-').map(Number);
+  const dateObj = new Date(year, month - 1, day);
+  
+  // Get today and tomorrow as local dates
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  // Compare dates
+  const dateTime = dateObj.getTime();
+  const todayTime = today.getTime();
+  const tomorrowTime = tomorrow.getTime();
+  
+  if (dateTime === todayTime) {
+    return 'Today';
+  } else if (dateTime === tomorrowTime) {
+    return 'Tomorrow';
+  } else {
+    // Format as "Mon, Jan 15" or "Jan 15, 2025" if it's next year
+    const sameYear = dateObj.getFullYear() === now.getFullYear();
+    
+    if (sameYear) {
+      return dateObj.toLocaleDateString('en-US', { 
+        weekday: 'short',
+        month: 'short', 
+        day: 'numeric'
+      });
+    } else {
+      return dateObj.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+  }
+};
+
 
 const categories = [
   'Private Yoga',
@@ -369,11 +409,30 @@ export default function SearchPage() {
                         height={200}
                         className={styles.image}
                       />
-                      {provider.services && provider.services.length > 0 && (
-                        <div className={styles.duration}>
-                          {provider.services[0].duration || '60 Min'}
-                        </div>
-                      )}
+                      {(() => {
+                        // Parse availability if it's a string
+                        let availability = [];
+                        if (provider.availability) {
+                          if (typeof provider.availability === 'string') {
+                            try {
+                              availability = JSON.parse(provider.availability);
+                            } catch (e) {
+                              availability = [];
+                            }
+                          } else if (Array.isArray(provider.availability)) {
+                            availability = provider.availability;
+                          }
+                        }
+                        
+                        const nextDate = getNextAvailableDate(availability);
+                        const formattedDate = formatNextAvailability(nextDate);
+                        
+                        return (
+                          <div className={styles.duration}>
+                            Next: {formattedDate}
+                          </div>
+                        );
+                      })()}
                     </div>
                     
                     <div className={styles.providerInfo}>

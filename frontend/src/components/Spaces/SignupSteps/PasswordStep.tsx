@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import styles from '@/styles/Spaces/SignupSteps.module.scss';
 
 interface PasswordStepProps {
@@ -65,7 +66,7 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
               onClick={togglePasswordVisibility}
               className={styles.passwordToggle}
             >
-              {showPassword ? '👁️' : '👁️‍🗨️'}
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
             </button>
           </div>
         </div>

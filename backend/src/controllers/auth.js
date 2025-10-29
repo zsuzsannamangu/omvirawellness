@@ -676,6 +676,8 @@ async function login(req, res) {
           insurance_providers,
           work_location,
           services,
+          add_ons,
+          certifications,
           travel_policy,
           travel_fee,
           max_distance,
@@ -700,6 +702,24 @@ async function login(req, res) {
           } catch (e) {
             profile.services = [];
           }
+        }
+        if (typeof profile.add_ons === 'string') {
+          try {
+            profile.add_ons = JSON.parse(profile.add_ons);
+          } catch (e) {
+            profile.add_ons = [];
+          }
+        } else if (!profile.add_ons) {
+          profile.add_ons = [];
+        }
+        if (typeof profile.certifications === 'string') {
+          try {
+            profile.certifications = JSON.parse(profile.certifications);
+          } catch (e) {
+            profile.certifications = [];
+          }
+        } else if (!profile.certifications) {
+          profile.certifications = [];
         }
         if (typeof profile.team_members === 'string') {
           try {
@@ -921,16 +941,271 @@ async function updateProviderProfile(req, res) {
       });
     }
 
-    const { profile_photo_url } = req.body;
+    const {
+      business_name,
+      contact_name,
+      phone_number,
+      business_type,
+      bio,
+      specialties,
+      years_experience,
+      credentials,
+      address_line1,
+      city,
+      state,
+      zip_code,
+      country,
+      work_location,
+      services,
+      travel_policy,
+      travel_fee,
+      max_distance,
+      team_members,
+      profile_photo_url
+    } = req.body;
 
-    const result = await pool.query(
-      `UPDATE provider_profiles 
-       SET profile_photo_url = COALESCE($1, profile_photo_url),
-           updated_at = CURRENT_TIMESTAMP
-       WHERE user_id = $2
-       RETURNING *`,
-      [profile_photo_url || null, userId]
-    );
+    console.log('Received provider profile update data:', req.body);
+
+    // Helper function to check if a field was provided in the request
+    const wasProvided = (key) => req.body.hasOwnProperty(key);
+
+    // Helper function to convert empty strings to null only if field was provided
+    const processValue = (value, fieldName) => {
+      if (!wasProvided(fieldName)) {
+        return null; // Field not provided, skip update
+      }
+      // Field was provided, even if empty, we should update it
+      return value === '' || value === null || value === undefined ? null : value;
+    };
+
+    // Helper function to handle JSONB fields
+    const toJsonb = (value, fieldName) => {
+      if (!wasProvided(fieldName)) {
+        return null; // Field not provided, use COALESCE to keep existing
+      }
+      if (value === null || value === undefined || value === '') return null;
+      if (Array.isArray(value)) return JSON.stringify(value);
+      if (typeof value === 'string') {
+        try {
+          JSON.parse(value);
+          return value;
+        } catch {
+          return JSON.stringify(value);
+        }
+      }
+      return JSON.stringify(value);
+    };
+
+    // Convert years_experience from string range to integer if needed
+    let yearsExpValue = null;
+    if (wasProvided('years_experience') && years_experience) {
+      if (typeof years_experience === 'string') {
+        if (years_experience.includes('+')) {
+          yearsExpValue = parseInt(years_experience.replace('+', '')) || null;
+        } else if (years_experience.includes('-')) {
+          const parts = years_experience.split('-');
+          yearsExpValue = parseInt(parts[parts.length - 1]) || null;
+        } else {
+          yearsExpValue = parseInt(years_experience) || null;
+        }
+      } else {
+        yearsExpValue = years_experience;
+      }
+    }
+
+    console.log('Updating provider profile for user:', userId);
+    console.log('Update data received:', req.body);
+
+    // Process travel_fee and max_distance with special handling
+    let travelFeeValue = null;
+    if (wasProvided('travel_fee')) {
+      if (travel_fee !== null && travel_fee !== undefined && travel_fee !== '') {
+        travelFeeValue = parseFloat(travel_fee);
+      } else {
+        travelFeeValue = null;
+      }
+    }
+    
+    let maxDistanceValue = null;
+    if (wasProvided('max_distance')) {
+      if (max_distance !== null && max_distance !== undefined && max_distance !== '') {
+        maxDistanceValue = parseInt(max_distance);
+      } else {
+        maxDistanceValue = null;
+      }
+    }
+
+    // Build dynamic UPDATE query - only update fields that were provided
+    const updateFields = [];
+    const values = [];
+    let paramCounter = 1;
+
+    if (wasProvided('business_name')) {
+      updateFields.push(`business_name = $${paramCounter}`);
+      values.push(processValue(business_name, 'business_name'));
+      paramCounter++;
+    }
+    if (wasProvided('contact_name')) {
+      updateFields.push(`contact_name = $${paramCounter}`);
+      values.push(processValue(contact_name, 'contact_name'));
+      paramCounter++;
+    }
+    if (wasProvided('phone_number')) {
+      updateFields.push(`phone_number = $${paramCounter}`);
+      values.push(processValue(phone_number, 'phone_number'));
+      paramCounter++;
+    }
+    if (wasProvided('business_type')) {
+      updateFields.push(`business_type = $${paramCounter}`);
+      values.push(processValue(business_type, 'business_type'));
+      paramCounter++;
+    }
+    if (wasProvided('bio')) {
+      updateFields.push(`bio = $${paramCounter}`);
+      values.push(processValue(bio, 'bio'));
+      paramCounter++;
+    }
+    if (wasProvided('specialties')) {
+      updateFields.push(`specialties = $${paramCounter}`);
+      values.push(processValue(specialties, 'specialties'));
+      paramCounter++;
+    }
+    if (wasProvided('years_experience')) {
+      updateFields.push(`years_experience = $${paramCounter}`);
+      values.push(yearsExpValue);
+      paramCounter++;
+    }
+    if (wasProvided('credentials')) {
+      updateFields.push(`credentials = $${paramCounter}`);
+      // credentials is a TEXT[] array, not JSONB - pass as JavaScript array
+      let credentialsArray = null;
+      if (credentials !== null && credentials !== undefined) {
+        if (Array.isArray(credentials)) {
+          credentialsArray = credentials;
+        } else if (typeof credentials === 'string') {
+          try {
+            credentialsArray = JSON.parse(credentials);
+          } catch {
+            credentialsArray = credentials.split(',').map(c => c.trim());
+          }
+        } else {
+          credentialsArray = [];
+        }
+      }
+      values.push(credentialsArray);
+      paramCounter++;
+    }
+    if (wasProvided('address_line1')) {
+      updateFields.push(`address_line1 = $${paramCounter}`);
+      values.push(processValue(address_line1, 'address_line1'));
+      paramCounter++;
+    }
+    if (wasProvided('city')) {
+      updateFields.push(`city = $${paramCounter}`);
+      values.push(processValue(city, 'city'));
+      paramCounter++;
+    }
+    if (wasProvided('state')) {
+      updateFields.push(`state = $${paramCounter}`);
+      values.push(processValue(state, 'state'));
+      paramCounter++;
+    }
+    if (wasProvided('zip_code')) {
+      updateFields.push(`zip_code = $${paramCounter}`);
+      values.push(processValue(zip_code, 'zip_code'));
+      paramCounter++;
+    }
+    if (wasProvided('country')) {
+      updateFields.push(`country = $${paramCounter}`);
+      values.push(processValue(country, 'country'));
+      paramCounter++;
+    }
+    if (wasProvided('work_location')) {
+      updateFields.push(`work_location = $${paramCounter}::JSONB`);
+      values.push(toJsonb(work_location, 'work_location'));
+      paramCounter++;
+    }
+    if (wasProvided('services')) {
+      updateFields.push(`services = $${paramCounter}::JSONB`);
+      values.push(toJsonb(services, 'services'));
+      paramCounter++;
+    }
+    if (req.body.hasOwnProperty('add_ons')) {
+      updateFields.push(`add_ons = $${paramCounter}::JSONB`);
+      values.push(toJsonb(req.body.add_ons, 'add_ons'));
+      paramCounter++;
+    }
+    if (req.body.hasOwnProperty('certifications')) {
+      updateFields.push(`certifications = $${paramCounter}::JSONB`);
+      values.push(toJsonb(req.body.certifications, 'certifications'));
+      paramCounter++;
+    }
+    if (wasProvided('travel_policy')) {
+      updateFields.push(`travel_policy = $${paramCounter}`);
+      values.push(processValue(travel_policy, 'travel_policy'));
+      paramCounter++;
+    }
+    if (wasProvided('travel_fee')) {
+      updateFields.push(`travel_fee = $${paramCounter}`);
+      values.push(travelFeeValue);
+      paramCounter++;
+    }
+    if (wasProvided('max_distance')) {
+      updateFields.push(`max_distance = $${paramCounter}`);
+      values.push(maxDistanceValue);
+      paramCounter++;
+    }
+    if (wasProvided('team_members')) {
+      updateFields.push(`team_members = $${paramCounter}::JSONB`);
+      values.push(toJsonb(team_members, 'team_members'));
+      paramCounter++;
+    }
+    if (wasProvided('profile_photo_url')) {
+      updateFields.push(`profile_photo_url = $${paramCounter}`);
+      values.push(processValue(profile_photo_url, 'profile_photo_url'));
+      paramCounter++;
+    }
+
+    // Always update updated_at (doesn't need a parameter)
+    updateFields.push(`updated_at = CURRENT_TIMESTAMP`);
+    
+    // Add user_id for WHERE clause - it will be the next parameter
+    values.push(userId);
+    const whereParamNumber = paramCounter; // userId is the paramCounter-th parameter
+
+    if (updateFields.length === 1) {
+      // Only updated_at was updated, nothing else
+      return res.json({
+        success: true,
+        message: 'No fields to update',
+        profile: null,
+      });
+    }
+
+    const updateQuery = `
+      UPDATE provider_profiles 
+      SET ${updateFields.join(', ')}
+      WHERE user_id = $${whereParamNumber}
+      RETURNING *
+    `;
+    
+    console.log('Update query:', updateQuery);
+    console.log('Update values:', values);
+    console.log('Number of parameters needed:', paramCounter);
+    console.log('Number of values provided:', values.length);
+
+    let result;
+    try {
+      result = await pool.query(updateQuery, values);
+    } catch (dbError) {
+      console.error('Database query error:', dbError.message);
+      console.error('Query:', updateQuery);
+      console.error('Values:', values);
+      throw dbError;
+    }
+    
+    console.log('Update query result rows:', result.rows.length);
+    console.log('Updated profile:', result.rows[0]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -939,10 +1214,59 @@ async function updateProviderProfile(req, res) {
       });
     }
 
+    console.log('Updated provider profile:', result.rows[0]);
+
+    // Parse JSONB fields for response
+    const profile = result.rows[0];
+    if (typeof profile.work_location === 'string') {
+      try {
+        profile.work_location = JSON.parse(profile.work_location);
+      } catch (e) {
+        profile.work_location = [];
+      }
+    }
+    if (typeof profile.services === 'string') {
+      try {
+        profile.services = JSON.parse(profile.services);
+      } catch (e) {
+        profile.services = [];
+      }
+    }
+        if (typeof profile.add_ons === 'string') {
+          try {
+            profile.add_ons = JSON.parse(profile.add_ons);
+          } catch (e) {
+            profile.add_ons = [];
+          }
+        } else if (!profile.add_ons) {
+          profile.add_ons = [];
+        }
+        if (typeof profile.certifications === 'string') {
+          try {
+            profile.certifications = JSON.parse(profile.certifications);
+          } catch (e) {
+            profile.certifications = [];
+          }
+        } else if (!profile.certifications) {
+          profile.certifications = [];
+        }
+        if (typeof profile.team_members === 'string') {
+      try {
+        profile.team_members = JSON.parse(profile.team_members);
+      } catch (e) {
+        profile.team_members = [];
+      }
+    }
+    if (Array.isArray(profile.credentials) && profile.credentials.length > 0) {
+      // credentials is already an array
+    } else {
+      profile.credentials = [];
+    }
+
     res.json({
       success: true,
-      message: 'Profile photo updated successfully',
-      profile: result.rows[0],
+      message: 'Profile updated successfully',
+      profile: profile,
     });
   } catch (error) {
     console.error('Error updating provider profile:', error);

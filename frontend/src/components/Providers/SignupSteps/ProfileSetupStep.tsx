@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaLightbulb } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface ProfileSetupStepProps {
@@ -218,7 +219,7 @@ export default function ProfileSetupStep({ onNext, onBack, initialData }: Profil
 
         <div className={styles.profileNote}>
           <p className={styles.noteText}>
-            💡 A complete profile helps clients find and trust you. You can always update this information later.
+            A complete profile helps clients find and trust you. You can always update this information later.
           </p>
         </div>
         

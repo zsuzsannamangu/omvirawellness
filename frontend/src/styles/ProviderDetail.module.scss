@@ -381,6 +381,22 @@
   font-family: $font-main;
 }
 
+.bookSection {
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  background: $bg-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px $shadow-color;
+}
+
+.bookSectionTitle {
+  font-size: 1.75rem;
+  margin-bottom: $spacing-md;
+  color: $dark-text;
+  font-family: $font-heading;
+  font-weight: $font-weight-bold;
+}
+
 .availabilitySection {
   margin-bottom: $spacing-md;
 }
@@ -571,8 +587,8 @@
   }
 
   &.otherMonth {
-    color: $subtext-color;
-    opacity: 0.5;
+    color: $dark-text;
+    opacity: 0.8;
   }
 
   &.available {

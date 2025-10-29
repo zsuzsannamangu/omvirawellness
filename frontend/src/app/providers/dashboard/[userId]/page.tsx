@@ -23,8 +23,8 @@ export default function ProvidersDashboard() {
   const [activeSubmenu, setActiveSubmenu] = useState('requests');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [providerName, setProviderName] = useState('Loading...');
-  const [providerRating] = useState(4.9);
-  const [totalClients] = useState(156);
+  const [providerRating, setProviderRating] = useState<number | null>(null);
+  const [totalClients, setTotalClients] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,6 +37,8 @@ export default function ProvidersDashboard() {
       router.push('/providers/login');
       return;
     }
+    
+    let handleProfileUpdate: (() => void) | null = null;
     
     try {
       const userData = JSON.parse(user);
@@ -54,18 +56,44 @@ export default function ProvidersDashboard() {
       }
 
       // Set provider name from profile
-      if (userData.profile?.contact_name) {
-        setProviderName(userData.profile.contact_name);
-      } else if (userData.profile?.business_name) {
-        setProviderName(userData.profile.business_name);
-      } else if (userData.email) {
-        setProviderName(userData.email.split('@')[0]);
-      }
+      const updateProviderName = () => {
+        if (userData.profile?.contact_name) {
+          setProviderName(userData.profile.contact_name);
+        } else if (userData.profile?.business_name) {
+          setProviderName(userData.profile.business_name);
+        } else if (userData.email) {
+          setProviderName(userData.email.split('@')[0]);
+        }
+      };
+      
+      updateProviderName();
       
       // Load profile image if available
       if (userData.profile?.profile_photo_url) {
         setProfileImage(userData.profile.profile_photo_url);
       }
+
+      // Listen for profile updates
+      handleProfileUpdate = () => {
+        const updatedUser = localStorage.getItem('user');
+        if (updatedUser) {
+          try {
+            const updatedUserData = JSON.parse(updatedUser);
+            if (updatedUserData.profile?.contact_name) {
+              setProviderName(updatedUserData.profile.contact_name);
+            } else if (updatedUserData.profile?.business_name) {
+              setProviderName(updatedUserData.profile.business_name);
+            }
+            if (updatedUserData.profile?.profile_photo_url) {
+              setProfileImage(updatedUserData.profile.profile_photo_url);
+            }
+          } catch (error) {
+            console.error('Error updating provider name:', error);
+          }
+        }
+      };
+
+      window.addEventListener('profileUpdated', handleProfileUpdate);
     } catch (error) {
       console.error('Error parsing user data:', error);
       router.push('/providers/login');
@@ -73,6 +101,13 @@ export default function ProvidersDashboard() {
     }
     
     setLoading(false);
+
+    // Cleanup listener on unmount
+    return () => {
+      if (handleProfileUpdate) {
+        window.removeEventListener('profileUpdated', handleProfileUpdate);
+      }
+    };
   }, [userId, router]);
 
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +182,7 @@ export default function ProvidersDashboard() {
     { id: 'payments', label: 'Payments & Earnings' },
     { id: 'analytics', label: 'Analytics' },
     { id: 'messages', label: 'Messages' },
-    { id: 'profile', label: 'Profile' },
+    { id: 'profile', label: 'Profile & Services' },
     { id: 'settings', label: 'Account Settings' },
     { id: 'signout', label: 'Sign Out' },
   ];
@@ -402,8 +437,12 @@ export default function ProvidersDashboard() {
             <div className={styles.greetingInfo}>
               <h1 className={styles.greeting}>Hello, {providerName}</h1>
               <div className={styles.userStats}>
-                <span className={styles.rating}>★ {providerRating} (47 reviews)</span>
-                <span className={styles.clients}>{totalClients} clients</span>
+                {providerRating !== null && (
+                  <span className={styles.rating}>★ {providerRating.toFixed(1)}</span>
+                )}
+                {totalClients > 0 && (
+                  <span className={styles.clients}>{totalClients} client{totalClients !== 1 ? 's' : ''}</span>
+                )}
                 <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
             </div>

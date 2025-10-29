@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaHome, FaCar, FaBuilding, FaVideo, FaCheckCircle, FaCircle } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface LocationStepProps {
@@ -14,25 +15,25 @@ const locationOptions = [
     id: 'at-my-place',
     title: 'At my place',
     description: 'My clients come to me. I own the place or work in a studio/suite alongside other professionals.',
-    icon: '🏠'
+    icon: FaHome
   },
   {
     id: 'at-client-location',
     title: 'At the client\'s location',
     description: 'I\'m on the go. My services are performed at the client\'s location.',
-    icon: '🚗'
+    icon: FaCar
   },
   {
     id: 'from-booked-studio',
     title: 'From a booked studio',
     description: 'I rent studio space on-demand through Omvira\'s studio booking system.',
-    icon: '🏢'
+    icon: FaBuilding
   },
   {
     id: 'online',
     title: 'Online',
     description: 'I offer services via video call.',
-    icon: '💻'
+    icon: FaVideo
   }
 ];
 
@@ -70,13 +71,15 @@ export default function LocationStep({ onNext, onBack, initialData }: LocationSt
               className={`${styles.locationCard} ${workLocations.includes(option.id) ? styles.selected : ''}`}
               onClick={() => handleLocationSelect(option.id)}
             >
-              <div className={styles.locationIcon}>{option.icon}</div>
+              <div className={styles.locationIcon}>
+                {option.icon && <option.icon />}
+              </div>
               <div className={styles.locationContent}>
                 <h3 className={styles.locationTitle}>{option.title}</h3>
                 <p className={styles.locationDescription}>{option.description}</p>
               </div>
               <div className={styles.locationCheckbox}>
-                {workLocations.includes(option.id) ? '✓' : '○'}
+                {workLocations.includes(option.id) ? <FaCheckCircle /> : <FaCircle />}
               </div>
             </button>
           ))}

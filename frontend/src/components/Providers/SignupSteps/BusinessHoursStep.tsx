@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaLightbulb } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface BusinessHoursStepProps {
@@ -140,7 +141,7 @@ export default function BusinessHoursStep({ onNext, onBack, initialData }: Busin
 
         <div className={styles.hoursNote}>
           <p className={styles.noteText}>
-            💡 You can always adjust your availability later in your provider dashboard.
+            <FaLightbulb /> You can always adjust your availability later in your provider dashboard.
           </p>
         </div>
         

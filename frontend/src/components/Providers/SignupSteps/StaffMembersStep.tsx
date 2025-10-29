@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaLightbulb } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface StaffMembersStepProps {
@@ -143,7 +144,7 @@ export default function StaffMembersStep({ onNext, onBack, initialData }: StaffM
 
         <div className={styles.staffNote}>
           <p className={styles.noteText}>
-            💡 <strong>Note:</strong> Team members will receive an invitation to join your practice. You can manage their permissions and services in your provider dashboard.
+            <FaLightbulb /> <strong>Note:</strong> Team members will receive an invitation to join your practice. You can manage their permissions and services in your provider dashboard.
           </p>
         </div>
         

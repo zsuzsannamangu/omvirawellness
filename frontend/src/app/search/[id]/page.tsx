@@ -8,155 +8,115 @@ import { FaCalendarAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/ProviderDetail.module.scss';
 import BookingOptions from '@/components/BookingOptions';
 
-// Sample provider data
-const getProviderData = (id: string) => {
-  const providers: any = {
-    '1': {
-      id: 1,
-      name: 'Sarah Chen',
-      image: '/images/yoga4.jpg',
-      location: 'Los Angeles',
-      startingPrice: 85,
-      services: ['Private Yoga', 'Yoga Therapy'],
-      rating: 4.9,
-      reviewCount: 127,
-      bio: 'I\'ve been practicing yoga for over 15 years and teaching for 8 years. My approach combines traditional Hatha and Vinyasa styles with modern therapeutic techniques.',
-      photos: [
-        '/images/yoga4.jpg',
-        '/images/yoga5.jpg',
-        '/images/yoga6.jpg'
-      ],
-      serviceDetails: [
-        {
-          name: 'Private Yoga Session',
-          duration: '60 min',
-          price: 85,
-          description: 'Personalized yoga session tailored to your needs and goals'
-        },
-        {
-          name: 'Yoga Therapy',
-          duration: '90 min',
-          price: 120,
-          description: 'Therapeutic yoga focused on healing and rehabilitation'
-        }
-      ],
-      availability: {
-        // December 2024 - Mix of available and unavailable dates
-        '2024-12-20': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        // '2024-12-21': unavailable (weekend)
-        '2024-12-22': ['9:00 AM', '9:15 AM', '9:30 AM', '10:00 AM', '10:15 AM', '10:30 AM', '11:00 AM', '11:15 AM', '11:30 AM', '12:00 PM', '12:15 PM', '12:30 PM', '1:00 PM', '1:15 PM', '1:30 PM', '2:00 PM', '2:15 PM', '2:30 PM', '3:00 PM', '3:15 PM', '3:30 PM', '4:00 PM', '4:15 PM'], // Available
-        '2024-12-23': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        // '2024-12-24': unavailable (Christmas Eve)
-        // '2024-12-25': unavailable (Christmas Day)
-        '2024-12-26': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2024-12-27': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        // '2024-12-28': unavailable (weekend)
-        '2024-12-29': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2024-12-30': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        // '2024-12-31': unavailable (New Year's Eve)
-        // January 2025 - Mix of available and unavailable dates
-        // '2025-01-01': unavailable (New Year's Day)
-        '2025-01-02': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        '2025-01-03': ['9:00 AM', '9:15 AM', '9:30 AM', '10:00 AM', '10:15 AM', '10:30 AM', '11:00 AM', '11:15 AM', '11:30 AM', '12:00 PM', '12:15 PM', '12:30 PM', '1:00 PM', '1:15 PM', '1:30 PM', '2:00 PM', '2:15 PM', '2:30 PM', '3:00 PM', '3:15 PM', '3:30 PM', '4:00 PM', '4:15 PM'], // Available
-        // '2025-01-04': unavailable (weekend)
-        // '2025-01-05': unavailable (weekend)
-        '2025-01-06': ['9:00 AM', '9:15 AM', '9:30 AM', '9:45 AM', '10:00 AM', '10:15 AM', '10:30 AM', '10:45 AM', '11:00 AM', '11:15 AM', '11:30 AM', '11:45 AM', '12:00 PM', '12:15 PM', '12:30 PM', '12:45 PM', '1:00 PM', '1:15 PM', '1:30 PM', '1:45 PM', '2:00 PM', '2:15 PM', '2:30 PM', '2:45 PM', '3:00 PM', '3:15 PM', '3:30 PM', '3:45 PM', '4:00 PM', '4:15 PM'], // Available
-        '2025-01-07': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2025-01-08': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        '2025-01-09': ['9:00 AM', '9:15 AM', '9:30 AM', '10:00 AM', '10:15 AM', '10:30 AM', '11:00 AM', '11:15 AM', '11:30 AM', '12:00 PM', '12:15 PM', '12:30 PM', '1:00 PM', '1:15 PM', '1:30 PM', '2:00 PM', '2:15 PM', '2:30 PM', '3:00 PM', '3:15 PM', '3:30 PM', '4:00 PM', '4:15 PM'], // Available
-        '2025-01-10': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        // '2025-01-11': unavailable (weekend)
-        // '2025-01-12': unavailable (weekend)
-        '2025-01-13': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2025-01-14': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        '2025-01-15': ['9:00 AM', '9:15 AM', '9:30 AM', '10:00 AM', '10:15 AM', '10:30 AM', '11:00 AM', '11:15 AM', '11:30 AM', '12:00 PM', '12:15 PM', '12:30 PM', '1:00 PM', '1:15 PM', '1:30 PM', '2:00 PM', '2:15 PM', '2:30 PM', '3:00 PM', '3:15 PM', '3:30 PM', '4:00 PM', '4:15 PM'], // Available
-        '2025-01-16': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2025-01-17': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        // '2025-01-18': unavailable (weekend)
-        // '2025-01-19': unavailable (weekend)
-        '2025-01-20': ['9:00 AM', '9:15 AM', '9:30 AM', '9:45 AM', '10:00 AM', '10:15 AM', '10:30 AM', '10:45 AM', '11:00 AM', '11:15 AM', '11:30 AM', '11:45 AM', '12:00 PM', '12:15 PM', '12:30 PM', '12:45 PM', '1:00 PM', '1:15 PM', '1:30 PM', '1:45 PM', '2:00 PM', '2:15 PM', '2:30 PM', '2:45 PM', '3:00 PM', '3:15 PM', '3:30 PM', '3:45 PM', '4:00 PM', '4:15 PM'], // Available
-        '2025-01-21': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2025-01-22': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        '2025-01-23': ['9:00 AM', '9:15 AM', '9:30 AM', '10:00 AM', '10:15 AM', '10:30 AM', '11:00 AM', '11:15 AM', '11:30 AM', '12:00 PM', '12:15 PM', '12:30 PM', '1:00 PM', '1:15 PM', '1:30 PM', '2:00 PM', '2:15 PM', '2:30 PM', '3:00 PM', '3:15 PM', '3:30 PM', '4:00 PM', '4:15 PM'], // Available
-        '2025-01-24': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        // '2025-01-25': unavailable (weekend)
-        // '2025-01-26': unavailable (weekend)
-        '2025-01-27': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2025-01-28': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'], // Available
-        '2025-01-29': ['9:00 AM', '9:15 AM', '9:30 AM', '10:00 AM', '10:15 AM', '10:30 AM', '11:00 AM', '11:15 AM', '11:30 AM', '12:00 PM', '12:15 PM', '12:30 PM', '1:00 PM', '1:15 PM', '1:30 PM', '2:00 PM', '2:15 PM', '2:30 PM', '3:00 PM', '3:15 PM', '3:30 PM', '4:00 PM', '4:15 PM'], // Available
-        '2025-01-30': ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'], // Available
-        '2025-01-31': ['9:15 AM', '9:45 AM', '10:15 AM', '10:45 AM', '11:15 AM', '11:45 AM', '12:15 PM', '12:45 PM', '1:15 PM', '1:45 PM', '2:15 PM', '2:45 PM', '3:15 PM', '3:45 PM', '4:15 PM'] // Available
-      },
-      reviews: [
-        {
-          id: 1,
-          name: 'Emily M.',
-          rating: 5,
-          comment: 'Sarah is an amazing yoga instructor. She helped me with my back pain and made me feel comfortable throughout the session. Highly recommended!',
-          date: '2 weeks ago',
-          recommends: true
-        },
-        {
-          id: 2,
-          name: 'Michael R.',
-          rating: 5,
-          comment: 'Professional, knowledgeable, and very patient. Sarah\'s therapeutic approach really helped me recover from my injury.',
-          date: '1 month ago',
-          recommends: true
-        },
-        {
-          id: 3,
-          name: 'Jessica L.',
-          rating: 4,
-          comment: 'Great session! Sarah is very attentive to form and safety. I felt much more flexible after just one session.',
-          date: '1 month ago',
-          recommends: true
-        },
-        {
-          id: 4,
-          name: 'Sarah Chen',
-          rating: 5,
-          comment: 'Love the personalized approach. Sarah really listens to your needs and adapts the session accordingly. My flexibility has improved so much!',
-          date: '3 weeks ago',
-          recommends: true
-        },
-        {
-          id: 5,
-          name: 'David K.',
-          rating: 5,
-          comment: 'Excellent quality instruction and very calming presence. Perfect for stress relief and building strength.',
-          date: '1 week ago',
-          recommends: true
-        },
-        {
-          id: 6,
-          name: 'Lisa P.',
-          rating: 4,
-          comment: 'Sarah\'s yoga therapy sessions are transformative. She really knows how to work with different body types and limitations.',
-          date: '2 weeks ago',
-          recommends: true
-        },
-        {
-          id: 7,
-          name: 'Mark T.',
-          rating: 5,
-          comment: 'Outstanding instructor! Sarah\'s attention to detail and ability to modify poses for my specific needs is incredible.',
-          date: '4 days ago',
-          recommends: true
-        },
-        {
-          id: 8,
-          name: 'Anna W.',
-          rating: 5,
-          comment: 'Sarah creates such a peaceful environment. Her guidance helped me find balance both physically and mentally.',
-          date: '1 week ago',
-          recommends: true
-        }
-      ]
-    }
+
+// Transform availability slots from database format to calendar format
+// Database format: [{ date: '2024-12-20', time: '09:00', duration: 60, isRecurring: false, ... }]
+// Calendar format: { '2024-12-20': ['9:00 AM', '10:00 AM'], ... }
+const transformAvailability = (slots: any[]): { [key: string]: string[] } => {
+  if (!slots || !Array.isArray(slots) || slots.length === 0) {
+    return {};
+  }
+
+  const availability: { [key: string]: string[] } = {};
+  const today = new Date();
+  const maxDate = new Date(today);
+  maxDate.setMonth(maxDate.getMonth() + 6); // Generate up to 6 months ahead
+
+  // Helper to normalize date string to YYYY-MM-DD
+  const normalizeDateString = (value: string): string => {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const d = new Date(value);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   };
 
-  return providers[id] || providers['1'];
+  // Helper to convert time from HH:MM to H:MM AM/PM
+  const formatTime = (timeString: string): string => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+  };
+
+  // Helper to generate time slots - only return the start time (single slot)
+  const generateTimeSlots = (startTime: string, duration: number): string[] => {
+    // Only return the start time as a single available slot
+    // Duration is just for information, not for creating multiple booking slots
+    return [formatTime(startTime)];
+  };
+
+  slots.forEach((slot) => {
+    if (!slot.date || !slot.time) return;
+
+    const normalizedSlotDate = normalizeDateString(slot.date);
+
+    if (!slot.isRecurring) {
+      // One-time slot
+      if (!availability[normalizedSlotDate]) {
+        availability[normalizedSlotDate] = [];
+      }
+      const timeSlots = generateTimeSlots(slot.time, slot.duration || 60);
+      availability[normalizedSlotDate].push(...timeSlots);
+    } else if (slot.recurringPattern) {
+      // Recurring slot
+      if (slot.recurringPattern.frequency === 'weekly' && slot.recurringPattern.daysOfWeek) {
+        const [slotYear, slotMonth, slotDay] = normalizedSlotDate.split('-').map(Number);
+        const startDate = new Date(slotYear, slotMonth - 1, slotDay);
+        
+        // Check end date limit
+        let endDate = maxDate;
+        if (slot.recurringPattern.endDate) {
+          const normalizedEndDate = normalizeDateString(slot.recurringPattern.endDate);
+          const [endYear, endMonth, endDay] = normalizedEndDate.split('-').map(Number);
+          const calculatedEndDate = new Date(endYear, endMonth - 1, endDay);
+          if (calculatedEndDate < endDate) {
+            endDate = calculatedEndDate;
+          }
+        }
+
+        // Generate all dates that match the pattern
+        const currentDate = new Date(startDate);
+        const timeSlots = generateTimeSlots(slot.time, slot.duration || 60);
+
+        while (currentDate <= endDate) {
+          const dayOfWeek = currentDate.getDay();
+          if (slot.recurringPattern.daysOfWeek.includes(dayOfWeek)) {
+            const dateStr = normalizeDateString(
+              `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+            );
+            if (!availability[dateStr]) {
+              availability[dateStr] = [];
+            }
+            availability[dateStr].push(...timeSlots);
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      }
+    }
+  });
+
+  // Remove duplicates and sort time slots for each date
+  Object.keys(availability).forEach(date => {
+    availability[date] = Array.from(new Set(availability[date])).sort((a, b) => {
+      // Parse time strings like "9:00 AM" or "2:30 PM"
+      const parseTime = (timeStr: string): number => {
+        const [timePart, period] = timeStr.split(' ');
+        const [hours, minutes] = timePart.split(':').map(Number);
+        let totalMinutes = hours * 60 + minutes;
+        if (period === 'PM' && hours !== 12) {
+          totalMinutes += 12 * 60; // Add 12 hours for PM (except 12 PM)
+        } else if (period === 'AM' && hours === 12) {
+          totalMinutes -= 12 * 60; // 12 AM is midnight
+        }
+        return totalMinutes;
+      };
+      return parseTime(a) - parseTime(b);
+    });
+  });
+
+  return availability;
 };
 
 export default function ProviderDetailPage() {
@@ -168,25 +128,64 @@ export default function ProviderDetailPage() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [currentReviewPage, setCurrentReviewPage] = useState(1);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false); // Closed by default, opens when clicked
-  const [currentMonth, setCurrentMonth] = useState(new Date(2024, 11, 1)); // December 2024
+  const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
   const [favorites, setFavorites] = useState<number[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProvider = async () => {
-      if (params?.id) {
+    if (params?.id) {
         try {
           const response = await fetch(`http://localhost:4000/api/providers/${params.id}`);
+          console.log('Fetching provider with ID:', params.id);
+          console.log('Response status:', response.status);
           if (response.ok) {
             const data = await response.json();
+            console.log('Provider data received:', data);
+            
+            if (!data || !data.id) {
+              console.error('Invalid provider data received:', data);
+              setLoading(false);
+              return;
+            }
             
             // Transform API data to match the expected structure
             const mainPhoto = data.profile_photo_url || '/images/default-provider.jpg';
             
+            // Transform availability from database format to calendar format
+            const availabilityData = transformAvailability(data.availability || []);
+            
+            // Parse work_location if it's a string
+            const workLocation = typeof data.work_location === 'string' 
+              ? JSON.parse(data.work_location) 
+              : (data.work_location || []);
+            
+            // Parse credentials - backend should return it as an array, but handle if it's still a string
+            const credentials = Array.isArray(data.credentials) 
+              ? data.credentials 
+              : (typeof data.credentials === 'string' 
+                  ? (data.credentials.startsWith('[') ? JSON.parse(data.credentials) : data.credentials.split(',').map((s: string) => s.trim()))
+                  : []);
+
+            // Parse certifications
+            let certifications = [];
+            if (data.certifications) {
+              if (typeof data.certifications === 'string') {
+                try {
+                  certifications = JSON.parse(data.certifications);
+                } catch (e) {
+                  certifications = [];
+                }
+              } else if (Array.isArray(data.certifications)) {
+                certifications = data.certifications;
+              }
+            }
+
             const transformedProvider = {
               id: data.id,
               name: data.contact_name || data.business_name,
+              businessName: data.business_name || null,
               image: mainPhoto,
               location: `${data.city}, ${data.state}`,
               startingPrice: data.services && data.services.length > 0 ? data.services[0].price : 0,
@@ -194,8 +193,18 @@ export default function ProviderDetailPage() {
               rating: data.average_rating || 4.5,
               reviewCount: data.total_reviews || 0,
               bio: data.bio || '',
+              specialties: data.specialties || '',
+              languages: credentials || [],
+              licenseNumber: data.license_number || null,
+              certifications: certifications,
               photos: [mainPhoto], // Only use the actual photo if it exists
               serviceDetails: data.services || [],
+              availability: availabilityData,
+              workLocation: workLocation,
+              travelsToClient: Array.isArray(workLocation) && workLocation.includes('at-client-location'),
+              travelFee: data.travel_fee || 0,
+              maxDistance: data.max_distance || null,
+              travelPolicy: data.travel_policy || '',
             };
             
             setProvider(transformedProvider);
@@ -203,21 +212,17 @@ export default function ProviderDetailPage() {
               setSelectedService(transformedProvider.serviceDetails[0]);
             }
           } else {
-            // Fallback to sample data
-            const providerData = getProviderData(params.id as string);
-            setProvider(providerData);
-            if (providerData?.serviceDetails?.length > 0) {
-              setSelectedService(providerData.serviceDetails[0]);
-            }
+            const errorText = await response.text();
+            console.error('Provider not found or API error:', response.status, errorText);
+            setLoading(false);
+            // Don't fall back to sample data - show error or empty state
+            return;
           }
         } catch (error) {
           console.error('Error fetching provider:', error);
-          // Fallback to sample data
-          const providerData = getProviderData(params.id as string);
-          setProvider(providerData);
-          if (providerData?.serviceDetails?.length > 0) {
-            setSelectedService(providerData.serviceDetails[0]);
-          }
+          setLoading(false);
+          // Don't fall back to sample data - show error or empty state
+          return;
         } finally {
           setLoading(false);
         }
@@ -265,10 +270,18 @@ export default function ProviderDetailPage() {
     };
   }, [isCalendarOpen]);
 
-  if (loading || !provider) {
+  if (loading) {
     return (
       <div className={styles.loading}>
         <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (!provider) {
+    return (
+      <div className={styles.loading}>
+        <div>Provider not found. Please check the URL or try again later.</div>
       </div>
     );
   }
@@ -305,7 +318,9 @@ export default function ProviderDetailPage() {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Parse date string (YYYY-MM-DD) as local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -331,7 +346,9 @@ export default function ProviderDetailPage() {
 
 
   const formatDateForDisplay = (dateString: string) => {
-    const date = new Date(dateString);
+    // Parse date string (YYYY-MM-DD) as local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric'
@@ -378,18 +395,26 @@ export default function ProviderDetailPage() {
     return date.getMonth() === currentMonth.getMonth();
   };
 
+  // Helper to format date as YYYY-MM-DD in local timezone
+  const formatDateString = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const isDateAvailable = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = formatDateString(date);
     return provider?.availability && provider.availability[dateString];
   };
 
   const isDateSelected = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = formatDateString(date);
     return selectedDate === dateString;
   };
 
   const handleDateSelect = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = formatDateString(date);
     if (isDateAvailable(date)) {
       setSelectedDate(dateString);
       setSelectedSlot('');
@@ -398,7 +423,9 @@ export default function ProviderDetailPage() {
   };
 
   const formatSelectedDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Parse date string (YYYY-MM-DD) as local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -445,9 +472,9 @@ export default function ProviderDetailPage() {
         <div className={styles.photoSection}>
           <div className={styles.photoGallery}>
             {provider.photos.length > 1 && (
-              <button className={styles.photoNav} onClick={prevPhoto}>
-                ‹
-              </button>
+            <button className={styles.photoNav} onClick={prevPhoto}>
+              ‹
+            </button>
             )}
             <Image
               src={provider.photos[currentPhotoIndex]}
@@ -457,29 +484,29 @@ export default function ProviderDetailPage() {
               className={styles.mainPhoto}
             />
             {provider.photos.length > 1 && (
-              <button className={styles.photoNav} onClick={nextPhoto}>
-                ›
-              </button>
+            <button className={styles.photoNav} onClick={nextPhoto}>
+              ›
+            </button>
             )}
           </div>
           {provider.photos.length > 1 && (
-            <div className={styles.photoThumbnails}>
-              {provider.photos.map((photo: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPhotoIndex(index)}
-                  className={`${styles.thumbnail} ${index === currentPhotoIndex ? styles.active : ''}`}
-                >
-                  <Image
-                    src={photo}
-                    alt={`${provider.name} photo ${index + 1}`}
-                    width={80}
-                    height={60}
-                    className={styles.thumbnailImage}
-                  />
-                </button>
-              ))}
-            </div>
+          <div className={styles.photoThumbnails}>
+            {provider.photos.map((photo: string, index: number) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPhotoIndex(index)}
+                className={`${styles.thumbnail} ${index === currentPhotoIndex ? styles.active : ''}`}
+              >
+                <Image
+                  src={photo}
+                  alt={`${provider.name} photo ${index + 1}`}
+                  width={80}
+                  height={60}
+                  className={styles.thumbnailImage}
+                />
+              </button>
+            ))}
+          </div>
           )}
         </div>
         <div className={styles.providerMainSection}>
@@ -503,139 +530,228 @@ export default function ProviderDetailPage() {
 
         {/* Provider Info */}
         <div className={styles.providerInfo}>
+          {/* Business Name */}
+          {provider.businessName && (
+            <div className={styles.bioSection}>
+              <h2>Business Name</h2>
+              <p className={styles.bio}>{provider.businessName}</p>
+            </div>
+          )}
+
           {/* Bio */}
+          {provider.bio && (
           <div className={styles.bioSection}>
             <h2>About {provider.name}</h2>
             <p className={styles.bio}>{provider.bio}</p>
           </div>
+          )}
 
-          {/* Services */}
-          <div className={styles.servicesSection}>
-            <h2>Services</h2>
-            <div className={styles.servicesList}>
-              {provider.serviceDetails.map((service: any, index: number) => (
-                <div
-                  key={index}
-                  onClick={() => setSelectedService(service)}
-                  className={`${styles.serviceItem} ${selectedService?.name === service.name ? styles.selected : ''}`}
-                >
-                  <div className={styles.serviceInfo}>
-                    <h3>{service.name}</h3>
-                    <p className={styles.serviceDescription}>{service.description}</p>
-                    <div className={styles.serviceMeta}>
-                      <span className={styles.duration}>{service.duration}</span>
-                      <span className={styles.price}>${service.price}</span>
+          {/* Specialties */}
+          {provider.specialties && (
+            <div className={styles.bioSection}>
+              <h2>Specialties</h2>
+              <p className={styles.bio}>{provider.specialties}</p>
+            </div>
+          )}
+
+          {/* Travel Information */}
+          {provider.travelsToClient && (
+            <div className={styles.bioSection}>
+              <h2>Travel Services</h2>
+              <p className={styles.bio}>
+                {provider.travelFee > 0 
+                  ? `Travel fee: $${provider.travelFee}` 
+                  : 'Free travel'}
+                {provider.maxDistance && ` • Up to ${provider.maxDistance} miles`}
+                {provider.travelPolicy && (
+                  <>
+                    <br />
+                    <br />
+                    <strong>Travel Policy:</strong> {provider.travelPolicy}
+                  </>
+                )}
+              </p>
+            </div>
+          )}
+
+          {/* Languages Spoken */}
+          {provider.languages && provider.languages.length > 0 && (
+            <div className={styles.bioSection}>
+              <h2>Languages Spoken</h2>
+              <p className={styles.bio}>{provider.languages.join(', ')}</p>
+                    </div>
+          )}
+
+          {/* Certifications */}
+          {provider.certifications && provider.certifications.length > 0 && (
+            <div className={styles.bioSection}>
+              <h2>Certifications</h2>
+              {provider.certifications.map((cert: any, index: number) => {
+                const formatDate = (dateString: string) => {
+                  if (!dateString) return null;
+                  const date = new Date(dateString);
+                  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                };
+                
+                return (
+                  <div key={index} style={{ marginBottom: '16px' }}>
+                    <p className={styles.bio} style={{ fontWeight: '600', marginBottom: '4px' }}>
+                      {cert.name}
+                    </p>
+                    <p className={styles.bio} style={{ color: '#666', marginBottom: '4px' }}>
+                      {cert.issuer}
+                    </p>
+                    {(cert.issueDate || cert.expirationDate) && (
+                      <p className={styles.bio} style={{ color: '#666', fontSize: '0.9rem', marginBottom: '4px' }}>
+                        {cert.issueDate && `Issued: ${formatDate(cert.issueDate)}`}
+                        {cert.issueDate && cert.expirationDate && ' • '}
+                        {cert.expirationDate && `Expires: ${formatDate(cert.expirationDate)}`}
+                        {cert.issueDate && !cert.expirationDate && ' • No expiration'}
+                      </p>
+                    )}
+                    {cert.licenseNumber && (
+                      <p className={styles.bio} style={{ color: '#666', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                        License Number: {cert.licenseNumber}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Book with [Provider Name] Section */}
+          <div className={styles.bookSection}>
+            <h2 className={styles.bookSectionTitle}>Book with {provider.name}</h2>
+
+            {/* Services */}
+            <div className={styles.servicesSection}>
+              <h2>Services</h2>
+              <div className={styles.servicesList}>
+                {provider.serviceDetails.map((service: any, index: number) => (
+                  <div
+                    key={index}
+                    onClick={() => setSelectedService(service)}
+                    className={`${styles.serviceItem} ${selectedService?.name === service.name ? styles.selected : ''}`}
+                  >
+                    <div className={styles.serviceInfo}>
+                      <h3>{service.name}</h3>
+                      <p className={styles.serviceDescription}>{service.description}</p>
+                      <div className={styles.serviceMeta}>
+                        <span className={styles.duration}>{service.duration} minutes</span>
+                        <span className={styles.price}>${service.price}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Availability */}
-          <div className={styles.availabilitySection}>
-            <h2>Availability</h2>
+            {/* Availability */}
+            <div className={styles.availabilitySection}>
+              <h2>Availability</h2>
 
-            {/* Date Selection */}
-            <div className={styles.dateSelection}>
-              <label className={styles.dateLabel}>Date</label>
-              <div className={styles.dateInputContainer}>
-                <input
-                  type="text"
-                  value={selectedDate ? formatSelectedDate(selectedDate) : ''}
-                  onClick={toggleCalendar}
-                  readOnly
-                  className={styles.dateInput}
-                  placeholder="Select a date"
-                />
-                <button
-                  className={styles.calendarButton}
-                  onClick={toggleCalendar}
-                >
-                  <FaCalendarAlt />
-                </button>
+              {/* Date Selection */}
+              <div className={styles.dateSelection}>
+                <label className={styles.dateLabel}>Date</label>
+                <div className={styles.dateInputContainer}>
+                  <input
+                    type="text"
+                    value={selectedDate ? formatSelectedDate(selectedDate) : ''}
+                    onClick={toggleCalendar}
+                    readOnly
+                    className={styles.dateInput}
+                    placeholder="Select a date"
+                  />
+                  <button
+                    className={styles.calendarButton}
+                    onClick={toggleCalendar}
+                  >
+                    <FaCalendarAlt />
+                  </button>
+                </div>
+
+                {/* Calendar Widget */}
+                {isCalendarOpen && (
+                  <div className={styles.calendarWidget}>
+                    <div className={styles.calendarHeader}>
+                      <button
+                        className={styles.calendarNavButton}
+                        onClick={() => navigateMonth('prev')}
+                      >
+                        ‹
+                      </button>
+                      <h3 className={styles.calendarMonth}>
+                        {currentMonth.toLocaleDateString('en-US', {
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </h3>
+                      <button
+                        className={styles.calendarNavButton}
+                        onClick={() => navigateMonth('next')}
+                      >
+                        ›
+                      </button>
+                    </div>
+
+                    <div className={styles.calendarLegend}>
+                      <div className={styles.legendItem}>
+                        <div className={styles.legendDot} style={{ backgroundColor: '#10b981' }}></div>
+                        <span>Available</span>
+                      </div>
+                      <div className={styles.legendItem}>
+                        <div className={styles.legendDot} style={{ backgroundColor: '#9ca3af' }}></div>
+                        <span>Unavailable</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.calendarGrid}>
+                      <div className={styles.calendarWeekdays}>
+                        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                          <div key={day} className={styles.weekday}>{day}</div>
+                        ))}
+                      </div>
+                      <div className={styles.calendarDays}>
+                        {getCalendarDays().map((date, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleDateSelect(date)}
+                            className={`${styles.calendarDay} ${!isDateInCurrentMonth(date) ? styles.otherMonth : ''
+                              } ${isDateAvailable(date) ? styles.available : styles.unavailable
+                              } ${isDateSelected(date) ? styles.selected : ''
+                              }`}
+                            disabled={!isDateAvailable(date)}
+                          >
+                            {date.getDate()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Calendar Widget */}
-              {isCalendarOpen && (
-                <div className={styles.calendarWidget}>
-                  <div className={styles.calendarHeader}>
-                    <button
-                      className={styles.calendarNavButton}
-                      onClick={() => navigateMonth('prev')}
-                    >
-                      ‹
-                    </button>
-                    <h3 className={styles.calendarMonth}>
-                      {currentMonth.toLocaleDateString('en-US', {
-                        month: 'long',
-                        year: 'numeric'
-                      })}
-                    </h3>
-                    <button
-                      className={styles.calendarNavButton}
-                      onClick={() => navigateMonth('next')}
-                    >
-                      ›
-                    </button>
+              {/* Time Selection */}
+              {selectedDate && (
+                <div className={styles.timeSelection}>
+                  <div className={styles.timeHeader}>
+                    <h3>Time (PDT)</h3>
                   </div>
-
-                  <div className={styles.calendarLegend}>
-                    <div className={styles.legendItem}>
-                      <div className={styles.legendDot} style={{ backgroundColor: '#10b981' }}></div>
-                      <span>Available</span>
-                    </div>
-                    <div className={styles.legendItem}>
-                      <div className={styles.legendDot} style={{ backgroundColor: '#9ca3af' }}></div>
-                      <span>Unavailable</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.calendarGrid}>
-                    <div className={styles.calendarWeekdays}>
-                      {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                        <div key={day} className={styles.weekday}>{day}</div>
-                      ))}
-                    </div>
-                    <div className={styles.calendarDays}>
-                      {getCalendarDays().map((date, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleDateSelect(date)}
-                          className={`${styles.calendarDay} ${!isDateInCurrentMonth(date) ? styles.otherMonth : ''
-                            } ${isDateAvailable(date) ? styles.available : styles.unavailable
-                            } ${isDateSelected(date) ? styles.selected : ''
-                            }`}
-                          disabled={!isDateAvailable(date)}
-                        >
-                          {date.getDate()}
-                        </button>
-                      ))}
-                    </div>
+                  <div className={styles.timeSlotsGrid}>
+                    {getAvailableTimeSlots().map((slot: string, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`${styles.timeSlot} ${selectedSlot === slot ? styles.selected : ''}`}
+                      >
+                        {slot}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Time Selection */}
-            {selectedDate && (
-              <div className={styles.timeSelection}>
-                <div className={styles.timeHeader}>
-                  <h3>Time (PDT)</h3>
-                </div>
-                <div className={styles.timeSlotsGrid}>
-                  {getAvailableTimeSlots().map((slot: string, index: number) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedSlot(slot)}
-                      className={`${styles.timeSlot} ${selectedSlot === slot ? styles.selected : ''}`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Reviews */}
@@ -730,7 +846,13 @@ export default function ProviderDetailPage() {
             {selectedService && (
               <div className={styles.selectedService}>
                 <h3>{selectedService.name}</h3>
-                <p>{selectedService.duration}</p>
+                <p>{(() => {
+                  const d = selectedService?.duration;
+                  if (d == null) return '';
+                  if (typeof d === 'number') return `${d} minutes`;
+                  const s = String(d);
+                  return /min|hour/i.test(s) ? s : `${s} minutes`;
+                })()}</p>
               </div>
             )}
 

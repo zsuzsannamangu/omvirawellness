@@ -1,6 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { 
+  FaSpa, 
+  FaLeaf, 
+  FaMagic, 
+  FaGem, 
+  FaBaby, 
+  FaAppleAlt,
+  FaChevronRight 
+} from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface ServiceCategoryStepProps {
@@ -10,12 +19,12 @@ interface ServiceCategoryStepProps {
 }
 
 const serviceCategories = [
-  { id: 'massage', name: 'Massage Therapy', icon: '💆‍♀️' },
-  { id: 'yoga', name: 'Yoga Instruction', icon: '🧘‍♀️' },
-  { id: 'aesthetics', name: 'Aesthetics & Skincare', icon: '✨' },
-  { id: 'reiki', name: 'Reiki & Energy Work', icon: '🔮' },
-  { id: 'doulas', name: 'Doula Services', icon: '🤱' },
-  { id: 'nutrition', name: 'Nutrition Counseling', icon: '🥗' }
+  { id: 'massage', name: 'Massage Therapy', icon: FaSpa },
+  { id: 'yoga', name: 'Yoga Instruction', icon: FaLeaf },
+  { id: 'aesthetics', name: 'Aesthetics & Skincare', icon: FaMagic },
+  { id: 'reiki', name: 'Reiki & Energy Work', icon: FaGem },
+  { id: 'doulas', name: 'Doula Services', icon: FaBaby },
+  { id: 'nutrition', name: 'Nutrition Counseling', icon: FaAppleAlt }
 ];
 
 const otherCategories = [
@@ -57,7 +66,9 @@ export default function ServiceCategoryStep({ onNext, onBack, initialData }: Ser
               className={`${styles.categoryCard} ${selectedCategory === category.id ? styles.selected : ''}`}
               onClick={() => handleCategorySelect(category.id)}
             >
-              <div className={styles.categoryIcon}>{category.icon}</div>
+              <div className={styles.categoryIcon}>
+                {category.icon && <category.icon />}
+              </div>
               <span className={styles.categoryName}>{category.name}</span>
             </button>
           ))}
@@ -74,7 +85,7 @@ export default function ServiceCategoryStep({ onNext, onBack, initialData }: Ser
                 onClick={() => handleCategorySelect(category)}
               >
                 <span>{category}</span>
-                <span className={styles.arrow}>→</span>
+                <FaChevronRight className={styles.arrow} />
               </button>
             ))}
           </div>

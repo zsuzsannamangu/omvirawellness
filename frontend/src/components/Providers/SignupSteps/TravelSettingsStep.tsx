@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaCheckCircle, FaMapMarkerAlt, FaLightbulb } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface TravelSettingsStepProps {
@@ -49,6 +50,27 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
     });
   };
 
+  const handleZipCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
+    handleInputChange('zipCode', value);
+  };
+
+  const handleZipCodeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Allow: backspace, delete, tab, escape, enter, and home/end keys
+    if ([8, 9, 27, 13, 46, 35, 36].indexOf(e.keyCode) !== -1 ||
+      // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+      (e.keyCode === 65 && e.ctrlKey === true) ||
+      (e.keyCode === 67 && e.ctrlKey === true) ||
+      (e.keyCode === 86 && e.ctrlKey === true) ||
+      (e.keyCode === 88 && e.ctrlKey === true)) {
+      return;
+    }
+    // Ensure that it is a number and stop the keypress
+    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onNext({ travelSettings });
@@ -68,7 +90,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
               className={`${styles.feeTypeTab} ${travelSettings.feeType === 'free' ? styles.active : ''}`}
               onClick={() => handleFeeTypeChange('free')}
             >
-              <span className={styles.tabIcon}>✓</span>
+              <FaCheckCircle className={styles.tabIcon} />
               Free Travel
             </button>
             <button
@@ -172,7 +194,8 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
               <input
                 type="text"
                 value={travelSettings.zipCode}
-                onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                onChange={handleZipCodeChange}
+                onKeyDown={handleZipCodeKeyDown}
                 className={styles.textInput}
                 placeholder="94102"
                 maxLength={10}
@@ -183,7 +206,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
 
           <div className={styles.serviceAreaNote}>
             <p className={styles.noteText}>
-              📍 <strong>Service Area:</strong> You'll serve clients within a {travelSettings.maxDistance}-mile radius
+              <strong>Service Area:</strong> You'll serve clients within a {travelSettings.maxDistance}-mile radius
               {travelSettings.feeType === 'fee' && travelSettings.travelFee !== '0' 
                 ? ` with a $${travelSettings.travelFee} travel fee`
                 : ' at no additional cost'
@@ -211,7 +234,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
 
         <div className={styles.travelNote}>
           <p className={styles.noteText}>
-            💡 <strong>Note:</strong> You can always update your travel settings and service area in your provider dashboard.
+            <strong>Note:</strong> You can always update your travel settings and service area in your provider dashboard.
           </p>
         </div>
         

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface PaymentStepProps {
@@ -143,7 +144,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
                 <ul className={styles.planFeatures}>
                   {plan.features.map((feature, index) => (
                     <li key={index} className={styles.feature}>
-                      <span className={styles.checkIcon}>✓</span>
+                      <FaCheckCircle className={styles.checkIcon} />
                       {feature}
                     </li>
                   ))}

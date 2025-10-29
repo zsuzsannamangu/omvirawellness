@@ -7,85 +7,6 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { FaMapMarkerAlt, FaHome, FaBuilding, FaCar, FaVideo } from 'react-icons/fa';
 import styles from '@/styles/BookingConfirmation.module.scss';
 
-// Sample provider data (same as detail page)
-const getProviderData = (id: string) => {
-  const providers: any = {
-    '1': {
-      id: 1,
-      name: 'Sarah Chen',
-      image: '/images/yoga4.jpg',
-      location: 'Los Angeles',
-      startingPrice: 85,
-      services: ['Private Yoga', 'Yoga Therapy'],
-      rating: 4.9,
-      reviewCount: 127,
-      bio: 'I\'ve been practicing yoga for over 15 years and teaching for 8 years. My approach combines traditional Hatha and Vinyasa styles with modern therapeutic techniques.',
-      photos: [
-        '/images/yoga4.jpg',
-        '/images/yoga5.jpg',
-        '/images/yoga6.jpg'
-      ],
-      serviceDetails: [
-        {
-          name: 'Private Yoga Session',
-          duration: '60 min',
-          price: 85,
-          description: 'Personalized yoga session tailored to your needs and goals'
-        },
-        {
-          name: 'Yoga Therapy',
-          duration: '90 min',
-          price: 120,
-          description: 'Therapeutic yoga focused on healing and rehabilitation'
-        }
-      ],
-      // Provider settings
-      requiresDeposit: true,
-      depositAmount: 25, // 25% of service price
-      acceptsHomeVisits: true,
-      hasStudio: true,
-      studioAddress: '123 Wellness Center, Los Angeles, CA 90210',
-      maxTravelDistance: 15, // miles
-    locationOptions: {
-      hasHomeStudio: true,
-      travelsToClient: true,
-      hasBookedLocation: true,
-      offersOnline: true,
-      travelRadius: 15, // miles
-      homeStudioFee: 0,
-      travelFee: 25,
-      onlineFee: 0
-    },
-      addOns: [
-        {
-          id: 1,
-          name: 'Yoga Mat Rental',
-          price: 5,
-          description: 'High-quality yoga mat provided'
-        },
-        {
-          id: 2,
-          name: 'Props Package',
-          price: 10,
-          description: 'Blocks, straps, and bolsters included'
-        },
-        {
-          id: 3,
-          name: 'Extended Session',
-          price: 20,
-          description: 'Add 15 minutes to your session'
-        },
-        {
-          id: 4,
-          name: 'Nutrition Consultation',
-          price: 30,
-          description: '15-minute post-session nutrition advice'
-        }
-      ]
-    }
-  };
-  return providers[id] || providers['1'];
-};
 
 export default function BookingConfirmationPage() {
   const params = useParams();
@@ -111,29 +32,87 @@ export default function BookingConfirmationPage() {
   // Provider modal
   const [showProviderModal, setShowProviderModal] = useState(false);
 
+  // Normalize date string (YYYY-MM-DD) into local Date for display only
+  const formatLocalDateLong = (dateString: string) => {
+    const [y, m, d] = dateString.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    return dt.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
   useEffect(() => {
-    if (params?.id) {
-      const providerData = getProviderData(params.id as string);
-      setProvider(providerData);
-      
+    const load = async () => {
+      if (!params?.id) return;
+
       // Get booking details from URL params
       const serviceName = searchParams.get('service');
       const date = searchParams.get('date');
       const time = searchParams.get('time');
-      
-      if (serviceName && providerData?.serviceDetails) {
-        const service = providerData.serviceDetails.find((s: any) => s.name === serviceName);
-        if (service) {
-          setSelectedService(service);
+
+      try {
+        const resp = await fetch(`http://localhost:4000/api/providers/${params.id}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          const mainPhoto = data.profile_photo_url || '/images/default-provider.jpg';
+          // Parse work_location if it's a string
+          const workLocation = typeof data.work_location === 'string' 
+            ? JSON.parse(data.work_location) 
+            : (data.work_location || []);
+          
+          // Transform work_location array to locationOptions object
+          const locationOptions = {
+            hasHomeStudio: Array.isArray(workLocation) && workLocation.includes('at-my-place'),
+            travelsToClient: Array.isArray(workLocation) && workLocation.includes('at-client-location'),
+            hasBookedLocation: Array.isArray(workLocation) && workLocation.includes('from-booked-studio'),
+            offersOnline: Array.isArray(workLocation) && workLocation.includes('online'),
+            homeStudioFee: 0, // Default, could be added to database later
+            travelFee: data.travel_fee || 0,
+            onlineFee: 0 // Default, could be added to database later
+          };
+
+          const providerTransformed = {
+            id: data.id,
+            name: data.contact_name || data.business_name,
+            image: mainPhoto,
+            location: [data.city, data.state].filter(Boolean).join(', ') || 'Location not specified',
+            serviceDetails: data.services || [],
+            rating: data.average_rating || 4.5,
+            reviewCount: data.total_reviews || 0,
+            bio: data.bio || '',
+            locationOptions: locationOptions,
+            studioAddress: data.address_line1 ? `${data.address_line1}, ${data.city}, ${data.state} ${data.zip_code || ''}`.trim() : undefined,
+            requiresDeposit: false, // Default, could be added to database later
+            depositAmount: 0, // Default
+            addOns: typeof data.add_ons === 'string' ? JSON.parse(data.add_ons) : (data.add_ons || [])
+          };
+          setProvider(providerTransformed);
+
+          // Pick service by exact name, fall back to constructing minimal service from query
+          if (serviceName) {
+            const svc = (providerTransformed.serviceDetails || []).find((s: any) => s.name === serviceName);
+            setSelectedService(svc || { name: serviceName, price: 0, duration: '' });
+          }
+        } else {
+          console.error('Provider not found or API error:', resp.status);
+          setIsLoading(false);
+          return;
         }
+      } catch (error) {
+        console.error('Error fetching provider:', error);
+        setIsLoading(false);
+        return;
+      } finally {
+        if (date) setSelectedDate(date);
+        if (time) setSelectedTime(time);
+        setIsLoading(false);
       }
-      
-      if (date) setSelectedDate(date);
-      if (time) setSelectedTime(time);
-      
-      // Set loading to false after data is loaded
-      setIsLoading(false);
-    }
+    };
+
+    load();
   }, [params?.id, searchParams]);
 
   const handleAddOnChange = (addOnId: number) => {
@@ -174,15 +153,18 @@ export default function BookingConfirmationPage() {
   const calculateTotal = () => {
     if (!selectedService) return 0;
     
-    let total = selectedService.price;
+    // Ensure price is a number
+    let total = typeof selectedService.price === 'number' 
+      ? selectedService.price 
+      : parseFloat(selectedService.price) || 0;
     
-    // Add location fee
-    if (locationType === 'home' && provider?.locationOptions?.homeStudioFee) {
-      total += provider.locationOptions.homeStudioFee;
+    // Add location fee - "Come to Me" also uses travelFee
+    if (locationType === 'home' && provider?.locationOptions?.travelFee) {
+      total += parseFloat(provider.locationOptions.travelFee) || 0;
     } else if (locationType === 'travel' && provider?.locationOptions?.travelFee) {
-      total += provider.locationOptions.travelFee;
+      total += parseFloat(provider.locationOptions.travelFee) || 0;
     } else if (locationType === 'online' && provider?.locationOptions?.onlineFee) {
-      total += provider.locationOptions.onlineFee;
+      total += parseFloat(provider.locationOptions.onlineFee) || 0;
     }
     
     // Add add-ons
@@ -190,7 +172,7 @@ export default function BookingConfirmationPage() {
       if (isSelected) {
         const addOn = provider?.addOns?.find((a: any) => a.id === parseInt(addOnId));
         if (addOn) {
-          total += addOn.price;
+          total += parseFloat(addOn.price) || 0;
         }
       }
     });
@@ -241,7 +223,7 @@ export default function BookingConfirmationPage() {
     }
   };
 
-  if (isLoading || !provider || !selectedService || !selectedDate || !selectedTime) {
+  if (isLoading || !provider || !selectedDate || !selectedTime) {
     return (
       <div className={styles.loading}>
         <div>Loading booking details...</div>
@@ -276,14 +258,24 @@ export default function BookingConfirmationPage() {
             <div className={styles.bookingSummaryCard}>
               <div className={styles.bookingSummaryContent}>
                 <div className={styles.bookingDetails}>
-                  <h4 className={styles.serviceTitle}>{selectedService.name} ({selectedService.duration})</h4>
+                  <h4 className={styles.serviceTitle}>
+                    {selectedService?.name}
+                    {selectedService?.duration ? (() => {
+                      const d = selectedService.duration;
+                      if (typeof d === 'number') {
+                        return ` (${d} min.)`;
+                      }
+                      const s = String(d).trim();
+                      if (!s) return '';
+                      // If it already contains "min" or "hour", use as-is, otherwise add "min."
+                      if (/min|hour/i.test(s)) {
+                        return ` (${s})`;
+                      }
+                      return ` (${s} min.)`;
+                    })() : ''}
+                  </h4>
                   <div className={styles.appointmentDateTime}>
-                    {new Date(selectedDate).toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      month: 'long', 
-                      day: 'numeric', 
-                      year: 'numeric'
-                    })}, {selectedTime}
+                    {formatLocalDateLong(selectedDate)}, {selectedTime}
                   </div>
                   <button 
                     onClick={() => setShowProviderModal(true)}
@@ -323,15 +315,15 @@ export default function BookingConfirmationPage() {
                 </div>
 
                 <div 
-                  className={`${styles.locationOption} ${locationType === 'home' ? styles.selected : ''} ${!provider?.locationOptions?.hasHomeStudio ? styles.disabled : ''}`}
-                  onClick={() => provider?.locationOptions?.hasHomeStudio && handleLocationChange('home')}
+                  className={`${styles.locationOption} ${locationType === 'home' ? styles.selected : ''} ${!provider?.locationOptions?.travelsToClient ? styles.disabled : ''}`}
+                  onClick={() => provider?.locationOptions?.travelsToClient && handleLocationChange('home')}
                 >
                   <FaHome className={styles.locationIcon} />
                   <div className={styles.locationInfo}>
                     <h4>Come to Me</h4>
                     <p>Provider will travel to your location</p>
-                    {provider?.locationOptions?.homeStudioFee > 0 && (
-                      <span className={styles.locationFee}>+${provider.locationOptions.homeStudioFee}</span>
+                    {provider?.locationOptions?.travelFee > 0 && (
+                      <span className={styles.locationFee}>+${provider.locationOptions.travelFee}</span>
                     )}
                   </div>
                 </div>
@@ -498,30 +490,40 @@ export default function BookingConfirmationPage() {
             <div className={styles.summaryCard}>
               <h3>Booking Summary</h3>
               
-              <div className={styles.summaryItem}>
-                <span>{selectedService.name}</span>
-                <span>${selectedService.price}</span>
-              </div>
+              {(() => {
+                const hasLocationFee = (locationType === 'home' && provider?.locationOptions?.travelFee > 0) ||
+                  (locationType === 'travel' && provider?.locationOptions?.travelFee > 0) ||
+                  (locationType === 'online' && provider?.locationOptions?.onlineFee > 0);
+                const hasAddOns = Object.values(selectedAddOns).some(selected => selected === true);
+                const hasIntermediateItems = hasLocationFee || hasAddOns;
+                
+                return (
+                  <div className={styles.summaryItem}>
+                    <span>{selectedService.name}</span>
+                    <span>${parseFloat(selectedService.price || 0).toFixed(2)}</span>
+                  </div>
+                );
+              })()}
 
               {/* Location Fee */}
-              {locationType === 'home' && provider?.locationOptions?.homeStudioFee > 0 && (
+              {locationType === 'home' && provider?.locationOptions?.travelFee > 0 && (
                 <div className={styles.summaryItem}>
-                  <span>Come to Me Fee</span>
-                  <span>${provider.locationOptions.homeStudioFee}</span>
+                  <span>Travel Fee</span>
+                  <span>${parseFloat(provider.locationOptions.travelFee || 0).toFixed(2)}</span>
                 </div>
               )}
               
               {locationType === 'travel' && provider?.locationOptions?.travelFee > 0 && (
                 <div className={styles.summaryItem}>
                   <span>Travel Fee</span>
-                  <span>${provider.locationOptions.travelFee}</span>
+                  <span>${parseFloat(provider.locationOptions.travelFee || 0).toFixed(2)}</span>
                 </div>
               )}
 
               {locationType === 'online' && provider?.locationOptions?.onlineFee > 0 && (
                 <div className={styles.summaryItem}>
                   <span>Online Fee</span>
-                  <span>${provider.locationOptions.onlineFee}</span>
+                  <span>${parseFloat(provider.locationOptions.onlineFee || 0).toFixed(2)}</span>
                 </div>
               )}
 
@@ -532,14 +534,14 @@ export default function BookingConfirmationPage() {
                 return (
                   <div key={addOnId} className={styles.summaryItem}>
                     <span>{addOn.name}</span>
-                    <span>${addOn.price}</span>
+                    <span>${parseFloat(addOn.price || 0).toFixed(2)}</span>
                   </div>
                 );
               })}
 
               <div className={styles.summaryTotal}>
                 <span>Total</span>
-                <span>${total}</span>
+                <span>${total.toFixed(2)}</span>
               </div>
 
               {provider.requiresDeposit && (
@@ -549,11 +551,11 @@ export default function BookingConfirmationPage() {
                   </p>
                   <div className={styles.depositAmount}>
                     <span>Deposit Amount</span>
-                    <span>${deposit}</span>
+                    <span>${deposit.toFixed(2)}</span>
                   </div>
                   <div className={styles.remainingAmount}>
                     <span>Remaining Balance</span>
-                    <span>${total - deposit}</span>
+                    <span>${(total - deposit).toFixed(2)}</span>
                   </div>
                 </div>
               )}
@@ -562,7 +564,7 @@ export default function BookingConfirmationPage() {
                 className={styles.bookButton}
                 onClick={handleBooking}
               >
-                {provider.requiresDeposit ? `Pay $${deposit} Deposit` : `Pay $${total}`}
+                {provider.requiresDeposit ? `Pay $${deposit.toFixed(2)} Deposit` : `Pay $${total.toFixed(2)}`}
               </button>
 
               <div className={styles.bookingInfo}>

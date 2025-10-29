@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaLock, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
 import styles from '@/styles/Clients/SignupSteps.module.scss';
 
 interface EmailStepProps {
@@ -43,8 +44,8 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
               required
             />
             <div className={styles.inputIcons}>
-              <span className={styles.lockIcon}>🔒</span>
-              <span className={styles.infoIcon}>ℹ️</span>
+              <FaLock className={styles.lockIcon} />
+              <FaInfoCircle className={styles.infoIcon} />
             </div>
             <div className={styles.passwordManager}>
               Unlock 1Password
@@ -53,7 +54,7 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
         </div>
         
         <button type="submit" className={styles.continueButton}>
-          <span className={styles.envelopeIcon}>✉️</span>
+          <FaEnvelope className={styles.envelopeIcon} />
           CONTINUE WITH EMAIL
         </button>
       </form>

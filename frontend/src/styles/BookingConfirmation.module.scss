@@ -506,12 +506,7 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-sm 0;
-  border-bottom: 1px solid $border-light;
   font-family: $font-main;
-
-  &:last-of-type {
-    border-bottom: none;
-  }
 }
 
 .summaryTotal {
@@ -525,6 +520,11 @@
   font-family: $font-main;
   border-top: 2px solid $border-light;
   margin-top: $spacing-sm;
+
+  &.noBorderTop {
+    border-top: none;
+    margin-top: 0;
+  }
 }
 
 .depositInfo {

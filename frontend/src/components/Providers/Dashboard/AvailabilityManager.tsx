@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { FaPlus, FaEdit, FaTrash, FaClock, FaCalendarAlt, FaRedo, FaTimes } from 'react-icons/fa';
 import styles from '@/styles/Providers/AvailabilityManager.module.scss';
 
@@ -20,137 +21,181 @@ interface AvailabilitySlot {
   notes?: string;
 }
 
-export default function AvailabilityManager() {
-  const [availabilitySlots, setAvailabilitySlots] = useState<AvailabilitySlot[]>([
-    {
-      id: '1',
-      date: '2024-12-05',
-      time: '09:00',
-      duration: 60,
-      isRecurring: false,
-      type: 'available',
-      notes: 'Morning yoga session'
-    },
-    {
-      id: '2',
-      date: '2024-12-05',
-      time: '14:00',
-      duration: 90,
-      isRecurring: false,
-      type: 'available',
-      notes: 'Afternoon deep stretch'
-    },
-    {
-      id: '3',
-      date: '2024-12-08',
-      time: '10:00',
-      duration: 60,
-      isRecurring: false,
-      type: 'available',
-      notes: 'Sunday morning class'
-    },
-    {
-      id: '4',
-      date: '2024-12-09',
-      time: '16:00',
-      duration: 60,
-      isRecurring: true,
-      recurringPattern: {
-        frequency: 'weekly',
-        daysOfWeek: [1], // Monday
-        occurrences: 8
-      },
-      type: 'available',
-      notes: 'Monday 4pm for 8 weeks'
-    },
-    {
-      id: '5',
-      date: '2024-12-10',
-      time: '18:00',
-      duration: 75,
-      isRecurring: true,
-      recurringPattern: {
-        frequency: 'weekly',
-        daysOfWeek: [2], // Tuesday
-        occurrences: 6
-      },
-      type: 'available',
-      notes: 'Tuesday evening class'
-    },
-    {
-      id: '6',
-      date: '2024-12-12',
-      time: '12:00',
-      duration: 45,
-      isRecurring: true,
-      recurringPattern: {
-        frequency: 'weekly',
-        daysOfWeek: [4], // Thursday
-        occurrences: 4
-      },
-      type: 'available',
-      notes: 'Lunch break yoga'
-    },
-    {
-      id: '7',
-      date: '2024-12-15',
-      time: '08:00',
-      duration: 60,
-      isRecurring: false,
-      type: 'available',
-      notes: 'Early morning session'
-    },
-    {
-      id: '8',
-      date: '2024-12-15',
-      time: '19:30',
-      duration: 90,
-      isRecurring: false,
-      type: 'available',
-      notes: 'Evening restorative yoga'
-    },
-    {
-      id: '9',
-      date: '2024-12-16',
-      time: '16:00',
-      duration: 60,
-      isRecurring: true,
-      recurringPattern: {
-        frequency: 'weekly',
-        daysOfWeek: [1], // Monday (recurring)
-        occurrences: 8
-      },
-      type: 'available',
-      notes: 'Monday 4pm for 8 weeks'
-    }
-  ]);
+// Normalize any incoming date string (including ISO) to local YYYY-MM-DD
+const normalizeDateString = (value: string): string => {
+  // If it's already YYYY-MM-DD, return as-is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  // Otherwise, parse and format in local time
+  const d = new Date(value);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
 
+export default function AvailabilityManager() {
+  const params = useParams();
+  const userId = params.userId as string;
+  
+  const [availabilitySlots, setAvailabilitySlots] = useState<AvailabilitySlot[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSlot, setEditingSlot] = useState<AvailabilitySlot | null>(null);
   const [showCalendarView, setShowCalendarView] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const addAvailabilitySlot = (slot: Omit<AvailabilitySlot, 'id'>) => {
+  // Load availability from database
+  useEffect(() => {
+    const loadAvailability = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !userId) return;
+
+        const response = await fetch(`http://localhost:4000/api/providers/${userId}/availability`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const slots = (data.availability || []).map((slot: any) => {
+            const normalized: any = { ...slot, date: normalizeDateString(slot.date) };
+            if (slot.recurringPattern) {
+              normalized.recurringPattern = {
+                ...slot.recurringPattern,
+                endDate: slot.recurringPattern.endDate
+                  ? normalizeDateString(slot.recurringPattern.endDate)
+                  : undefined,
+              };
+            }
+            return normalized as AvailabilitySlot;
+          });
+          setAvailabilitySlots(slots);
+        }
+      } catch (error) {
+        console.error('Error loading availability:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAvailability();
+  }, [userId]);
+
+  // Save availability to database
+  const saveAvailability = async (slots: AvailabilitySlot[]) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      setSaving(true);
+
+      const response = await fetch(`http://localhost:4000/api/providers/${userId}/availability`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          availability: slots.map((s) => ({
+            ...s,
+            date: normalizeDateString(s.date),
+            recurringPattern: s.isRecurring && s.recurringPattern
+              ? {
+                  ...s.recurringPattern,
+                  endDate: s.recurringPattern.endDate
+                    ? normalizeDateString(s.recurringPattern.endDate)
+                    : undefined,
+                }
+              : undefined,
+          })),
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to save availability');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error saving availability:', error);
+      throw error;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const addAvailabilitySlot = async (slot: Omit<AvailabilitySlot, 'id'>) => {
     const newSlot: AvailabilitySlot = {
       ...slot,
-      id: Date.now().toString()
+      id: Date.now().toString(),
+      date: normalizeDateString(slot.date) // Normalize date when adding
     };
-    setAvailabilitySlots([...availabilitySlots, newSlot]);
+    const updatedSlots = [...availabilitySlots, newSlot];
+    setAvailabilitySlots(updatedSlots);
     setShowAddForm(false);
+    
+    // Save to database
+    try {
+      await saveAvailability(updatedSlots);
+    } catch (error: any) {
+      alert(`Error saving: ${error.message}`);
+      // Revert on error
+      setAvailabilitySlots(availabilitySlots);
+    }
   };
 
-  const updateAvailabilitySlot = (id: string, updates: Partial<AvailabilitySlot>) => {
-    setAvailabilitySlots(availabilitySlots.map(slot => 
-      slot.id === id ? { ...slot, ...updates } : slot
-    ));
+  const updateAvailabilitySlot = async (id: string, slot: AvailabilitySlot) => {
+    const normalizedSlot = {
+      ...slot,
+      date: normalizeDateString(slot.date) // Normalize date when updating
+    };
+    const updatedSlots = availabilitySlots.map(s => 
+      s.id === id ? normalizedSlot : s
+    );
+    setAvailabilitySlots(updatedSlots);
     setEditingSlot(null);
+    
+    // Save to database
+    try {
+      await saveAvailability(updatedSlots);
+    } catch (error: any) {
+      alert(`Error saving: ${error.message}`);
+      // Revert on error
+      setAvailabilitySlots(availabilitySlots);
+      setEditingSlot(availabilitySlots.find(s => s.id === id) || null);
+    }
   };
 
-  const deleteAvailabilitySlot = (id: string) => {
-    setAvailabilitySlots(availabilitySlots.filter(slot => slot.id !== id));
+  const deleteAvailabilitySlot = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this availability slot?')) {
+      return;
+    }
+    
+    const updatedSlots = availabilitySlots.filter(slot => slot.id !== id);
+    setAvailabilitySlots(updatedSlots);
+    
+    // Save to database
+    try {
+      await saveAvailability(updatedSlots);
+    } catch (error: any) {
+      alert(`Error deleting: ${error.message}`);
+      // Revert on error
+      setAvailabilitySlots(availabilitySlots);
+    }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', { 
+    // Parse date string (YYYY-MM-DD) as local date to avoid timezone issues
+    const normalized = normalizeDateString(dateString);
+    const [year, month, day] = normalized.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('en-US', { 
       weekday: 'long', 
       month: 'short', 
       day: 'numeric',
@@ -166,18 +211,44 @@ export default function AvailabilityManager() {
     });
   };
 
-  const getRecurringDescription = (pattern: AvailabilitySlot['recurringPattern']) => {
+  // Format as "the week of Month Day" (no weekday)
+  const formatWeekOf = (dateString: string) => {
+    const normalized = normalizeDateString(dateString);
+    const [y, m, d] = normalized.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    const md = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    return `the week of ${md}`;
+  };
+
+  const getRecurringDescription = (pattern: AvailabilitySlot['recurringPattern'], slotDate: string) => {
     if (!pattern) return '';
     
     if (pattern.frequency === 'weekly') {
       const days = pattern.daysOfWeek?.map(day => 
         ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day]
       ).join(', ');
-      return `Every ${days}${pattern.occurrences ? ` for ${pattern.occurrences} weeks` : ''}`;
+
+      // Format "week of {Month Day}" using the chosen start date
+      const [year, month, day] = slotDate.split('-').map(Number);
+      const startDate = new Date(year, month - 1, day);
+      const formattedStart = startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+
+      return `Repeating every ${days}`;
     }
     
     return pattern.frequency === 'daily' ? 'Daily' : '';
   };
+
+  if (loading) {
+    return (
+      <div className={styles.availabilityManager}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>Availability Management</h2>
+          <p className={styles.subtitle}>Loading availability...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.availabilityManager}>
@@ -187,6 +258,7 @@ export default function AvailabilityManager() {
           Manage your availability with both one-time slots and recurring patterns. 
           This gives you flexibility while reducing manual scheduling work.
         </p>
+        {saving && <p style={{ color: '#27ab81', marginTop: '8px' }}>Saving...</p>}
       </div>
 
       <div className={styles.quickActions}>
@@ -259,13 +331,13 @@ export default function AvailabilityManager() {
                   <div key={slot.id} className={styles.slotCard}>
                     <div className={styles.slotInfo}>
                       <h4 className={styles.slotDate}>
-                        Starting {formatDate(slot.date)}
+                        Starting {formatWeekOf(slot.date)}
                       </h4>
                       <p className={styles.slotTime}>
                         {formatTime(slot.time)} • {slot.duration} minutes
                       </p>
                       <p className={styles.recurringPattern}>
-                        {getRecurringDescription(slot.recurringPattern)}
+                        {getRecurringDescription(slot.recurringPattern, slot.date)}
                       </p>
                       {slot.notes && (
                         <p className={styles.slotNotes}>{slot.notes}</p>
@@ -302,7 +374,13 @@ export default function AvailabilityManager() {
       {editingSlot && (
         <AvailabilityForm
           slot={editingSlot}
-          onSave={(updates) => updateAvailabilitySlot(editingSlot.id, updates)}
+          onSave={async (slotData) => {
+            const fullSlot: AvailabilitySlot = {
+              ...slotData,
+              id: editingSlot.id
+            };
+            await updateAvailabilitySlot(editingSlot.id, fullSlot);
+          }}
           onCancel={() => setEditingSlot(null)}
         />
       )}
@@ -316,7 +394,8 @@ interface AvailabilityCalendarProps {
 }
 
 function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityCalendarProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date(2024, 11, 1)); // December 2024
+  const now = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date(now.getFullYear(), now.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // Generate calendar days for the current month
@@ -340,29 +419,56 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
     return days;
   };
 
+  // Format date as YYYY-MM-DD in local timezone
+  const formatDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Check if a date has availability
   const hasAvailability = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = formatDateString(date);
     
-    // Check for one-time availability
-    const hasOneTime = availabilitySlots.some(slot => 
-      !slot.isRecurring && slot.date === dateString
-    );
-
-    // Check for recurring availability
-    const hasRecurring = availabilitySlots.some(slot => {
-      if (!slot.isRecurring || !slot.recurringPattern) return false;
-      
-      const slotDate = new Date(slot.date);
-      const dayOfWeek = date.getDay();
-      
-      if (slot.recurringPattern.frequency === 'weekly') {
-        return slot.recurringPattern.daysOfWeek?.includes(dayOfWeek) &&
-               date >= slotDate;
+    // Check for one-time availability (normalize slot dates before comparison)
+    const hasOneTime = availabilitySlots.some(slot => {
+      if (!slot.isRecurring) {
+        const normalizedSlotDate = normalizeDateString(slot.date);
+        return normalizedSlotDate === dateString;
       }
-      
       return false;
     });
+
+      // Check for recurring availability
+      const hasRecurring = availabilitySlots.some(slot => {
+        if (!slot.isRecurring || !slot.recurringPattern) return false;
+        
+        // Normalize and parse slot date as local date (YYYY-MM-DD format)
+        const normalizedSlotDateStr = normalizeDateString(slot.date);
+        const [slotYear, slotMonth, slotDay] = normalizedSlotDateStr.split('-').map(Number);
+        const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
+        const dayOfWeek = date.getDay();
+        
+        // Check end date limit
+        if (slot.recurringPattern.endDate) {
+          const normalizedEndDateStr = normalizeDateString(slot.recurringPattern.endDate);
+          const [endYear, endMonth, endDay] = normalizedEndDateStr.split('-').map(Number);
+          const endDate = new Date(endYear, endMonth - 1, endDay);
+          if (date > endDate) return false;
+        }
+      
+        if (slot.recurringPattern.frequency === 'weekly') {
+          if (!slot.recurringPattern.daysOfWeek?.includes(dayOfWeek) || date < slotDate) {
+            return false;
+          }
+          
+          
+          return true;
+        }
+      
+        return false;
+      });
 
     return hasOneTime || hasRecurring;
   };
@@ -382,19 +488,38 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
 
   // Get available time slots for a selected date
   const getAvailableTimeSlots = (dateString: string) => {
+    // Parse selected date string as local date
+    const [year, month, day] = dateString.split('-').map(Number);
+    const selectedDate = new Date(year, month - 1, day);
+    const selectedDayOfWeek = selectedDate.getDay();
+    
     const slots = availabilitySlots.filter(slot => {
       if (!slot.isRecurring) {
-        // One-time availability - exact date match
-        return slot.date === dateString;
+        // One-time availability - exact date match (normalize both dates)
+        const normalizedSlotDate = normalizeDateString(slot.date);
+        return normalizedSlotDate === dateString;
       } else {
         // Recurring availability - check if date matches pattern
-        const slotDate = new Date(slot.date);
-        const selectedDate = new Date(dateString);
-        const dayOfWeek = selectedDate.getDay();
+        // Normalize and parse slot date as local date (YYYY-MM-DD format)
+        const normalizedSlotDateStr = normalizeDateString(slot.date);
+        const [slotYear, slotMonth, slotDay] = normalizedSlotDateStr.split('-').map(Number);
+        const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
         
         if (slot.recurringPattern?.frequency === 'weekly') {
-          return slot.recurringPattern.daysOfWeek?.includes(dayOfWeek) &&
-                 selectedDate >= slotDate;
+          if (!slot.recurringPattern.daysOfWeek?.includes(selectedDayOfWeek) || selectedDate < slotDate) {
+            return false;
+          }
+          
+          // Check end date limit
+          if (slot.recurringPattern.endDate) {
+            const normalizedEndDateStr = normalizeDateString(slot.recurringPattern.endDate);
+            const [endYear, endMonth, endDay] = normalizedEndDateStr.split('-').map(Number);
+            const endDate = new Date(endYear, endMonth - 1, endDay);
+            if (selectedDate > endDate) return false;
+          }
+          
+          
+          return true;
         }
         
         return false;
@@ -409,7 +534,7 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
   };
 
   const handleDateClick = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = formatDateString(date);
     const hasSlots = hasAvailability(date);
     
     if (hasSlots) {
@@ -482,7 +607,7 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
                   } ${
                     hasAvailableSlots ? styles.hasAvailability : ''
                   } ${
-                    selectedDate === day.toISOString().split('T')[0] ? styles.selected : ''
+                    selectedDate === formatDateString(day) ? styles.selected : ''
                   }`}
                   onClick={() => handleDateClick(day)}
                 >
@@ -507,12 +632,16 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
       {selectedDate && (
         <div className={styles.timeSlotsSection}>
           <h3 className={styles.timeSlotsTitle}>
-            Available Times for {new Date(selectedDate).toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              month: 'short', 
-              day: 'numeric',
-              year: 'numeric'
-            })}
+            Available Times for {(() => {
+              const [year, month, day] = selectedDate.split('-').map(Number);
+              const date = new Date(year, month - 1, day);
+              return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric'
+              });
+            })()}
           </h3>
           <div className={styles.timeSlotsList}>
             {getAvailableTimeSlots(selectedDate).map((slot, index) => (
@@ -533,7 +662,7 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
 
 interface AvailabilityFormProps {
   slot?: AvailabilitySlot;
-  onSave: (slot: AvailabilitySlot | Partial<AvailabilitySlot>) => void;
+  onSave: (slot: Omit<AvailabilitySlot, 'id'>) => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -548,17 +677,33 @@ function AvailabilityForm({ slot, onSave, onCancel }: AvailabilityFormProps) {
     recurringPattern: {
       frequency: slot?.recurringPattern?.frequency || 'weekly',
       daysOfWeek: slot?.recurringPattern?.daysOfWeek || [],
-      occurrences: slot?.recurringPattern?.occurrences || 4,
       endDate: slot?.recurringPattern?.endDate || ''
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Require at least one day when recurring weekly
+    if (
+      formData.isRecurring &&
+      formData.recurringPattern.frequency === 'weekly' &&
+      (!formData.recurringPattern.daysOfWeek || formData.recurringPattern.daysOfWeek.length === 0)
+    ) {
+      alert('Please select at least one day for recurring availability.');
+      return;
+    }
     
-    const slotData = {
-      ...formData,
-      recurringPattern: formData.isRecurring ? formData.recurringPattern : undefined
+    const slotData: Omit<AvailabilitySlot, 'id'> = {
+      date: formData.date,
+      time: formData.time,
+      duration: formData.duration,
+      isRecurring: formData.isRecurring,
+      recurringPattern: formData.isRecurring ? {
+        ...formData.recurringPattern,
+        occurrences: undefined // Don't save occurrences, only use endDate
+      } : undefined,
+      type: formData.type,
+      notes: formData.notes || undefined
     };
     
     onSave(slotData);
@@ -570,8 +715,31 @@ function AvailabilityForm({ slot, onSave, onCancel }: AvailabilityFormProps) {
       ? daysOfWeek.filter(d => d !== day)
       : [...daysOfWeek, day];
     
+    // If we have a date and recurring days selected, adjust date to match first selected day
+    let adjustedDate = formData.date;
+    if (formData.date && newDays.length > 0) {
+      const [year, month, dayNum] = formData.date.split('-').map(Number);
+      const currentDate = new Date(year, month - 1, dayNum);
+      const currentDayOfWeek = currentDate.getDay();
+      
+      // If current date's day of week is not in selected days, find next occurrence
+      if (!newDays.includes(currentDayOfWeek)) {
+        const nextDay = newDays[0]; // Use first selected day
+        let daysUntilNext = (nextDay - currentDayOfWeek + 7) % 7;
+        if (daysUntilNext === 0) daysUntilNext = 7; // If same day, go to next week
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(currentDate.getDate() + daysUntilNext);
+        
+        const adjustedYear = nextDate.getFullYear();
+        const adjustedMonth = String(nextDate.getMonth() + 1).padStart(2, '0');
+        const adjustedDay = String(nextDate.getDate()).padStart(2, '0');
+        adjustedDate = `${adjustedYear}-${adjustedMonth}-${adjustedDay}`;
+      }
+    }
+    
     setFormData({
       ...formData,
+      date: adjustedDate,
       recurringPattern: {
         ...formData.recurringPattern,
         daysOfWeek: newDays
@@ -691,24 +859,7 @@ function AvailabilityForm({ slot, onSave, onCancel }: AvailabilityFormProps) {
 
               <div className={styles.formRowTwoCol}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Number of Occurrences</label>
-                  <input
-                    type="number"
-                    value={formData.recurringPattern.occurrences}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      recurringPattern: {
-                        ...formData.recurringPattern,
-                        occurrences: parseInt(e.target.value)
-                      }
-                    })}
-                    className={styles.formInput}
-                    min="1"
-                    max="52"
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>End Date (optional)</label>
+                  <label className={styles.formLabel}>End Date</label>
                   <input
                     type="date"
                     value={formData.recurringPattern.endDate}
@@ -720,6 +871,7 @@ function AvailabilityForm({ slot, onSave, onCancel }: AvailabilityFormProps) {
                       }
                     })}
                     className={styles.formInput}
+                    required
                   />
                 </div>
               </div>
@@ -737,14 +889,56 @@ function AvailabilityForm({ slot, onSave, onCancel }: AvailabilityFormProps) {
             />
           </div>
 
-          <div className={styles.formActions}>
-            <button type="button" className={styles.cancelBtn} onClick={onCancel}>
-              Cancel
-            </button>
-            <button type="submit" className={styles.saveBtn}>
-              {slot ? 'Update' : 'Add'} Availability
-            </button>
-          </div>
+          {(() => {
+            const isDisabled = !formData.date ||
+              !formData.time ||
+              (formData.isRecurring &&
+                formData.recurringPattern.frequency === 'weekly' &&
+                (!formData.recurringPattern.daysOfWeek || formData.recurringPattern.daysOfWeek.length === 0));
+            
+            let validationMessage = '';
+            if (isDisabled) {
+              if (!formData.date) {
+                validationMessage = 'Please select a date';
+              } else if (!formData.time) {
+                validationMessage = 'Please select a time';
+              } else if (formData.isRecurring &&
+                formData.recurringPattern.frequency === 'weekly' &&
+                (!formData.recurringPattern.daysOfWeek || formData.recurringPattern.daysOfWeek.length === 0)) {
+                validationMessage = 'Please select at least one day for recurring availability';
+              }
+            }
+            
+            return (
+              <>
+                {validationMessage && (
+                  <div style={{ 
+                    color: '#6C4F70', 
+                    fontSize: '0.85rem', 
+                    marginBottom: '12px',
+                    padding: '10px 14px',
+                    backgroundColor: '#F5F0E8',
+                    borderRadius: '6px',
+                    border: '1px solid #A67873'
+                  }}>
+                    {validationMessage}
+                  </div>
+                )}
+                <div className={styles.formActions}>
+                  <button type="button" className={styles.cancelBtn} onClick={onCancel}>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.saveBtn}
+                    disabled={isDisabled}
+                  >
+                    {slot ? 'Update' : 'Add'} Availability
+                  </button>
+                </div>
+              </>
+            );
+          })()}
         </form>
       </div>
     </div>
