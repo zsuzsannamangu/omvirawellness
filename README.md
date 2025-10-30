@@ -240,6 +240,39 @@ You'll add routes to handle:
 
 Create `.env` files in both frontend and backend directories with the necessary environment variables.
 
+## Key Features
+
+### Client Features
+- **Provider Discovery**: Browse and search wellness providers with filtering by service type, location, and availability
+- **Favorites System**: Save favorite providers for quick access
+- **Booking Management**: 
+  - Request appointments with providers
+  - View upcoming and past bookings
+  - Reschedule or cancel upcoming appointments
+  - Leave reviews for completed appointments
+  - Book again with previous providers
+- **Calendar View**: See all appointments in a calendar format
+- **Real-time Availability**: See next available dates for providers, excluding already booked slots
+
+### Provider Features
+- **Profile Management**: Complete profile setup with business info, services, certifications, team members
+- **Availability Management**: 
+  - Set one-time and recurring availability slots
+  - Automatic blocking of booked time slots
+  - Calendar view for managing availability
+- **Booking Management**: 
+  - Accept or decline booking requests
+  - View upcoming and past sessions
+  - Manage client directory with notes
+- **Service Management**: Add/edit services and add-ons with pricing
+- **Client Management**: Track clients, add notes, and manage relationships
+
+### Technical Features
+- **Dynamic User Routes**: User-specific dashboards (`/dashboard/[userId]`, `/providers/dashboard/[userId]`)
+- **Real-time Updates**: Bookings and availability update automatically
+- **Smart Filtering**: Past bookings automatically move based on date/time, not just status
+- **Blocked Slot Management**: Booked time slots are automatically excluded from availability
+
 ## Authentication & Account System
 
 ### Overview
