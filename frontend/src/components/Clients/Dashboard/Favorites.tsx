@@ -5,140 +5,79 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaHeart } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
+import { getClientFavorites, removeFavorite, getClientId } from '@/services/favorites';
 
 interface FavoritesProps {
   activeSubmenu: string;
 }
 
-// Sample providers data (should match the data from search page)
-const sampleProviders = [
-  {
-    id: 1,
-    name: 'Sarah Chen',
-    image: '/images/yoga4.jpg',
-    location: 'Los Angeles',
-    startingPrice: 85,
-    services: ['Private Yoga', 'Yoga Therapy'],
-    rating: 4.9,
-    reviewCount: 127
-  },
-  {
-    id: 2,
-    name: 'Maria Rodriguez',
-    image: '/images/massage2.jpg',
-    location: 'Los Angeles',
-    startingPrice: 120,
-    services: ['Massage', 'Energy Work'],
-    rating: 4.8,
-    reviewCount: 89
-  },
-  {
-    id: 3,
-    name: 'Jennifer Kim',
-    image: '/images/facial.jpg',
-    location: 'Los Angeles',
-    startingPrice: 95,
-    services: ['Skincare', 'Facial Treatments'],
-    rating: 4.7,
-    reviewCount: 156
-  },
-  {
-    id: 4,
-    name: 'Amanda Foster',
-    image: '/images/massage3.jpg',
-    location: 'Los Angeles',
-    startingPrice: 110,
-    services: ['Reiki', 'Energy Healing'],
-    rating: 4.9,
-    reviewCount: 203
-  },
-  {
-    id: 5,
-    name: 'Priya Patel',
-    image: '/images/ayurveda.jpg',
-    location: 'Los Angeles',
-    startingPrice: 150,
-    services: ['Ayurveda', 'Holistic Healing'],
-    rating: 4.8,
-    reviewCount: 94
-  },
-  {
-    id: 6,
-    name: 'Dr. Lisa Wang',
-    image: '/images/acupuncture2.jpg',
-    location: 'Los Angeles',
-    startingPrice: 130,
-    services: ['Acupuncture', 'Traditional Chinese Medicine'],
-    rating: 4.9,
-    reviewCount: 178
-  },
-  {
-    id: 7,
-    name: 'Tyler Johnson',
-    image: '/images/personaltrainer.jpg',
-    location: 'Los Angeles',
-    startingPrice: 75,
-    services: ['Personal Training', 'Fitness Coaching'],
-    rating: 4.6,
-    reviewCount: 112
-  },
-  {
-    id: 8,
-    name: 'Natalie Goodman',
-    image: '/images/hair.jpg',
-    location: 'Los Angeles',
-    startingPrice: 85,
-    services: ['Hair Styling', 'Hair Treatments'],
-    rating: 4.7,
-    reviewCount: 145
-  },
-  {
-    id: 9,
-    name: 'Sophia Martinez',
-    image: '/images/nail.jpg',
-    location: 'Los Angeles',
-    startingPrice: 65,
-    services: ['Nail Care', 'Manicures & Pedicures'],
-    rating: 4.5,
-    reviewCount: 98
-  }
-];
+// Format business type string: capitalize and add proper spacing
+const formatBusinessType = (businessType: string | null | undefined): string => {
+  if (!businessType) return 'Wellness Services';
+  
+  return businessType
+    .split(',')
+    .map(item => {
+      const trimmed = item.trim();
+      return trimmed
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    })
+    .join(', ');
+};
 
 export default function Favorites({ activeSubmenu }: FavoritesProps) {
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favoriteProviders, setFavoriteProviders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load favorites from localStorage on component mount
+  // Load favorites from backend
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedFavorites = localStorage.getItem('favoriteProviders');
-      if (savedFavorites) {
-        setFavorites(JSON.parse(savedFavorites));
+    const loadFavorites = async () => {
+      try {
+        const clientId = getClientId();
+        if (!clientId) {
+          setLoading(false);
+          return;
+        }
+
+        const favorites = await getClientFavorites(clientId);
+        setFavoriteProviders(favorites || []);
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+        setFavoriteProviders([]);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    loadFavorites();
   }, []);
 
-  const removeFavorite = (providerId: number) => {
-    setFavorites(prev => {
-      const newFavorites = prev.filter(id => id !== providerId);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('favoriteProviders', JSON.stringify(newFavorites));
-      }
-      return newFavorites;
-    });
-  };
+  const handleRemoveFavorite = async (providerUserId: string) => {
+    try {
+      const clientId = getClientId();
+      if (!clientId) return;
 
-  const getFavoriteProviders = () => {
-    return sampleProviders.filter(provider => favorites.includes(provider.id));
+      await removeFavorite(clientId, providerUserId);
+      // Remove from local state
+      setFavoriteProviders(prev => prev.filter(p => p.user_id !== providerUserId));
+    } catch (error) {
+      console.error('Error removing favorite:', error);
+    }
   };
 
   const renderContent = () => {
     switch (activeSubmenu) {
       case 'providers':
-        const favoriteProviders = getFavoriteProviders();
         return (
           <div className={styles.favoritesContent}>
             <h2 className={styles.sectionTitle}>Saved Providers</h2>
-            {favoriteProviders.length === 0 ? (
+            {loading ? (
+              <div className={styles.emptyState}>
+                <p>Loading favorites...</p>
+              </div>
+            ) : favoriteProviders.length === 0 ? (
               <div className={styles.emptyState}>
                 <FaHeart className={styles.emptyIcon} />
                 <h3>No saved providers yet</h3>
@@ -149,39 +88,52 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
               </div>
             ) : (
               <div className={styles.providersGrid}>
-                {favoriteProviders.map((provider) => (
-                  <div key={provider.id} className={styles.providerCard}>
-                    <div className={styles.providerImageContainer}>
-                      <Image
-                        src={provider.image}
-                        alt={provider.name}
-                        width={80}
-                        height={80}
-                        className={styles.providerImage}
-                      />
-                    </div>
-                    <div className={styles.providerInfo}>
-                      <h4 className={styles.providerName}>{provider.name}</h4>
-                      <p className={styles.providerSpecialty}>{provider.services.join(' • ')}</p>
-                      <div className={styles.providerRating}>
-                        <span className={styles.stars}>★★★★★</span>
-                        <span className={styles.ratingText}>{provider.rating} ({provider.reviewCount} reviews)</span>
+                {favoriteProviders.map((provider) => {
+                  const services = provider.services && Array.isArray(provider.services) && provider.services.length > 0
+                    ? provider.services.map((s: any) => s.name || s).join(' • ')
+                    : formatBusinessType(provider.specialties);
+                  const startingPrice = provider.services && Array.isArray(provider.services) && provider.services.length > 0
+                    ? provider.services[0].price
+                    : null;
+
+                  return (
+                    <div key={provider.favorite_id || provider.provider_id} className={styles.providerCard}>
+                      <div className={styles.providerImageContainer}>
+                        <Image
+                          src={provider.profile_photo_url || '/images/default-provider.jpg'}
+                          alt={provider.contact_name || provider.business_name || 'Provider'}
+                          width={80}
+                          height={80}
+                          className={styles.providerImage}
+                        />
                       </div>
-                      <p className={styles.providerLocation}>{provider.location}</p>
+                      <div className={styles.providerInfo}>
+                        <h4 className={styles.providerName}>{provider.contact_name || provider.business_name}</h4>
+                        <p className={styles.providerSpecialty}>{services || formatBusinessType(provider.specialties)}</p>
+                        <div className={styles.providerRating}>
+                          <span className={styles.stars}>★★★★★</span>
+                          <span className={styles.ratingText}>
+                            {provider.average_rating || '4.5'} ({provider.total_reviews || 0} reviews)
+                          </span>
+                        </div>
+                        <p className={styles.providerLocation}>
+                          {provider.city || ''}{provider.city && provider.state ? ', ' : ''}{provider.state || ''}
+                        </p>
+                      </div>
+                      <div className={styles.providerActions}>
+                        <Link href={`/search/${provider.user_id}`} className={styles.bookBtn}>
+                          Book Now
+                        </Link>
+                        <button 
+                          className={styles.removeBtn}
+                          onClick={() => handleRemoveFavorite(provider.user_id)}
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
-                    <div className={styles.providerActions}>
-                      <Link href={`/search/${provider.id}`} className={styles.bookBtn}>
-                        Book Now
-                      </Link>
-                      <button 
-                        className={styles.removeBtn}
-                        onClick={() => removeFavorite(provider.id)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -189,15 +141,14 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
       
       
       default:
-        const favoriteProvidersCount = getFavoriteProviders().length;
         return (
           <div className={styles.favoritesContent}>
             <h2 className={styles.sectionTitle}>Favorites</h2>
             <div className={styles.favoritesOverview}>
               <div className={styles.overviewCard}>
                 <h3>Saved Providers</h3>
-                <p className={styles.count}>{favoriteProvidersCount} providers</p>
-                <button className={styles.viewBtn}>View All</button>
+                <p className={styles.count}>{loading ? '...' : favoriteProviders.length} providers</p>
+                <Link href="/search" className={styles.viewBtn}>Explore Providers</Link>
               </div>
             </div>
           </div>

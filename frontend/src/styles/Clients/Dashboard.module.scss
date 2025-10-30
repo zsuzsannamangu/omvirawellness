@@ -832,17 +832,78 @@
     padding: $spacing-md;
     gap: $spacing-md;
     transition: box-shadow 0.2s ease;
+    position: relative; // allow absolute badge
     
     &:hover {
       box-shadow: 0 2px 8px $shadow-color;
     }
   }
+.statusTopRight {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+}
   
   .sessionStatus {
     display: flex;
     flex-direction: column;
     gap: $spacing-xs;
     margin-top: $spacing-xs;
+  }
+
+  .sessionRight {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  // Provider-style badge for client status
+  .statusBadge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: $background-light;
+    color: $dark-text;
+  }
+
+  .pending {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .confirmed {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .cancelled {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .sessionActions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  .actionBtn {
+    padding: $spacing-xs $spacing-sm;
+    background: $bg-white;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    color: $dark-text;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $background-light;
+    }
   }
   
   .statusCompleted {
@@ -861,6 +922,18 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+  }
+
+  .statusPending {
+    color: $warning-color;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .statusConfirmed {
+    color: $primary-color;
+    font-size: 0.875rem;
+    font-weight: 600;
   }
   
   .sessionRating {
@@ -892,6 +965,32 @@
       background: darken($primary-color, 10%);
     }
   }
+}
+
+// Standalone status badge classes (not scoped under a container)
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: $background-light;
+  color: $dark-text;
+}
+
+.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.confirmed {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.cancelled {
+  background: #f8d7da;
+  color: #721c24;
 }
 
 // Favorites Styles
@@ -1413,24 +1512,44 @@
   
   .calendarHeader {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: $spacing-md;
     margin-bottom: $spacing-lg;
   }
   
   .calendarNav {
-    background: $section-bg-1;
-    border: 1px solid $border-light;
-    border-radius: 4px;
-    padding: $spacing-xs $spacing-sm;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-md;
     
-    &:hover {
-      background: $primary-color;
-      color: $bg-white;
-      border-color: $primary-color;
+    button {
+      background: $section-bg-1;
+      border: 1px solid $border-light;
+      border-radius: 4px;
+      padding: $spacing-xs $spacing-sm;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $dark-text;
+      
+      &:hover {
+        background: $primary-color;
+        color: $bg-white;
+        border-color: $primary-color;
+      }
     }
+  }
+  
+  .monthYear {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+    text-align: center;
   }
   
   .calendarMonth {
@@ -1450,10 +1569,6 @@
     overflow: hidden;
   }
   
-  .calendarWeekdays {
-    display: contents;
-  }
-  
   .weekday {
     background: $muted-bg;
     padding: $spacing-sm;
@@ -1461,15 +1576,18 @@
     font-size: 0.875rem;
     font-weight: 600;
     color: $subtext-color;
-  }
-  
-  .calendarDays {
-    display: contents;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
   .calendarDay {
     background: $bg-white;
     padding: $spacing-sm;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     text-align: center;
     font-size: 0.875rem;
     color: $dark-text;
@@ -1479,6 +1597,46 @@
     
     &:hover {
       background: $section-bg-1;
+    }
+
+    &.otherMonth {
+      color: $subtext-color;
+      opacity: 0.5;
+    }
+
+    &.today {
+      background: rgba($primary-color, 0.1);
+      font-weight: 700;
+
+      .dayNumber {
+        color: $primary-color;
+      }
+    }
+
+    &.hasBookings {
+      background: $calendar-has-appointment;
+      
+      .bookingIndicator {
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 6px;
+        height: 6px;
+        background: $primary-color;
+        border-radius: 50%;
+      }
+    }
+
+    &.selected {
+      background: rgba($primary-color, 0.2);
+      border: 2px solid $primary-color;
+    }
+
+    .dayNumber {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $dark-text;
     }
   }
   
@@ -1568,6 +1726,83 @@
     
     &:last-child {
       margin-bottom: 0;
+    }
+  }
+
+  .selectedDateBookings {
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $border-light;
+
+    .dateTitle {
+      font-family: $font-heading;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0 0 $spacing-md 0;
+    }
+
+    .bookingsTableWrapper {
+      background: $bg-white;
+      border: 1px solid $border-light;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: $spacing-md;
+    }
+
+    .bookingsTable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+
+      thead {
+        background: $background-light;
+      }
+
+      th, td {
+        padding: $spacing-sm $spacing-md;
+        border-bottom: 1px solid $border-light;
+        text-align: left;
+      }
+
+      th {
+        font-weight: 600;
+        color: $dark-text;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr:hover {
+        background: $background-light;
+      }
+
+      .serviceName {
+        font-weight: 500;
+        color: $dark-text;
+      }
+
+      .addOnsList {
+        font-style: italic;
+        color: $subtext-color;
+        font-size: 0.85rem;
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+
+      .statusBadge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $bg-white;
+        text-transform: capitalize;
+      }
     }
   }
 }

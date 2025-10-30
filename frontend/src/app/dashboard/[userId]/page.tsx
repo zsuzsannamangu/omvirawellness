@@ -133,7 +133,7 @@ export default function ClientDashboard() {
     ],
     payments: [
       { id: 'methods', label: 'Payment Methods' },
-      { id: 'receipts', label: 'Receipts & Invoices' },
+      { id: 'receipts', label: 'Payment History' },
     ],
     calendar: [
       { id: 'view', label: 'Calendar View' },

@@ -7,6 +7,25 @@ import { useParams } from 'next/navigation';
 import { FaCalendarAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/ProviderDetail.module.scss';
 import BookingOptions from '@/components/BookingOptions';
+import FavoriteAuthModal from '@/components/FavoriteAuthModal';
+import { isClientAuthenticated, getClientId, getFavoriteStatus, addFavorite, removeFavorite } from '@/services/favorites';
+
+// Format business type string: capitalize and add proper spacing
+const formatBusinessType = (businessType: string | null | undefined): string => {
+  if (!businessType) return '';
+  
+  return businessType
+    .split(',')
+    .map(item => {
+      const trimmed = item.trim();
+      // Capitalize first letter of each word
+      return trimmed
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    })
+    .join(', ');
+};
 
 
 // Transform availability slots from database format to calendar format
@@ -47,13 +66,28 @@ const transformAvailability = (slots: any[]): { [key: string]: string[] } => {
     return [formatTime(startTime)];
   };
 
+  // First, collect all blocked slots to filter them out
+  const blockedSlots = new Set<string>(); // Store as "YYYY-MM-DD|HH:MM"
   slots.forEach((slot) => {
+    if (slot.type === 'blocked' && slot.date && slot.time) {
+      const normalizedDate = normalizeDateString(slot.date);
+      const normalizedTime = String(slot.time).slice(0, 5); // Get HH:MM format
+      blockedSlots.add(`${normalizedDate}|${normalizedTime}`);
+    }
+  });
+
+  slots.forEach((slot) => {
+    if (slot.type && slot.type !== 'available') return; // skip blocked
     if (!slot.date || !slot.time) return;
 
     const normalizedSlotDate = normalizeDateString(slot.date);
+    const normalizedTime = String(slot.time).slice(0, 5); // Get HH:MM format
 
     if (!slot.isRecurring) {
-      // One-time slot
+      // One-time slot - check if it's blocked
+      const slotKey = `${normalizedSlotDate}|${normalizedTime}`;
+      if (blockedSlots.has(slotKey)) return;
+      
       if (!availability[normalizedSlotDate]) {
         availability[normalizedSlotDate] = [];
       }
@@ -86,10 +120,14 @@ const transformAvailability = (slots: any[]): { [key: string]: string[] } => {
             const dateStr = normalizeDateString(
               `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
             );
-            if (!availability[dateStr]) {
-              availability[dateStr] = [];
+            // Check if this specific date+time is blocked
+            const slotKey = `${dateStr}|${normalizedTime}`;
+            if (!blockedSlots.has(slotKey)) {
+              if (!availability[dateStr]) {
+                availability[dateStr] = [];
+              }
+              availability[dateStr].push(...timeSlots);
             }
-            availability[dateStr].push(...timeSlots);
           }
           currentDate.setDate(currentDate.getDate() + 1);
         }
@@ -98,6 +136,7 @@ const transformAvailability = (slots: any[]): { [key: string]: string[] } => {
   });
 
   // Remove duplicates and sort time slots for each date
+  // Also remove dates that have no available slots (all blocked)
   Object.keys(availability).forEach(date => {
     availability[date] = Array.from(new Set(availability[date])).sort((a, b) => {
       // Parse time strings like "9:00 AM" or "2:30 PM"
@@ -114,6 +153,11 @@ const transformAvailability = (slots: any[]): { [key: string]: string[] } => {
       };
       return parseTime(a) - parseTime(b);
     });
+    
+    // Remove dates with no available time slots (all were blocked)
+    if (availability[date].length === 0) {
+      delete availability[date];
+    }
   });
 
   return availability;
@@ -129,8 +173,9 @@ export default function ProviderDetailPage() {
   const [currentReviewPage, setCurrentReviewPage] = useState(1);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false); // Closed by default, opens when clicked
   const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [isFavorited, setIsFavorited] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -189,7 +234,7 @@ export default function ProviderDetailPage() {
               image: mainPhoto,
               location: `${data.city}, ${data.state}`,
               startingPrice: data.services && data.services.length > 0 ? data.services[0].price : 0,
-              services: [data.business_type],
+              services: [formatBusinessType(data.business_type)],
               rating: data.average_rating || 4.5,
               reviewCount: data.total_reviews || 0,
               bio: data.bio || '',
@@ -232,15 +277,29 @@ export default function ProviderDetailPage() {
     fetchProvider();
   }, [params?.id]);
 
-  // Load favorites from localStorage on component mount
+  // Check authentication and load favorite status
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedFavorites = localStorage.getItem('favoriteProviders');
-      if (savedFavorites) {
-        setFavorites(JSON.parse(savedFavorites));
+    const checkAuthAndFavorite = async () => {
+      const authenticated = isClientAuthenticated();
+      setIsAuthenticated(authenticated);
+
+      if (!authenticated || !provider?.id) {
+        return;
       }
-    }
-  }, []);
+
+      try {
+        const clientId = getClientId();
+        if (!clientId) return;
+
+        const favoriteStatus = await getFavoriteStatus(clientId, [provider.id]);
+        setIsFavorited(!!favoriteStatus[provider.id]);
+      } catch (error) {
+        console.error('Error loading favorite status:', error);
+      }
+    };
+
+    checkAuthAndFavorite();
+  }, [provider]);
 
   // Close calendar when clicking outside
   useEffect(() => {
@@ -433,21 +492,37 @@ export default function ProviderDetailPage() {
     });
   };
 
-  const toggleFavorite = () => {
+  const toggleFavorite = async () => {
     if (!provider) return;
     
-    setFavorites(prev => {
-      const newFavorites = prev.includes(provider.id) 
-        ? prev.filter(id => id !== provider.id)
-        : [...prev, provider.id];
-      
-      // Save to localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('favoriteProviders', JSON.stringify(newFavorites));
+    // Check if user is authenticated
+    if (!isClientAuthenticated()) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    const clientId = getClientId();
+    if (!clientId) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    try {
+      if (isFavorited) {
+        // Remove from favorites
+        await removeFavorite(clientId, provider.id);
+        setIsFavorited(false);
+      } else {
+        // Add to favorites
+        await addFavorite(clientId, provider.id);
+        setIsFavorited(true);
       }
-      
-      return newFavorites;
-    });
+    } catch (error: any) {
+      console.error('Error toggling favorite:', error);
+      if (error.message === 'Not authenticated') {
+        setShowAuthModal(true);
+      }
+    }
   };
 
   return (
@@ -512,13 +587,15 @@ export default function ProviderDetailPage() {
         <div className={styles.providerMainSection}>
           <div className={styles.providerNameRow}>
             <h1 className={styles.providerName}>{provider.name}</h1>
+            {isAuthenticated && (
             <button
-              className={`${styles.favoriteButton} ${favorites.includes(provider.id) ? styles.favorited : ''}`}
+                className={`${styles.favoriteButton} ${isFavorited ? styles.favorited : ''}`}
               onClick={toggleFavorite}
-              title={favorites.includes(provider.id) ? 'Remove from favorites' : 'Add to favorites'}
+                title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
             >
-              {favorites.includes(provider.id) ? <FaHeart /> : <FaRegHeart />}
+                {isFavorited ? <FaHeart /> : <FaRegHeart />}
             </button>
+            )}
           </div>
           <div className={styles.rating}>
             <span className={styles.stars}>★★★★★</span>
@@ -624,133 +701,133 @@ export default function ProviderDetailPage() {
           <div className={styles.bookSection}>
             <h2 className={styles.bookSectionTitle}>Book with {provider.name}</h2>
 
-            {/* Services */}
-            <div className={styles.servicesSection}>
-              <h2>Services</h2>
-              <div className={styles.servicesList}>
-                {provider.serviceDetails.map((service: any, index: number) => (
-                  <div
-                    key={index}
-                    onClick={() => setSelectedService(service)}
-                    className={`${styles.serviceItem} ${selectedService?.name === service.name ? styles.selected : ''}`}
-                  >
-                    <div className={styles.serviceInfo}>
-                      <h3>{service.name}</h3>
-                      <p className={styles.serviceDescription}>{service.description}</p>
-                      <div className={styles.serviceMeta}>
+          {/* Services */}
+          <div className={styles.servicesSection}>
+              <h2>Select Service</h2>
+            <div className={styles.servicesList}>
+              {provider.serviceDetails.map((service: any, index: number) => (
+                <div
+                  key={index}
+                  onClick={() => setSelectedService(service)}
+                  className={`${styles.serviceItem} ${selectedService?.name === service.name ? styles.selected : ''}`}
+                >
+                  <div className={styles.serviceInfo}>
+                    <h3>{service.name}</h3>
+                    <p className={styles.serviceDescription}>{service.description}</p>
+                    <div className={styles.serviceMeta}>
                         <span className={styles.duration}>{service.duration} minutes</span>
-                        <span className={styles.price}>${service.price}</span>
-                      </div>
+                      <span className={styles.price}>${service.price}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Availability */}
-            <div className={styles.availabilitySection}>
-              <h2>Availability</h2>
-
-              {/* Date Selection */}
-              <div className={styles.dateSelection}>
-                <label className={styles.dateLabel}>Date</label>
-                <div className={styles.dateInputContainer}>
-                  <input
-                    type="text"
-                    value={selectedDate ? formatSelectedDate(selectedDate) : ''}
-                    onClick={toggleCalendar}
-                    readOnly
-                    className={styles.dateInput}
-                    placeholder="Select a date"
-                  />
-                  <button
-                    className={styles.calendarButton}
-                    onClick={toggleCalendar}
-                  >
-                    <FaCalendarAlt />
-                  </button>
                 </div>
+              ))}
+            </div>
+          </div>
 
-                {/* Calendar Widget */}
-                {isCalendarOpen && (
-                  <div className={styles.calendarWidget}>
-                    <div className={styles.calendarHeader}>
-                      <button
-                        className={styles.calendarNavButton}
-                        onClick={() => navigateMonth('prev')}
-                      >
-                        ‹
-                      </button>
-                      <h3 className={styles.calendarMonth}>
-                        {currentMonth.toLocaleDateString('en-US', {
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </h3>
-                      <button
-                        className={styles.calendarNavButton}
-                        onClick={() => navigateMonth('next')}
-                      >
-                        ›
-                      </button>
-                    </div>
+          {/* Availability */}
+          <div className={styles.availabilitySection}>
+              <h2>Select Date and Time</h2>
 
-                    <div className={styles.calendarLegend}>
-                      <div className={styles.legendItem}>
-                        <div className={styles.legendDot} style={{ backgroundColor: '#10b981' }}></div>
-                        <span>Available</span>
-                      </div>
-                      <div className={styles.legendItem}>
-                        <div className={styles.legendDot} style={{ backgroundColor: '#9ca3af' }}></div>
-                        <span>Unavailable</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.calendarGrid}>
-                      <div className={styles.calendarWeekdays}>
-                        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                          <div key={day} className={styles.weekday}>{day}</div>
-                        ))}
-                      </div>
-                      <div className={styles.calendarDays}>
-                        {getCalendarDays().map((date, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleDateSelect(date)}
-                            className={`${styles.calendarDay} ${!isDateInCurrentMonth(date) ? styles.otherMonth : ''
-                              } ${isDateAvailable(date) ? styles.available : styles.unavailable
-                              } ${isDateSelected(date) ? styles.selected : ''
-                              }`}
-                            disabled={!isDateAvailable(date)}
-                          >
-                            {date.getDate()}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+            {/* Date Selection */}
+            <div className={styles.dateSelection}>
+              <label className={styles.dateLabel}>Date</label>
+              <div className={styles.dateInputContainer}>
+                <input
+                  type="text"
+                  value={selectedDate ? formatSelectedDate(selectedDate) : ''}
+                  onClick={toggleCalendar}
+                  readOnly
+                  className={styles.dateInput}
+                  placeholder="Select a date"
+                />
+                <button
+                  className={styles.calendarButton}
+                  onClick={toggleCalendar}
+                >
+                  <FaCalendarAlt />
+                </button>
               </div>
 
-              {/* Time Selection */}
-              {selectedDate && (
-                <div className={styles.timeSelection}>
-                  <div className={styles.timeHeader}>
-                    <h3>Time (PDT)</h3>
+              {/* Calendar Widget */}
+              {isCalendarOpen && (
+                <div className={styles.calendarWidget}>
+                  <div className={styles.calendarHeader}>
+                    <button
+                      className={styles.calendarNavButton}
+                      onClick={() => navigateMonth('prev')}
+                    >
+                      ‹
+                    </button>
+                    <h3 className={styles.calendarMonth}>
+                      {currentMonth.toLocaleDateString('en-US', {
+                        month: 'long',
+                        year: 'numeric'
+                      })}
+                    </h3>
+                    <button
+                      className={styles.calendarNavButton}
+                      onClick={() => navigateMonth('next')}
+                    >
+                      ›
+                    </button>
                   </div>
-                  <div className={styles.timeSlotsGrid}>
-                    {getAvailableTimeSlots().map((slot: string, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`${styles.timeSlot} ${selectedSlot === slot ? styles.selected : ''}`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
+
+                  <div className={styles.calendarLegend}>
+                    <div className={styles.legendItem}>
+                      <div className={styles.legendDot} style={{ backgroundColor: '#10b981' }}></div>
+                      <span>Available</span>
+                    </div>
+                    <div className={styles.legendItem}>
+                      <div className={styles.legendDot} style={{ backgroundColor: '#9ca3af' }}></div>
+                      <span>Unavailable</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.calendarGrid}>
+                    <div className={styles.calendarWeekdays}>
+                      {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                        <div key={day} className={styles.weekday}>{day}</div>
+                      ))}
+                    </div>
+                    <div className={styles.calendarDays}>
+                      {getCalendarDays().map((date, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleDateSelect(date)}
+                          className={`${styles.calendarDay} ${!isDateInCurrentMonth(date) ? styles.otherMonth : ''
+                            } ${isDateAvailable(date) ? styles.available : styles.unavailable
+                            } ${isDateSelected(date) ? styles.selected : ''
+                            }`}
+                          disabled={!isDateAvailable(date)}
+                        >
+                          {date.getDate()}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Time Selection */}
+            {selectedDate && (
+              <div className={styles.timeSelection}>
+                <div className={styles.timeHeader}>
+                  <h3>Time (PDT)</h3>
+                </div>
+                <div className={styles.timeSlotsGrid}>
+                  {getAvailableTimeSlots().map((slot: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedSlot(slot)}
+                      className={`${styles.timeSlot} ${selectedSlot === slot ? styles.selected : ''}`}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             </div>
           </div>
 
@@ -881,6 +958,11 @@ export default function ProviderDetailPage() {
           </div>
         </div>
       </div>
+
+      <FavoriteAuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </div>
   );
 }

@@ -26,6 +26,7 @@ export default function ProvidersDashboard() {
   const [providerRating, setProviderRating] = useState<number | null>(null);
   const [totalClients, setTotalClients] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [pendingRequests, setPendingRequests] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -109,6 +110,40 @@ export default function ProvidersDashboard() {
       }
     };
   }, [userId, router]);
+
+  // Load pending requests count
+  useEffect(() => {
+    const loadPending = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !userId) return;
+        const resp = await fetch(`http://localhost:4000/api/bookings/provider/${userId}/pending`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          setPendingRequests(Array.isArray(data) ? data.length : 0);
+        }
+      } catch (e) {
+        setPendingRequests(0);
+      }
+    };
+
+    loadPending();
+
+    const refresh = () => loadPending();
+    window.addEventListener('refreshBookings', refresh);
+    return () => window.removeEventListener('refreshBookings', refresh);
+  }, [userId]);
+
+  // Allow children to request submenu switch (e.g., after accepting a booking)
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e?.detail?.submenu) setActiveSubmenu(e.detail.submenu);
+    };
+    window.addEventListener('switchSubmenu', handler);
+    return () => window.removeEventListener('switchSubmenu', handler);
+  }, []);
 
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -206,7 +241,7 @@ export default function ProvidersDashboard() {
       { id: 'sync', label: 'Sync with Google/Apple Calendar' },
     ],
     clients: [
-      { id: 'directory', label: 'Directory of Past Clients' },
+      { id: 'directory', label: 'Client Directory' },
       { id: 'notes', label: 'Notes & Preferences' },
     ],
     payments: [
@@ -309,8 +344,14 @@ export default function ProvidersDashboard() {
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Billing Cycle</label>
-                      <input type="text" className={styles.formInput} defaultValue="Monthly" disabled />
+                      <label className={styles.formLabel}>Next Payment Due</label>
+                      <div className={styles.paymentDueInfo}>
+                        <div className={styles.paymentDueDetails}>
+                          <span className={styles.paymentDate}>January 15, 2025</span>
+                          <span className={styles.paymentAmount}>$59.00</span>
+                        </div>
+                        <p className={styles.paymentDescription}>Professional Plan - Monthly Subscription</p>
+                      </div>
                     </div>
                   </div>
 
@@ -333,17 +374,17 @@ export default function ProvidersDashboard() {
                     
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Card Number</label>
-                      <input type="text" className={styles.formInput} placeholder="**** **** **** 1234" disabled />
+                      <input type="text" className={`${styles.formInput} ${styles.cardNumberInput}`} placeholder="**** **** **** 1234" disabled />
                     </div>
 
-                    <div className={styles.formRow}>
+                    <div className={`${styles.formRow} ${styles.cardDetailsRow}`}>
                       <div className={styles.formGroup}>
                         <label className={styles.formLabel}>Expiry Date</label>
-                        <input type="text" className={styles.formInput} placeholder="MM/YY" />
+                        <input type="text" className={`${styles.formInput} ${styles.expiryInput}`} placeholder="MM/YY" />
                       </div>
                       <div className={styles.formGroup}>
                         <label className={styles.formLabel}>CVV</label>
-                        <input type="text" className={styles.formInput} placeholder="***" />
+                        <input type="text" className={`${styles.formInput} ${styles.cvvInput}`} placeholder="***" />
                       </div>
                     </div>
                   </div>
@@ -468,6 +509,9 @@ export default function ProvidersDashboard() {
               onClick={() => setActiveSubmenu(item.id)}
             >
               {item.label}
+              {activeSection === 'bookings' && item.id === 'requests' && pendingRequests > 0 && (
+                <span className={styles.badge}>{pendingRequests}</span>
+              )}
             </button>
           ))}
         </div>

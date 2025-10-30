@@ -289,7 +289,7 @@ export default function AvailabilityManager() {
             </h3>
             <div className={styles.slotsList}>
               {availabilitySlots
-                .filter(slot => !slot.isRecurring)
+                .filter(slot => !slot.isRecurring && (!(slot as any).type || (slot as any).type === 'available'))
                 .map(slot => (
                   <div key={slot.id} className={styles.slotCard}>
                     <div className={styles.slotInfo}>
@@ -326,7 +326,7 @@ export default function AvailabilityManager() {
             </h3>
             <div className={styles.slotsList}>
               {availabilitySlots
-                .filter(slot => slot.isRecurring)
+                .filter(slot => slot.isRecurring && (!(slot as any).type || (slot as any).type === 'available'))
                 .map(slot => (
                   <div key={slot.id} className={styles.slotCard}>
                     <div className={styles.slotInfo}>
@@ -431,44 +431,66 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
   const hasAvailability = (date: Date) => {
     const dateString = formatDateString(date);
     
+    // First, collect all blocked slots for this date
+    const blockedSlotsForDate = new Set<string>();
+    availabilitySlots.forEach(slot => {
+      if ((slot as any).type === 'blocked') {
+        const normalizedSlotDate = normalizeDateString(slot.date);
+        if (normalizedSlotDate === dateString) {
+          const normalizedTime = String(slot.time).slice(0, 5); // Get HH:MM format
+          blockedSlotsForDate.add(normalizedTime);
+        }
+      }
+    });
+    
     // Check for one-time availability (normalize slot dates before comparison)
     const hasOneTime = availabilitySlots.some(slot => {
       if (!slot.isRecurring) {
+        if ((slot as any).type && (slot as any).type !== 'available') return false;
         const normalizedSlotDate = normalizeDateString(slot.date);
-        return normalizedSlotDate === dateString;
+        if (normalizedSlotDate !== dateString) return false;
+        // Check if this time slot is blocked
+        const normalizedTime = String(slot.time).slice(0, 5);
+        return !blockedSlotsForDate.has(normalizedTime);
       }
       return false;
     });
 
-      // Check for recurring availability
-      const hasRecurring = availabilitySlots.some(slot => {
-        if (!slot.isRecurring || !slot.recurringPattern) return false;
-        
-        // Normalize and parse slot date as local date (YYYY-MM-DD format)
-        const normalizedSlotDateStr = normalizeDateString(slot.date);
-        const [slotYear, slotMonth, slotDay] = normalizedSlotDateStr.split('-').map(Number);
-        const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
-        const dayOfWeek = date.getDay();
-        
-        // Check end date limit
-        if (slot.recurringPattern.endDate) {
-          const normalizedEndDateStr = normalizeDateString(slot.recurringPattern.endDate);
-          const [endYear, endMonth, endDay] = normalizedEndDateStr.split('-').map(Number);
-          const endDate = new Date(endYear, endMonth - 1, endDay);
-          if (date > endDate) return false;
-        }
+    // Check for recurring availability
+    const hasRecurring = availabilitySlots.some(slot => {
+      if (!slot.isRecurring || !slot.recurringPattern) return false;
+      if ((slot as any).type && (slot as any).type !== 'available') return false;
       
-        if (slot.recurringPattern.frequency === 'weekly') {
-          if (!slot.recurringPattern.daysOfWeek?.includes(dayOfWeek) || date < slotDate) {
-            return false;
-          }
-          
-          
-          return true;
-        }
+      // Normalize and parse slot date as local date (YYYY-MM-DD format)
+      const normalizedSlotDateStr = normalizeDateString(slot.date);
+      const [slotYear, slotMonth, slotDay] = normalizedSlotDateStr.split('-').map(Number);
+      const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
+      const dayOfWeek = date.getDay();
       
-        return false;
-      });
+      // Check end date limit
+      if (slot.recurringPattern.endDate) {
+        const normalizedEndDateStr = normalizeDateString(slot.recurringPattern.endDate);
+        const [endYear, endMonth, endDay] = normalizedEndDateStr.split('-').map(Number);
+        const endDate = new Date(endYear, endMonth - 1, endDay);
+        if (date > endDate) return false;
+      }
+    
+      if (slot.recurringPattern.frequency === 'weekly') {
+        if (!slot.recurringPattern.daysOfWeek?.includes(dayOfWeek) || date < slotDate) {
+          return false;
+        }
+        
+        // Check if this specific time slot is blocked for this date
+        const normalizedTime = String(slot.time).slice(0, 5);
+        if (blockedSlotsForDate.has(normalizedTime)) {
+          return false; // This time is blocked, but check other recurring slots
+        }
+        
+        return true;
+      }
+    
+      return false;
+    });
 
     return hasOneTime || hasRecurring;
   };
@@ -493,14 +515,31 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
     const selectedDate = new Date(year, month - 1, day);
     const selectedDayOfWeek = selectedDate.getDay();
     
+    // First, collect all blocked slots for this date
+    const blockedSlotsForDate = new Set<string>();
+    availabilitySlots.forEach(slot => {
+      if ((slot as any).type === 'blocked') {
+        const normalizedSlotDate = normalizeDateString(slot.date);
+        if (normalizedSlotDate === dateString) {
+          const normalizedTime = String(slot.time).slice(0, 5); // Get HH:MM format
+          blockedSlotsForDate.add(normalizedTime);
+        }
+      }
+    });
+    
     const slots = availabilitySlots.filter(slot => {
       if (!slot.isRecurring) {
         // One-time availability - exact date match (normalize both dates)
+        if ((slot as any).type && (slot as any).type !== 'available') return false;
         const normalizedSlotDate = normalizeDateString(slot.date);
-        return normalizedSlotDate === dateString;
+        if (normalizedSlotDate !== dateString) return false;
+        // Check if this time slot is blocked
+        const normalizedTime = String(slot.time).slice(0, 5);
+        return !blockedSlotsForDate.has(normalizedTime);
       } else {
         // Recurring availability - check if date matches pattern
         // Normalize and parse slot date as local date (YYYY-MM-DD format)
+        if ((slot as any).type && (slot as any).type !== 'available') return false;
         const normalizedSlotDateStr = normalizeDateString(slot.date);
         const [slotYear, slotMonth, slotDay] = normalizedSlotDateStr.split('-').map(Number);
         const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
@@ -518,6 +557,11 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
             if (selectedDate > endDate) return false;
           }
           
+          // Check if this specific time slot is blocked for this date
+          const normalizedTime = String(slot.time).slice(0, 5);
+          if (blockedSlotsForDate.has(normalizedTime)) {
+            return false; // This time is blocked, exclude it
+          }
           
           return true;
         }

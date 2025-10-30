@@ -2,6 +2,27 @@ const { Router } = require('express');
 const pool = require('../db');
 
 const router = Router();
+const jwt = require('jsonwebtoken');
+
+// Helper function to verify JWT token
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  
+  const token = authHeader.split(' ')[1];
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
+    req.userId = decoded.id;
+    req.userType = decoded.user_type;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
 
 // GET all providers
 router.get('/', async (req, res) => {
@@ -162,6 +183,159 @@ router.put('/:id/availability', async (req, res) => {
     res.json({ success: true, availability });
   } catch (err) {
     console.error('Error updating availability:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET clients who have booked with a provider
+router.get('/:providerId/clients', verifyToken, async (req, res) => {
+  try {
+    const { providerId } = req.params;
+    
+    // Verify the user is a provider and matches the providerId
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    // Get provider profile ID from user ID
+    const profileResult = await pool.query(
+      'SELECT id FROM provider_profiles WHERE user_id = $1',
+      [providerId]
+    );
+    
+    if (profileResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+    
+    const providerProfileId = profileResult.rows[0].id;
+    
+    // Get all unique clients who have booked with this provider
+    const result = await pool.query(`
+      SELECT DISTINCT
+        c.id as client_profile_id,
+        c.user_id,
+        c.first_name,
+        c.last_name,
+        c.phone_number,
+        c.date_of_birth,
+        c.gender,
+        c.pronoun,
+        c.wellness_goals,
+        c.city,
+        c.state,
+        u.email
+      FROM client_profiles c
+      JOIN users u ON c.user_id = u.id
+      JOIN client_provider_bookings b ON c.id = b.client_id
+      WHERE b.provider_id = $1
+      ORDER BY c.last_name, c.first_name
+    `, [providerProfileId]);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching provider clients:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET notes for a provider's clients
+router.get('/:providerId/clients/notes', verifyToken, async (req, res) => {
+  try {
+    const { providerId } = req.params;
+    
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    // Get provider profile ID
+    const profileResult = await pool.query(
+      'SELECT id, client_notes FROM provider_profiles WHERE user_id = $1',
+      [providerId]
+    );
+    
+    if (profileResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+    
+    const providerProfile = profileResult.rows[0];
+    let notes = {};
+    
+    // Parse client_notes JSONB if it exists
+    if (providerProfile.client_notes) {
+      if (typeof providerProfile.client_notes === 'string') {
+        try {
+          notes = JSON.parse(providerProfile.client_notes);
+        } catch (e) {
+          notes = {};
+        }
+      } else {
+        notes = providerProfile.client_notes;
+      }
+    }
+    
+    res.json({ notes });
+  } catch (err) {
+    console.error('Error fetching client notes:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST/PUT note for a specific client
+router.post('/:providerId/clients/:clientId/notes', verifyToken, async (req, res) => {
+  try {
+    const { providerId, clientId } = req.params;
+    const { note } = req.body;
+    
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    if (!note || !note.trim()) {
+      return res.status(400).json({ error: 'Note cannot be empty' });
+    }
+    
+    // Get provider profile ID
+    const profileResult = await pool.query(
+      'SELECT id, client_notes FROM provider_profiles WHERE user_id = $1',
+      [providerId]
+    );
+    
+    if (profileResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+    
+    const providerProfileId = profileResult.rows[0].id;
+    let notes = {};
+    
+    // Parse existing notes
+    if (profileResult.rows[0].client_notes) {
+      if (typeof profileResult.rows[0].client_notes === 'string') {
+        try {
+          notes = JSON.parse(profileResult.rows[0].client_notes);
+        } catch (e) {
+          notes = {};
+        }
+      } else {
+        notes = profileResult.rows[0].client_notes;
+      }
+    }
+    
+    // Add or update note for this client
+    notes[clientId] = {
+      note: note.trim(),
+      created_at: notes[clientId]?.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    // Update provider profile
+    await pool.query(
+      'UPDATE provider_profiles SET client_notes = $1::JSONB, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+      [JSON.stringify(notes), providerProfileId]
+    );
+    
+    res.json({ success: true, notes });
+  } catch (err) {
+    console.error('Error saving client note:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

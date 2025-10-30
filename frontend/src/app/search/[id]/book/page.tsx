@@ -44,6 +44,36 @@ export default function BookingConfirmationPage() {
     });
   };
 
+  // Convert 12-hour time (e.g., "9:00 AM") to 24-hour format (e.g., "09:00")
+  const convertTo24Hour = (time12Hour: string): string => {
+    if (!time12Hour) return '';
+    
+    // Check if it's already in 24-hour format (HH:MM)
+    if (/^\d{1,2}:\d{2}$/.test(time12Hour) && !time12Hour.includes('AM') && !time12Hour.includes('PM')) {
+      const [hours, minutes] = time12Hour.split(':').map(Number);
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+    
+    // Parse 12-hour format (e.g., "9:00 AM" or "2:30 PM")
+    const match = time12Hour.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!match) {
+      console.error('Invalid time format:', time12Hour);
+      return '';
+    }
+    
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    const period = match[3].toUpperCase();
+    
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     const load = async () => {
       if (!params?.id) return;
@@ -201,10 +231,93 @@ export default function BookingConfirmationPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleBooking = () => {
-    if (validateForm()) {
-      // Navigate to success page
+  const handleBooking = async () => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      alert('Please sign in to book an appointment.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    let userData;
+    try {
+      userData = JSON.parse(user);
+    } catch (e) {
+      alert('Error reading user data. Please sign in again.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Check if user is a client
+    if (userData.user_type !== 'client') {
+      alert('Only clients can book appointments. Please sign in with a client account.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    try {
+      // Prepare booking data
+      const selectedAddOnsList = provider.addOns?.filter((addOn: any) => selectedAddOns[addOn.id]) || [];
+      
+      // Convert time from 12-hour format to 24-hour format
+      const time24Hour = convertTo24Hour(selectedTime);
+      if (!time24Hour) {
+        throw new Error('Invalid time format. Please select a valid time.');
+      }
+      
       const bookingData = {
+        provider_id: provider.id, // provider user_id
+        service_name: selectedService.name,
+        service_duration: typeof selectedService.duration === 'number' 
+          ? selectedService.duration 
+          : parseInt(selectedService.duration) || 60,
+        service_price: typeof selectedService.price === 'number'
+          ? selectedService.price
+          : parseFloat(selectedService.price) || 0,
+        booking_date: selectedDate,
+        start_time: time24Hour, // Use converted 24-hour format
+        location_type: locationType,
+        location_details: locationType === 'home' || locationType === 'travel' ? userAddress : 
+                          locationType === 'online' ? 'Online' : 
+                          provider.location || 'Provider Studio',
+        add_ons: selectedAddOnsList.map((addOn: any) => ({
+          id: addOn.id,
+          name: addOn.name,
+          price: parseFloat(addOn.price) || 0
+        })),
+        total_amount: calculateTotal(),
+        client_notes: null // Can add a notes field later
+      };
+      
+      // Submit booking to API
+      const response = await fetch('http://localhost:4000/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(bookingData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const errorMessage = errorData.error || errorData.details || 'Failed to create booking';
+        console.error('Booking error response:', errorData);
+        throw new Error(errorMessage);
+      }
+      
+      const result = await response.json();
+      
+      // Navigate to success page
+      const successData = {
+        bookingId: result.booking.id,
         providerId: provider.id,
         service: selectedService.name,
         date: selectedDate,
@@ -212,14 +325,16 @@ export default function BookingConfirmationPage() {
         locationType,
         userAddress: locationType === 'home' ? userAddress : (locationType === 'travel' ? userAddress : ''),
         travelRadius: locationType === 'travel' ? travelRadius : 0,
-        addOns: provider.addOns?.filter((addOn: any) => selectedAddOns[addOn.id]) || [],
+        addOns: selectedAddOnsList,
         total: calculateTotal(),
         deposit: calculateDeposit()
       };
       
-      // Store booking data and navigate to success page
-      localStorage.setItem('bookingData', JSON.stringify(bookingData));
+      localStorage.setItem('bookingData', JSON.stringify(successData));
       window.location.href = `/search/${params?.id}/book/success`;
+    } catch (error: any) {
+      console.error('Error creating booking:', error);
+      alert(`Error creating booking: ${error.message || 'Please try again'}`);
     }
   };
 

@@ -26,7 +26,7 @@ export default function BookingOptions({
         className={`${styles.bookButton} ${styles.disabled}`}
         disabled
       >
-        Book Now
+        Book
       </button>
     );
   }
@@ -38,7 +38,7 @@ export default function BookingOptions({
         className={styles.bookButton}
         style={{ textDecoration: 'none', display: 'block' }}
       >
-        Book Now
+        Book
       </Link>
     );
   }

@@ -9,6 +9,7 @@ import styles from '@/styles/BookingSuccess.module.scss';
 export default function BookingSuccessPage() {
   const params = useParams();
   const [bookingData, setBookingData] = useState<any>(null);
+  const [dashboardUrl, setDashboardUrl] = useState<string>('/login');
 
   useEffect(() => {
     // Get booking data from localStorage
@@ -17,6 +18,19 @@ export default function BookingSuccessPage() {
       setBookingData(JSON.parse(storedData));
       // Clear the stored data after displaying
       localStorage.removeItem('bookingData');
+    }
+
+    // Get user ID for dashboard URL
+    const user = localStorage.getItem('user');
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        if (userData.id && userData.user_type === 'client') {
+          setDashboardUrl(`/dashboard/${userData.id}`);
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
     }
   }, []);
 
@@ -226,7 +240,7 @@ export default function BookingSuccessPage() {
             <Link href="/search" className={styles.primaryButton}>
               Find More Providers
             </Link>
-            <Link href="/dashboard" className={styles.secondaryButton}>
+            <Link href={dashboardUrl} className={styles.secondaryButton}>
               View My Bookings
             </Link>
           </div>

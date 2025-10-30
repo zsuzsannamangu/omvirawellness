@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
+import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
+import { FaStar } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 import ReviewPopup from './ReviewPopup';
 
@@ -15,6 +16,193 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     providerName: string;
     serviceName: string;
   } | null>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const loadBookings = useCallback(async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        if (!token || !user) {
+          setBookings([]);
+          setLoading(false);
+          return;
+        }
+        const userData = JSON.parse(user);
+        const clientId = userData.id;
+
+        // Always fetch all, then filter per tab so 'upcoming' can include pending
+        const baseUrl = `http://localhost:4000/api/bookings/client/${clientId}`;
+        const resp = await fetch(baseUrl, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          const list = Array.isArray(data) ? data : [];
+          
+          // Helper function to check if a booking is in the past
+          const isPastBooking = (booking: any): boolean => {
+            if (!booking.booking_date || !booking.start_time) return false;
+            
+            try {
+              // Parse booking date - handle both ISO string and YYYY-MM-DD format
+              let bookingDate: Date;
+              if (typeof booking.booking_date === 'string') {
+                // Check if it's YYYY-MM-DD format
+                if (/^\d{4}-\d{2}-\d{2}$/.test(booking.booking_date)) {
+                  const [year, month, day] = booking.booking_date.split('-').map(Number);
+                  bookingDate = new Date(year, month - 1, day);
+                } else {
+                  // Try parsing as ISO string
+                  bookingDate = new Date(booking.booking_date);
+                }
+              } else if (booking.booking_date instanceof Date) {
+                bookingDate = booking.booking_date;
+              } else {
+                return false;
+              }
+              
+              // Parse time - handle HH:MM or HH:MM:SS format
+              const timeStr = String(booking.start_time);
+              const timeParts = timeStr.split(':');
+              const hours = parseInt(timeParts[0], 10);
+              const minutes = parseInt(timeParts[1] || '0', 10);
+              
+              // Create a date object for the booking date+time (local time)
+              const bookingDateTime = new Date(
+                bookingDate.getFullYear(),
+                bookingDate.getMonth(),
+                bookingDate.getDate(),
+                hours,
+                minutes,
+                0, // seconds
+                0  // milliseconds
+              );
+              
+              // Get current date+time (local time), reset seconds/milliseconds for fair comparison
+              const now = new Date();
+              now.setSeconds(0, 0);
+              
+              // Consider it past if the booking date+time is before now
+              const isPast = bookingDateTime < now;
+              
+              // Debug logging (can be removed later)
+              if (isPast) {
+                console.log('Past booking detected:', {
+                  booking_date: booking.booking_date,
+                  start_time: booking.start_time,
+                  bookingDateTime: bookingDateTime.toISOString(),
+                  now: now.toISOString(),
+                  status: booking.status
+                });
+              }
+              
+              return isPast;
+            } catch (error) {
+              console.error('Error checking if booking is past:', error, booking);
+              return false;
+            }
+          };
+          
+          let filtered = list;
+          if (activeSubmenu === 'upcoming') {
+            // Upcoming: status is pending/confirmed AND date is in the future
+            filtered = list.filter((b: any) => {
+              if (b.status === 'cancelled') return false;
+              return (b.status === 'pending' || b.status === 'confirmed') && !isPastBooking(b);
+            });
+            
+            // Sort upcoming bookings chronologically (earlier first)
+            filtered.sort((a: any, b: any) => {
+              // Compare dates first
+              const dateA = new Date(a.booking_date);
+              const dateB = new Date(b.booking_date);
+              
+              if (dateA.getTime() !== dateB.getTime()) {
+                return dateA.getTime() - dateB.getTime(); // Earlier date first
+              }
+              
+              // If same date, compare times
+              const timeA = String(a.start_time).split(':').map(Number);
+              const timeB = String(b.start_time).split(':').map(Number);
+              const timeAMinutes = timeA[0] * 60 + (timeA[1] || 0);
+              const timeBMinutes = timeB[0] * 60 + (timeB[1] || 0);
+              
+              return timeAMinutes - timeBMinutes; // Earlier time first
+            });
+          } else if (activeSubmenu === 'past') {
+            // Past: either status is completed, OR date is in the past (regardless of status, unless cancelled)
+            filtered = list.filter((b: any) => {
+              if (b.status === 'cancelled') return false;
+              return b.status === 'completed' || isPastBooking(b);
+            });
+            
+            // Sort past bookings reverse chronologically (most recent first)
+            filtered.sort((a: any, b: any) => {
+              const dateA = new Date(a.booking_date);
+              const dateB = new Date(b.booking_date);
+              
+              if (dateA.getTime() !== dateB.getTime()) {
+                return dateB.getTime() - dateA.getTime(); // Later date first (most recent)
+              }
+              
+              // If same date, compare times (later time first)
+              const timeA = String(a.start_time).split(':').map(Number);
+              const timeB = String(b.start_time).split(':').map(Number);
+              const timeAMinutes = timeA[0] * 60 + (timeA[1] || 0);
+              const timeBMinutes = timeB[0] * 60 + (timeB[1] || 0);
+              
+              return timeBMinutes - timeAMinutes; // Later time first (most recent)
+            });
+          } else if (activeSubmenu === 'canceled') {
+            filtered = list.filter((b: any) => b.status === 'cancelled');
+            
+            // Sort canceled bookings reverse chronologically (most recent first)
+            filtered.sort((a: any, b: any) => {
+              const dateA = new Date(a.booking_date);
+              const dateB = new Date(b.booking_date);
+              
+              if (dateA.getTime() !== dateB.getTime()) {
+                return dateB.getTime() - dateA.getTime(); // Later date first
+              }
+              
+              const timeA = String(a.start_time).split(':').map(Number);
+              const timeB = String(b.start_time).split(':').map(Number);
+              const timeAMinutes = timeA[0] * 60 + (timeA[1] || 0);
+              const timeBMinutes = timeB[0] * 60 + (timeB[1] || 0);
+              
+              return timeBMinutes - timeAMinutes; // Later time first
+            });
+          }
+          setBookings(filtered);
+        } else {
+          setBookings([]);
+        }
+      } catch (e) {
+        setBookings([]);
+      } finally {
+        setLoading(false);
+      }
+  }, [activeSubmenu]);
+
+  useEffect(() => {
+    setLoading(true);
+    setBookings([]); // Clear previous bookings to prevent flashing old data
+    loadBookings();
+  }, [loadBookings]);
+
+  // Auto-refresh when the tab gains focus and every 15s
+  useEffect(() => {
+    const onFocus = () => loadBookings();
+    window.addEventListener('focus', onFocus);
+    const id = setInterval(() => loadBookings(), 15000);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      clearInterval(id);
+    };
+  }, [activeSubmenu]);
 
   const handleLeaveReview = (providerName: string, serviceName: string) => {
     setSelectedBooking({ providerName, serviceName });
@@ -33,59 +221,69 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     setSelectedBooking(null);
   };
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className={styles.upcomingContent}>
+          <h2 className={styles.sectionTitle}>
+            {activeSubmenu === 'upcoming' && 'Upcoming'}
+            {activeSubmenu === 'book-new' && 'Book New Appointment'}
+            {activeSubmenu === 'past' && 'Past Appointments'}
+            {activeSubmenu === 'canceled' && 'Canceled Appointments'}
+          </h2>
+          <div className={styles.placeholderText}>Loading...</div>
+        </div>
+      );
+    }
+
     switch (activeSubmenu) {
       case 'upcoming':
         return (
           <div className={styles.upcomingContent}>
             <h2 className={styles.sectionTitle}>Upcoming</h2>
             <div className={styles.sessionsList}>
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>15</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Massage Therapy</h4>
-                  <p className={styles.sessionProvider}>with Sarah Johnson</p>
-                  <p className={styles.sessionTime}>2:00 PM - 3:00 PM</p>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>Reschedule</button>
-                  <button className={styles.actionBtn}>Cancel</button>
-                </div>
-              </div>
-
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>18</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Yoga Class</h4>
-                  <p className={styles.sessionProvider}>with Mike Chen</p>
-                  <p className={styles.sessionTime}>10:00 AM - 11:00 AM</p>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>Reschedule</button>
-                  <button className={styles.actionBtn}>Cancel</button>
-                </div>
-              </div>
-
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>22</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Meditation Session</h4>
-                  <p className={styles.sessionProvider}>with Lisa Wang</p>
-                  <p className={styles.sessionTime}>7:00 PM - 8:00 PM</p>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>Reschedule</button>
-                  <button className={styles.actionBtn}>Cancel</button>
-                </div>
-              </div>
+              {bookings.length === 0 ? (
+                <div className={styles.placeholderText}>No upcoming bookings.</div>
+              ) : (
+                bookings.map((b) => {
+                  const date = new Date(b.booking_date);
+                  const day = String(date.getDate());
+                  const month = date.toLocaleString('en-US', { month: 'short' });
+                  const providerName = b.contact_name || b.business_name || 'Provider';
+                  const svc = (() => {
+                    try {
+                      const info = b.provider_notes ? JSON.parse(b.provider_notes) : null;
+                      return info?.name || 'Service';
+                    } catch { return 'Service'; }
+                  })();
+                  const formatTime = (t: string) => {
+                    const [h, m] = t.split(':').map((x: string)=>parseInt(x,10));
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const hh = h % 12 === 0 ? 12 : h % 12;
+                    return `${hh}:${String(m).padStart(2,'0')} ${ampm}`;
+                  };
+                  const statusLabel = b.status.charAt(0).toUpperCase() + b.status.slice(1);
+                  return (
+                    <div key={b.id} className={styles.sessionCard}>
+                      <span className={`${styles.statusBadge} ${styles[b.status]} ${styles.statusTopRight}`}>{statusLabel}</span>
+                      <div className={styles.sessionDate}>
+                        <span className={styles.day}>{day}</span>
+                        <span className={styles.month}>{month}</span>
+                      </div>
+                      <div className={styles.sessionDetails}>
+                        <h4 className={styles.sessionTitle}>{svc}</h4>
+                        <p className={styles.sessionProvider}>with {providerName}</p>
+                        <p className={styles.sessionTime}>{formatTime(b.start_time)} - {formatTime(b.end_time)}</p>
+                      </div>
+                      <div className={styles.sessionRight}>
+                        <div className={styles.sessionActions}>
+                          <button className={styles.actionBtn}>Reschedule</button>
+                          <button className={styles.actionBtn}>Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         );
@@ -94,103 +292,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         return (
           <div className={styles.bookNewContent}>
             <h2 className={styles.sectionTitle}>Book New Appointment</h2>
-            
-            <div className={styles.bookingSteps}>
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>1</div>
-                <div className={styles.stepContent}>
-                  <h3 className={styles.stepTitle}>Choose Service</h3>
-                  <div className={styles.serviceDropdown}>
-                    <select className={styles.serviceSelect}>
-                      <option value="">Select a service</option>
-                      <option value="massage">Massage Therapy</option>
-                      <option value="yoga">Yoga Class</option>
-                      <option value="meditation">Meditation</option>
-                      <option value="training">Personal Training</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>2</div>
-                <div className={styles.stepContent}>
-                  <h3 className={styles.stepTitle}>Select Provider</h3>
-                  <div className={styles.providerDropdown}>
-                    <select className={styles.providerSelect}>
-                      <option value="">Select a provider</option>
-                      <option value="sarah">Sarah Johnson - Massage Therapist - ⭐ 4.9</option>
-                      <option value="mike">Mike Chen - Yoga Instructor - ⭐ 4.8</option>
-                      <option value="lisa">Lisa Wang - Meditation Guide - ⭐ 4.7</option>
-                      <option value="david">David Kim - Personal Trainer - ⭐ 4.9</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>3</div>
-                <div className={styles.stepContent}>
-                  <h3 className={styles.stepTitle}>Choose Date & Time</h3>
-                  <div className={styles.datetimeRow}>
-                    <div className={styles.dateField}>
-                      <label className={styles.fieldLabel}>Date</label>
-                      <input type="date" className={styles.dateInput} />
-                    </div>
-                    <div className={styles.timeField}>
-                      <label className={styles.fieldLabel}>Time</label>
-                      <select className={styles.timeSelect}>
-                        <option value="">Select time</option>
-                        <option value="9:00">9:00 AM</option>
-                        <option value="10:00">10:00 AM</option>
-                        <option value="11:00">11:00 AM</option>
-                        <option value="2:00">2:00 PM</option>
-                        <option value="3:00">3:00 PM</option>
-                        <option value="4:00">4:00 PM</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>4</div>
-                <div className={styles.stepContent}>
-                  <h3 className={styles.stepTitle}>Review & Confirm</h3>
-                  <div className={styles.confirmLayout}>
-                    <div className={styles.bookingSummary}>
-                      <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Service:</span>
-                        <span className={styles.summaryValue}>Massage Therapy</span>
-                      </div>
-                      <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Provider:</span>
-                        <span className={styles.summaryValue}>Sarah Johnson</span>
-                      </div>
-                      <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Date:</span>
-                        <span className={styles.summaryValue}>Dec 20, 2024</span>
-                      </div>
-                      <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Time:</span>
-                        <span className={styles.summaryValue}>2:00 PM - 3:00 PM</span>
-                      </div>
-                      <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Duration:</span>
-                        <span className={styles.summaryValue}>60 minutes</span>
-                      </div>
-                      <div className={styles.summaryTotal}>
-                        <span className={styles.summaryLabel}>Total:</span>
-                        <span className={styles.summaryValue}>$120</span>
-                      </div>
-                    </div>
-                    <div className={styles.confirmActions}>
-                      <button className={styles.confirmBookingBtn}>Confirm Booking</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className={styles.placeholderText}>Browse providers to book a new appointment.</div>
           </div>
         );
 
@@ -199,80 +301,54 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
           <div className={styles.pastContent}>
             <h2 className={styles.sectionTitle}>Past Appointments</h2>
             <div className={styles.sessionsList}>
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>10</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Massage Therapy</h4>
-                  <p className={styles.sessionProvider}>with Sarah Johnson</p>
-                  <p className={styles.sessionTime}>2:00 PM - 3:00 PM</p>
-                  <div className={styles.sessionStatus}>
-                    <span className={styles.statusCompleted}>Completed</span>
-                    <span className={styles.sessionRating}><FaStar /> 5.0</span>
-                  </div>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button 
-                    className={styles.actionBtn}
-                    onClick={() => handleLeaveReview('Sarah Johnson', 'Massage Therapy')}
-                  >
-                    Leave Review
-                  </button>
-                  <button className={styles.bookAgainBtn}>Book Again</button>
-                </div>
-              </div>
-
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>8</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Yoga Class</h4>
-                  <p className={styles.sessionProvider}>with Mike Chen</p>
-                  <p className={styles.sessionTime}>10:00 AM - 11:00 AM</p>
-                  <div className={styles.sessionStatus}>
-                    <span className={styles.statusCompleted}>Completed</span>
-                    <span className={styles.sessionRating}><FaStar /> 4.8</span>
-                  </div>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button 
-                    className={styles.actionBtn}
-                    onClick={() => handleLeaveReview('Mike Chen', 'Yoga Class')}
-                  >
-                    Leave Review
-                  </button>
-                  <button className={styles.bookAgainBtn}>Book Again</button>
-                </div>
-              </div>
-
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>5</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Meditation Session</h4>
-                  <p className={styles.sessionProvider}>with Lisa Wang</p>
-                  <p className={styles.sessionTime}>7:00 PM - 8:00 PM</p>
-                  <div className={styles.sessionStatus}>
-                    <span className={styles.statusCompleted}>Completed</span>
-                    <span className={styles.sessionRating}><FaStar /> 4.9</span>
-                  </div>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button 
-                    className={styles.actionBtn}
-                    onClick={() => handleLeaveReview('Lisa Wang', 'Meditation Session')}
-                  >
-                    Leave Review
-                  </button>
-                  <button className={styles.bookAgainBtn}>Book Again</button>
-                </div>
-              </div>
+              {bookings.length === 0 ? (
+                <div className={styles.placeholderText}>No past appointments.</div>
+              ) : (
+                bookings.map((b) => {
+                  const date = new Date(b.booking_date);
+                  const day = String(date.getDate());
+                  const month = date.toLocaleString('en-US', { month: 'short' });
+                  const providerName = b.contact_name || b.business_name || 'Provider';
+                  const svc = (() => {
+                    try { const info = b.provider_notes ? JSON.parse(b.provider_notes) : null; return info?.name || 'Service'; } catch { return 'Service'; }
+                  })();
+                  const formatTime = (t: string) => { const [h, m] = t.split(':').map((x: string)=>parseInt(x,10)); const ampm = h >= 12 ? 'PM' : 'AM'; const hh = h % 12 === 0 ? 12 : h % 12; return `${hh}:${String(m).padStart(2,'0')} ${ampm}`; };
+                  return (
+                    <div key={b.id} className={styles.sessionCard}>
+                      <div className={styles.sessionDate}>
+                        <span className={styles.day}>{day}</span>
+                        <span className={styles.month}>{month}</span>
+                      </div>
+                      <div className={styles.sessionDetails}>
+                        <h4 className={styles.sessionTitle}>{svc}</h4>
+                        <p className={styles.sessionProvider}>with {providerName}</p>
+                        <p className={styles.sessionTime}>{formatTime(b.start_time)} - {formatTime(b.end_time)}</p>
+                        <div className={styles.sessionStatus}>
+                          <span className={styles.statusCompleted}>Completed</span>
+                        </div>
+                      </div>
+                      <div className={styles.sessionRight}>
+                        <div className={styles.sessionActions}>
+                          <button 
+                            className={styles.actionBtn}
+                            onClick={() => handleLeaveReview(providerName, svc)}
+                          >
+                            Leave a Review
+                          </button>
+                          {b.provider_user_id && (
+                            <Link 
+                              href={`/search/${b.provider_user_id}`}
+                              className={styles.actionBtn}
+                            >
+                              Book Again
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         );
@@ -282,45 +358,34 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
           <div className={styles.canceledContent}>
             <h2 className={styles.sectionTitle}>Canceled Appointments</h2>
             <div className={styles.sessionsList}>
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>12</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Personal Training</h4>
-                  <p className={styles.sessionProvider}>with David Kim</p>
-                  <p className={styles.sessionTime}>3:00 PM - 4:00 PM</p>
-                  <div className={styles.sessionStatus}>
-                    <span className={styles.statusCanceled}>Canceled</span>
-                    <span className={styles.cancelReason}>Client requested</span>
-                  </div>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>View</button>
-                  <button className={styles.bookAgainBtn}>Book Again</button>
-                </div>
-              </div>
-
-              <div className={styles.sessionCard}>
-                <div className={styles.sessionDate}>
-                  <span className={styles.day}>6</span>
-                  <span className={styles.month}>Dec</span>
-                </div>
-                <div className={styles.sessionDetails}>
-                  <h4 className={styles.sessionTitle}>Massage Therapy</h4>
-                  <p className={styles.sessionProvider}>with Sarah Johnson</p>
-                  <p className={styles.sessionTime}>1:00 PM - 2:00 PM</p>
-                  <div className={styles.sessionStatus}>
-                    <span className={styles.statusCanceled}>Canceled</span>
-                    <span className={styles.cancelReason}>Provider unavailable</span>
-                  </div>
-                </div>
-                <div className={styles.sessionActions}>
-                  <button className={styles.actionBtn}>View</button>
-                  <button className={styles.bookAgainBtn}>Book Again</button>
-                </div>
-              </div>
+              {bookings.length === 0 ? (
+                <div className={styles.placeholderText}>No canceled appointments.</div>
+              ) : (
+                bookings.map((b) => {
+                  const date = new Date(b.booking_date);
+                  const day = String(date.getDate());
+                  const month = date.toLocaleString('en-US', { month: 'short' });
+                  const providerName = b.contact_name || b.business_name || 'Provider';
+                  const svc = (() => { try { const info = b.provider_notes ? JSON.parse(b.provider_notes) : null; return info?.name || 'Service'; } catch { return 'Service'; }})();
+                  const formatTime = (t: string) => { const [h, m] = t.split(':').map((x: string)=>parseInt(x,10)); const ampm = h >= 12 ? 'PM' : 'AM'; const hh = h % 12 === 0 ? 12 : h % 12; return `${hh}:${String(m).padStart(2,'0')} ${ampm}`; };
+                  return (
+                    <div key={b.id} className={styles.sessionCard}>
+                      <div className={styles.sessionDate}>
+                        <span className={styles.day}>{day}</span>
+                        <span className={styles.month}>{month}</span>
+                      </div>
+                      <div className={styles.sessionDetails}>
+                        <h4 className={styles.sessionTitle}>{svc}</h4>
+                        <p className={styles.sessionProvider}>with {providerName}</p>
+                        <p className={styles.sessionTime}>{formatTime(b.start_time)} - {formatTime(b.end_time)}</p>
+                        <div className={styles.sessionStatus}>
+                          <span className={styles.statusCanceled}>Canceled</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         );

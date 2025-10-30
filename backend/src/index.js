@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const providerRoutes = require('./routes/providers');
 const bookingRoutes = require('./routes/bookings');
 const authRoutes = require('./routes/auth');
+const favoriteRoutes = require('./routes/favorites');
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/favorites', favoriteRoutes);
 
 app.get('/', (req, res) => {
   res.send('Omvira backend is running!');
