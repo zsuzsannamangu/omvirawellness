@@ -870,18 +870,18 @@
   }
 
   .pending {
-    background: #fff3cd;
-    color: #856404;
+    background: rgba($secondary-color, 0.1);
+    color: $subtext-color;
   }
 
   .confirmed {
-    background: #d1ecf1;
-    color: #0c5460;
+    background: rgba($primary-color, 0.1);
+    color: $subtext-color;
   }
 
   .cancelled {
-    background: #f8d7da;
-    color: #721c24;
+    background: rgba($accent-color, 0.1);
+    color: $subtext-color;
   }
 
   .sessionActions {
@@ -979,18 +979,18 @@
 }
 
 .pending {
-  background: #fff3cd;
-  color: #856404;
+  background: rgba($secondary-color, 0.1);
+  color: $subtext-color;
 }
 
 .confirmed {
-  background: #d1ecf1;
-  color: #0c5460;
+  background: rgba($primary-color, 0.1);
+  color: $subtext-color;
 }
 
 .cancelled {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba($accent-color, 0.1);
+  color: $subtext-color;
 }
 
 // Favorites Styles
@@ -2102,7 +2102,7 @@
     &:focus {
       outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
     }
   }
   
@@ -2127,7 +2127,7 @@
     &:focus {
       outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
     }
   }
   

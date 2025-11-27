@@ -1482,44 +1482,45 @@
   $bg-white-space: nowrap;
 }
 
+
 .plansContainer {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: $spacing-lg;
-  margin-bottom: $spacing-lg;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto $spacing-xxl;
+  max-width: 1100px;
 }
 
 .planCard {
   background: $bg-white;
-  border: 2px solid $border-light;
-  border-radius: 12px;
-  padding: $spacing-lg;
+  border: 1px solid rgba($dark-text, 0.08);
+  border-radius: 24px;
+  padding: $spacing-xl $spacing-lg;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: $spacing-lg;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba($primary-color, 0.12);
 
   &:hover {
-    border-color: $primary-color;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px $shadow-color;
+    transform: translateY(-8px);
+    box-shadow: 0 28px 60px rgba($primary-color, 0.18);
+    border-color: rgba($primary-color, 0.35);
   }
 
   &.selected {
     border-color: $primary-color;
-    background: rgba($primary-color, 0.02);
+    box-shadow: 0 32px 70px rgba($primary-color, 0.22);
   }
 
   &.popular {
-    border-color: $border-light;
-    
+    border-color: rgba($secondary-color, 0.4);
+
     &.selected {
-      border-color: $primary-color;
+      border-color: $secondary-color;
     }
   }
 }
@@ -1528,8 +1529,8 @@
   position: absolute;
   top: -10px;
   right: $spacing-lg;
-  background: $primary-color;
-  color: $bg-white;
+  background: $secondary-color;
+  color: $light-text;
   padding: $spacing-xs $spacing-md;
   border-radius: 20px;
   font-family: $font-main;
@@ -1537,14 +1538,14 @@
   font-weight: 600;
 }
 
+
 .planHeader {
-  flex: 1;
-  text-align: left;
+  width: 100%;
 }
 
 .planName {
-  font-family: $font-main;
-  font-size: 1.25rem;
+  font-family: $font-heading;
+  font-size: 1.4rem;
   font-weight: 700;
   color: $dark-text;
   margin: 0 0 $spacing-sm 0;
@@ -1553,21 +1554,22 @@
 .planPrice {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: $spacing-xs;
-  margin-bottom: $spacing-sm;
+  margin-bottom: $spacing-xs;
 }
 
 .price {
-  font-family: $font-main;
-  font-size: 2rem;
+  font-family: $font-heading;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: $dark-text;
+  color: $primary-color;
 }
 
 .period {
   font-family: $font-main;
   font-size: 1rem;
-  color: $subtext-color;
+  color: rgba($dark-text, 0.7);
 }
 
 .billingNote {
@@ -1579,18 +1581,24 @@
   margin-top: 2px;
 }
 
+
 .planDescription {
   font-family: $font-main;
-  font-size: 0.875rem;
-  color: $subtext-color;
-  margin: 0;
+  font-size: 0.95rem;
+  color: rgba($dark-text, 0.75);
+  margin: 0 0 $spacing-md 0;
 }
+
 
 .planFeatures {
   list-style: none;
   padding: 0;
   margin: 0;
-  flex: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  text-align: left;
 }
 
 .feature {
@@ -1599,36 +1607,53 @@
   gap: $spacing-sm;
   padding: $spacing-xs 0;
   font-family: $font-main;
-  font-size: 0.875rem;
-  color: $dark-text;
+  font-size: 0.9rem;
+  color: rgba($dark-text, 0.8);
 }
 
 .checkIcon {
-  color: $primary-color;
+  color: $secondary-color;
   font-weight: bold;
   font-size: 1rem;
 }
 
+
 .planRadio {
+  margin-top: $spacing-lg;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: $spacing-sm;
-  flex-shrink: 0;
 }
 
 .planRadioInput {
-  width: 18px;
-  height: 18px;
-  accent-color: $primary-color;
-  cursor: pointer;
+  display: none;
 }
 
 .planRadioLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 999px;
   font-family: $font-main;
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: $dark-text;
+  color: $light-text;
+  background: $primary-color;
+  box-shadow: 0 12px 25px rgba($primary-color, 0.25);
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba($primary-color, 0.25);
+  }
+}
+
+.planCard.selected .planRadioLabel {
+  background: $secondary-color;
+  box-shadow: 0 16px 32px rgba($secondary-color, 0.3);
 }
 
 .pricingSummary {

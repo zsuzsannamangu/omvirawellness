@@ -1,10 +1,12 @@
 @import './_variables.scss';
 
 .footer {
-  background-color: $primary-color; // Dark teal background
+  background: $bg-dark;
   padding: $spacing-xxl 2rem $spacing-xl;
   margin-top: $spacing-xxl;
   position: relative;
+  color: $light-text;
+  border-top: 1px solid rgba($light-text, 0.1);
 
   @media (max-width: 768px) {
     padding: $spacing-xl $spacing-md;
@@ -19,7 +21,7 @@
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: auto auto auto;
   gap: $spacing-xl;
-  align-items: start;
+  align-items: center;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -41,25 +43,28 @@
 
 .newsletterTitle {
   font-family: $font-heading;
-  color: $secondary-color; // Using EDE4DA from variables
-  font-size: 1.5rem;
+  color: $secondary-color;
+  font-size: 2rem;
   margin-bottom: $spacing-md;
   font-weight: 600;
 }
 
 .emailSignup {
   display: flex;
-  max-width: 400px;
+  max-width: 380px;
 
   @media (max-width: 768px) {
     margin: 0 auto;
+    max-width: 100%;
+    flex-direction: column;
+    gap: $spacing-sm;
   }
 }
 
 .emailInput {
   flex: 1;
   padding: 10px 15px;
-  border: 2px solid $light-text;
+  border: 2px solid rgba($light-text, 0.7);
   background: transparent;
   color: $light-text;
   font-family: $font-main;
@@ -72,22 +77,24 @@
   &:focus {
     outline: none;
     border-color: $secondary-color;
+    box-shadow: 0 0 0 3px rgba($secondary-color, 0.2);
   }
 }
 
 .subscribeButton {
   padding: 10px 20px;
-  background-color: transparent;
-  border: 2px solid $light-text;
-  color: $light-text;
+  background-color: $secondary-color;
+  border: 2px solid $secondary-color;
+  color: $dark-text;
   font-family: $font-main;
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 0;
 
   &:hover {
-    background-color: $light-text;
-    color: $primary-color;
+    background-color: lighten($secondary-color, 10%);
+    border-color: lighten($secondary-color, 10%);
+    color: $dark-text;
   }
 }
 
@@ -95,6 +102,10 @@
   display: flex;
   gap: $spacing-md;
   margin-top: $spacing-lg;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 }
 
 .socialIcon {
@@ -104,14 +115,14 @@
   width: 40px;
   height: 40px;
   background-color: $light-text;
-  color: $primary-color;
+  color: $bg-dark;
   border-radius: 50%;
-  font-size: 1.2rem;
+  font-size: 2rem;
   transition: all 0.3s ease;
 
   &:hover {
     background-color: $secondary-color;
-    color: $primary-color;
+    color: $bg-dark;
     transform: scale(1.1);
   }
 }
@@ -123,6 +134,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 
   @media (max-width: 768px) {
     grid-column: 1;
@@ -134,6 +146,7 @@
   width: 350px;
   height: auto;
   max-width: 100%;
+  filter: drop-shadow(0 12px 24px rgba($bg-dark, 0.35));
 }
 
 // Contact Section (Top Right)
@@ -149,8 +162,8 @@
 
 .contactTitle {
   font-family: $font-heading;
-  color: $secondary-color; // Using EDE4DA from variables
-  font-size: 1.5rem;
+  color: $secondary-color;
+  font-size: 2rem;
   margin-bottom: $spacing-md;
   font-weight: 600;
 }
@@ -167,9 +180,9 @@
 
   p {
     font-family: $font-main;
-    color: $light-text;
+    color: rgba($light-text, 0.9);
     margin: 0.2rem 0;
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 }
 
@@ -188,8 +201,8 @@
 
 .getInTouchTitle {
   font-family: $font-heading;
-  color: $secondary-color; // Using EDE4DA from variables
-  font-size: 1.5rem;
+  color: $secondary-color;
+  font-size: 2rem;
   margin-bottom: $spacing-md;
   font-weight: 600;
 }
@@ -197,9 +210,9 @@
 .email,
 .phone {
   font-family: $font-main;
-  color: $light-text;
+  color: rgba($light-text, 0.9);
   margin: 0.5rem 0;
-  font-size: 1rem;
+  font-size: 1.3rem;
 }
 
 .email {
@@ -214,7 +227,7 @@
 .copyright {
   text-align: center;
   margin-top: $spacing-xl;
-  font-size: 0.9rem;
-  color: $light-text;
+  font-size: 1.2rem;
+  color: rgba($light-text, 0.7);
 }
 

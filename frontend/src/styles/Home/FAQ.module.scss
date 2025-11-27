@@ -33,6 +33,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: $spacing-lg;
+  align-items: start;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -44,9 +45,10 @@
   background: $light-text;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid $secondary-color;
+  border: none;
   overflow: hidden;
   transition: all 0.3s ease;
+  height: fit-content;
   
   &:hover {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);

@@ -100,7 +100,7 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
                     <div key={provider.favorite_id || provider.provider_id} className={styles.providerCard}>
                       <div className={styles.providerImageContainer}>
                         <Image
-                          src={provider.profile_photo_url || '/images/default-provider.jpg'}
+                          src={provider.profile_photo_url || '/images/screenshots/Jenn.png'}
                           alt={provider.contact_name || provider.business_name || 'Provider'}
                           width={80}
                           height={80}

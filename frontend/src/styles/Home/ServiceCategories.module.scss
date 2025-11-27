@@ -103,18 +103,20 @@
 .categoryCard {
   background: $light-text;
   border-radius: 16px;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem;
   min-width: 280px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid $secondary-color;
+  border: none;
   transition: all 0.3s ease;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
   
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    border-color: $primary-color;
   }
   
   @media (max-width: 768px) {
@@ -123,32 +125,44 @@
   }
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
 .imageContainer {
-  width: 120px;
-  height: 120px;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 0 auto $spacing-lg;
-  box-shadow: 0 4px 16px $shadow-color;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($secondary-color, 0.1) 100%);
+  box-shadow: 0 2px 8px $shadow-color;
+  flex-shrink: 0;
 }
 
-.serviceImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease-out;
+.serviceIcon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  transition: all 0.3s ease;
 }
 
-.categoryCard:hover .serviceImage {
-  transform: scale(1.08);
+.categoryCard:hover .serviceIcon {
+  transform: scale(1.1);
 }
 
 .categoryTitle {
   font-size: 1.25rem;
   font-family: $font-subheading;
   color: $dark-text;
-  margin-bottom: $spacing-md;
+  margin: 0;
   font-weight: 600;
+  text-align: left;
+  flex: 1;
 }
 
 .description {
@@ -157,4 +171,5 @@
   font-family: $font-main;
   line-height: 1.4;
   margin: 0;
+  text-align: left;
 }

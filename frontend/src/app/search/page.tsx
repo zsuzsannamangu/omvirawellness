@@ -491,7 +491,7 @@ export default function SearchPage() {
                   <div className={styles.providerCard}>
                     <div className={styles.providerImage}>
                       <Image
-                        src={provider.profile_photo_url || '/images/default-provider.jpg'}
+                        src={provider.profile_photo_url || '/images/screenshots/Jenn.png'}
                         alt={provider.contact_name || provider.business_name || 'Provider'}
                         width={300}
                         height={200}

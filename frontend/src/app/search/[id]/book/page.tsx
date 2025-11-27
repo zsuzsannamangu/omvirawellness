@@ -87,7 +87,7 @@ export default function BookingConfirmationPage() {
         const resp = await fetch(`http://localhost:4000/api/providers/${params.id}`);
         if (resp.ok) {
           const data = await resp.json();
-          const mainPhoto = data.profile_photo_url || '/images/default-provider.jpg';
+          const mainPhoto = data.profile_photo_url || '/images/screenshots/Jenn.png';
           // Parse work_location if it's a string
           const workLocation = typeof data.work_location === 'string' 
             ? JSON.parse(data.work_location) 

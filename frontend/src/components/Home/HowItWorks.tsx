@@ -6,22 +6,22 @@ const steps = [
   {
     title: 'Browse verified providers with real-time availability and transparent pricing',
     description: 'Discover local wellness professionals who are vetted, trusted, and ready to serve you with upfront pricing and instant availability.',
-    image: '/images/laptop.jpg',
+    image: '/images/screenshots/growyourpractice2.png',
   },
   {
     title: 'Book on-demand or in advance for wellness services near you',
     description: 'Schedule your wellness session exactly when you need it - whether it\'s a last-minute massage or a planned yoga retreat.',
-    image: '/images/wellness.jpg',
+    image: '/images/screenshots/arrival.png',
   },
   {
     title: 'Curate your own experience — solo or with friends, for daily care or special events',
     description: 'Customize your wellness journey whether you\'re treating yourself, planning a group session, or organizing a special celebration.',
-    image: '/images/spa.jpg',
+    image: '/images/screenshots/massage1.png',
   },
   {
     title: 'Wellness that travels — to your home, retreat, hotel, or workplace',
     description: 'Enjoy professional wellness services wherever you are most comfortable, bringing the spa experience directly to you.',
-    image: '/images/girl-hair.jpg',
+    image: '/images/screenshots/massagetable.png',
   },
 ];
 

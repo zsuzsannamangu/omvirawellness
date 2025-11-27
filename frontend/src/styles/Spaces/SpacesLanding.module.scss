@@ -10,30 +10,25 @@
   padding: 0 $spacing-md;
 }
 
-// Hero Section - Peerspace style
+// Hero Section
 .hero {
-  background: $light-text;
+  background: $muted-bg;
+  padding: $spacing-xl 2rem $spacing-xxl;
   color: $dark-text;
-  position: relative;
-  overflow: hidden;
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-lg $spacing-md $spacing-xl;
+  }
 }
 
 .heroContent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  padding: $spacing-xxl $spacing-md;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xxl;
+  align-items: start;
+  padding: $spacing-md $spacing-md;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -42,53 +37,53 @@
   }
 }
 
-.heroText {
-  position: relative;
-  margin-left: 50px;
-  z-index: 3;
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.heroTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: $spacing-md;
   
   h1 {
     font-family: $font-mainheading;
-    font-size: 6rem;
+    font-size: 3rem;
     font-weight: 500;
-    line-height: 0.8;
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-    color: $dark-text;
+    line-height: 1;
+    margin: 0;
+    color: $primary-color;
     text-transform: uppercase;
     letter-spacing: -0.02em;
     
     @media (max-width: 768px) {
-      font-size: 4rem;
+      font-size: 2.5rem;
     }
   }
   
   h2 {
     font-family: $font-mainheading;
-    font-size: 8rem;
+    font-size: 3.5rem;
     font-weight: 700;
-    line-height: 0.7;
-    margin-bottom: 0;
+    line-height: 1;
+    margin: 0;
     color: $dark-text;
     text-transform: uppercase;
     letter-spacing: -0.02em;
     
     @media (max-width: 768px) {
-      font-size: 5rem;
+      font-size: 2.5rem;
     }
   }
 }
 
-.heroRight {
-  position: relative;
-  z-index: 3;
-  background: rgba($light-text, 0.95);
-  padding: $spacing-xl;
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
-}
-
-.heroRightContent {
+.heroText {
+  margin-top: $spacing-md;
+  
   h3 {
     font-family: $font-subheading;
     font-size: 2.5rem;
@@ -106,24 +101,41 @@
     font-family: $font-main;
     font-size: 1.1rem;
     line-height: 1.6;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-lg;
     color: $subtext-color;
   }
 }
 
+.heroFooterText {
+  font-family: $font-main;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: $subtext-color;
+  margin-top: $spacing-lg;
+  margin-bottom: 0;
+}
+
+
+
 .heroImage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  aspect-ratio: 2 / 3;
   
-  .heroImg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  @media (max-width: 768px) {
+    order: -1;
+    aspect-ratio: 4 / 3;
   }
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .heroButtons {
@@ -137,7 +149,7 @@
 }
 
 .primaryButton {
-  background: $dark-text;
+  background: $primary-color;
   color: $light-text;
   padding: 1rem 2rem;
   border-radius: 6px;
@@ -148,7 +160,7 @@
   transition: all 0.3s ease;
   
   &:hover {
-    background: $primary-color;
+    background: $hover-green;
     transform: translateY(-1px);
   }
 }
@@ -337,6 +349,20 @@
 .spaceInfo {
   padding: $spacing-lg;
   
+  .categoryRow {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  
   .spaceCategory {
     font-family: $font-main;
     font-size: 0.8rem;
@@ -344,8 +370,7 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: $subtext-color;
-    margin-bottom: $spacing-sm;
-    display: block;
+    margin: 0;
   }
   
   h4 {
@@ -543,8 +568,9 @@
 
 .benefitImg {
   width: 100%;
-  height: 400px;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .imageOverlay {

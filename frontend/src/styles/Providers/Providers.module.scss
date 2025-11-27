@@ -568,6 +568,10 @@
       flex-direction: column;
     }
   }
+  
+  &#everything-you-need {
+    gap: $spacing-sm;
+  }
 }
 
 .content {
@@ -640,7 +644,9 @@
 
 .imageContainer {
   flex: 1;
-  max-width: 500px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   
   @media (max-width: 768px) {
     max-width: 100%;
@@ -650,6 +656,7 @@
 .image {
   width: 100%;
   height: auto;
+  max-width: 500px;
   border-radius: 12px;
   box-shadow: 0 10px 30px $shadow-color;
   object-fit: cover;
@@ -658,6 +665,12 @@
   &:hover {
     transform: scale(1.02);
   }
+}
+
+.verticalImage {
+  width: 350px;
+  max-width: 350px;
+  object-fit: contain;
 }
 
 // Pricing Section
@@ -1073,17 +1086,18 @@
   
   .founderImg {
     border-radius: 8px;
-    object-fit: cover;
+    object-fit: contain;
     box-shadow: 0 2px 8px rgba($primary-color, 0.15);
     width: 100%;
-    height: 320px;
+    height: auto;
+    max-height: 500px;
   }
   
   @media (max-width: 768px) {
     width: 200px;
     
     .founderImg {
-      height: 280px;
+      max-height: 400px;
     }
   }
 }

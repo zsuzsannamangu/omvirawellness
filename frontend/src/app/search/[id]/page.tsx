@@ -196,7 +196,7 @@ export default function ProviderDetailPage() {
             }
             
             // Transform API data to match the expected structure
-            const mainPhoto = data.profile_photo_url || '/images/default-provider.jpg';
+            const mainPhoto = data.profile_photo_url || '/images/screenshots/Jenn.png';
             
             // Transform availability from database format to calendar format
             const availabilityData = transformAvailability(data.availability || []);

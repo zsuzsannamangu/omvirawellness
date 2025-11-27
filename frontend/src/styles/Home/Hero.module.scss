@@ -1,13 +1,14 @@
 @import '../_variables.scss';
 
 .hero {
-  background: url('/images/aesthetic.jpg') center/cover no-repeat;
+  background: url('/images/screenshots/meditation.png') center/cover no-repeat;
   height: 100vh;
   position: relative;
 }
 
 .overlay {
-  background-color: $overlay-color;
+  background-color: transparentize($overlay-color, 0.9);
+  background-color: transparentize($secondary-color, 0.3);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -19,16 +20,17 @@
 
 .title {
   font-family: $font-mainheading;
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: bold;
-  color: $light-text;
+  color: $dark-text;
 }
 
 .subtitle {
-  color: $light-text;
+  color: $dark-text;
+  font-weight: bold;
   margin-top: $spacing-md;
   margin-bottom: $spacing-lg;
-  font-size: 1.25rem;
+  font-size: 2.25rem;
   max-width: 600px;
   font-family: $font-subheading;
 }

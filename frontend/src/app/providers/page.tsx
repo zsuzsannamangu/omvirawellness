@@ -23,18 +23,13 @@ export default function ProvidersPage() {
                         </div>
                         <div className={styles.heroImage}>
                             <Image
-                                src="/images/yogasunrise.jpg"
-                                alt="A yoga sunrise"
+                                src="/images/screenshots/hair4.png"
+                                alt="Hair stylist"
                                 width={600}
                                 height={400}
                                 className={styles.heroImg}
                                 priority
                             />
-                            <div className={styles.playButton}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -80,8 +75,8 @@ export default function ProvidersPage() {
                                 </div>
                                 <div className={styles.imageContainer}>
                                     <Image
-                                        src="/images/massage5.jpg"
-                                        alt="Wellness professional at work"
+                                        src="/images/screenshots/laugh.png"
+                                        alt="People laughing"
                                         width={500}
                                         height={400}
                                         className={styles.image}
@@ -121,7 +116,7 @@ export default function ProvidersPage() {
                                 </div>
                                 <div className={styles.imageContainer}>
                                     <Image
-                                        src="/images/massageplace.jpg"
+                                        src="/images/screenshots/massagetable2.png"
                                         alt="Thai massage place"
                                         width={500}
                                         height={400}
@@ -166,11 +161,11 @@ export default function ProvidersPage() {
                                 </div>
                                 <div className={styles.imageContainer}>
                                     <Image
-                                        src="/images/computer2.jpg"
-                                        alt="Professional working on a computer"
-                                        width={500}
-                                        height={400}
-                                        className={styles.image}
+                                        src="/images/screenshots/computer2.png"
+                                        alt="Standing with a laptop"
+                                        width={350}
+                                        height={600}
+                                        className={`${styles.image} ${styles.verticalImage}`}
                                     />
                                 </div>
                             </div>
@@ -211,8 +206,8 @@ export default function ProvidersPage() {
                                 </div>
                                 <div className={styles.imageContainer}>
                                     <Image
-                                        src="/images/smilereal.jpg"
-                                        alt="Happy wellness professional"
+                                        src="/images/screenshots/wework2.png"
+                                        alt="Founders at work, laughing"
                                         width={500}
                                         height={400}
                                         className={styles.image}
@@ -430,10 +425,10 @@ export default function ProvidersPage() {
                             <div className={styles.founderCard}>
                                 <div className={styles.founderImage}>
                                     <Image
-                                        src="/images/Jenn.png"
+                                        src="/images/screenshots/Jenn.png"
                                         alt="Jennifer Duffin - Founder & CEO"
                                         width={400}
-                                        height={500}
+                                        height={600}
                                         className={styles.founderImg}
                                     />
                                 </div>
@@ -451,10 +446,10 @@ export default function ProvidersPage() {
                             <div className={styles.founderCard}>
                                 <div className={styles.founderImage}>
                                     <Image
-                                        src="/images/Zsuzsi.jpg"
+                                        src="/images/screenshots/Zsu.png"
                                         alt="Zsuzsanna Mangu - Lead Software Developer and Technical Product Manager"
                                         width={400}
-                                        height={500}
+                                        height={600}
                                         className={styles.founderImg}
                                     />
                                 </div>
@@ -471,7 +466,6 @@ export default function ProvidersPage() {
                         </div>
                     </div>
                 </section>
-
             </main>
             <Footer />
         </div>

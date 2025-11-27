@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FaUserFriends, FaHome } from 'react-icons/fa';
 import styles from '../styles/Navbar.module.scss';
 
 export default function Navbar() {
@@ -16,12 +17,12 @@ export default function Navbar() {
 
   return (
     <header className={styles.navbar}>
-      <div className={styles.logo}>
+      <div className={styles.brandSection}>
         <Link href="/" className={styles.logoLink}>
-          Omvira Wellness
+          Omvira logo here
         </Link>
       </div>
-      
+
       <nav className={styles.mainNav}>
         <button 
           onClick={() => scrollToSection('services')} 
@@ -42,26 +43,34 @@ export default function Navbar() {
           FAQ
         </button>
       </nav>
-      
-      <div className={styles.rightSection}>
-        <Link href="/providers" className={styles.providerLink}>
-          For Providers
-        </Link>
-        {pathname?.startsWith('/spaces') ? (
-          <Link href="/providers" className={styles.spacesLink}>
-            Find a Provider
+
+      <div className={styles.rightWrap}>
+        <div className={styles.authGroup}>
+          <Link href="/login" className={styles.loginLink}>
+            Log In
           </Link>
-        ) : (
-          <Link href="/spaces" className={styles.spacesLink}>
-            For Spaces
+          <Link href="/signup" className={styles.signupButton}>
+            Sign Up
           </Link>
-        )}
-        <Link href="/login" className={styles.loginLink}>
-          Log In
-        </Link>
-        <Link href="/signup" className={styles.signupButton}>
-          Sign Up
-        </Link>
+        </div>
+
+        <div className={styles.secondaryLinks}>
+          <Link href="/providers" className={styles.providerLink}>
+            <FaUserFriends className={styles.linkIcon} />
+            For Providers
+          </Link>
+          {pathname?.startsWith('/spaces') ? (
+            <Link href="/providers" className={styles.spacesLink}>
+              <FaUserFriends className={styles.linkIcon} />
+              Find a Provider
+            </Link>
+          ) : (
+            <Link href="/spaces" className={styles.spacesLink}>
+              <FaHome className={styles.linkIcon} />
+              For Spaces
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

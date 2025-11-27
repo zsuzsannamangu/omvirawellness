@@ -36,15 +36,18 @@ const SpacesPage: React.FC = () => {
         {/* Hero Section */}
         <section className={styles.hero}>
           <div className={styles.heroContent}>
-            <div className={styles.heroText}>
-              <h2>Rent</h2>
-              <h1>Your</h1>
-              <h2>Space</h2>
-            </div>
-            <div className={styles.heroRight}>
-              <div className={styles.heroRightContent}>
+            <div className={styles.heroLeft}>
+              <div className={styles.heroTitle}>
+                <h2>Rent</h2>
+                <h1>Your</h1>
+                <h2>Space</h2>
+              </div>
+              <div className={styles.heroText}>
                 <h3>Turn Your Space Into a Revenue Stream</h3>
                 <p>Connect with qualified wellness providers who need space to serve their clients. Your massage room, yoga studio, or therapy space can generate income when you're not using it.</p>
+                <p className={styles.heroFooterText}>
+                  Set your own pricing and availability. No monthly fees, only pay when you book. Start earning from your space with our simple listing process.
+                </p>
                 <div className={styles.heroButtons}>
                   <a href="/spaces/signup" className={styles.primaryButton}>
                     List Your Space
@@ -55,16 +58,16 @@ const SpacesPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
-          <div className={styles.heroImage}>
-            <Image
-              src="/images/rooms/room13.jpg"
-              alt="Wellness space"
-              width={1200}
-              height={600}
-              className={styles.heroImg}
-              priority
-            />
+            <div className={styles.heroImage}>
+              <Image
+                src="/images/screenshots/home2.png"
+                alt="Massage oils with massage in background"
+                width={500}
+                height={800}
+                className={styles.heroImg}
+                priority
+              />
+            </div>
           </div>
         </section>
 
@@ -86,96 +89,99 @@ const SpacesPage: React.FC = () => {
             </div>
             <div className={styles.spacesCarousel} ref={carouselRef}>
               <div className={styles.spaceCard}>
-                <div className={styles.spaceImage}>
-                  <Image
-                    src="/images/rooms/room1.jpg"
-                    alt="Massage Room"
-                    width={400}
-                    height={250}
-                    className={styles.spaceImg}
-                  />
-                </div>
                 <div className={styles.spaceInfo}>
-                  <span className={styles.spaceCategory}>MASSAGE ROOMS</span>
+                  <div className={styles.categoryRow}>
+                    <Image
+                      src="/images/icons/massage.png"
+                      alt="Massage"
+                      width={40}
+                      height={40}
+                      className={styles.icon}
+                    />
+                    <span className={styles.spaceCategory}>MASSAGE ROOMS</span>
+                  </div>
                   <h4>Private, quiet spaces perfect for therapeutic bodywork</h4>
                   <div className={styles.cardDivider}></div>
                 </div>
               </div>
               <div className={styles.spaceCard}>
-                <div className={styles.spaceImage}>
-                  <Image
-                    src="/images/rooms/room2.jpg"
-                    alt="Yoga Studio"
-                    width={400}
-                    height={250}
-                    className={styles.spaceImg}
-                  />
-                </div>
                 <div className={styles.spaceInfo}>
-                  <span className={styles.spaceCategory}>YOGA STUDIOS</span>
+                  <div className={styles.categoryRow}>
+                    <Image
+                      src="/images/icons/yoga.png"
+                      alt="Yoga"
+                      width={40}
+                      height={40}
+                      className={styles.icon}
+                    />
+                    <span className={styles.spaceCategory}>YOGA STUDIOS</span>
+                  </div>
                   <h4>Open areas with good lighting for yoga classes</h4>
                   <div className={styles.cardDivider}></div>
                 </div>
               </div>
               <div className={styles.spaceCard}>
-                <div className={styles.spaceImage}>
-                  <Image
-                    src="/images/rooms/room4.jpg"
-                    alt="Therapy Office"
-                    width={400}
-                    height={250}
-                    className={styles.spaceImg}
-                  />
-                </div>
                 <div className={styles.spaceInfo}>
-                  <span className={styles.spaceCategory}>THERAPY OFFICES</span>
+                  <div className={styles.categoryRow}>
+                    <Image
+                      src="/images/icons/medicine.png"
+                      alt="Therapy"
+                      width={40}
+                      height={40}
+                      className={styles.icon}
+                    />
+                    <span className={styles.spaceCategory}>THERAPY OFFICES</span>
+                  </div>
                   <h4>Professional spaces for counseling and mental health</h4>
                   <div className={styles.cardDivider}></div>
                 </div>
               </div>
               <div className={styles.spaceCard}>
-                <div className={styles.spaceImage}>
-                  <Image
-                    src="/images/rooms/room5.jpg"
-                    alt="Meditation Space"
-                    width={400}
-                    height={250}
-                    className={styles.spaceImg}
-                  />
-                </div>
                 <div className={styles.spaceInfo}>
-                  <span className={styles.spaceCategory}>MEDITATION SPACES</span>
+                  <div className={styles.categoryRow}>
+                    <Image
+                      src="/images/icons/yogatherapy.png"
+                      alt="Meditation"
+                      width={40}
+                      height={40}
+                      className={styles.icon}
+                    />
+                    <span className={styles.spaceCategory}>MEDITATION SPACES</span>
+                  </div>
                   <h4>Peaceful rooms for mindfulness and spiritual practices</h4>
                   <div className={styles.cardDivider}></div>
                 </div>
               </div>
               <div className={styles.spaceCard}>
-                <div className={styles.spaceImage}>
-                  <Image
-                    src="/images/rooms/room6.jpg"
-                    alt="Fitness Room"
-                    width={400}
-                    height={250}
-                    className={styles.spaceImg}
-                  />
-                </div>
                 <div className={styles.spaceInfo}>
-                  <span className={styles.spaceCategory}>FITNESS ROOMS</span>
+                  <div className={styles.categoryRow}>
+                    <Image
+                      src="/images/icons/training.png"
+                      alt="Fitness"
+                      width={40}
+                      height={40}
+                      className={styles.icon}
+                    />
+                    <span className={styles.spaceCategory}>FITNESS ROOMS</span>
+                  </div>
                   <h4>Spaces equipped for personal training and Pilates</h4>
                   <div className={styles.cardDivider}></div>
                 </div>
               </div>
               <div className={styles.spaceCard}>
-                <Image
-                  src="/images/rooms/room7.jpg"
-                  alt="Wellness Suite"
-                  width={300}
-                  height={200}
-                  className={styles.spaceImage}
-                />
                 <div className={styles.spaceInfo}>
-                  <h3>Wellness Suites</h3>
-                  <p>Multi-purpose spaces for various wellness services</p>
+                  <div className={styles.categoryRow}>
+                    <Image
+                      src="/images/icons/power.png"
+                      alt="Wellness"
+                      width={40}
+                      height={40}
+                      className={styles.icon}
+                    />
+                    <span className={styles.spaceCategory}>WELLNESS SUITES</span>
+                  </div>
+                  <h4>Multi-purpose spaces for various wellness services</h4>
+                  <div className={styles.cardDivider}></div>
                 </div>
               </div>
             </div>
@@ -238,11 +244,12 @@ const SpacesPage: React.FC = () => {
               </div>
               <div className={styles.benefitsImage}>
                 <Image
-                  src="/images/rooms/room10.jpg"
+                  src="/images/screenshots/yogapose6.png"
                   alt="Arm chair, blanket and plant"
                   width={500}
-                  height={400}
+                  height={600}
                   className={styles.benefitImg}
+                  style={{ width: '100%', height: 'auto' }}
                 />
               </div>
             </div>
