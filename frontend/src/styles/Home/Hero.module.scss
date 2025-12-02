@@ -1,14 +1,13 @@
 @import '../_variables.scss';
 
 .hero {
-  background: url('/images/screenshots/meditation.png') center/cover no-repeat;
+  background: $primary-color url('/images/screenshots/meditation.png') center/cover no-repeat;
   height: 100vh;
   position: relative;
 }
 
 .overlay {
-  background-color: transparentize($overlay-color, 0.9);
-  background-color: transparentize($secondary-color, 0.3);
+  background-color: transparentize(#f5f3f0, 0.2);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -35,26 +34,54 @@
   font-family: $font-subheading;
 }
 
+.searchForm {
+  display: flex;
+  gap: $spacing-sm;
+  max-width: 450px;
+  width: 100%;
+  margin: 0 auto;
+  align-items: center;
+}
+
 .searchInput {
-  padding: $spacing-sm $spacing-md;
+  padding: 0.625rem $spacing-md;
   border-radius: 8px;
   border: none;
   font-size: 1rem;
-  width: 100% !important;
-  max-width: 600px !important;
-  min-width: 500px !important;
+  flex: 1;
+  min-width: 0;
   color: $dark-text;
   box-sizing: border-box;
-  display: block;
-  margin: 0 auto;
+  
   &::placeholder {
     color: $subtext-color;
   }
+  
+  &:focus {
+    outline: none;
+  }
 }
 
-// Style the form wrapper to ensure it doesn't constrain the input
-.overlay form {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+.searchButton {
+  padding: 0.625rem $spacing-lg;
+  background-color: $secondary-color;
+  color: $dark-text;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    background-color: $button-yellow-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($secondary-color, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
 }

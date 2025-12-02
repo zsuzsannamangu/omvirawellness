@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { FaUserFriends, FaHome } from 'react-icons/fa';
 import styles from '../styles/Navbar.module.scss';
@@ -19,7 +20,14 @@ export default function Navbar() {
     <header className={styles.navbar}>
       <div className={styles.brandSection}>
         <Link href="/" className={styles.logoLink}>
-          Omvira logo here
+          <Image
+            src="/Omvira_logo_long.png"
+            alt="Omvira Wellness"
+            width={300}
+            height={75}
+            className={styles.logoImage}
+            priority
+          />
         </Link>
       </div>
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { FaCheckCircle, FaCalendarAlt, FaMapMarkerAlt, FaCreditCard, FaClipboardList } from 'react-icons/fa';
 import styles from '@/styles/BookingSuccess.module.scss';
@@ -112,7 +113,13 @@ export default function BookingSuccessPage() {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <Link href="/" className={styles.logo}>
-            Omvira Wellness
+            <Image
+              src="/Omvira_logo_long.png"
+              alt="Omvira Wellness"
+              width={600}
+              height={200}
+              className={styles.logoImage}
+            />
           </Link>
         </div>
       </header>

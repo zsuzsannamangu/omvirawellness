@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { registerClient } from '@/services/auth';
@@ -151,7 +152,13 @@ export default function SignupPage() {
     <div className={styles.signupPage}>
       <div className={styles.header}>
         <Link href="/" className={styles.logo}>
-          Omvira Wellness
+          <Image
+            src="/Omvira_logo_long.png"
+            alt="Omvira Wellness"
+            width={200}
+            height={50}
+            className={styles.logoImage}
+          />
         </Link>
         <div className={styles.headerRight}>
           <Link href="/login" className={styles.loginLink}>

@@ -32,7 +32,7 @@ export default function Footer() {
         {/* Central Logo */}
         <div className={styles.logoSection}>
           <Image
-            src="/logoblack.png"
+            src="/Omvira_logo_circle.png"
             alt="Omvira Wellness Logo"
             width={180}
             height={180}

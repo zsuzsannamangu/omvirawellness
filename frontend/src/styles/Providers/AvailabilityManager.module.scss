@@ -48,7 +48,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
     transform: translateY(-1px);
   }
 
@@ -390,7 +390,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 
   &:disabled {
@@ -470,7 +470,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
     transform: translateY(-1px);
   }
 }
@@ -563,7 +563,7 @@
     color: $bg-white;
     
     &:hover {
-      background: darken($primary-color, 10%);
+      background: $button-pink-hover;
     }
   }
 }

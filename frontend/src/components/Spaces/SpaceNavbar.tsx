@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect } from 'react';
 import styles from '@/styles/Spaces/SpaceNavbar.module.scss';
 
@@ -37,7 +38,14 @@ export default function SpaceNavbar() {
     <header className={styles.navbar}>
       <div className={styles.logo}>
         <Link href="/spaces" className={styles.logoLink}>
-          Omvira Wellness
+          <Image
+            src="/Omvira_logo_white.png"
+            alt="Omvira Wellness"
+            width={300}
+            height={75}
+            className={styles.spaceLogoImage}
+            priority
+          />
         </Link>
       </div>
 

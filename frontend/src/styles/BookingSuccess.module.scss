@@ -28,18 +28,31 @@
 .headerContent {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 $spacing-lg;
+  padding: 0 $spacing-md;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  position: relative;
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: $font-weight-bold;
-  font-family: $font-heading;
-  color: $primary-color;
+  display: flex;
+  align-items: center;
   text-decoration: none;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.logoImage {
+  width: 600px;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
 }
 
 .mainContent {
@@ -444,8 +457,8 @@
   border: 1px solid $primary-color;
 
   &:hover {
-    background: darken($primary-color, 10%);
-    border-color: darken($primary-color, 10%);
+    background: $button-pink-hover;
+    border-color: $button-pink-hover;
     transform: translateY(-1px);
   }
 }

@@ -101,7 +101,7 @@
   transition: all 0.3s ease;
   
   &:hover {
-    background-color: $cta-hover-green;
+    background-color: $button-pink-hover;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba($primary-color, 0.3);
   }
@@ -210,7 +210,7 @@
 
 .whoCtaButton {
   display: inline-block;
-  background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+  background: linear-gradient(135deg, $primary-color 0%, $button-pink-hover 100%);
   color: $light-text;
   padding: 1rem 2.5rem;
   border-radius: 50px;
@@ -225,7 +225,7 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 35px rgba($primary-color, 0.4);
-    background: linear-gradient(135deg, darken($primary-color, 5%) 0%, darken($primary-color, 15%) 100%);
+    background: linear-gradient(135deg, darken($primary-color, 5%) 0%, darken($button-pink-hover, 5%) 100%);
   }
 }
 
@@ -522,7 +522,7 @@
   transition: all 0.3s ease;
   
   &:hover {
-    background-color: darken($secondary-color, 10%);
+    background-color: $button-yellow-hover;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba($secondary-color, 0.3);
   }
@@ -844,7 +844,7 @@
   transition: all 0.3s ease;
   
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: $button-pink-hover;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba($primary-color, 0.3);
   }

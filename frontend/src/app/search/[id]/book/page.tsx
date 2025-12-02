@@ -358,7 +358,13 @@ export default function BookingConfirmationPage() {
             ← Back to Provider
           </Link>
           <Link href="/" className={styles.logo}>
-            Omvira Wellness
+            <Image
+              src="/Omvira_logo_long.png"
+              alt="Omvira Wellness"
+              width={600}
+              height={200}
+              className={styles.logoImage}
+            />
           </Link>
         </div>
       </header>

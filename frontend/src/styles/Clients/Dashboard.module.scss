@@ -162,7 +162,7 @@
   transition: background-color 0.2s ease;
   
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -810,7 +810,7 @@
     max-width: 300px;
     
     &:hover {
-      background: darken($primary-color, 10%);
+      background: $button-pink-hover;
     }
   }
 }
@@ -962,7 +962,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: darken($primary-color, 10%);
+      background: $button-pink-hover;
     }
   }
 }
@@ -1124,7 +1124,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: darken($primary-color, 10%);
+      background: $button-pink-hover;
     }
   }
   
@@ -1186,7 +1186,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($primary-color, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -1237,7 +1237,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -1445,7 +1445,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($primary-color, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -1496,7 +1496,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -1982,7 +1982,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($primary-color, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -2033,7 +2033,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -2176,7 +2176,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: darken($primary-color, 10%);
+      background: $button-pink-hover;
     }
   }
   
@@ -2287,7 +2287,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($primary-color, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -2338,6 +2338,6 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 }

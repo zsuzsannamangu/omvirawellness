@@ -218,7 +218,7 @@
   color: $bg-white;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
     color: $light-text;
   }
 }
@@ -266,7 +266,7 @@
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
   }
 
   &:disabled {

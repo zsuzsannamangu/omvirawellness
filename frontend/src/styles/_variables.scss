@@ -1,14 +1,16 @@
 // _variables.scss
 
 // Colors
-$secondary-color: #32E9CD;         // Muted Plum – NEW primary
+//$secondary-color: #32E9CD;   
+$secondary-color: #F4B763;      // Muted Plum – NEW primary
 $accent-color: #6D4f71;       // Soft Neutral (unchanged)
 $primary-color: #ED6E95;          // Warm Rose Accent (instead of green)
-$dark-text: #070707;             // Dark text (unchanged)
+$dark-text: #294055;             // Dark text (unchanged)
 $light-text: #FAFAFA;     
 $hover-green: #5C3E5B;        // Light text (unchanged)
 $muted-bg: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($accent-color, 0.08) 50%, rgba($hover-green, 0.05) 100%);              // Soft background (unchanged)
-$subtext-color: #30556D;
+$subtext-color: #455F76;
+$subtext-color-2: #4F8D80;
 $placeholder-grey: #999999;
 $disabled-button-grey: #cccccc;
 
@@ -18,6 +20,10 @@ $cta-text: #FAFAFA;              // CTA text
 $cta-border: #6C4F70;            // CTA border
 $cta-hover-border: #5C3E5B;      // CTA border on hover
 $cta-text-hover: #FFFFFF;        // Optional bright hover text
+
+// Standardized button hover colors
+$button-yellow-hover: darken($secondary-color, 8%);  // Standard yellow button hover
+$button-pink-hover: darken($primary-color, 10%);   // Standard pink button hover
 
 $logo-yellow: #E6C27A;           // Soft Gold (more cohesive with plum)
 $stars-color: #ffc107;           // Star color for ratings
@@ -33,6 +39,7 @@ $bg-accent: #A67873;             // Accent background
 $bg-light: #FAFAFA;              // Light background
 $bg-white: #FFFFFF;              // Pure white background
 $bg-dark: #2C2C2C;               // Dark background
+$bg-footer: #F4B763;             // Footer background
 $bg-gradient-primary: linear-gradient(135deg, #6C4F70 0%, #5C3E5B 100%);
 $bg-gradient-navbar: linear-gradient(135deg, #ED6E95 0%, #5C3E5B 100%);
 $bg-gradient-secondary: linear-gradient(135deg, #EDE4DA 0%, #F5F0E8 100%);

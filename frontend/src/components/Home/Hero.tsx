@@ -22,7 +22,7 @@ const Hero: React.FC = () => {
         <p className={styles.subtitle}>
         A platform that connects you to independent wellness, beauty, and fitness professionals - anytime, anywhere.  
         </p>
-        <form onSubmit={handleSearch}>
+        <form onSubmit={handleSearch} className={styles.searchForm}>
           <input
             type="text"
             placeholder="Search services or providers"
@@ -30,6 +30,9 @@ const Hero: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <button type="submit" className={styles.searchButton}>
+            Search
+          </button>
         </form>
       </div>
     </section>

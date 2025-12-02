@@ -22,7 +22,7 @@
   width: 100%;
 
   &:hover:not(.disabled) {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
     transform: translateY(-1px);
   }
 
@@ -51,7 +51,7 @@
   width: 100%;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
     transform: translateY(-1px);
   }
 }

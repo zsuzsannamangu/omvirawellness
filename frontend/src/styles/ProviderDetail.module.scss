@@ -18,7 +18,7 @@
 .header {
   background: $bg-white;
   border-bottom: 1px solid $border-light;
-  padding: $spacing-sm 0;
+  padding: 0.5rem 0;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -28,9 +28,11 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 $spacing-md;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  gap: $spacing-lg;
+  position: relative;
 }
 
 .backButton {
@@ -41,6 +43,7 @@
   padding: $spacing-xs $spacing-sm;
   border-radius: 4px;
   transition: background-color 0.2s ease;
+  justify-self: start;
 
   &:hover {
     background-color: $muted-bg;
@@ -48,16 +51,22 @@
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: $font-weight-bold;
   font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: $primary-color;
   text-decoration: none;
+  justify-self: center;
+  
+  &:hover {
+    color: $hover-green;
+  }
 }
 
 .headerActions {
   display: flex;
   gap: $spacing-sm;
+  margin-left: auto;
 }
 
 .shareButton {
@@ -67,6 +76,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-family: $font-main;
+  justify-self: end;
   transition: all 0.2s ease;
 
   &:hover {

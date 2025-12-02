@@ -673,8 +673,8 @@
   justify-content: center;
 
   &:hover {
-    background: darken($secondary-color, 10%);
-    border-color: darken($secondary-color, 10%);
+    background: $button-yellow-hover;
+    border-color: $button-yellow-hover;
     transform: translateY(-1px);
   }
 }
@@ -914,7 +914,7 @@
     justify-content: center;
 
     &:hover {
-      background: $cta-hover-green;
+      background: $button-pink-hover;
       border-color: $cta-hover-green;
       transform: translateY(-1px);
     }
@@ -2331,7 +2331,7 @@
   cursor: pointer;
   
   &:hover {
-    background: $cta-hover-green;
+    background: $button-pink-hover;
   }
 }
 
@@ -2474,7 +2474,7 @@
   color: $cta-text;
   
   &:hover {
-    background: $cta-hover-green;
+    background: $button-pink-hover;
   }
 }
 
@@ -2503,7 +2503,7 @@
   color: $cta-text;
   
   &:hover {
-    background: $cta-hover-green;
+    background: $button-pink-hover;
   }
 }
 
@@ -2522,7 +2522,7 @@
   color: $cta-text;
   
   &:hover {
-    background: $cta-hover-green;
+    background: $button-pink-hover;
   }
 }
 
@@ -2559,7 +2559,7 @@
   color: $cta-text;
   
   &:hover {
-    background: $cta-hover-green;
+    background: $button-pink-hover;
   }
 }
 
@@ -2578,7 +2578,7 @@
   color: $cta-text;
   
   &:hover {
-    background: $cta-hover-green;
+    background: $button-pink-hover;
   }
 }
 

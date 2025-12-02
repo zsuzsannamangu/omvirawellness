@@ -1,12 +1,12 @@
 @import './_variables.scss';
 
 .footer {
-  background: $bg-dark;
+  background: $bg-footer;
   padding: $spacing-xxl 2rem $spacing-xl;
   margin-top: $spacing-xxl;
   position: relative;
-  color: $light-text;
-  border-top: 1px solid rgba($light-text, 0.1);
+  color: $dark-text;
+  border-top: 1px solid rgba($dark-text, 0.1);
 
   @media (max-width: 768px) {
     padding: $spacing-xl $spacing-md;
@@ -43,10 +43,10 @@
 
 .newsletterTitle {
   font-family: $font-heading;
-  color: $secondary-color;
+  color: $dark-text;
   font-size: 2rem;
   margin-bottom: $spacing-md;
-  font-weight: 600;
+  font-weight: $font-weight-bold;
 }
 
 .emailSignup {
@@ -64,37 +64,40 @@
 .emailInput {
   flex: 1;
   padding: 10px 15px;
-  border: 2px solid rgba($light-text, 0.7);
-  background: transparent;
-  color: $light-text;
+  border: 2px solid rgba($dark-text, 0.3);
+  background: $bg-white;
+  color: $dark-text;
   font-family: $font-main;
+  font-weight: $font-weight-semibold;
   border-radius: 0;
 
   &::placeholder {
-    color: rgba($light-text, 0.7);
+    color: rgba($dark-text, 0.5);
+    font-weight: $font-weight-semibold;
   }
 
   &:focus {
     outline: none;
-    border-color: $secondary-color;
-    box-shadow: 0 0 0 3px rgba($secondary-color, 0.2);
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
   }
 }
 
 .subscribeButton {
   padding: 10px 20px;
-  background-color: $secondary-color;
-  border: 2px solid $secondary-color;
-  color: $dark-text;
+  background-color: $primary-color;
+  border: 2px solid $primary-color;
+  color: $light-text;
   font-family: $font-main;
+  font-weight: $font-weight-bold;
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 0;
 
   &:hover {
-    background-color: lighten($secondary-color, 10%);
-    border-color: lighten($secondary-color, 10%);
-    color: $dark-text;
+    background-color: $button-pink-hover;
+    border-color: $button-pink-hover;
+    color: $light-text;
   }
 }
 
@@ -114,15 +117,15 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: $light-text;
-  color: $bg-dark;
+  background-color: $dark-text;
+  color: $bg-footer;
   border-radius: 50%;
   font-size: 2rem;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: $secondary-color;
-    color: $bg-dark;
+    background-color: $primary-color;
+    color: $light-text;
     transform: scale(1.1);
   }
 }
@@ -146,7 +149,7 @@
   width: 350px;
   height: auto;
   max-width: 100%;
-  filter: drop-shadow(0 12px 24px rgba($bg-dark, 0.35));
+  filter: drop-shadow(0 12px 24px rgba($dark-text, 0.2));
 }
 
 // Contact Section (Top Right)
@@ -162,10 +165,10 @@
 
 .contactTitle {
   font-family: $font-heading;
-  color: $secondary-color;
+  color: $dark-text;
   font-size: 2rem;
   margin-bottom: $spacing-md;
-  font-weight: 600;
+  font-weight: $font-weight-bold;
 }
 
 .locationInfo {
@@ -173,16 +176,17 @@
 
   .locationLabel {
     font-family: $font-main;
-    color: $light-text;
-    font-weight: 600;
+    color: $dark-text;
+    font-weight: $font-weight-bold;
     margin-bottom: $spacing-xs;
   }
 
   p {
     font-family: $font-main;
-    color: rgba($light-text, 0.9);
+    color: rgba($dark-text, 0.9);
     margin: 0.2rem 0;
     font-size: 1rem;
+    font-weight: $font-weight-semibold;
   }
 }
 
@@ -201,26 +205,28 @@
 
 .getInTouchTitle {
   font-family: $font-heading;
-  color: $secondary-color;
+  color: $dark-text;
   font-size: 2rem;
   margin-bottom: $spacing-md;
-  font-weight: 600;
+  font-weight: $font-weight-bold;
 }
 
 .email,
 .phone {
   font-family: $font-main;
-  color: rgba($light-text, 0.9);
+  color: rgba($dark-text, 0.9);
   margin: 0.5rem 0;
   font-size: 1.3rem;
+  font-weight: $font-weight-semibold;
 }
 
 .email {
   text-decoration: underline;
   cursor: pointer;
+  font-weight: $font-weight-bold;
 
   &:hover {
-    color: $secondary-color;
+    color: $primary-color;
   }
 }
 
@@ -228,6 +234,7 @@
   text-align: center;
   margin-top: $spacing-xl;
   font-size: 1.2rem;
-  color: rgba($light-text, 0.7);
+  color: rgba($dark-text, 0.8);
+  font-weight: $font-weight-semibold;
 }
 

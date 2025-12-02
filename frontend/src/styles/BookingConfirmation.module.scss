@@ -27,10 +27,12 @@
 .headerContent {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 $spacing-lg;
+  padding: 0 $spacing-md;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: $spacing-lg;
+  position: relative;
 }
 
 .backButton {
@@ -48,11 +50,23 @@
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: $font-weight-bold;
-  font-family: $font-heading;
-  color: $primary-color;
+  display: flex;
+  align-items: center;
   text-decoration: none;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.logoImage {
+  width: 600px;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
 }
 
 .mainContent {
@@ -576,7 +590,7 @@
   margin-bottom: $spacing-sm;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: $button-pink-hover;
     transform: translateY(-1px);
   }
 }
@@ -683,7 +697,7 @@
   text-align: left;
   
   &:hover {
-    color: $cta-hover-green;
+    color: $button-pink-hover;
     text-decoration: underline;
   }
 }
@@ -724,8 +738,8 @@
   white-space: nowrap;
 
   &:hover {
-    background: $cta-hover-green;
-    border-color: $cta-hover-green;
+    background: $button-pink-hover;
+    border-color: $button-pink-hover;
     transform: translateY(-1px);
     text-decoration: none;
     color: $light-text;
@@ -760,8 +774,8 @@
   max-width: 200px;
 
   &:hover:not(:disabled) {
-    background: $cta-hover-green;
-    border-color: $cta-hover-green;
+    background: $button-pink-hover;
+    border-color: $button-pink-hover;
     transform: translateY(-1px);
   }
 

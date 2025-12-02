@@ -16,15 +16,20 @@
 }
 
 .logo {
-  font-family: $font-heading;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: $primary-color;
+  display: flex;
+  align-items: center;
   text-decoration: none;
   
   &:hover {
-    color: $hover-green;
+    opacity: 0.9;
   }
+}
+
+.logoImage {
+  width: 200px;
+  height: auto;
+  max-height: 50px;
+  object-fit: contain;
 }
 
 .headerRight {
