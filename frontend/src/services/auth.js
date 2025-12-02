@@ -1,12 +1,14 @@
 // frontend/src/services/auth.js
-const API_URL = 'http://localhost:4000/api/auth';
+import { API_URL } from '../config/api';
+
+const AUTH_API_URL = `${API_URL}/auth`;
 
 /**
  * Login - works for all user types
  */
 export async function login(email, password) {
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${AUTH_API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +39,7 @@ export async function login(email, password) {
  */
 export async function registerClient(formData) {
   try {
-    const response = await fetch(`${API_URL}/register/client`, {
+    const response = await fetch(`${AUTH_API_URL}/register/client`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +70,7 @@ export async function registerClient(formData) {
  */
 export async function registerProvider(formData) {
   try {
-    const response = await fetch(`${API_URL}/register/provider`, {
+    const response = await fetch(`${AUTH_API_URL}/register/provider`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -99,7 +101,7 @@ export async function registerProvider(formData) {
  */
 export async function registerSpaceOwner(formData) {
   try {
-    const response = await fetch(`${API_URL}/register/space-owner`, {
+    const response = await fetch(`${AUTH_API_URL}/register/space-owner`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -177,7 +179,7 @@ export async function updateClientProfile(profileData) {
       throw new Error('Not authenticated');
     }
 
-    const response = await fetch(`${API_URL}/profile/client`, {
+    const response = await fetch(`${AUTH_API_URL}/profile/client`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
