@@ -36,7 +36,7 @@
 }
 
 .backButton {
-  color: $primary-color;
+  color: $dark-text;
   text-decoration: none;
   font-weight: $font-weight-medium;
   font-family: $font-main;
@@ -45,7 +45,7 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: $muted-bg;
+    background-color: $section-bg-1;
   }
 }
 
@@ -201,7 +201,7 @@
 
 .price {
   font-weight: $font-weight-bold;
-  color: $primary-color;
+  color: $dark-text;
   font-size: 1.1rem;
   font-family: $font-main;
 }
@@ -247,13 +247,13 @@
   position: relative;
 
   &:hover:not(.disabled) {
-    border-color: $primary-color;
-    background-color: $muted-bg;
+    border-color: $secondary-color;
+    background-color: $section-bg-1;
   }
 
   &.selected {
-    border-color: $primary-color;
-    background-color: rgba($primary-color, 0.05);
+    border-color: $secondary-color;
+    background-color: rgba($secondary-color, 0.1);
   }
 
   &.disabled {
@@ -269,7 +269,7 @@
 }
 
 .locationIcon {
-  color: $primary-color;
+  color: $subtext-color;
   font-size: 1.2rem;
   width: 24px;
   text-align: center;
@@ -294,8 +294,8 @@
   position: absolute;
   top: $spacing-sm;
   right: $spacing-sm;
-  background: $primary-color;
-  color: $light-text;
+  background: $secondary-color;
+  color: $dark-text;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -344,7 +344,8 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $secondary-color;
+    box-shadow: 0 0 0 2px rgba($secondary-color, 0.1);
   }
 
   &.error {
@@ -380,7 +381,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: $primary-color;
+    background: $secondary-color;
     cursor: pointer;
   }
 
@@ -388,7 +389,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: $primary-color;
+    background: $secondary-color;
     cursor: pointer;
     border: none;
   }
@@ -419,13 +420,13 @@
   cursor: pointer;
 
   &:hover {
-    border-color: $primary-color;
-    background-color: $muted-bg;
+    border-color: $secondary-color;
+    background-color: $section-bg-1;
   }
 
   &.selected {
-    border-color: $primary-color;
-    background-color: rgba($primary-color, 0.05);
+    border-color: $secondary-color;
+    background-color: rgba($secondary-color, 0.1);
   }
 }
 
@@ -450,7 +451,7 @@
 
 .addOnPrice {
   font-weight: $font-weight-bold;
-  color: $primary-color;
+  color: $dark-text;
   font-family: $font-main;
 }
 
@@ -487,7 +488,7 @@
 }
 
 .addOnCheckbox:checked + .addOnLabel {
-  background: $primary-color;
+  background: $secondary-color;
 
   &::after {
     transform: translateX(20px);
@@ -542,7 +543,7 @@
 }
 
 .depositInfo {
-  background: $muted-bg;
+  background: $section-bg-1;
   border-radius: 6px;
   padding: $spacing-md;
   margin: $spacing-md 0;
@@ -561,7 +562,7 @@
   align-items: center;
   padding: $spacing-xs 0;
   font-weight: $font-weight-semibold;
-  color: $primary-color;
+  color: $dark-text;
   font-family: $font-main;
 }
 
@@ -577,21 +578,28 @@
 
 .bookButton {
   width: 100%;
-  background: $primary-color;
-  color: $light-text;
+  background: $secondary-color;
+  color: $dark-text;
   border: none;
   border-radius: 8px;
-  padding: $spacing-sm;
-  font-size: 1.1rem;
-  font-weight: $font-weight-bold;
+  padding: $spacing-xs $spacing-md;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
   font-family: $font-main;
   cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: $spacing-sm;
 
-  &:hover {
-    background: $button-pink-hover;
+  &:hover:not(:disabled) {
+    background: $button-yellow-hover;
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: $disabled-button-grey;
+    color: $subtext-color;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
@@ -685,7 +693,7 @@
 
 .providerLink {
   font-size: 1.1rem;
-  color: $primary-color;
+  color: $dark-text;
   font-family: $font-main;
   font-weight: $font-weight-medium;
   text-decoration: none;
@@ -697,7 +705,7 @@
   text-align: left;
   
   &:hover {
-    color: $button-pink-hover;
+    color: $subtext-color;
     text-decoration: underline;
   }
 }
@@ -724,9 +732,9 @@
 }
 
 .modifyButton {
-  background: $primary-color;
-  color: $light-text;
-  border: 1px solid $primary-color;
+  background: $secondary-color;
+  color: $dark-text;
+  border: 1px solid $secondary-color;
   border-radius: 6px;
   padding: $spacing-xs $spacing-md;
   font-size: 0.9rem;
@@ -738,25 +746,25 @@
   white-space: nowrap;
 
   &:hover {
-    background: $button-pink-hover;
-    border-color: $button-pink-hover;
+    background: $button-yellow-hover;
+    border-color: $button-yellow-hover;
     transform: translateY(-1px);
     text-decoration: none;
-    color: $light-text;
+    color: $dark-text;
   }
 }
 
 .totalPrice {
   font-size: 1.3rem;
   font-weight: $font-weight-bold;
-  color: $primary-color;
+  color: $dark-text;
   font-family: $font-main;
 }
 
 .checkAddressButton {
-  background: $primary-color;
-  color: $light-text;
-  border: 1px solid $primary-color;
+  background: $secondary-color;
+  color: $dark-text;
+  border: 1px solid $secondary-color;
   border-radius: 6px;
   padding: 6px $spacing-md;
   font-size: 0.9rem;
@@ -774,8 +782,8 @@
   max-width: 200px;
 
   &:hover:not(:disabled) {
-    background: $button-pink-hover;
-    border-color: $button-pink-hover;
+    background: $button-yellow-hover;
+    border-color: $button-yellow-hover;
     transform: translateY(-1px);
   }
 

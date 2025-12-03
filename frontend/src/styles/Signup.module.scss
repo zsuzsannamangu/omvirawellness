@@ -2,7 +2,7 @@
 
 .signupPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, $section-bg-1 0%, $section-bg-3 100%);
+  background: linear-gradient(135deg, rgba($client-colors-3, 0.1) 0%, rgba($client-colors-1, 0.05) 100%);
   font-family: $font-main;
 }
 
@@ -45,7 +45,7 @@
   transition: color 0.2s ease;
   
   &:hover {
-    color: $primary-color;
+    color: $client-colors-1;
   }
 }
 
@@ -112,8 +112,8 @@
 // Navigation Tabs
 .navTabs {
   display: flex;
-  background-color: rgba($primary-color, 0.05);
-  border-bottom: 1px solid rgba($primary-color, 0.1);
+  background-color: rgba($client-colors-3, 0.2);
+  border-bottom: 1px solid rgba($client-colors-1, 0.2);
 }
 
 .navTab {
@@ -130,7 +130,7 @@
   cursor: pointer;
   
   &:hover {
-    color: $primary-color;
+    color: $client-colors-1;
   }
   
   &.active {
@@ -181,7 +181,7 @@
 .emailInput {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba($primary-color, 0.2);
+  border: 1px solid $border-light;
   border-radius: 8px;
   font-family: $font-main;
   font-size: 1rem;
@@ -190,8 +190,8 @@
   
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    border-color: $client-colors-1;
+    box-shadow: 0 0 0 3px rgba($client-colors-1, 0.1);
   }
   
   &::placeholder {
@@ -226,7 +226,7 @@
 .continueButton {
   width: 100%;
   padding: 0.875rem 1rem;
-  background: $primary-color;
+  background: $client-colors-1;
   color: $light-text;
   border: none;
   border-radius: 8px;
@@ -241,7 +241,7 @@
   gap: 0.5rem;
   
   &:hover {
-    background: $hover-green;
+    background: darken($client-colors-1, 10%);
   }
 }
 
@@ -262,7 +262,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba($primary-color, 0.2);
+    background: $border-light;
   }
 }
 
@@ -287,7 +287,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   background: $bg-white;
-  border: 1px solid rgba($primary-color, 0.2);
+  border: 1px solid $border-light;
   border-radius: 8px;
   font-family: $font-main;
   font-weight: 500;
@@ -300,8 +300,8 @@
   gap: 0.5rem;
   
   &:hover {
-    background: rgba($primary-color, 0.05);
-    border-color: $primary-color;
+    background: rgba($client-colors-3, 0.2);
+    border-color: $client-colors-1;
   }
 }
 
@@ -334,7 +334,7 @@
 }
 
 .legalLink {
-  color: $primary-color;
+  color: $client-colors-1;
   text-decoration: none;
   font-weight: 600;
   

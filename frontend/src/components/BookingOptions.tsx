@@ -57,13 +57,6 @@ export default function BookingOptions({
       >
         Register to Book
       </Link>
-      <Link
-        href={bookingUrl || '#'}
-        className={styles.guestButton}
-        style={{ textDecoration: 'none', display: 'block' }}
-      >
-        Book as Guest
-      </Link>
     </div>
   );
 }

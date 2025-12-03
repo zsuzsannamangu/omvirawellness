@@ -36,50 +36,101 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
 
   const loadBookings = async () => {
       try {
+        // Clear bookings immediately when switching tabs to prevent showing stale data
+        setBookings([]);
+        setLoading(true);
+        
         const token = localStorage.getItem('token');
         if (!token || !userId) {
           setLoading(false);
           return;
         }
 
-        let url = `http://localhost:4000/api/bookings/provider/${userId}`;
+        // Helper function to check if a booking is in the past
+        const isPastBooking = (booking: Booking): boolean => {
+          const bookingDate = new Date(booking.booking_date);
+          const [hours, minutes] = booking.end_time.split(':').map(Number);
+          const bookingDateTime = new Date(bookingDate);
+          bookingDateTime.setHours(hours, minutes, 0, 0);
+          return bookingDateTime < new Date();
+        };
+
+        let data: Booking[] = [];
         
-        // Filter by status based on submenu
-        if (activeSubmenu === 'requests') {
-          url = `http://localhost:4000/api/bookings/provider/${userId}/pending`;
-        } else if (activeSubmenu === 'upcoming') {
-          url = `http://localhost:4000/api/bookings/provider/${userId}/confirmed`;
-        } else if (activeSubmenu === 'past') {
-          url = `http://localhost:4000/api/bookings/provider/${userId}/completed`;
-        } else if (activeSubmenu === 'canceled') {
-          url = `http://localhost:4000/api/bookings/provider/${userId}/cancelled`;
-        }
-
-        const response = await fetch(url, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          // Sort bookings: sooner appointments first (by date, then by time)
-          const sorted = data.sort((a: Booking, b: Booking) => {
-            // First compare dates
-            const dateA = new Date(a.booking_date);
-            const dateB = new Date(b.booking_date);
-            if (dateA.getTime() !== dateB.getTime()) {
-              return dateA.getTime() - dateB.getTime();
-            }
-            // If same date, compare start times
-            const timeA = a.start_time.split(':').map(Number);
-            const timeB = b.start_time.split(':').map(Number);
-            const minutesA = timeA[0] * 60 + timeA[1];
-            const minutesB = timeB[0] * 60 + timeB[1];
-            return minutesA - minutesB;
+        // For past section, we need both completed AND confirmed bookings to filter by date
+        if (activeSubmenu === 'past') {
+          // Fetch both completed and confirmed bookings
+          const [completedRes, confirmedRes] = await Promise.all([
+            fetch(`http://localhost:4000/api/bookings/provider/${userId}/completed`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }),
+            fetch(`http://localhost:4000/api/bookings/provider/${userId}/confirmed`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            })
+          ]);
+          
+          const completedData = completedRes.ok ? await completedRes.json() : [];
+          const confirmedData = confirmedRes.ok ? await confirmedRes.json() : [];
+          
+          // Combine and filter: show completed OR past confirmed bookings
+          data = [...completedData, ...confirmedData].filter((booking: Booking) => {
+            return booking.status === 'completed' || 
+                   (booking.status === 'confirmed' && isPastBooking(booking));
           });
-          setBookings(sorted);
+        } else {
+          // For other sections, use the original logic
+          let url = `http://localhost:4000/api/bookings/provider/${userId}`;
+          
+          if (activeSubmenu === 'requests') {
+            url = `http://localhost:4000/api/bookings/provider/${userId}/pending`;
+          } else if (activeSubmenu === 'upcoming') {
+            url = `http://localhost:4000/api/bookings/provider/${userId}/confirmed`;
+          } else if (activeSubmenu === 'canceled') {
+            url = `http://localhost:4000/api/bookings/provider/${userId}/cancelled`;
+          }
+
+          const response = await fetch(url, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (response.ok) {
+            data = await response.json();
+          }
         }
+
+        // Filter and sort bookings based on submenu
+        let filtered = data;
+        
+        if (activeSubmenu === 'upcoming') {
+          // For upcoming: only show confirmed bookings that haven't passed yet
+          filtered = data.filter((booking: Booking) => {
+            return booking.status === 'confirmed' && !isPastBooking(booking);
+          });
+        }
+          
+        // Sort bookings: sooner appointments first (by date, then by time)
+        // For past, reverse sort (most recent first)
+        const sorted = filtered.sort((a: Booking, b: Booking) => {
+          // First compare dates
+          const dateA = new Date(a.booking_date);
+          const dateB = new Date(b.booking_date);
+          if (dateA.getTime() !== dateB.getTime()) {
+            return activeSubmenu === 'past' 
+              ? dateB.getTime() - dateA.getTime()  // Most recent first for past
+              : dateA.getTime() - dateB.getTime(); // Soonest first for upcoming
+          }
+          // If same date, compare start times
+          const timeA = a.start_time.split(':').map(Number);
+          const timeB = b.start_time.split(':').map(Number);
+          const minutesA = timeA[0] * 60 + timeA[1];
+          const minutesB = timeB[0] * 60 + timeB[1];
+          return activeSubmenu === 'past'
+            ? minutesB - minutesA  // Most recent first for past
+            : minutesA - minutesB;  // Soonest first for upcoming
+        });
+        setBookings(sorted);
       } catch (error) {
         console.error('Error loading bookings:', error);
       } finally {
@@ -94,14 +145,17 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     return () => window.removeEventListener('refreshBookings', refresh);
   }, [userId, activeSubmenu]);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string, includeWeekday: boolean = true) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short',
+    const options: Intl.DateTimeFormatOptions = { 
       month: 'short', 
       day: 'numeric',
       year: 'numeric'
-    });
+    };
+    if (includeWeekday) {
+      options.weekday = 'short';
+    }
+    return date.toLocaleDateString('en-US', options);
   };
 
   const formatTime = (timeString: string) => {
@@ -174,11 +228,14 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       );
     }
 
-    if (activeSubmenu === 'upcoming') {
-      // Table format for upcoming
+    if (activeSubmenu === 'upcoming' || activeSubmenu === 'past') {
+      // Table format for upcoming and past
       return (
         <div className={styles.historyContent}>
-          <h2 className={styles.sectionTitle}>Upcoming Sessions</h2>
+          <h2 className={styles.sectionTitle}>
+            {activeSubmenu === 'upcoming' && 'Upcoming Sessions'}
+            {activeSubmenu === 'past' && 'Past Sessions'}
+          </h2>
           <div className={styles.bookingsTableWrapper}>
             <table className={styles.bookingsTable}>
               <thead>
@@ -189,6 +246,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   <th>Client</th>
                   <th>Location</th>
                   <th>Total</th>
+                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -198,7 +256,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   const addOns = serviceInfo?.add_ons || [];
                   return (
                     <tr key={booking.id}>
-                      <td>{formatDate(booking.booking_date)}</td>
+                      <td>{formatDate(booking.booking_date, activeSubmenu !== 'past')}</td>
                       <td>{formatTime(booking.start_time)} - {formatTime(booking.end_time)}</td>
                       <td>
                         <div className={styles.serviceName}>{serviceInfo?.name || 'Service'}</div>
@@ -216,6 +274,11 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                       <td>{booking.first_name} {booking.last_name}</td>
                       <td>{formatLocation(serviceInfo?.location_type)}</td>
                       <td>${parseFloat(booking.total_amount).toFixed(2)}</td>
+                      <td>
+                        <span className={`${styles.statusBadge} ${styles[booking.status]}`}>
+                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                        </span>
+                      </td>
                       <td>
                         <button className={styles.secondaryBtn}>Message Client</button>
                       </td>

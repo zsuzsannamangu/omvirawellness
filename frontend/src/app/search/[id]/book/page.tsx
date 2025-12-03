@@ -28,6 +28,7 @@ export default function BookingConfirmationPage() {
   
   // Form validation
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Provider modal
   const [showProviderModal, setShowProviderModal] = useState(false);
@@ -232,6 +233,11 @@ export default function BookingConfirmationPage() {
   };
 
   const handleBooking = async () => {
+    // Prevent double submission
+    if (isSubmitting) {
+      return;
+    }
+    
     // Check if user is authenticated
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -261,6 +267,8 @@ export default function BookingConfirmationPage() {
     if (!validateForm()) {
       return;
     }
+    
+    setIsSubmitting(true);
     
     try {
       // Prepare booking data
@@ -335,6 +343,7 @@ export default function BookingConfirmationPage() {
     } catch (error: any) {
       console.error('Error creating booking:', error);
       alert(`Error creating booking: ${error.message || 'Please try again'}`);
+      setIsSubmitting(false);
     }
   };
 
@@ -684,8 +693,14 @@ export default function BookingConfirmationPage() {
               <button 
                 className={styles.bookButton}
                 onClick={handleBooking}
+                disabled={isSubmitting}
               >
-                {provider.requiresDeposit ? `Pay $${deposit.toFixed(2)} Deposit` : `Pay $${total.toFixed(2)}`}
+                {isSubmitting 
+                  ? 'Processing...' 
+                  : provider.requiresDeposit 
+                    ? `Pay $${deposit.toFixed(2)} Deposit` 
+                    : `Pay $${total.toFixed(2)}`
+                }
               </button>
 
               <div className={styles.bookingInfo}>

@@ -2,7 +2,7 @@
 
 .providerDetailPage {
   min-height: 100vh;
-  background: $muted-bg;
+  background: $bg-light;
   font-family: $font-main;
 }
 
@@ -52,7 +52,7 @@
   justify-self: start;
 
   &:hover {
-    background-color: $muted-bg;
+    background-color: $section-bg-1;
   }
 }
 
@@ -94,7 +94,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: $muted-bg;
+    background-color: $section-bg-1;
   }
 }
 
@@ -367,7 +367,7 @@
 
   &.selected {
     border-color: $primary-color;
-    background-color: $muted-bg;
+    background-color: $section-bg-1;
   }
 }
 
@@ -528,7 +528,7 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background: $muted-bg;
+    background: $section-bg-1;
   }
 }
 
@@ -606,7 +606,7 @@
   justify-content: center;
 
   &:hover:not(:disabled) {
-    background: $muted-bg;
+    background: $section-bg-1;
     border-color: $primary-color;
   }
 
@@ -691,7 +691,7 @@
 
   &:hover {
     border-color: $primary-color;
-    background-color: $muted-bg;
+    background-color: $section-bg-1;
   }
 
   &.selected {
@@ -768,7 +768,7 @@
 }
 
 .reviewItem {
-  padding: $spacing-md;
+  padding: $spacing-sm $spacing-md;
   border-bottom: 1px solid $border-light;
   background: $bg-white;
 
@@ -780,8 +780,10 @@
 .reviewHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: $spacing-xs;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
 }
 
 .reviewRating {
@@ -789,26 +791,27 @@
   align-items: center;
   gap: $spacing-xs;
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .stars {
   color: $stars-color;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .ratingNumber {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: $font-weight-medium;
   font-family: $font-main;
   color: $dark-text;
 }
 
 .itemTag {
-  background: $muted-bg;
+  background: $section-bg-1;
   color: $dark-text;
   padding: 2px $spacing-xs;
   border-radius: 12px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-family: $font-main;
   font-weight: $font-weight-medium;
 }
@@ -818,58 +821,45 @@
   align-items: center;
   gap: 4px;
   color: $success-color;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-family: $font-main;
   font-weight: $font-weight-medium;
 }
 
 .checkmark {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .reviewerInfo {
   display: flex;
   align-items: center;
   gap: $spacing-xs;
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: $primary-color;
-  color: $light-text;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  font-weight: $font-weight-bold;
-  font-family: $font-main;
-}
-
-.reviewerDetails {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-shrink: 0;
 }
 
 .reviewerName {
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-semibold;
   font-family: $font-main;
   color: $dark-text;
   font-size: 0.9rem;
 }
 
+.reviewSeparator {
+  color: $subtext-color;
+  font-size: 0.85rem;
+  font-family: $font-main;
+}
+
 .reviewDate {
   color: $subtext-color;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-family: $font-main;
 }
 
 .reviewComment {
   color: $dark-text;
   line-height: 1.5;
-  margin: 0;
+  margin: $spacing-xs 0 0 0;
   font-family: $font-main;
   font-size: 0.9rem;
 }
@@ -894,7 +884,7 @@
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: $muted-bg;
+    background: $section-bg-1;
     border-color: $primary-color;
   }
 
@@ -905,7 +895,7 @@
 }
 
 .paginationPage {
-  background: $muted-bg;
+  background: $section-bg-1;
   border: 1px solid $border-light;
   border-radius: 50%;
   width: 32px;
@@ -970,7 +960,7 @@
 .selectedService {
   margin-bottom: $spacing-sm;
   padding: $spacing-sm;
-  background: $muted-bg;
+  background: $section-bg-1;
   border-radius: 4px;
 }
 
@@ -992,7 +982,7 @@
 .selectedTime {
   margin-bottom: $spacing-sm;
   padding: $spacing-sm;
-  background: $muted-bg;
+  background: $section-bg-1;
   border-radius: 6px;
   border-left: 4px solid $success-color;
 }

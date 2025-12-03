@@ -11,7 +11,7 @@
 .sidebar {
   width: 200px;
   background: linear-gradient(180deg, $bg-white 0%, $background-light 100%);
-  border-right: 1px solid rgba($primary-color, 0.1);
+  border-right: 1px solid $border-light;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -19,19 +19,19 @@
   left: 0;
   top: 0;
   z-index: 100;
-  box-shadow: 2px 0 8px rgba($primary-color, 0.05);
+  box-shadow: 2px 0 8px $shadow-color;
 }
 
 .sidebarHeader {
   padding: $spacing-md;
-  border-bottom: 1px solid rgba($primary-color, 0.1);
-  background: rgba($primary-color, 0.02);
+  border-bottom: 1px solid $border-light;
+  background: $section-bg-2;
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: $primary-color;
+  color: $provider-colors-3;
   margin: 0;
   font-family: $font-main;
 }
@@ -56,15 +56,15 @@
   text-align: left;
 
   &:hover {
-    background: linear-gradient(90deg, rgba($primary-color, 0.08) 0%, rgba($primary-color, 0.02) 100%);
-    color: $primary-color;
+    background: $section-bg-2;
+    color: $provider-colors-3;
     transform: translateX(2px);
   }
 
   &.active {
-    background: linear-gradient(90deg, rgba($primary-color, 0.15) 0%, rgba($primary-color, 0.05) 100%);
-    color: $primary-color;
-    border-right: 3px solid $primary-color;
+    background: $background-light;
+    color: $provider-colors-3;
+    border-right: 3px solid $provider-colors-3;
     font-weight: 600;
     position: relative;
     
@@ -75,7 +75,7 @@
       top: 0;
       bottom: 0;
       width: 3px;
-      background: linear-gradient(180deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+      background: linear-gradient(180deg, $provider-colors-3 0%, darken($provider-colors-3, 20%) 100%);
     }
   }
 }
@@ -103,8 +103,8 @@
 
 // Top Navigation
 .topNav {
-  background: linear-gradient(90deg, $bg-white 0%, rgba($primary-color, 0.02) 100%);
-  border-bottom: 1px solid rgba($primary-color, 0.1);
+  background: linear-gradient(90deg, $bg-white 0%, $section-bg-2 100%);
+  border-bottom: 1px solid $border-light;
   padding: $spacing-md $spacing-lg;
   display: flex;
   justify-content: space-between;
@@ -112,7 +112,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 2px 4px rgba($primary-color, 0.05);
+  box-shadow: 0 2px 4px $shadow-color;
 }
 
 .greetingSection {
@@ -152,7 +152,7 @@
 }
 
 .profileLink {
-  color: $primary-color;
+  color: $provider-colors-3;
   text-decoration: none;
   cursor: pointer;
   
@@ -162,7 +162,7 @@
 }
 
 .signOutBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-xs $spacing-sm;
@@ -173,7 +173,7 @@
   transition: background-color 0.2s ease;
   
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -215,9 +215,9 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba($primary-color, 0.05);
-    border-color: $primary-color;
-    color: $primary-color;
+    background: $section-bg-2;
+    border-color: $provider-colors-3;
+    color: $provider-colors-3;
   }
 }
 
@@ -250,7 +250,7 @@
 .profileInitials {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+  background: linear-gradient(135deg, $provider-colors-3 0%, $provider-colors-1 100%);
   color: $bg-white;
   display: flex;
   align-items: center;
@@ -283,12 +283,12 @@
 
 // Submenu Navigation
 .submenu {
-  background: linear-gradient(90deg, $bg-white 0%, rgba($primary-color, 0.01) 100%);
-  border-bottom: 1px solid rgba($primary-color, 0.1);
+  background: linear-gradient(90deg, $bg-white 0%, $section-bg-2 100%);
+  border-bottom: 1px solid $border-light;
   padding: 0 $spacing-lg;
   display: flex;
   gap: $spacing-lg;
-  box-shadow: 0 1px 3px rgba($primary-color, 0.03);
+  box-shadow: 0 1px 3px $shadow-color;
 }
 
 .submenuItem {
@@ -305,14 +305,14 @@
   position: relative;
 
   &:hover {
-    color: $primary-color;
-    border-bottom-color: rgba($primary-color, 0.4);
+    color: $provider-colors-3;
+    border-bottom-color: $provider-colors-3;
     transform: translateY(-1px);
   }
 
   &.active {
-    color: $primary-color;
-    border-bottom-color: $primary-color;
+    color: $provider-colors-3;
+    border-bottom-color: $provider-colors-3;
     font-weight: 600;
     
     &::after {
@@ -322,7 +322,7 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: linear-gradient(90deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+      background: linear-gradient(90deg, $accent-color 0%, darken($accent-color, 20%) 100%);
     }
   }
 }
@@ -336,7 +336,7 @@
   height: 20px;
   padding: 0 6px;
   margin-left: 8px;
-  background: $error-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -503,9 +503,9 @@
     color: $dark-text;
 
     &:hover {
-      border-color: $primary-color;
-      background: rgba($primary-color, 0.05);
-      color: $primary-color;
+      border-color: $accent-color;
+      background: $section-bg-2;
+      color: $provider-colors-3;
     }
   }
 
@@ -574,8 +574,8 @@
   display: flex;
   align-items: center;
   padding: $spacing-sm;
-  background: linear-gradient(135deg, $bg-white 0%, rgba($primary-color, 0.01) 100%);
-  border: 1px solid rgba($primary-color, 0.1);
+  background: linear-gradient(135deg, $bg-white 0%, $section-bg-2 100%);
+  border: 1px solid $border-light;
   border-radius: 8px;
   gap: $spacing-md;
   transition: all 0.3s ease;
@@ -584,8 +584,8 @@
   width: 100%;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    border-color: $accent-color;
+    box-shadow: 0 4px 12px $shadow-color;
     transform: translateY(-1px);
   }
 }
@@ -596,14 +596,14 @@
   align-items: center;
   min-width: 50px;
   padding: $spacing-xs;
-  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.02) 100%);
+  background: linear-gradient(135deg, $section-bg-2 0%, $background-light 100%);
   border-radius: 6px;
-  border: 1px solid rgba($primary-color, 0.1);
+  border: 1px solid $border-light;
 
   .day {
     font-size: 1.2rem;
     font-weight: 700;
-    color: $primary-color;
+    color: $provider-colors-3;
     line-height: 1;
   }
 
@@ -637,7 +637,7 @@
 }
 
 .requestNote {
-  color: $primary-color;
+  color: $provider-colors-3;
   margin: $spacing-xs 0 0 0;
   font-size: 0.8rem;
   font-style: italic;
@@ -820,7 +820,7 @@
   .day {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $primary-color;
+    color: $provider-colors-3;
   }
 
   .month {
@@ -852,7 +852,7 @@
 
   .bookingPrice, .requestPrice, .historyPrice {
     font-weight: 600;
-    color: $primary-color;
+    color: $provider-colors-3;
     margin: 0;
   }
 
@@ -872,7 +872,7 @@
     padding-top: $spacing-sm;
     border-top: 1px solid $border-light;
     font-weight: 600;
-    color: $primary-color;
+    color: $provider-colors-3;
   }
 
   .bookingNotes {
@@ -898,9 +898,9 @@
 
   .actionBtn {
     padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
-    border: 1px solid $primary-color;
+    border: 1px solid $provider-colors-3;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.85rem;
@@ -914,7 +914,7 @@
     justify-content: center;
 
     &:hover {
-      background: $button-pink-hover;
+      background: darken($provider-colors-3, 10%);
       border-color: $cta-hover-green;
       transform: translateY(-1px);
     }
@@ -1010,8 +1010,8 @@
     color: $dark-text;
 
     &:hover {
-      border-color: $primary-color;
-      color: $primary-color;
+      border-color: $provider-colors-3;
+      color: $provider-colors-3;
     }
   }
 
@@ -1038,7 +1038,7 @@
     transition: background 0.2s ease;
 
     &:hover {
-      background: rgba($primary-color, 0.1);
+      background: $section-bg-2;
     }
   }
 
@@ -1135,7 +1135,7 @@
   }
 
   .addBlockedBtn {
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
     border: none;
     padding: $spacing-sm $spacing-md;
@@ -1144,7 +1144,7 @@
     font-weight: 500;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: darken($provider-colors-3, 10%);
     }
   }
 }
@@ -1176,7 +1176,7 @@
   .revenueAmount, .sessionsNumber {
     font-size: 2rem;
     font-weight: 700;
-    color: $primary-color;
+    color: $provider-colors-3;
     margin: 0 0 $spacing-xs 0;
   }
 
@@ -1208,7 +1208,7 @@
   .ratingNumber {
     font-size: 3rem;
     font-weight: 700;
-    color: $primary-color;
+    color: $provider-colors-3;
     margin: 0 0 $spacing-sm 0;
   }
 
@@ -1249,7 +1249,7 @@
 
   .ratingBarFill {
     height: 100%;
-    background: $primary-color;
+    background: $provider-colors-3;
     border-radius: 4px;
   }
 
@@ -1272,14 +1272,66 @@
   .reviewHeader {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: $spacing-sm;
+    gap: $spacing-md;
+  }
+
+  .reviewRating {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex-shrink: 0;
+  }
+
+  .stars {
+    display: flex;
+    gap: 2px;
+    color: $stars-color;
+    font-size: 0.9rem;
+  }
+
+  .starFilled {
+    color: $stars-color;
+  }
+
+  .starEmpty {
+    color: $border-light;
+  }
+
+  .reviewerInfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $provider-colors-3;
+    color: $bg-white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .reviewerDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .reviewerName {
     font-weight: 600;
     color: $dark-text;
-    margin: 0 0 $spacing-xs 0;
+    margin: 0;
+    font-size: 0.9rem;
   }
 
   .reviewStars {
@@ -1290,6 +1342,20 @@
     color: $subtext-color;
     margin: 0;
     font-size: 0.8rem;
+  }
+
+  .reviewTitle {
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+    font-size: 1rem;
+  }
+
+  .reviewComment {
+    color: $dark-text;
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.9rem;
   }
 
   .reviewText {
@@ -1349,8 +1415,8 @@
 
     &:focus {
       outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.05);
+      border-color: $accent-color;
+      box-shadow: 0 0 0 2px rgba($accent-color, 0.05);
     }
 
     &::placeholder {
@@ -1411,8 +1477,8 @@
 
     &:focus {
       outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.05);
+      border-color: $accent-color;
+      box-shadow: 0 0 0 2px rgba($accent-color, 0.05);
     }
 
     &::placeholder {
@@ -1493,7 +1559,7 @@
     transition: background 0.2s ease;
 
     &:hover {
-      background: rgba($primary-color, 0.05);
+      background: $section-bg-2;
     }
   }
 
@@ -1507,12 +1573,12 @@
     justify-content: flex-end;
     margin-top: $spacing-md;
     padding-top: $spacing-md;
-    border-top: 1px solid rgba($primary-color, 0.1);
+    border-top: 1px solid $border-light;
     gap: $spacing-sm;
   }
 
   .saveBtn, .secondaryBtn {
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
     border: none;
     padding: 10px 20px;
@@ -1524,7 +1590,7 @@
     font-family: $font-main;
 
     &:hover {
-      background: $hover-green;
+      background: darken($provider-colors-3, 10%);
       transform: translateY(-1px);
     }
 
@@ -1565,20 +1631,20 @@
     color: $dark-text;
 
     &:hover {
-      border-color: $primary-color;
-      background: rgba($primary-color, 0.05);
+      border-color: $provider-colors-3;
+      background: $section-bg-2;
     }
 
     input[type="checkbox"] {
       margin: 0;
       cursor: pointer;
-      accent-color: $primary-color;
+      accent-color: $provider-colors-3;
     }
 
     &:has(input:checked) {
-      background: rgba($primary-color, 0.1);
-      border-color: $primary-color;
-      color: $primary-color;
+      background: $section-bg-2;
+      border-color: $provider-colors-3;
+      color: $provider-colors-3;
     }
   }
 
@@ -1603,7 +1669,7 @@
     align-items: center;
     gap: $spacing-xs;
     padding: $spacing-xs $spacing-sm;
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
     border-radius: 20px;
     font-size: 0.85rem;
@@ -1653,11 +1719,11 @@
 
   .suggestionButton {
     padding: 8px 16px !important;
-    border: 2px solid $primary-color !important;
+    border: 2px solid $provider-colors-3 !important;
     border-radius: 25px !important;
     background: $bg-white !important;
     font-size: 0.85rem !important;
-    color: $primary-color !important;
+    color: $provider-colors-3 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
     font-weight: 600 !important;
@@ -1665,14 +1731,14 @@
     display: inline-flex !important;
     align-items: center !important;
     min-height: 36px !important;
-    box-shadow: 0 2px 4px rgba($primary-color, 0.15) !important;
+    box-shadow: 0 2px 4px $shadow-color !important;
 
     &:hover {
-      border-color: $hover-green !important;
-      background: rgba($primary-color, 0.08) !important;
-      box-shadow: 0 4px 8px rgba($primary-color, 0.2) !important;
+      border-color: $provider-colors-3 !important;
+      background: $section-bg-2 !important;
+      box-shadow: 0 4px 8px $shadow-color !important;
       transform: translateY(-2px) !important;
-      color: $hover-green !important;
+      color: $provider-colors-3 !important;
     }
 
     &:active {
@@ -1708,13 +1774,13 @@
   gap: $spacing-sm;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   &.active {
-    border-color: $primary-color;
-    background: rgba($primary-color, 0.05);
-    color: $primary-color;
+    border-color: $accent-color;
+    background: $section-bg-2;
+    color: $provider-colors-3;
   }
 }
 
@@ -1786,7 +1852,7 @@
   background: $bg-white;
   border: 2px dashed $border-color;
   border-radius: 6px;
-  color: $primary-color;
+  color: $provider-colors-3;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
@@ -1799,8 +1865,8 @@
   }
 
   &:hover {
-    border-color: $primary-color;
-    background: rgba($primary-color, 0.05);
+    border-color: $accent-color;
+    background: $section-bg-2;
   }
 }
 
@@ -1865,7 +1931,7 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -1974,7 +2040,7 @@
   background: $bg-white;
   border: 2px dashed $border-color;
   border-radius: 6px;
-  color: $primary-color;
+  color: $provider-colors-3;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.85rem;
@@ -1983,8 +2049,8 @@
   width: fit-content;
 
   &:hover {
-    border-color: $primary-color;
-    background: rgba($primary-color, 0.05);
+    border-color: $accent-color;
+    background: $section-bg-2;
   }
 }
 
@@ -2009,7 +2075,7 @@
   padding: 8px 16px !important;
   border: none !important;
   border-radius: 25px !important;
-  background: $primary-color !important;
+  background: $provider-colors-3 !important;
   font-size: 0.85rem !important;
   color: $bg-white !important;
   font-weight: 600 !important;
@@ -2023,11 +2089,11 @@
 
 .suggestionButton {
   padding: 8px 16px !important;
-  border: 2px solid $primary-color !important;
+  border: 2px solid $provider-colors-3 !important;
   border-radius: 25px !important;
   background: $bg-white !important;
   font-size: 0.85rem !important;
-  color: $primary-color !important;
+  color: $provider-colors-3 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
   font-weight: 600 !important;
@@ -2036,7 +2102,7 @@
   align-items: center !important;
   justify-content: center !important;
   min-height: 36px !important;
-  box-shadow: 0 2px 4px rgba($primary-color, 0.15) !important;
+  box-shadow: 0 2px 4px $shadow-color !important;
   margin-right: 15px !important;
   margin-bottom: 15px !important;
 }
@@ -2155,7 +2221,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   margin-bottom: $spacing-sm;
 }
 
@@ -2188,7 +2254,7 @@
 .favoritePrice {
   font-family: $font-heading;
   font-size: 1.1rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   font-weight: $font-weight-semibold;
 }
 
@@ -2253,7 +2319,7 @@
   
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     box-shadow: 0 0 0 2px rgba(108, 79, 112, 0.1);
   }
 }
@@ -2307,7 +2373,7 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
+      border-color: $provider-colors-3;
       box-shadow: 0 0 0 2px rgba(108, 79, 112, 0.1);
     }
   }
@@ -2321,7 +2387,7 @@
 }
 
 .searchBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $cta-text;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -2331,7 +2397,7 @@
   cursor: pointer;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2362,7 +2428,7 @@
   
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -2429,7 +2495,7 @@
 .spacePrice {
   font-family: $font-heading;
   font-size: 1.1rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   font-weight: $font-weight-semibold;
   margin-bottom: $spacing-sm;
 }
@@ -2470,11 +2536,11 @@
 }
 
 .primaryBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $cta-text;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2499,11 +2565,11 @@
 }
 
 .messageBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $cta-text;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2518,11 +2584,11 @@
 }
 
 .bookBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $cta-text;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2555,11 +2621,11 @@
 }
 
 .saveBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $cta-text;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2574,11 +2640,11 @@
 }
 
 .uploadBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $cta-text;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2637,14 +2703,14 @@
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 4px 12px $shadow-color;
   }
 }
 
 .syncIcon {
   font-size: 2rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   margin-bottom: $spacing-md;
 }
 
@@ -2661,7 +2727,7 @@
 }
 
 .syncBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -2675,7 +2741,7 @@
   margin: 0 auto;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -2797,9 +2863,9 @@
   font-size: 0.9rem;
 
   &:hover {
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -2808,36 +2874,82 @@
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
   background: $border-light;
-  border: 1px solid $border-light;
   border-radius: 4px;
   overflow: hidden;
 }
 
 .calendarDayHeader {
-  background: $background-gray;
+  background: $muted-bg;
   padding: $spacing-sm;
   text-align: center;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: $dark-text;
-  font-size: 0.9rem;
+  color: $subtext-color;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .calendarDay {
   background: $bg-white;
   padding: $spacing-sm;
-  min-height: 40px;
+  min-height: 80px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  text-align: center;
+  font-size: 0.875rem;
+  color: $dark-text;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-
+  transition: background 0.2s ease;
+  position: relative;
+  
   &:hover {
+    background: $section-bg-1;
+  }
+
+  &.otherMonth {
+    color: $subtext-color;
+    opacity: 0.5;
+  }
+
+  &.today {
+    background: $section-bg-2;
+    font-weight: 700;
+
+    .dayNumber {
+      color: $provider-colors-3;
+    }
+  }
+
+  &.hasBookings {
+    background: $calendar-has-appointment;
+    
+    .bookingIndicator {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background: $provider-colors-3;
+      border-radius: 50%;
+    }
+  }
+
+  &.selected {
     background: $background-light;
+    border: 2px solid $provider-colors-3;
+  }
+
+  .dayNumber {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $dark-text;
   }
 
   &:empty {
-    background: $background-gray;
+    background: $bg-white;
     cursor: default;
 
     &:hover {
@@ -2881,7 +2993,7 @@
   align-items: center;
   gap: $spacing-xs;
   font-weight: 500;
-  color: $primary-color;
+  color: $provider-colors-3;
   min-width: 120px;
 }
 
@@ -2938,14 +3050,14 @@
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 4px 12px $shadow-color;
   }
 }
 
 .balanceIcon {
   font-size: 2rem;
-  color: $primary-color;
+  color: $provider-colors-3;
 }
 
 .balanceInfo {
@@ -3080,7 +3192,7 @@
 }
 
 .editPayoutBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-xs $spacing-sm;
@@ -3089,7 +3201,7 @@
   cursor: pointer;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -3128,7 +3240,7 @@
   align-items: center;
   gap: $spacing-xs;
   font-weight: 500;
-  color: $primary-color;
+  color: $provider-colors-3;
   min-width: 120px;
 }
 
@@ -3195,14 +3307,14 @@
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 4px 12px $shadow-color;
   }
 }
 
 .reportIcon {
   font-size: 2rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   margin-bottom: $spacing-md;
 }
 
@@ -3220,7 +3332,7 @@
 }
 
 .downloadBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -3234,7 +3346,7 @@
   margin: 0 auto;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -3279,12 +3391,12 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
 .generateBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -3294,7 +3406,7 @@
   height: fit-content;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -3303,6 +3415,74 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-lg;
+}
+
+// Notifications Styles
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.notificationItem {
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-md;
+  transition: all 0.2s ease;
+
+  &.unread {
+    background: rgba($provider-colors-3, 0.05);
+    border-left: 3px solid $provider-colors-3;
+  }
+
+  &:hover {
+    background: $section-bg-1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.notificationContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.notificationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.notificationTitle {
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  color: $dark-text;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  background: $provider-colors-3;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.notificationMessage {
+  font-size: 0.95rem;
+  color: $subtext-color;
+  margin: 0;
+  line-height: 1.5;
+  font-family: $font-main;
+}
+
+.notificationTime {
+  font-size: 0.85rem;
+  color: $subtext-color;
+  font-family: $font-main;
 }
 
 .conversationsList {
@@ -3337,7 +3517,7 @@
 .conversationAvatar {
   width: 40px;
   height: 40px;
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border-radius: 50%;
   display: flex;
@@ -3375,7 +3555,7 @@
 }
 
 .unreadBadge {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   padding: 2px 6px;
   border-radius: 10px;
@@ -3428,7 +3608,7 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -3447,7 +3627,7 @@
 }
 
 .sendBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -3459,7 +3639,7 @@
   gap: $spacing-xs;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -3566,7 +3746,7 @@
 }
 
 .addTemplateBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -3578,7 +3758,7 @@
   gap: $spacing-xs;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -3655,7 +3835,7 @@
 }
 
 .reminderIcon {
-  color: $primary-color;
+  color: $provider-colors-3;
   font-size: 1.2rem;
 }
 
@@ -3728,7 +3908,7 @@
 }
 
 .addServiceBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -3740,7 +3920,7 @@
   gap: $spacing-xs;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -3857,7 +4037,7 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -3941,7 +4121,7 @@
 }
 
 .addBlockedBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -3953,7 +4133,7 @@
   gap: $spacing-xs;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -4079,9 +4259,9 @@
   position: relative;
 
   &:hover {
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     transform: translateY(-1px);
   }
 
@@ -4124,8 +4304,8 @@
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 4px 12px $shadow-color;
     transform: translateY(-1px);
   }
 }
@@ -4178,8 +4358,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 4px 12px $shadow-color;
   }
 }
 
@@ -4191,8 +4371,8 @@
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 4px 12px $shadow-color;
   }
 }
 
@@ -4235,7 +4415,7 @@
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-xs $spacing-sm;
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   border-radius: 4px;
@@ -4246,7 +4426,7 @@
   position: relative;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 
   // Custom tooltip
@@ -4350,8 +4530,8 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.05);
+    border-color: $accent-color;
+    box-shadow: 0 0 0 2px rgba($accent-color, 0.05);
   }
 
   &::placeholder {
@@ -4437,7 +4617,7 @@
 }
 
 .specialtyTag {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   padding: $spacing-xs $spacing-sm;
   border-radius: 20px;
@@ -4454,7 +4634,7 @@
 }
 
 .saveBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: 10px 20px;
@@ -4465,7 +4645,7 @@
   font-family: $font-main;
 
   &:hover {
-    background: $hover-green;
+    background: darken($provider-colors-3, 10%);
     transform: translateY(-1px);
   }
 }
@@ -4515,7 +4695,7 @@
 
 .certIcon {
   font-size: 1.5rem;
-  color: $primary-color;
+  color: $provider-colors-3;
 }
 
 .certInfo {
@@ -4588,14 +4768,14 @@
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: $primary-color;
-    background: rgba($primary-color, 0.02);
+    border-color: $provider-colors-3;
+    background: $section-bg-2;
   }
 }
 
 .uploadIcon {
   font-size: 2rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   margin-bottom: $spacing-sm;
 }
 
@@ -4617,7 +4797,7 @@
 }
 
 .addCertBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -4629,7 +4809,7 @@
   gap: $spacing-xs;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -4739,8 +4919,8 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
   }
 
   &::placeholder {
@@ -4798,8 +4978,8 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
   }
 
   &::placeholder {
@@ -4884,7 +5064,7 @@
 }
 
 .locationIcon {
-  color: $primary-color;
+  color: $provider-colors-3;
   font-size: 0.9rem;
   width: 16px;
   text-align: center;
@@ -4964,7 +5144,7 @@
 }
 
 .removeAddOnBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   border-radius: 4px;
@@ -4978,7 +5158,7 @@
   font-size: 0.8rem;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -4996,9 +5176,9 @@
   font-size: 0.85rem;
 
   &:hover {
-    border-color: $primary-color;
-    color: $primary-color;
-    background: lighten($primary-color, 45%);
+    border-color: $provider-colors-3;
+    color: $provider-colors-3;
+    background: lighten($provider-colors-3, 45%);
   }
 }
 
@@ -5012,7 +5192,7 @@
 }
 
 .saveBtn {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   padding: $spacing-sm $spacing-md;
@@ -5023,7 +5203,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -5033,9 +5213,9 @@
   align-items: center;
   justify-content: space-between;
   padding: $spacing-sm;
-  background: linear-gradient(135deg, $primary-color 0%, $hover-green 100%);
+  background: linear-gradient(135deg, $provider-colors-3 0%, darken($provider-colors-3, 15%) 100%);
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba($primary-color, 0.2);
+  box-shadow: 0 2px 8px $shadow-color;
   margin-top: $spacing-xs;
 }
 
@@ -5078,7 +5258,7 @@
 .paymentAmount {
   font-size: 1.1rem;
   font-weight: 700;
-  color: $primary-color;
+  color: $provider-colors-3;
 }
 
 .paymentDescription {
@@ -5115,7 +5295,7 @@
 .practiceOption {
   padding: 6px $spacing-sm;
   background: $bg-white;
-  border: 1px solid $primary-color;
+  border: 1px solid $provider-colors-3;
   border-radius: 4px;
   color: $dark-text;
   font-size: 0.9rem;
@@ -5128,16 +5308,16 @@
   text-align: center;
 
   &:hover {
-    background: $primary-color;
+    background: $provider-colors-3;
     color: $bg-white;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
 .practiceSelected {
-  background: $primary-color !important;
+  background: $provider-colors-3 !important;
   color: $bg-white !important;
-  border-color: $primary-color !important;
+  border-color: $provider-colors-3 !important;
 }
 
 // Calendar View Styles
@@ -5173,9 +5353,9 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: $primary-color;
+      background: $provider-colors-3;
       color: $bg-white;
-      border-color: $primary-color;
+      border-color: $provider-colors-3;
     }
   }
 }
@@ -5190,12 +5370,12 @@
 }
 
 .weekday {
-  background: $background-light;
+  background: $muted-bg;
   padding: $spacing-sm;
   text-align: center;
+  font-size: 0.875rem;
   font-weight: 600;
-  font-size: 0.85rem;
-  color: $dark-text;
+  color: $subtext-color;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -5208,12 +5388,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  text-align: center;
+  font-size: 0.875rem;
+  color: $dark-text;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.2s ease;
   position: relative;
-
+  
   &:hover {
-    background: $background-light;
+    background: $section-bg-1;
   }
 
   &.otherMonth {
@@ -5222,11 +5405,11 @@
   }
 
   &.today {
-    background: rgba($primary-color, 0.1);
+    background: $section-bg-2;
     font-weight: 700;
 
     .dayNumber {
-      color: $primary-color;
+      color: $provider-colors-3;
     }
   }
 
@@ -5240,14 +5423,14 @@
       transform: translateX(-50%);
       width: 6px;
       height: 6px;
-      background: $primary-color;
+      background: $provider-colors-3;
       border-radius: 50%;
     }
   }
 
   &.selected {
-    background: rgba($primary-color, 0.2);
-    border: 2px solid $primary-color;
+    background: $background-light;
+    border: 2px solid $provider-colors-3;
   }
 
   .dayNumber {
@@ -5397,9 +5580,9 @@
     position: relative;
 
     &:hover {
-      background: $primary-color;
+      background: $provider-colors-3;
       color: $bg-white;
-      border-color: $primary-color;
+      border-color: $provider-colors-3;
     }
 
     svg {

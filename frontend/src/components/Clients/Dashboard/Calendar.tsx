@@ -53,7 +53,9 @@ export default function Calendar({ activeSubmenu }: CalendarProps) {
 
         if (response.ok) {
           const data = await response.json();
-          setBookings(data);
+          // Filter out canceled appointments
+          const activeBookings = data.filter((booking: Booking) => booking.status !== 'cancelled');
+          setBookings(activeBookings);
         }
       } catch (error) {
         console.error('Error fetching bookings:', error);

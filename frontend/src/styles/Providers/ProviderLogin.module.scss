@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
+  background: linear-gradient(135deg, rgba($provider-colors-1, 0.1) 0%, rgba($provider-colors-3, 0.05) 100%);
   padding: 1rem;
 }
 
@@ -30,25 +30,25 @@
   gap: 0.25rem;
   
   &:hover {
-    color: $primary-color;
+    color: $provider-colors-3;
   }
 }
 
 .formContainer {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba($primary-color, 0.15);
+  box-shadow: 0 8px 32px $shadow-color;
   width: 100%;
   max-width: 450px;
   overflow: hidden;
-  border: 1px solid rgba($primary-color, 0.1);
+  border: 1px solid $border-light;
 }
 
 // Navigation Tabs
 .navTabs {
   display: flex;
-  background-color: rgba($primary-color, 0.08);
-  border-bottom: 2px solid rgba($primary-color, 0.15);
+  background-color: rgba($provider-colors-1, 0.2);
+  border-bottom: 2px solid rgba($provider-colors-3, 0.2);
 }
 
 .navTab {
@@ -66,7 +66,7 @@
   position: relative;
   
   &:hover {
-    color: $primary-color;
+    color: $provider-colors-3;
   }
   
   &.active {
@@ -81,7 +81,7 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: $primary-color;
+      background: $provider-colors-3;
     }
   }
 }
@@ -136,7 +136,7 @@
 .passwordInput {
   width: 100%;
   padding: 1rem 1.25rem;
-  border: 2px solid rgba($primary-color, 0.15);
+  border: 2px solid $border-light;
   border-radius: 12px;
   font-family: $font-main;
   font-size: 1rem;
@@ -145,8 +145,8 @@
   
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+    border-color: $provider-colors-3;
+    box-shadow: 0 0 0 4px rgba($provider-colors-3, 0.1);
   }
   
   &::placeholder {
@@ -193,14 +193,14 @@
   transition: color 0.2s ease;
   
   &:hover {
-    color: $primary-color;
+    color: $provider-colors-3;
   }
 }
 
 .loginButton {
   width: 100%;
   padding: 1rem 2rem;
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $light-text;
   border: none;
   border-radius: 12px;
@@ -224,9 +224,9 @@
   }
   
   &:hover {
-    background: $hover-green;
+    background: darken($provider-colors-3, 10%);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    box-shadow: 0 4px 12px $shadow-color;
   }
 }
 
@@ -241,7 +241,7 @@
 }
 
 .forgotPasswordLink {
-  color: $primary-color;
+  color: $provider-colors-3;
   text-decoration: none;
   font-family: $font-main;
   font-size: 0.875rem;
@@ -265,7 +265,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba($primary-color, 0.2);
+    background: $border-light;
   }
 }
 
@@ -290,7 +290,7 @@
   width: 100%;
   padding: 1rem 1.25rem;
   background: white;
-  border: 2px solid rgba($primary-color, 0.15);
+  border: 2px solid $border-light;
   border-radius: 12px;
   font-family: $font-main;
   font-weight: 500;
@@ -303,8 +303,8 @@
   gap: 0.75rem;
   
   &:hover {
-    background: rgba($primary-color, 0.02);
-    border-color: $primary-color;
+    background: rgba($provider-colors-1, 0.2);
+    border-color: $provider-colors-3;
     transform: translateY(-1px);
   }
 }
@@ -337,7 +337,7 @@
 }
 
 .switchLink {
-  color: $primary-color;
+  color: $provider-colors-3;
   text-decoration: none;
   font-weight: 600;
   
@@ -356,7 +356,7 @@
 }
 
 .legalLink {
-  color: $primary-color;
+  color: $provider-colors-3;
   text-decoration: none;
   font-weight: 600;
   

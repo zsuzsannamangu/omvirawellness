@@ -177,6 +177,7 @@ export default function ProviderDetailPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProvider = async () => {
@@ -255,6 +256,34 @@ export default function ProviderDetailPage() {
             setProvider(transformedProvider);
             if (transformedProvider?.serviceDetails?.length > 0) {
               setSelectedService(transformedProvider.serviceDetails[0]);
+            }
+
+            // Fetch reviews separately
+            try {
+              const reviewsResponse = await fetch(`http://localhost:4000/api/reviews/provider/${data.id}`);
+              if (reviewsResponse.ok) {
+                const reviewsData = await reviewsResponse.json();
+                // Transform reviews to match expected format
+                const transformedReviews = Array.isArray(reviewsData) ? reviewsData.map((review: any) => ({
+                  id: review.id,
+                  rating: review.rating,
+                  comment: review.comment || '',
+                  title: review.title || '',
+                  name: review.reviewer_first_name && review.reviewer_last_name
+                    ? `${review.reviewer_first_name} ${review.reviewer_last_name}`
+                    : review.reviewer_email?.split('@')[0] || 'Anonymous',
+                  date: new Date(review.created_at).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  }),
+                  recommends: true // Default to true since recommends column doesn't exist in DB yet
+                })) : [];
+                setReviews(transformedReviews);
+              }
+            } catch (reviewError) {
+              console.error('Error fetching reviews:', reviewError);
+              setReviews([]);
             }
           } else {
             const errorText = await response.text();
@@ -354,11 +383,11 @@ export default function ProviderDetailPage() {
   };
 
   const reviewsPerPage = 4;
-  const totalReviewPages = Math.ceil(provider?.reviews?.length / reviewsPerPage) || 1;
-  const currentReviews = provider?.reviews?.slice(
+  const totalReviewPages = Math.ceil(reviews.length / reviewsPerPage) || 1;
+  const currentReviews = reviews.slice(
     (currentReviewPage - 1) * reviewsPerPage,
     currentReviewPage * reviewsPerPage
-  ) || [];
+  );
 
   const goToReviewPage = (page: number) => {
     setCurrentReviewPage(page);
@@ -867,16 +896,14 @@ export default function ProviderDetailPage() {
                       )}
                     </div>
                     <div className={styles.reviewerInfo}>
-                      <div className={styles.avatar}>
-                        {review.name.charAt(0)}
-                      </div>
-                      <div className={styles.reviewerDetails}>
-                        <span className={styles.reviewerName}>{review.name}</span>
-                        <span className={styles.reviewDate}>{review.date}</span>
-                      </div>
+                      <span className={styles.reviewerName}>{review.name}</span>
+                      <span className={styles.reviewSeparator}>|</span>
+                      <span className={styles.reviewDate}>{review.date}</span>
                     </div>
                   </div>
-                  <p className={styles.reviewComment}>{review.comment}</p>
+                  {review.comment && (
+                    <p className={styles.reviewComment}>{review.comment}</p>
+                  )}
                 </div>
               ))}
             </div>

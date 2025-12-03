@@ -59,3 +59,4 @@ If you want full functionality:
 - ✅ Perfect for portfolio/resume showcase
 
 
+

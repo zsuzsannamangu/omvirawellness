@@ -27,6 +27,8 @@ export default function ProvidersDashboard() {
   const [totalClients, setTotalClients] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<number>(0);
+  const [unreadNotifications, setUnreadNotifications] = useState<number>(0);
+  const [unreadMessages, setUnreadMessages] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,7 +37,9 @@ export default function ProvidersDashboard() {
     const user = localStorage.getItem('user');
     
     if (!token || !user) {
-      router.push('/providers/login');
+      // Clear any remaining state and redirect
+      setLoading(false);
+      router.replace('/providers/login');
       return;
     }
     
@@ -113,27 +117,132 @@ export default function ProvidersDashboard() {
 
   // Load pending requests count
   useEffect(() => {
+    let isMounted = true;
+    
     const loadPending = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token || !userId) return;
+        if (!token || !userId || !isMounted) return;
         const resp = await fetch(`http://localhost:4000/api/bookings/provider/${userId}/pending`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (resp.ok) {
+        if (resp.ok && isMounted) {
           const data = await resp.json();
           setPendingRequests(Array.isArray(data) ? data.length : 0);
         }
       } catch (e) {
-        setPendingRequests(0);
+        if (isMounted) {
+          setPendingRequests(0);
+        }
       }
     };
 
     loadPending();
 
-    const refresh = () => loadPending();
+    const refresh = () => {
+      if (isMounted) {
+        loadPending();
+      }
+    };
     window.addEventListener('refreshBookings', refresh);
-    return () => window.removeEventListener('refreshBookings', refresh);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('refreshBookings', refresh);
+    };
+  }, [userId]);
+
+  // Load unread notifications count
+  useEffect(() => {
+    let isMounted = true;
+    
+    const loadUnreadNotifications = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !userId || !isMounted) return;
+        const resp = await fetch('http://localhost:4000/api/notifications/unread-count', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resp.ok && isMounted) {
+          const data = await resp.json();
+          setUnreadNotifications(data.count || 0);
+        }
+      } catch (e) {
+        if (isMounted) {
+          setUnreadNotifications(0);
+        }
+      }
+    };
+
+    loadUnreadNotifications();
+
+    // Refresh notifications when bookings are updated (might include notification triggers)
+    const refresh = () => {
+      if (isMounted) {
+        loadUnreadNotifications();
+      }
+    };
+    window.addEventListener('refreshBookings', refresh);
+    
+    // Also listen for notification updates
+    const refreshNotifications = () => {
+      if (isMounted) {
+        loadUnreadNotifications();
+      }
+    };
+    window.addEventListener('refreshNotifications', refreshNotifications);
+    
+    return () => {
+      isMounted = false;
+      window.removeEventListener('refreshBookings', refresh);
+      window.removeEventListener('refreshNotifications', refreshNotifications);
+    };
+  }, [userId]);
+
+  // Load unread messages count
+  useEffect(() => {
+    let isMounted = true;
+    
+    const loadUnreadMessages = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !userId || !isMounted) return;
+        const resp = await fetch('http://localhost:4000/api/messages/unread-count', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resp.ok && isMounted) {
+          const data = await resp.json();
+          setUnreadMessages(data.count || 0);
+        }
+      } catch (e) {
+        if (isMounted) {
+          setUnreadMessages(0);
+        }
+      }
+    };
+
+    loadUnreadMessages();
+
+    // Refresh messages when bookings are updated
+    const refresh = () => {
+      if (isMounted) {
+        loadUnreadMessages();
+      }
+    };
+    window.addEventListener('refreshBookings', refresh);
+    
+    // Also listen for message updates
+    const refreshMessages = () => {
+      if (isMounted) {
+        loadUnreadMessages();
+      }
+    };
+    window.addEventListener('refreshMessages', refreshMessages);
+    
+    return () => {
+      isMounted = false;
+      window.removeEventListener('refreshBookings', refresh);
+      window.removeEventListener('refreshMessages', refreshMessages);
+    };
   }, [userId]);
 
   // Allow children to request submenu switch (e.g., after accepting a booking)
@@ -252,9 +361,11 @@ export default function ProvidersDashboard() {
     analytics: [
       { id: 'bookings', label: 'Bookings' },
       { id: 'revenue', label: 'Revenue Trends' },
+      { id: 'reviews', label: 'Reviews' },
       { id: 'retention', label: 'Retention' },
     ],
     messages: [
+      { id: 'notifications', label: 'Notifications' },
       { id: 'communication', label: 'Client Communication' },
       { id: 'reminders', label: 'Reminders' },
     ],
@@ -441,9 +552,12 @@ export default function ProvidersDashboard() {
               className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
               onClick={() => {
                 if (item.id === 'signout') {
+                  // Clear authentication
                   localStorage.removeItem('token');
                   localStorage.removeItem('user');
-                  router.push('/providers');
+                  // Stop loading state and redirect immediately
+                  setLoading(false);
+                  router.replace('/providers/login');
                 } else {
                   setActiveSection(item.id);
                   const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
@@ -452,6 +566,9 @@ export default function ProvidersDashboard() {
               }}
             >
               <span className={styles.sidebarLabel}>{item.label}</span>
+              {item.id === 'messages' && (unreadNotifications + unreadMessages) > 0 && (
+                <span className={styles.badge}>{unreadNotifications + unreadMessages}</span>
+              )}
             </button>
           ))}
         </nav>
@@ -511,6 +628,12 @@ export default function ProvidersDashboard() {
               {item.label}
               {activeSection === 'bookings' && item.id === 'requests' && pendingRequests > 0 && (
                 <span className={styles.badge}>{pendingRequests}</span>
+              )}
+              {activeSection === 'messages' && item.id === 'notifications' && unreadNotifications > 0 && (
+                <span className={styles.badge}>{unreadNotifications}</span>
+              )}
+              {activeSection === 'messages' && item.id === 'communication' && unreadMessages > 0 && (
+                <span className={styles.badge}>{unreadMessages}</span>
               )}
             </button>
           ))}

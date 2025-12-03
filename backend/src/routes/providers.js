@@ -127,6 +127,48 @@ router.get('/:id/availability', async (req, res) => {
         : result.rows[0].availability;
     }
     
+    // Also get existing confirmed bookings and add them as blocked slots
+    // This ensures rescheduled bookings are properly blocked even if the blocked slot wasn't saved correctly
+    const bookingsResult = await pool.query(
+      `SELECT booking_date, start_time, duration_minutes 
+       FROM client_provider_bookings 
+       WHERE provider_id = $1 
+       AND status IN ('confirmed', 'requested')
+       AND booking_date >= CURRENT_DATE`,
+      [providerProfileId]
+    );
+    
+    // Create a set of existing blocked slots to avoid duplicates
+    const existingBlockedSlots = new Set();
+    availability.forEach((slot) => {
+      if (slot.type === 'blocked' && slot.date && slot.time) {
+        const dateStr = String(slot.date).slice(0, 10);
+        const timeStr = String(slot.time).slice(0, 5);
+        existingBlockedSlots.add(`${dateStr}|${timeStr}`);
+      }
+    });
+    
+    // Add blocked slots for existing confirmed bookings
+    bookingsResult.rows.forEach((booking) => {
+      const bookingDate = String(booking.booking_date).slice(0, 10);
+      const bookingTime = String(booking.start_time).slice(0, 5);
+      const slotKey = `${bookingDate}|${bookingTime}`;
+      
+      // Only add if it doesn't already exist as a blocked slot
+      if (!existingBlockedSlots.has(slotKey)) {
+        availability.push({
+          id: `booking-${bookingDate}-${bookingTime}`,
+          date: bookingDate,
+          time: bookingTime,
+          duration: booking.duration_minutes || 60,
+          isRecurring: false,
+          type: 'blocked',
+          notes: 'Auto-blocked by existing booking'
+        });
+        existingBlockedSlots.add(slotKey);
+      }
+    });
+    
     res.json({ availability });
   } catch (err) {
     console.error('Error fetching availability:', err);

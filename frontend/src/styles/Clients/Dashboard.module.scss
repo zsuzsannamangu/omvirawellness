@@ -30,7 +30,7 @@
   font-family: $font-heading;
   font-size: 1.25rem;
   font-weight: 700;
-  color: $primary-color;
+  color: $client-colors-1;
   margin: 0;
 }
 
@@ -54,13 +54,13 @@
   color: $dark-text;
 
   &:hover {
-    background: rgba($primary-color, 0.05);
+    background: $section-bg-2;
   }
 
   &.active {
-    background: rgba($primary-color, 0.1);
-    color: $primary-color;
-    border-right: 3px solid $primary-color;
+    background: $background-light;
+    color: $client-colors-1;
+    border-right: 3px solid $client-colors-1;
   }
 }
 
@@ -140,7 +140,7 @@
 }
 
 .profileLink {
-  color: $primary-color;
+  color: $client-colors-1;
   text-decoration: none;
   cursor: pointer;
   
@@ -150,7 +150,7 @@
 }
 
 .findProviderBtn {
-  background: $primary-color;
+  background: $client-colors-1;
   color: $bg-white;
   border: none;
   padding: $spacing-xs $spacing-sm;
@@ -216,7 +216,7 @@
 .profileInitials {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+  background: linear-gradient(135deg, $client-colors-1 0%, $client-colors-2 100%);
   color: $bg-white;
   display: flex;
   align-items: center;
@@ -271,8 +271,8 @@
   }
 
   &.active {
-    color: $primary-color;
-    border-bottom-color: $primary-color;
+    color: $client-colors-1;
+    border-bottom-color: $client-colors-1;
     font-weight: 600;
   }
 }
@@ -343,7 +343,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $client-colors-1;
   }
 }
 
@@ -419,26 +419,26 @@
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $client-colors-1;
   }
 }
 
-.sessionDate {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 50px;
-  padding: $spacing-xs;
-  background: rgba($primary-color, 0.1);
-  border-radius: 4px;
-}
+  .sessionDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+    padding: $spacing-xs;
+    background: $section-bg-2;
+    border-radius: 4px;
+  }
 
-.day {
-  font-family: $font-subheading;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: $primary-color;
-}
+  .day {
+    font-family: $font-subheading;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $client-colors-1;
+  }
 
 .month {
   font-size: 0.7rem;
@@ -488,6 +488,14 @@
   gap: $spacing-xs;
 }
 
+.reviewLeftText {
+  color: $subtext-color;
+  font-size: 0.875rem;
+  font-style: italic;
+  padding: $spacing-xs 0;
+  font-family: $font-main;
+}
+
 .actionBtn {
   padding: $spacing-xs $spacing-sm;
   background: $bg-white;
@@ -500,8 +508,8 @@
   color: $dark-text;
 
   &:hover {
-    background: rgba($primary-color, 0.05);
-    border-color: $primary-color;
+    background: $section-bg-2;
+    border-color: $client-colors-1;
   }
 }
 
@@ -614,7 +622,7 @@
   .stepNumber {
     width: 40px;
     height: 40px;
-    background: $primary-color;
+    background: $client-colors-1;
     color: $bg-white;
     border-radius: 50%;
     display: flex;
@@ -658,7 +666,7 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
+      border-color: $client-colors-1;
     }
   }
   
@@ -684,7 +692,7 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
+      border-color: $client-colors-1;
     }
   }
   
@@ -719,7 +727,7 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
+      border-color: $client-colors-1;
     }
   }
   
@@ -740,7 +748,7 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
+      border-color: $client-colors-1;
     }
   }
   
@@ -798,7 +806,7 @@
   
   .confirmBookingBtn {
     padding: $spacing-sm $spacing-xl;
-    background: $primary-color;
+    background: $client-colors-1;
     color: $bg-white;
     border: none;
     border-radius: 6px;
@@ -875,12 +883,12 @@
   }
 
   .confirmed {
-    background: rgba($primary-color, 0.1);
+    background: $section-bg-2;
     color: $subtext-color;
   }
 
   .cancelled {
-    background: rgba($accent-color, 0.1);
+    background: rgba($client-colors-1, 0.1);
     color: $subtext-color;
   }
 
@@ -931,7 +939,7 @@
   }
 
   .statusConfirmed {
-    color: $primary-color;
+    color: $client-colors-1;
     font-size: 0.875rem;
     font-weight: 600;
   }
@@ -951,7 +959,7 @@
   }
   
   .bookAgainBtn {
-    background: $primary-color;
+    background: $client-colors-1;
     color: $bg-white;
     border: none;
     padding: $spacing-xs $spacing-sm;
@@ -984,7 +992,7 @@
 }
 
 .confirmed {
-  background: rgba($primary-color, 0.1);
+  background: $section-bg-2;
   color: $subtext-color;
 }
 
@@ -1101,7 +1109,7 @@
   }
   
   .servicePrice {
-    color: $primary-color;
+    color: $client-colors-1;
     font-size: 1rem;
   }
   
@@ -1113,7 +1121,7 @@
   }
   
   .bookBtn {
-    background: $primary-color;
+    background: $client-colors-1;
     color: $bg-white;
     border: none;
     padding: $spacing-xs $spacing-sm;
@@ -1170,12 +1178,12 @@
     .count {
       font-size: 2rem;
       font-weight: 700;
-      color: $primary-color;
+      color: $client-colors-1;
       margin: 0 0 $spacing-md 0;
     }
     
     .viewBtn {
-      background: $primary-color;
+      background: $client-colors-1;
       color: $bg-white;
       border: none;
       padding: $spacing-xs $spacing-md;
@@ -1227,7 +1235,7 @@
 }
 
 .exploreBtn {
-  background: $primary-color;
+  background: $client-colors-1;
   color: $bg-white;
   text-decoration: none;
   padding: $spacing-sm $spacing-lg;
@@ -1315,9 +1323,9 @@
     justify-content: center;
     
     &:hover {
-      background: $primary-color;
+      background: $client-colors-1;
       color: $bg-white;
-      border-color: $primary-color;
+      border-color: $client-colors-1;
     }
   }
   
@@ -1363,7 +1371,7 @@
   }
   
   .receiptAmount {
-    color: $primary-color;
+    color: $client-colors-1;
     font-size: 1.125rem;
     font-weight: 600;
     margin: 0;
@@ -1385,9 +1393,9 @@
     transition: all 0.2s ease;
     
     &:hover {
-      background: $primary-color;
+      background: $client-colors-1;
       color: $bg-white;
-      border-color: $primary-color;
+      border-color: $client-colors-1;
     }
   }
   
@@ -1416,7 +1424,7 @@
     .amount {
       font-size: 2rem;
       font-weight: 700;
-      color: $primary-color;
+      color: $client-colors-1;
       margin: 0 0 $spacing-xs 0;
     }
     
@@ -1429,12 +1437,12 @@
     .count {
       font-size: 1.5rem;
       font-weight: 700;
-      color: $primary-color;
+      color: $client-colors-1;
       margin: 0 0 $spacing-md 0;
     }
     
     .viewBtn {
-      background: $primary-color;
+      background: $client-colors-1;
       color: $bg-white;
       border: none;
       padding: $spacing-xs $spacing-md;
@@ -1486,7 +1494,7 @@
 }
 
 .exploreBtn {
-  background: $primary-color;
+  background: $client-colors-1;
   color: $bg-white;
   text-decoration: none;
   padding: $spacing-sm $spacing-lg;
@@ -1536,9 +1544,9 @@
       color: $dark-text;
       
       &:hover {
-        background: $primary-color;
+        background: $client-colors-1;
         color: $bg-white;
-        border-color: $primary-color;
+        border-color: $client-colors-1;
       }
     }
   }
@@ -1605,11 +1613,11 @@
     }
 
     &.today {
-      background: rgba($primary-color, 0.1);
+      background: $section-bg-2;
       font-weight: 700;
 
       .dayNumber {
-        color: $primary-color;
+        color: $client-colors-1;
       }
     }
 
@@ -1623,14 +1631,14 @@
         transform: translateX(-50%);
         width: 6px;
         height: 6px;
-        background: $primary-color;
+        background: $client-colors-1;
         border-radius: 50%;
       }
     }
 
     &.selected {
-      background: rgba($primary-color, 0.2);
-      border: 2px solid $primary-color;
+      background: $background-light;
+      border: 2px solid $accent-color;
     }
 
     .dayNumber {
@@ -1655,7 +1663,7 @@
     transform: translateX(-50%);
     width: 6px;
     height: 6px;
-    background: $primary-color;
+    background: $client-colors-1;
     border-radius: 50%;
   }
   
@@ -1702,7 +1710,7 @@
   .appointmentDay {
     font-size: 1.25rem;
     font-weight: 700;
-    color: $primary-color;
+    color: $client-colors-1;
   }
   
   .appointmentMonth {
@@ -1875,7 +1883,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: $primary-color;
+    background: $client-colors-1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1929,7 +1937,7 @@
   }
   
   .unreadCount {
-    background: $primary-color;
+    background: $client-colors-1;
     color: $bg-white;
     border-radius: 50%;
     width: 20px;
@@ -1966,12 +1974,12 @@
     .count {
       font-size: 1.5rem;
       font-weight: 700;
-      color: $primary-color;
+      color: $client-colors-1;
       margin: 0 0 $spacing-md 0;
     }
     
     .viewBtn {
-      background: $primary-color;
+      background: $client-colors-1;
       color: $bg-white;
       border: none;
       padding: $spacing-xs $spacing-md;
@@ -2023,7 +2031,7 @@
 }
 
 .exploreBtn {
-  background: $primary-color;
+  background: $client-colors-1;
   color: $bg-white;
   text-decoration: none;
   padding: $spacing-sm $spacing-lg;
@@ -2101,8 +2109,8 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      border-color: $client-colors-1;
+      box-shadow: 0 0 0 3px rgba($accent-color, 0.1);
     }
   }
   
@@ -2126,8 +2134,8 @@
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      border-color: $client-colors-1;
+      box-shadow: 0 0 0 3px rgba($accent-color, 0.1);
     }
   }
   
@@ -2165,7 +2173,7 @@
   }
   
   .saveBtn {
-    background: $primary-color;
+    background: $client-colors-1;
     color: $bg-white;
     border: none;
     padding: $spacing-sm $spacing-lg;
@@ -2276,7 +2284,7 @@
     }
     
     .viewBtn {
-      background: $primary-color;
+      background: $client-colors-1;
       color: $bg-white;
       border: none;
       padding: $spacing-xs $spacing-md;
@@ -2328,7 +2336,7 @@
 }
 
 .exploreBtn {
-  background: $primary-color;
+  background: $client-colors-1;
   color: $bg-white;
   text-decoration: none;
   padding: $spacing-sm $spacing-lg;
@@ -2339,5 +2347,313 @@
   
   &:hover {
     background: $button-pink-hover;
+  }
+}
+
+
+// Reschedule Modal Styles
+.rescheduleModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: $spacing-md;
+}
+
+.rescheduleModal {
+  background: $bg-white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.rescheduleModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-light;
+
+  h2 {
+    font-family: $font-heading;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  line-height: 1;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $section-bg-1;
+    color: $dark-text;
+  }
+}
+
+.rescheduleModalBody {
+  padding: $spacing-lg;
+}
+
+.rescheduleInfo {
+  background: $section-bg-1;
+  border-radius: 8px;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  p {
+    margin: $spacing-xs 0;
+    color: $dark-text;
+    font-size: 0.95rem;
+
+    strong {
+      color: $client-colors-1;
+    }
+  }
+}
+
+.loadingText {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $subtext-color;
+}
+
+.rescheduleCalendarSection {
+  margin-bottom: $spacing-md;
+}
+
+.rescheduleCalendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  button {
+    background: none;
+    border: 1px solid $border-light;
+    border-radius: 6px;
+    padding: $spacing-xs $spacing-sm;
+    font-size: 1.25rem;
+    color: $dark-text;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $section-bg-1;
+      border-color: $client-colors-1;
+      color: $client-colors-1;
+    }
+  }
+}
+
+// Reschedule Modal Calendar Styles (specific class names to avoid conflicts)
+.rescheduleCalendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: $border-light;
+  border: 2px solid $client-colors-3;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rescheduleCalendarDayHeader {
+  background: $muted-bg;
+  padding: $spacing-sm;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $subtext-color;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rescheduleCalendarDay {
+  background: $bg-white;
+  padding: $spacing-sm;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  font-size: 0.875rem;
+  color: $dark-text;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: relative;
+
+  &:hover {
+    background: $section-bg-1;
+  }
+
+  &.otherMonth {
+    color: $subtext-color;
+    opacity: 0.5;
+  }
+
+  &.available {
+    &:hover:not(:disabled) {
+      background: $client-colors-3;
+    }
+  }
+
+  &.unavailable {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &.selected {
+    background: $calendar-has-appointment;
+    color: $client-colors-1;
+    font-weight: 700;
+  }
+
+  &.today {
+    background: $section-bg-2;
+    font-weight: 700;
+    color: $client-colors-1;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.timeSlotsSection {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+
+  h4 {
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+}
+
+.noTimesText {
+  color: $subtext-color;
+  font-style: italic;
+  text-align: center;
+  padding: $spacing-lg;
+}
+
+.timeSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: $spacing-xs;
+  margin-top: $spacing-sm;
+}
+
+.timeSlot {
+  padding: 6px $spacing-sm;
+  border: 1px solid $border-light;
+  background: $bg-white;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: $dark-text;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-height: auto;
+  height: auto;
+
+  &:hover {
+    background: $client-colors-3;
+    border-color: $client-colors-1;
+    color: $dark-text;
+  }
+
+  &.selected {
+    background: $client-colors-1;
+    color: $bg-white;
+    border-color: $client-colors-1;
+    font-weight: 600;
+  }
+}
+
+.rescheduleModalActions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  padding: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.cancelButton {
+  background: $bg-white;
+  color: $dark-text;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: $spacing-xs $spacing-sm;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: $background-light;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.rescheduleButton {
+  background: $client-colors-1;
+  color: $bg-white;
+  border: none;
+  border-radius: 4px;
+  padding: $spacing-xs $spacing-sm;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: darken($client-colors-1, 10%);
+  }
+
+  &:disabled {
+    background: $subtext-color;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }

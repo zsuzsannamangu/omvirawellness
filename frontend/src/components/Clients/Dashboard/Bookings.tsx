@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FaStar } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 import ReviewPopup from './ReviewPopup';
+import RescheduleModal from './RescheduleModal';
 
 interface BookingsProps {
   activeSubmenu: string;
@@ -12,9 +13,20 @@ interface BookingsProps {
 
 export default function Bookings({ activeSubmenu }: BookingsProps) {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<{
     providerName: string;
     serviceName: string;
+    providerId: string;
+    bookingId: string;
+  } | null>(null);
+  const [selectedRescheduleBooking, setSelectedRescheduleBooking] = useState<{
+    bookingId: string;
+    providerId: string;
+    providerName: string;
+    serviceName: string;
+    currentDate: string;
+    currentTime: string;
   } | null>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -204,21 +216,168 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     };
   }, [activeSubmenu]);
 
-  const handleLeaveReview = (providerName: string, serviceName: string) => {
-    setSelectedBooking({ providerName, serviceName });
+  const handleLeaveReview = (booking: any) => {
+    const providerName = booking.contact_name || booking.business_name || 'Provider';
+    const svc = (() => {
+      try {
+        const info = booking.provider_notes ? JSON.parse(booking.provider_notes) : null;
+        return info?.name || 'Service';
+      } catch { return 'Service'; }
+    })();
+    
+    setSelectedBooking({ 
+      providerName, 
+      serviceName: svc,
+      providerId: booking.provider_user_id || '',
+      bookingId: booking.id
+    });
     setReviewModalOpen(true);
   };
 
-  const handleReviewSubmit = (reviewData: any) => {
-    console.log('Review submitted:', reviewData);
-    // Here you would typically send the review to your backend
-    setReviewModalOpen(false);
-    setSelectedBooking(null);
+  const handleReviewSubmit = async (reviewData: any) => {
+    if (!selectedBooking) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please sign in to submit a review.');
+        return;
+      }
+
+      const response = await fetch('http://localhost:4000/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          provider_id: selectedBooking.providerId,
+          booking_id: selectedBooking.bookingId,
+          rating: reviewData.rating,
+          title: reviewData.comment.substring(0, 100) || null, // Use first 100 chars as title
+          comment: reviewData.comment,
+          recommends: reviewData.recommends
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to submit review');
+      }
+
+      const result = await response.json();
+      alert('Thank you for your review!');
+      
+      // Refresh bookings to update UI
+      loadBookings();
+      
+      setReviewModalOpen(false);
+      setSelectedBooking(null);
+    } catch (error: any) {
+      console.error('Error submitting review:', error);
+      alert(`Error submitting review: ${error.message || 'Please try again'}`);
+    }
   };
 
   const handleReviewClose = () => {
     setReviewModalOpen(false);
     setSelectedBooking(null);
+  };
+
+  const handleReschedule = async (booking: any) => {
+    const providerName = booking.contact_name || booking.business_name || 'Provider';
+    const svc = (() => {
+      try {
+        const info = booking.provider_notes ? JSON.parse(booking.provider_notes) : null;
+        return info?.name || 'Service';
+      } catch { return 'Service'; }
+    })();
+    
+    setSelectedRescheduleBooking({
+      bookingId: booking.id,
+      providerId: booking.provider_user_id || '',
+      providerName,
+      serviceName: svc,
+      currentDate: booking.booking_date,
+      currentTime: booking.start_time
+    });
+    setRescheduleModalOpen(true);
+  };
+
+  const handleRescheduleSubmit = async (newDate: string, newTime: string) => {
+    if (!selectedRescheduleBooking) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please sign in to reschedule appointments.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:4000/api/bookings/${selectedRescheduleBooking.bookingId}/reschedule`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          new_date: newDate,
+          new_time: newTime
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to reschedule booking');
+      }
+
+      alert('Appointment rescheduled successfully!');
+      setRescheduleModalOpen(false);
+      setSelectedRescheduleBooking(null);
+      loadBookings();
+    } catch (error: any) {
+      console.error('Error rescheduling booking:', error);
+      throw error;
+    }
+  };
+
+  const handleCancelBooking = async (bookingId: string) => {
+    if (!confirm('Are you sure you want to cancel this appointment?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please sign in to cancel appointments.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:4000/api/bookings/${bookingId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          cancellation_reason: null // Can add a reason field later if needed
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to cancel booking');
+      }
+
+      const result = await response.json();
+      alert('Appointment cancelled successfully.');
+      
+      // Refresh bookings to update UI
+      loadBookings();
+    } catch (error: any) {
+      console.error('Error cancelling booking:', error);
+      alert(`Error cancelling appointment: ${error.message || 'Please try again'}`);
+    }
   };
   const renderContent = () => {
     if (loading) {
@@ -276,8 +435,18 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                       </div>
                       <div className={styles.sessionRight}>
                         <div className={styles.sessionActions}>
-                          <button className={styles.actionBtn}>Reschedule</button>
-                          <button className={styles.actionBtn}>Cancel</button>
+                          <button 
+                            className={styles.actionBtn}
+                            onClick={() => handleReschedule(b)}
+                          >
+                            Reschedule
+                          </button>
+                          <button 
+                            className={styles.actionBtn}
+                            onClick={() => handleCancelBooking(b.id)}
+                          >
+                            Cancel
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -329,12 +498,16 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                       </div>
                       <div className={styles.sessionRight}>
                         <div className={styles.sessionActions}>
-                          <button 
-                            className={styles.actionBtn}
-                            onClick={() => handleLeaveReview(providerName, svc)}
-                          >
-                            Leave a Review
-                          </button>
+                          {b.has_review ? (
+                            <span className={styles.reviewLeftText}>You reviewed this provider</span>
+                          ) : (
+                            <button 
+                              className={styles.actionBtn}
+                              onClick={() => handleLeaveReview(b)}
+                            >
+                              Leave a Review
+                            </button>
+                          )}
                           {b.provider_user_id && (
                             <Link 
                               href={`/search/${b.provider_user_id}`}
@@ -405,6 +578,21 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         serviceName={selectedBooking?.serviceName || ''}
         onSubmit={handleReviewSubmit}
       />
+      {selectedRescheduleBooking && (
+        <RescheduleModal
+          isOpen={rescheduleModalOpen}
+          onClose={() => {
+            setRescheduleModalOpen(false);
+            setSelectedRescheduleBooking(null);
+          }}
+          onReschedule={handleRescheduleSubmit}
+          providerId={selectedRescheduleBooking.providerId}
+          providerName={selectedRescheduleBooking.providerName}
+          currentDate={selectedRescheduleBooking.currentDate}
+          currentTime={selectedRescheduleBooking.currentTime}
+          serviceName={selectedRescheduleBooking.serviceName}
+        />
+      )}
     </div>
   );
 }

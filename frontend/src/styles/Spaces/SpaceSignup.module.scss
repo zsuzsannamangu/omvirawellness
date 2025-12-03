@@ -2,7 +2,7 @@
 
 .signupPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, $section-bg-1 0%, $section-bg-3 100%);
+  background: linear-gradient(135deg, rgba($space-colors-1, 0.1) 0%, rgba($space-colors-2, 0.05) 100%);
   font-family: $font-main;
 }
 
@@ -19,11 +19,11 @@
   font-family: $font-heading;
   font-size: 1.5rem;
   font-weight: 700;
-  color: $primary-color;
+  color: $space-colors-2;
   text-decoration: none;
   
   &:hover {
-    color: $hover-green;
+    color: $space-colors-3;
   }
 }
 
@@ -40,7 +40,7 @@
   transition: color 0.2s ease;
   
   &:hover {
-    color: $primary-color;
+    color: $space-colors-2;
   }
 }
 
@@ -67,7 +67,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, $primary-color 0%, $hover-green 100%);
+  background: linear-gradient(90deg, $space-colors-2 0%, $space-colors-3 100%);
   transition: width 0.3s ease;
 }
 

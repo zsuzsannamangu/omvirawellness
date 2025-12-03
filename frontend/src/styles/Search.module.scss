@@ -46,7 +46,7 @@
   }
   
   &:hover {
-    color: $hover-green;
+    color: darken($primary-color, 10%);
   }
 }
 
@@ -78,12 +78,14 @@
   border-radius: 8px;
   font-family: $font-main;
   font-size: 1rem;
+  color: $dark-text;
   background-color: $bg-white;
   transition: border-color 0.2s ease;
   
   &:focus {
     outline: none;
     border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
   }
   
   &::placeholder {
@@ -185,8 +187,8 @@
 }
 
 .resetButton {
-  background-color: $primary-color;
-  color: $bg-white;
+  background-color: $secondary-color;
+  color: $dark-text;
   border: none;
   padding: $spacing-xs $spacing-sm;
   border-radius: 4px;
@@ -198,7 +200,7 @@
   white-space: nowrap;
   
   &:hover {
-    background-color: $hover-green;
+    background-color: $button-yellow-hover;
   }
 }
 
@@ -218,6 +220,7 @@
   border-radius: 4px;
   font-family: $font-main;
   font-size: 0.875rem;
+  color: $dark-text;
   background-color: $bg-white;
   cursor: pointer;
   flex: 1;
@@ -233,6 +236,7 @@
   &:focus {
     outline: none;
     border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
   }
 }
 
@@ -247,6 +251,7 @@
   border-radius: 4px;
   font-family: $font-main;
   font-size: 0.875rem;
+  color: $dark-text;
   background-color: $bg-white;
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
@@ -261,6 +266,7 @@
   &:focus {
     outline: none;
     border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
   }
 }
 

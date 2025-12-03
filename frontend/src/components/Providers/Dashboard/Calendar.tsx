@@ -49,8 +49,10 @@ export default function Calendar({ activeSubmenu }: CalendarProps) {
 
         if (response.ok) {
           const data = await response.json();
+          // Filter out canceled appointments
+          const activeBookings = data.filter((booking: Booking) => booking.status !== 'cancelled');
           // Sort bookings: sooner appointments first (by date, then by time)
-          const sorted = data.sort((a: Booking, b: Booking) => {
+          const sorted = activeBookings.sort((a: Booking, b: Booking) => {
             // First compare dates
             const dateA = new Date(a.booking_date);
             const dateB = new Date(b.booking_date);

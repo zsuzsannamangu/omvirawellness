@@ -59,7 +59,7 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   &::placeholder {
@@ -139,7 +139,7 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -227,12 +227,12 @@
   text-align: center;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     transform: translateY(-2px);
   }
 
   &.selected {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.05);
   }
 }
@@ -282,12 +282,12 @@
   color: $dark-text;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.05);
   }
 
   &.selected {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.1);
   }
 }
@@ -316,11 +316,11 @@
   text-align: left;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   &.selected {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.05);
   }
 }
@@ -374,7 +374,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 }
 
@@ -416,8 +416,8 @@
   justify-content: center;
 
   &:hover:not(:disabled) {
-    border-color: $primary-color;
-    color: $primary-color;
+    border-color: $provider-colors-3;
+    color: $provider-colors-3;
   }
 
   &:disabled {
@@ -431,7 +431,7 @@
   padding: $spacing-sm $spacing-md;
   border: none;
   border-radius: 8px;
-  background: $primary-color;
+  background: $provider-colors-3;
   font-family: $font-main;
   font-size: 0.875rem;
   font-weight: 600;
@@ -446,7 +446,7 @@
   width: 100%;
 
   &:hover:not(:disabled) {
-    background: $hover-green;
+    background: darken($provider-colors-3, 10%);
     transform: translateY(-1px);
   }
 
@@ -510,7 +510,7 @@
 
   &:hover {
     background: rgba($primary-color, 0.05);
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     transform: translateY(-1px);
   }
 }
@@ -592,7 +592,7 @@
 
   &:hover {
     background: $muted-bg;
-    color: $primary-color;
+    color: $provider-colors-3;
   }
 }
 
@@ -614,7 +614,7 @@
   gap: $spacing-sm;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.05);
   }
 }
@@ -704,12 +704,12 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background-color: rgba($primary-color, 0.02);
   }
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   option {
@@ -773,8 +773,8 @@
   justify-content: center;
 
   &:hover {
-    border-color: $primary-color;
-    color: $primary-color;
+    border-color: $provider-colors-3;
+    color: $provider-colors-3;
   }
 }
 
@@ -784,7 +784,7 @@
   padding: $spacing-sm $spacing-md;
   border: none;
   border-radius: 8px;
-  background: $primary-color;
+  background: $provider-colors-3;
   font-family: $font-main;
   font-size: 0.875rem;
   font-weight: 600;
@@ -796,7 +796,7 @@
   justify-content: center;
 
   &:hover:not(:disabled) {
-    background: $hover-green;
+    background: darken($provider-colors-3, 10%);
   }
 
   &:disabled {
@@ -901,12 +901,12 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background-color: rgba($primary-color, 0.02);
   }
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   option {
@@ -1057,13 +1057,13 @@
   gap: $spacing-sm;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   &.active {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.05);
-    color: $primary-color;
+    color: $provider-colors-3;
   }
 }
 
@@ -1133,7 +1133,7 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
   }
 
   &::placeholder {
@@ -1182,7 +1182,7 @@
 }
 
 .ownerBadge {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   padding: $spacing-xs $spacing-sm;
   border-radius: 6px;
@@ -1245,7 +1245,7 @@
   margin-bottom: $spacing-lg;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     background: rgba($primary-color, 0.05);
   }
 }
@@ -1302,7 +1302,7 @@
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-xs $spacing-sm;
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border-radius: 20px;
   font-family: $font-main;
@@ -1349,8 +1349,8 @@
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
-    color: $primary-color;
+    border-color: $provider-colors-3;
+    color: $provider-colors-3;
   }
 }
 
@@ -1363,7 +1363,7 @@
 
 .addOtherButton {
   padding: $spacing-xs $spacing-sm;
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   border: none;
   border-radius: 6px;
@@ -1374,7 +1374,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: $hover-green;
+    background: darken($provider-colors-3, 10%);
   }
 }
 
@@ -1472,7 +1472,7 @@
 }
 
 .savings {
-  background: $primary-color;
+  background: $provider-colors-3;
   color: $bg-white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -1512,7 +1512,7 @@
   }
 
   &.selected {
-    border-color: $primary-color;
+    border-color: $provider-colors-3;
     box-shadow: 0 32px 70px rgba($primary-color, 0.22);
   }
 
@@ -1640,7 +1640,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: $light-text;
-  background: $primary-color;
+  background: $provider-colors-3;
   box-shadow: 0 12px 25px rgba($primary-color, 0.25);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;

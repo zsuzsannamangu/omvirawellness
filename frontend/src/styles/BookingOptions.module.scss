@@ -7,12 +7,12 @@
 }
 
 .bookButton {
-  background: $primary-color;
-  color: $bg-white;
+  background: $secondary-color;
+  color: $dark-text;
   border: none;
   border-radius: 8px;
-  padding: $spacing-md $spacing-lg;
-  font-size: 1rem;
+  padding: $spacing-xs $spacing-md;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -22,7 +22,7 @@
   width: 100%;
 
   &:hover:not(.disabled) {
-    background: $button-pink-hover;
+    background: $button-yellow-hover;
     transform: translateY(-1px);
   }
 
@@ -31,13 +31,13 @@
     color: $subtext-color;
     cursor: not-allowed;
     transform: none;
-    padding: $spacing-sm $spacing-md; // Use thinner padding like other buttons
+    padding: $spacing-xs $spacing-md;
   }
 }
 
 .authButton {
-  background: $primary-color;
-  color: $bg-white;
+  background: $secondary-color;
+  color: $dark-text;
   border: none;
   border-radius: 6px;
   padding: $spacing-sm $spacing-md;
@@ -51,15 +51,15 @@
   width: 100%;
 
   &:hover {
-    background: $button-pink-hover;
+    background: $button-yellow-hover;
     transform: translateY(-1px);
   }
 }
 
 .guestButton {
   background: $bg-white;
-  color: $primary-color;
-  border: 2px solid $primary-color;
+  color: $dark-text;
+  border: 2px solid $secondary-color;
   border-radius: 6px;
   padding: $spacing-sm $spacing-md;
   font-size: 0.95rem;
@@ -71,8 +71,8 @@
   width: 100%;
 
   &:hover {
-    background: $primary-color;
-    color: $bg-white;
+    background: $secondary-color;
+    color: $dark-text;
     transform: translateY(-1px);
   }
 }

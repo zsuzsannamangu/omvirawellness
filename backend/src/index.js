@@ -6,6 +6,9 @@ const providerRoutes = require('./routes/providers');
 const bookingRoutes = require('./routes/bookings');
 const authRoutes = require('./routes/auth');
 const favoriteRoutes = require('./routes/favorites');
+const reviewRoutes = require('./routes/reviews');
+const notificationRoutes = require('./routes/notifications');
+const messageRoutes = require('./routes/messages');
 
 dotenv.config();
 
@@ -19,6 +22,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/messages', messageRoutes);
 
 app.get('/', (req, res) => {
   res.send('Omvira backend is running!');
