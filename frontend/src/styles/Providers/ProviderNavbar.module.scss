@@ -11,12 +11,14 @@
   top: 0;
   z-index: 100;
   font-family: $font-main;
-  height: 80px;
+  height: 100px;
   overflow: visible;
   
   @media (max-width: 968px) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     padding: 1rem $spacing-md;
-    height: 70px;
+    height: 90px;
   }
 }
 
@@ -29,10 +31,10 @@
   overflow: visible;
   z-index: 10;
   position: relative;
-  height: 80px;
+  height: 100px;
   
   @media (max-width: 968px) {
-    height: 70px;
+    height: 90px;
   }
 }
 
@@ -58,6 +60,10 @@
   position: relative;
   margin-top: 30px;
   margin-left: -30px;
+  
+  @media (max-width: 968px) {
+    margin-top: 0;
+  }
 }
 
 // Main navigation links
@@ -96,6 +102,10 @@
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  
+  @media (max-width: 968px) {
+    display: none;
+  }
   
   @media (max-width: 768px) {
     gap: 1rem;
@@ -184,6 +194,115 @@
   }
 }
 
+// Hamburger menu button
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: $light-text;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  z-index: 101;
+  grid-column: 3;
+  justify-self: end;
+  align-self: flex-start;
+  margin-top: 1rem;
+  
+  @media (max-width: 968px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Mobile menu
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50%;
+  max-width: 300px;
+  height: 100vh;
+  background-color: $bg-white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  animation: slideIn 0.3s ease-out;
+  overflow-y: auto;
+  
+  @media (max-width: 640px) {
+    width: 50%;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  background: none;
+  border: none;
+  color: $dark-text;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  z-index: 201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+  }
+}
+
+.mobileMenuContent {
+  padding: $spacing-xl $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-top: 60px;
+}
+
+.mobileNavLink {
+  font-family: $font-main;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $dark-text;
+  text-decoration: none;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $border-light;
+  transition: color 0.2s ease;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  &:hover {
+    color: $primary-color;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 // Mobile responsiveness
 @media (max-width: 640px) {
   .navbar {
@@ -192,9 +311,5 @@
   
   .logo {
     font-size: 1.3rem;
-  }
-  
-  .rightSection {
-    gap: 0.75rem;
   }
 }

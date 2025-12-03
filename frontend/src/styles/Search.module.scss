@@ -24,6 +24,12 @@
   align-items: center;
   gap: $spacing-lg;
   position: relative;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    padding: 0 $spacing-sm;
+  }
 }
 
 .logo {
@@ -33,6 +39,11 @@
   color: $primary-color;
   text-decoration: none;
   justify-self: start;
+  
+  @media (max-width: 768px) {
+    justify-self: center;
+    font-size: 1.25rem;
+  }
   
   &:hover {
     color: $hover-green;
@@ -46,6 +57,11 @@
   display: flex;
   align-items: center;
   justify-self: center;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    justify-self: stretch;
+  }
 }
 
 .searchIcon {
@@ -84,6 +100,12 @@
   border-radius: 4px;
   transition: background-color 0.2s ease;
   justify-self: end;
+  
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    right: $spacing-sm;
+  }
   
   &:hover {
     background-color: $muted-bg;
@@ -250,6 +272,11 @@
   
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-md;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
     gap: $spacing-md;
   }
 }

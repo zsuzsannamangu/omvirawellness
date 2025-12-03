@@ -179,7 +179,7 @@
 
 .loginButton {
   width: 100%;
-  padding: 0.875rem 1rem;
+  padding: 0.875rem 1.5rem;
   background: $primary-color;
   color: $light-text;
   border: none;
@@ -195,6 +195,13 @@
   gap: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-width: fit-content;
+  
+  @media (max-width: 480px) {
+    padding: 0.875rem 1rem;
+    font-size: 0.8rem;
+  }
   
   &:hover {
     background: $hover-green;

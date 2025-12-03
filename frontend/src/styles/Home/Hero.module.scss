@@ -1,20 +1,88 @@
 @import '../_variables.scss';
 
 .hero {
-  background: $primary-color url('/images/screenshots/meditation.png') center/cover no-repeat;
+  background: url('/images/screenshots/meditation.png') center top no-repeat;
+  background-size: 120%;
   height: 100vh;
   position: relative;
+  margin-bottom: 0;
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    height: 50vh;
+    min-height: 50vh;
+    max-height: 50vh;
+    background-size: 140%;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+  
+  @media (max-width: 480px) {
+    height: 45vh;
+    min-height: 45vh;
+    max-height: 45vh;
+    background-size: 160%;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
 }
 
 .overlay {
-  background-color: transparentize(#f5f3f0, 0.2);
+  background-color: transparentize(white , 0.2);
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   padding: $spacing-lg;
+  padding-top: 15vh;
+  
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50vh;
+    min-height: 50vh;
+    max-height: 50vh;
+    padding: $spacing-md;
+    padding-top: 12vh;
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+  
+  @media (max-width: 480px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45vh;
+    min-height: 45vh;
+    max-height: 45vh;
+    padding: $spacing-sm;
+    padding-top: 10vh;
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+}
+
+.searchSection {
+  display: none;
+  background-color: $bg-white;
+  padding: $spacing-xl $spacing-lg;
+  justify-content: center;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    padding: 0 $spacing-md $spacing-lg;
+    margin-top: 0;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 $spacing-md $spacing-md;
+  }
 }
 
 .title {
@@ -22,16 +90,40 @@
   font-size: 4rem;
   font-weight: bold;
   color: $dark-text;
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2rem;
+  }
 }
 
 .subtitle {
   color: $dark-text;
   font-weight: bold;
   margin-top: $spacing-md;
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-xl;
   font-size: 2.25rem;
   max-width: 600px;
   font-family: $font-subheading;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding: 0 $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    margin-top: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .searchForm {
@@ -40,7 +132,31 @@
   max-width: 450px;
   width: 100%;
   margin: 0 auto;
+  margin-top: $spacing-xl;
   align-items: center;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.searchFormMobile {
+  display: flex;
+  gap: $spacing-sm;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  align-items: center;
+  
+  @media (min-width: 769px) {
+    display: none;
+  }
+  
+  @media (max-width: 480px) {
+    flex-direction: row;
+    gap: $spacing-xs;
+    max-width: 100%;
+  }
 }
 
 .searchInput {
@@ -60,6 +176,10 @@
   &:focus {
     outline: none;
   }
+  
+  @media (max-width: 768px) {
+    border: 2px solid $border-light;
+  }
 }
 
 .searchButton {
@@ -74,6 +194,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  flex-shrink: 0;
   
   &:hover {
     background-color: $button-yellow-hover;
@@ -83,5 +204,16 @@
   
   &:active {
     transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem $spacing-sm;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    width: auto;
+    padding: 0.5rem $spacing-sm;
+    font-size: 0.875rem;
   }
 }

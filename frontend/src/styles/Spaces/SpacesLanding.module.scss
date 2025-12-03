@@ -33,7 +33,7 @@
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: $spacing-xl;
-    text-align: center;
+    text-align: left;
   }
 }
 
@@ -144,7 +144,7 @@
   flex-wrap: wrap;
   
   @media (max-width: 768px) {
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 
@@ -407,6 +407,7 @@
   
   @media (max-width: 768px) {
     font-size: 2rem;
+    text-align: left;
   }
 }
 
@@ -487,6 +488,7 @@
   
   @media (max-width: 768px) {
     font-size: 2rem;
+    text-align: left;
   }
 }
 
@@ -629,6 +631,7 @@
   
   @media (max-width: 768px) {
     font-size: 2rem;
+    text-align: left;
   }
 }
 
@@ -640,6 +643,11 @@
   margin: 0 auto $spacing-xl auto;
   max-width: 800px;
   line-height: 1.6;
+  
+  @media (max-width: 768px) {
+    text-align: left;
+    margin: 0 0 $spacing-xl 0;
+  }
 }
 
 .statsGrid {
@@ -656,7 +664,7 @@
   }
   
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: $spacing-sm;
   }
 }

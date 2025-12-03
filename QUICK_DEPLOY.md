@@ -58,3 +58,4 @@ If you want full functionality:
 - ⚠️ Login/signup forms won't submit without backend (but they'll look great!)
 - ✅ Perfect for portfolio/resume showcase
 
+

@@ -58,7 +58,6 @@
   @media (max-width: 768px) {
     flex-direction: column;
     gap: $spacing-lg;
-    text-align: center;
   }
   
   &.reverse {
@@ -91,6 +90,11 @@
     font-size: 1.1rem;
     color: $subtext-color;
     line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    text-align: left;
+    max-width: 100%;
   }
 }
 

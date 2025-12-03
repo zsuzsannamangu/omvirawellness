@@ -14,11 +14,12 @@
   top: 0;
   z-index: 100;
   font-family: $font-main;
-  min-height: 80px;
+  min-height: 100px;
   
   @media (max-width: 968px) {
     padding: 1rem $spacing-md;
-    min-height: 70px;
+    min-height: 90px;
+    grid-template-columns: auto 1fr auto;
   }
 }
 
@@ -47,6 +48,18 @@
   z-index: 10;
   position: relative;
   margin-top: 30px;
+  
+  @media (max-width: 768px) {
+    width: 200px;
+    max-height: 240px;
+    margin-top: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 150px;
+    max-height: 180px;
+    margin-top: 15px;
+  }
 }
 
 .brandSection {
@@ -70,8 +83,7 @@
   max-width: 780px;
 
   @media (max-width: 968px) {
-    align-items: flex-start;
-    max-width: 100%;
+    display: none;
   }
 }
 
@@ -230,6 +242,111 @@
   }
 }
 
+// Hamburger menu button
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: $dark-text;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  z-index: 101;
+  grid-column: 3;
+  justify-self: end;
+  align-self: flex-start;
+  margin-top: 1rem;
+  
+  @media (max-width: 968px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+  }
+}
+
+// Mobile menu
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50%;
+  max-width: 300px;
+  height: 100vh;
+  background-color: $bg-white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  animation: slideIn 0.3s ease-out;
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  background: none;
+  border: none;
+  color: $dark-text;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  z-index: 201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+  }
+}
+
+.mobileMenuContent {
+  padding: $spacing-xl $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-top: 60px;
+}
+
+.mobileNavLink {
+  font-family: $font-main;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $dark-text;
+  text-decoration: none;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $border-light;
+  transition: color 0.2s ease;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  &:hover {
+    color: $primary-color;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 // Mobile responsiveness
 @media (max-width: 640px) {
   .navbar {
@@ -242,5 +359,10 @@
   
   .rightSection {
     gap: 0.75rem;
+  }
+  
+  .mobileMenu {
+    width: 50%;
+    max-width: 300px;
   }
 }

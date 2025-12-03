@@ -61,6 +61,7 @@
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(0, 105, 92, 0.2);
   z-index: 10;
+  flex-shrink: 0;
   
   &:hover {
     background: $hover-green;
@@ -76,7 +77,16 @@
   }
   
   @media (max-width: 768px) {
-    display: none;
+    width: 40px;
+    height: 40px;
+    
+    &:first-child {
+      margin-right: -20px;
+    }
+    
+    &:last-child {
+      margin-left: -20px;
+    }
   }
 }
 

@@ -16,13 +16,29 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className={styles.hero}>
-      <div className={styles.overlay}>
-        <h1 className={styles.title}>Hello, Wellness Has Arrived.</h1>
-        <p className={styles.subtitle}>
-        A platform that connects you to independent wellness, beauty, and fitness professionals - anytime, anywhere.  
-        </p>
-        <form onSubmit={handleSearch} className={styles.searchForm}>
+    <>
+      <section className={styles.hero}>
+        <div className={styles.overlay}>
+          <h1 className={styles.title}>Hello, Wellness Has Arrived.</h1>
+          <p className={styles.subtitle}>
+          A platform that connects you to independent wellness, beauty, and fitness professionals - anytime, anywhere.  
+          </p>
+          <form onSubmit={handleSearch} className={styles.searchForm}>
+            <input
+              type="text"
+              placeholder="Search services or providers"
+              className={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className={styles.searchButton}>
+              Search
+            </button>
+          </form>
+        </div>
+      </section>
+      <div className={styles.searchSection}>
+        <form onSubmit={handleSearch} className={styles.searchFormMobile}>
           <input
             type="text"
             placeholder="Search services or providers"
@@ -35,7 +51,7 @@ const Hero: React.FC = () => {
           </button>
         </form>
       </div>
-    </section>
+    </>
   );
 };
 

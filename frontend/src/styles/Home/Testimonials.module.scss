@@ -33,6 +33,11 @@
   &:last-child {
     align-items: flex-end;
     text-align: right;
+    
+    @media (max-width: 768px) {
+      align-items: flex-start;
+      text-align: left;
+    }
   }
 }
 

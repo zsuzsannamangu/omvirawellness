@@ -41,6 +41,7 @@
     
     @media (max-width: 768px) {
       font-size: 2.5rem;
+      text-align: center;
     }
   }
 
@@ -50,6 +51,10 @@
     line-height: 1.6;
     margin-bottom: $spacing-xl;
     color: rgba($light-text, 0.9);
+    
+    @media (max-width: 768px) {
+      text-align: center;
+    }
   }
 }
 
@@ -558,7 +563,7 @@
   @media (max-width: 768px) {
     flex-direction: column;
     gap: $spacing-md;
-    text-align: center;
+    text-align: left;
   }
   
   &.reverse {
@@ -587,7 +592,13 @@
     
     @media (max-width: 768px) {
       font-size: 1.8rem;
+      text-align: left;
     }
+  }
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    text-align: left;
   }
 }
 
@@ -597,6 +608,7 @@
   line-height: 1.5;
   font-family: $font-main;
   margin-bottom: $spacing-md;
+  text-align: left;
 }
 
 .listContainer {
@@ -696,6 +708,7 @@
     
     @media (max-width: 768px) {
       font-size: 2rem;
+      margin-top: $spacing-xl;
     }
   }
   
@@ -1015,6 +1028,10 @@
   text-align: center;
   margin-bottom: $spacing-lg;
   
+  @media (max-width: 768px) {
+    text-align: left;
+  }
+  
   h2 {
     font-family: $font-heading;
     font-size: 2rem;
@@ -1024,6 +1041,7 @@
     
     @media (max-width: 768px) {
       font-size: 1.8rem;
+      text-align: left;
     }
   }
 }
@@ -1073,8 +1091,8 @@
   
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
     padding: $spacing-md;
     gap: $spacing-md;
   }
@@ -1095,6 +1113,7 @@
   
   @media (max-width: 768px) {
     width: 200px;
+    align-self: flex-start;
     
     .founderImg {
       max-height: 400px;
@@ -1109,12 +1128,17 @@
   justify-content: flex-start;
   padding-left: $spacing-md;
   
+  @media (max-width: 768px) {
+    padding-left: 0;
+  }
+  
   h3 {
     font-family: $font-heading;
     font-size: 1.5rem;
     color: $primary-color;
     margin-bottom: $spacing-xs;
     font-weight: 600;
+    text-align: left;
   }
 }
 
@@ -1126,6 +1150,7 @@
   margin-bottom: $spacing-sm;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: left;
 }
 
 .founderBio {
@@ -1135,8 +1160,4 @@
   line-height: 1.5;
   text-align: left;
   margin: 0;
-  
-  @media (max-width: 768px) {
-    text-align: center;
-  }
 }
