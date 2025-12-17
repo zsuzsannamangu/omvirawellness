@@ -9,6 +9,15 @@ interface ProfileProps {
   activeSubmenu: string;
 }
 
+// Generate UUID function
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export default function Profile({ activeSubmenu }: ProfileProps) {
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
   const [editingService, setEditingService] = useState<any>(null);
@@ -22,11 +31,11 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [travelFeeType, setTravelFeeType] = useState<'free' | 'fee'>('free');
   const [travelFee, setTravelFee] = useState('');
-  const [services, setServices] = useState<Array<{ name: string; type: string; duration: string; price: string; description?: string; mobileService?: boolean; id?: number }>>([]);
+  const [services, setServices] = useState<Array<{ name: string; type: string; duration: string; price: string; description?: string; mobileService?: boolean; id?: string }>>([]);
   const [showAddService, setShowAddService] = useState(false);
   const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(null);
   const [newService, setNewService] = useState({ name: '', type: '', duration: '60', price: '', description: '', mobileService: false });
-  const [addOns, setAddOns] = useState<Array<{ id?: number; name: string; description: string; price: string }>>([]);
+  const [addOns, setAddOns] = useState<Array<{ id?: string; name: string; description: string; price: string }>>([]);
   const [showAddOnModal, setShowAddOnModal] = useState(false);
   const [editingAddOnIndex, setEditingAddOnIndex] = useState<number | null>(null);
   const [newAddOn, setNewAddOn] = useState({ name: '', description: '', price: '' });
@@ -52,6 +61,43 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       if (response.ok) {
         const providerData = await response.json();
         
+        // Clean up services: remove empty objects and assign UUIDs
+        let cleanedServices = [];
+        const rawServices = typeof providerData.services === 'string' ? JSON.parse(providerData.services) : (providerData.services || []);
+        if (Array.isArray(rawServices)) {
+          cleanedServices = rawServices
+            .filter((service: any) => {
+              // Remove empty objects or services without name/price
+              return service && Object.keys(service).length > 0 && service.name && service.price;
+            })
+            .map((service: any) => {
+              // Assign UUID if missing
+              if (!service.id) {
+                console.log(`Assigning UUID to service: ${service.name}`);
+                return { ...service, id: generateUUID() };
+              }
+              return service;
+            });
+          
+          // Auto-save cleaned services if we made changes
+          if (cleanedServices.length !== rawServices.length || cleanedServices.some((s: any, i: number) => s.id !== rawServices[i]?.id)) {
+            console.log('Services cleaned and UUIDs assigned. Auto-saving...');
+            try {
+              await fetch(`http://localhost:4000/api/providers/${parsed.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ services: cleanedServices })
+              });
+              console.log('Cleaned services auto-saved successfully');
+            } catch (err) {
+              console.error('Failed to auto-save cleaned services:', err);
+            }
+          }
+        }
+        
         // Transform the provider data to match our user profile structure
         const updatedUser = {
           ...parsed,
@@ -71,7 +117,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
             zip_code: providerData.zip_code,
             country: providerData.country,
             work_location: typeof providerData.work_location === 'string' ? JSON.parse(providerData.work_location) : (providerData.work_location || []),
-            services: typeof providerData.services === 'string' ? JSON.parse(providerData.services) : (providerData.services || []),
+            services: cleanedServices,
             add_ons: typeof providerData.add_ons === 'string' ? JSON.parse(providerData.add_ons) : (providerData.add_ons || providerData.addOns || []),
             certifications: typeof providerData.certifications === 'string' ? JSON.parse(providerData.certifications) : (providerData.certifications || []),
             travel_policy: providerData.travel_policy,
@@ -93,7 +139,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         setSelectedLanguages(parsed.profile.credentials);
       }
       
-      // Load services if available
+      // Load services if available (they're already cleaned above)
       if (parsed.profile?.services && Array.isArray(parsed.profile.services)) {
         setServices(parsed.profile.services);
       }
@@ -406,14 +452,14 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       <h4 className={styles.serviceCardName}>{service.name}</h4>
                       <p className={styles.serviceCardDetails}>{service.type} • {formatDuration(service.duration)} • ${service.price}</p>
                       {service.description && (
-                        <p className={styles.serviceCardDetails} style={{ marginTop: '4px', color: '#666', fontStyle: 'italic' }}>
+                        <p className={`${styles.serviceCardDetails} ${styles.serviceDescription}`}>
                           {service.description}
                         </p>
                       )}
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div className={styles.serviceActions}>
                     <button 
-                        className={styles.editServiceBtn}
+                        className={`${styles.editServiceBtn} ${styles.editServiceBtnInline}`}
                       onClick={() => {
                           setEditingServiceIndex(index);
                           setNewService({
@@ -425,16 +471,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             mobileService: service.mobileService || false
                           });
                           setShowAddService(true);
-                        }}
-                        style={{ 
-                          background: 'none', 
-                          border: 'none', 
-                          color: '#6C4F70', 
-                          cursor: 'pointer',
-                          fontSize: '0.9rem',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontWeight: '500'
                         }}
                       >
                         Edit
@@ -539,7 +575,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       value={newService.name}
                       onChange={(e) => setNewService({ ...newService, name: e.target.value })}
                     />
-                    <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newService.name.length}/50</span>
+                    <span className={styles.charCount}>{newService.name.length}/50</span>
                     </div>
                   <div className={styles.modalFormGroup}>
                     <label className={styles.modalLabel}>SERVICE TYPE</label>
@@ -559,8 +595,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       <option value="Physical Therapy">Physical Therapy</option>
                     </select>
                   </div>
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <div className={styles.modalFormGroup} style={{ flex: 1 }}>
+                  <div className={styles.flexRowGapMedium}>
+                    <div className={`${styles.modalFormGroup} ${styles.modalFormGroupFlex}`}>
                       <label className={styles.modalLabel}>DURATION</label>
                       <select
                         className={styles.modalInput}
@@ -575,7 +611,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         <option value="120">2 hours</option>
                       </select>
                     </div>
-                    <div className={styles.modalFormGroup} style={{ flex: 1 }}>
+                    <div className={`${styles.modalFormGroup} ${styles.modalFormGroupFlex}`}>
                       <label className={styles.modalLabel}>PRICE</label>
                       <div className={styles.priceInput}>
                         <span className={styles.dollarSign}>$</span>
@@ -599,17 +635,17 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       value={newService.description}
                       onChange={(e) => setNewService({ ...newService, description: e.target.value })}
                     />
-                    <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newService.description.length}/200</span>
+                    <span className={styles.charCount}>{newService.description.length}/200</span>
                   </div>
-                  <div className={styles.modalFormGroup} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className={`${styles.modalFormGroup} ${styles.modalFormGroupRow}`}>
                     <input
                       type="checkbox"
                       id="mobileService"
                       checked={newService.mobileService}
                       onChange={(e) => setNewService({ ...newService, mobileService: e.target.checked })}
-                      style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                      className={styles.modalCheckbox}
                     />
-                    <label htmlFor="mobileService" className={styles.modalLabel} style={{ margin: 0, cursor: 'pointer', fontWeight: 'normal' }}>
+                    <label htmlFor="mobileService" className={`${styles.modalLabel} ${styles.modalLabelNormal}`}>
                       Mobile Service (I travel to clients)
                     </label>
                   </div>
@@ -634,12 +670,15 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                           // Calculate updated services array
                           let updatedServices;
                           if (editingServiceIndex !== null) {
-                            // Update existing service
+                            // Update existing service - ensure it has an ID
                             updatedServices = [...services];
-                            updatedServices[editingServiceIndex] = { ...newService };
+                            updatedServices[editingServiceIndex] = { 
+                              ...newService, 
+                              id: services[editingServiceIndex].id || generateUUID() 
+                            };
                           } else {
-                            // Add new service
-                            updatedServices = [...services, { ...newService, id: Date.now() }];
+                            // Add new service with UUID
+                            updatedServices = [...services, { ...newService, id: generateUUID() }];
                           }
                           
                           // Save to database immediately
@@ -735,7 +774,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
             )}
 
             {/* Add-ons Section */}
-            <div style={{ marginTop: '100px' }}>
+            <div className={styles.marginTopLarge}>
               <div className={styles.servicesHeader}>
                 <h2 className={styles.sectionTitle}>Add-ons</h2>
                 <button 
@@ -746,13 +785,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </button>
                     </div>
               
-              <p style={{ 
-                fontSize: '0.9rem', 
-                color: '#666', 
-                marginTop: '12px', 
-                marginBottom: '20px',
-                lineHeight: '1.5'
-              }}>
+              <p className={styles.infoText}>
                 Offer optional add-on services. Examples include yoga mat rental, 
                 equipment packages, extended session time (+15 min.), or consultation services...
               </p>
@@ -767,11 +800,11 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                           <p className={styles.serviceCardDetails}>
                             {addOn.description}
                           </p>
-                          <p className={styles.serviceCardDetails} style={{ marginTop: '4px' }}>
+                          <p className={`${styles.serviceCardDetails} ${styles.serviceDescriptionRegular}`}>
                             ${addOn.price}
                           </p>
                   </div>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div className={styles.serviceActions}>
                     <button 
                             className={styles.editServiceBtn}
                       onClick={() => {
@@ -783,16 +816,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                               });
                               setShowAddOnModal(true);
                             }}
-                            style={{ 
-                              background: 'none', 
-                              border: 'none', 
-                              color: '#6C4F70', 
-                              cursor: 'pointer',
-                              fontSize: '0.9rem',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontWeight: '500'
-                            }}
+                            className={`${styles.editServiceBtn} ${styles.editServiceBtnInline}`}
                           >
                             Edit
                           </button>
@@ -896,7 +920,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         value={newAddOn.name}
                         onChange={(e) => setNewAddOn({ ...newAddOn, name: e.target.value })}
                       />
-                      <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newAddOn.name.length}/50</span>
+                      <span className={styles.charCount}>{newAddOn.name.length}/50</span>
                     </div>
                     
                     <div className={styles.modalFormGroup}>
@@ -909,10 +933,10 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         value={newAddOn.description}
                         onChange={(e) => setNewAddOn({ ...newAddOn, description: e.target.value })}
                       />
-                      <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newAddOn.description.length}/200</span>
+                      <span className={styles.charCount}>{newAddOn.description.length}/200</span>
                   </div>
                     
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className={styles.flexRowGapMedium}>
                       <div className={styles.modalFormGroup}>
                         <label className={styles.modalLabel}>PRICE</label>
                         <div className={styles.priceInput}>
@@ -949,12 +973,12 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             // Calculate updated add-ons array
                             let updatedAddOns;
                             if (editingAddOnIndex !== null) {
-                              // Update existing add-on
+                              // Update existing add-on - ensure it has an ID
                               updatedAddOns = [...addOns];
-                              updatedAddOns[editingAddOnIndex] = { ...newAddOn, id: addOns[editingAddOnIndex].id || Date.now() };
+                              updatedAddOns[editingAddOnIndex] = { ...newAddOn, id: addOns[editingAddOnIndex].id || generateUUID() };
                             } else {
-                              // Add new add-on
-                              updatedAddOns = [...addOns, { ...newAddOn, id: Date.now() }];
+                              // Add new add-on with UUID
+                              updatedAddOns = [...addOns, { ...newAddOn, id: generateUUID() }];
                             }
                             
                             // Save to database immediately
@@ -1123,19 +1147,21 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
 
             <div className={styles.bioContainer} key={profileKey}>
               <div className={styles.bioForm}>
-                <div className={styles.formRow}>
+                <div className={`${styles.formRow} ${styles.formRowSingle}`}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Business Name</label>
                     <input type="text" data-field="business_name" className={styles.formInput} defaultValue={profileBasic.business_name || ''} />
-                    </div>
+                  </div>
+                </div>
 
+                <div className={`${styles.formRow} ${styles.formRowSingle}`}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Your Name</label>
                     <input type="text" data-field="contact_name" className={styles.formInput} defaultValue={profileBasic.contact_name || ''} />
                   </div>
                 </div>
 
-                <div className={styles.formRow}>
+                <div className={`${styles.formRow} ${styles.formRowSingle}`}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Phone Number</label>
                     <input type="text" data-field="phone_number" className={styles.formInput} defaultValue={profileBasic.phone_number || ''} />
@@ -1165,20 +1191,21 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       const isSelected = currentSet.includes(practiceId);
                       
                       return (
-                    <button 
-                          key={practice}
-                          type="button"
-                          className={`${styles.practiceOption} ${isSelected ? styles.practiceSelected : ''}`}
-                      onClick={() => {
-                            setSelectedPractices(prev => {
-                              const has = prev.includes(practiceId);
-                              if (has) return prev.filter(p => p !== practiceId);
-                              return [...prev, practiceId];
-                            });
-                          }}
-                        >
-                          {practice.toUpperCase()}
-                        </button>
+                        <label key={practice} className={styles.practiceOption}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              setSelectedPractices(prev => {
+                                const has = prev.includes(practiceId);
+                                if (has) return prev.filter(p => p !== practiceId);
+                                return [...prev, practiceId];
+                              });
+                            }}
+                            className={styles.practiceCheckbox}
+                          />
+                          <span className={styles.practiceLabel}>{practice}</span>
+                        </label>
                       );
                     })}
                   </div>
@@ -1189,7 +1216,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                   <input type="text" data-field="address_line1" className={styles.formInput} defaultValue={profileBasic.address_line1 || ''} placeholder="Street address" />
               </div>
 
-                <div className={styles.formRow}>
+                <div className={`${styles.formRow} ${styles.formRowThree}`}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>City</label>
                     <input type="text" data-field="city" className={styles.formInput} defaultValue={profileBasic.city || ''} />
@@ -1225,7 +1252,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                   ></textarea>
                 </div>
 
-                <div className={styles.formRow}>
+                <div className={`${styles.formRow} ${styles.formRowSingle}`}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Years of Experience</label>
                     <select data-field="years_experience" className={styles.formSelect} defaultValue={yearsExp || ''}>
@@ -1295,7 +1322,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             onChange={(e) => setOtherLanguage(e.target.value)}
                             placeholder="Enter language name"
                             className={styles.formInput}
-                            style={{ width: '200px', marginRight: '8px' }}
+                            className={styles.imageUploadPreview}
                           />
                           <button
                             type="button"
@@ -1306,8 +1333,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                                 setShowOtherInput(false);
                               }
                             }}
-                            className={styles.secondaryBtn}
-                            style={{ marginRight: '8px' }}
+                            className={`${styles.secondaryBtn} ${styles.imageUploadButton}`}
                           >
                             Add
                           </button>
@@ -1415,14 +1441,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
 
                 {saveMessage && (
-                  <div style={{ 
-                    padding: '12px 24px', 
-                    margin: '16px 0',
-                    backgroundColor: saveMessage.includes('Error') ? '#fee' : '#efe',
-                    border: `1px solid ${saveMessage.includes('Error') ? '#fcc' : '#cfc'}`,
-                    borderRadius: '8px',
-                    color: saveMessage.includes('Error') ? '#c33' : '#3c3'
-                  }}>
+                  <div className={`${styles.saveMessage} ${saveMessage.includes('Error') ? styles.saveMessageError : styles.saveMessageSuccess}`}>
                     {saveMessage}
                   </div>
                 )}
@@ -1473,17 +1492,9 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>TRAVEL FEE</label>
+                  <label className={styles.formLabel}>Travel Fee</label>
                   <div className={styles.feeTypeContainer}>
                     <div className={styles.feeTypeTabs}>
-                      <button
-                        type="button"
-                        className={`${styles.feeTypeTab} ${travelFeeType === 'free' ? styles.active : ''}`}
-                        onClick={() => setTravelFeeType('free')}
-                      >
-                        <span className={styles.tabIcon}>✓</span>
-                        Free Travel
-                      </button>
                       <button
                         type="button"
                         className={`${styles.feeTypeTab} ${travelFeeType === 'fee' ? styles.active : ''}`}
@@ -1492,9 +1503,17 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         <span className={styles.tabIcon}>$</span>
                         Travel Fee
                       </button>
+                      <button
+                        type="button"
+                        className={`${styles.feeTypeTab} ${travelFeeType === 'free' ? styles.active : ''}`}
+                        onClick={() => setTravelFeeType('free')}
+                      >
+                        <span className={styles.tabIcon}>✓</span>
+                        Free Travel
+                      </button>
                     </div>
                     {travelFeeType === 'fee' && (
-                      <div style={{ marginTop: '2px', width: '50%' }}>
+                      <div className={styles.marginTopSmall}>
                         <div className={styles.priceInput}>
                           <span className={styles.dollarSign}>$</span>
                           <input
@@ -1511,8 +1530,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>MAXIMUM TRAVEL DISTANCE</label>
-                  <select data-field="max_distance" className={styles.formSelect} defaultValue={profilePrefs.max_distance || '15'} style={{ width: '50%' }}>
+                  <label className={styles.formLabel}>Maximum travel distance</label>
+                  <select data-field="max_distance" className={`${styles.formSelect} ${styles.selectWidthHalf}`} defaultValue={profilePrefs.max_distance || '15'}>
                     <option value="5">5 miles</option>
                     <option value="10">10 miles</option>
                     <option value="15">15 miles</option>
@@ -1524,7 +1543,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Additional Travel Policy</label>
+                  <label className={styles.formLabel}>Additional travel policy</label>
                   <textarea
                     className={styles.formTextarea}
                     rows={3}
@@ -1535,14 +1554,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
 
                 {saveMessage && (
-                  <div style={{ 
-                    padding: '12px 24px', 
-                    margin: '16px 0',
-                    backgroundColor: saveMessage.includes('Error') ? '#fee' : '#efe',
-                    border: `1px solid ${saveMessage.includes('Error') ? '#fcc' : '#cfc'}`,
-                    borderRadius: '8px',
-                    color: saveMessage.includes('Error') ? '#c33' : '#3c3'
-                  }}>
+                  <div className={`${styles.saveMessage} ${saveMessage.includes('Error') ? styles.saveMessageError : styles.saveMessageSuccess}`}>
                     {saveMessage}
                   </div>
                 )}
@@ -1666,20 +1678,20 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       <div className={styles.serviceCardInfo}>
                         <h4 className={styles.serviceCardName}>{cert.name}</h4>
                         <p className={styles.serviceCardDetails}>{cert.issuer}</p>
-                        <p className={styles.serviceCardDetails} style={{ marginTop: '4px', color: '#666' }}>
+                        <p className={`${styles.serviceCardDetails} ${styles.serviceDescriptionRegular}`}>
                           {cert.issueDate && `Issued: ${formatDate(cert.issueDate)}`}
                           {cert.expirationDate && ` • Expires: ${formatDate(cert.expirationDate)}`}
                           {!cert.issueDate && !cert.expirationDate && 'No dates specified'}
                         </p>
                         {cert.licenseNumber && (
-                          <p className={styles.serviceCardDetails} style={{ marginTop: '4px', color: '#666', fontStyle: 'italic' }}>
+                          <p className={`${styles.serviceCardDetails} ${styles.serviceDescription}`}>
                             License Number: {cert.licenseNumber}
                           </p>
                         )}
                       </div>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <div className={styles.serviceActions}>
                         <button 
-                          className={styles.editServiceBtn}
+                          className={`${styles.editServiceBtn} ${styles.editServiceBtnInline}`}
                           onClick={() => {
                             setEditingCertificationIndex(index);
                             setNewCertification({
@@ -1691,19 +1703,10 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             });
                             setShowCertificationModal(true);
                           }}
-                          style={{ 
-                            background: 'none', 
-                            border: 'none', 
-                            color: '#6C4F70', 
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            fontWeight: '500'
-                          }}
-                        >
-                          Edit
-                        </button>
+                            className={`${styles.editServiceBtn} ${styles.editServiceBtnInline}`}
+                          >
+                            Edit
+                          </button>
                         <button
                           className={styles.removeServiceBtn}
                           onClick={async () => {
@@ -1804,7 +1807,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       value={newCertification.name}
                       onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
                     />
-                    <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newCertification.name.length}/100</span>
+                    <span className={styles.charCount}>{newCertification.name.length}/100</span>
                   </div>
                   
                   <div className={styles.modalFormGroup}>
@@ -1817,11 +1820,11 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       value={newCertification.issuer}
                       onChange={(e) => setNewCertification({ ...newCertification, issuer: e.target.value })}
                     />
-                    <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'right' }}>{newCertification.issuer.length}/100</span>
+                    <span className={styles.charCount}>{newCertification.issuer.length}/100</span>
                   </div>
                   
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <div className={styles.modalFormGroup} style={{ flex: 1 }}>
+                  <div className={styles.flexRowGapMedium}>
+                    <div className={`${styles.modalFormGroup} ${styles.modalFormGroupFlex}`}>
                       <label className={styles.modalLabel}>ISSUE DATE</label>
                       <input
                         type="date"
@@ -1830,7 +1833,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         onChange={(e) => setNewCertification({ ...newCertification, issueDate: e.target.value })}
                       />
                     </div>
-                    <div className={styles.modalFormGroup} style={{ flex: 1 }}>
+                    <div className={`${styles.modalFormGroup} ${styles.modalFormGroupFlex}`}>
                       <label className={styles.modalLabel}>EXPIRATION DATE (optional)</label>
                       <input
                         type="date"
@@ -1874,12 +1877,12 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                           // Calculate updated certifications array
                           let updatedCertifications;
                           if (editingCertificationIndex !== null) {
-                            // Update existing certification
+                            // Update existing certification - ensure it has an ID
                             updatedCertifications = [...certifications];
-                            updatedCertifications[editingCertificationIndex] = { ...newCertification, id: certifications[editingCertificationIndex].id || Date.now() };
+                            updatedCertifications[editingCertificationIndex] = { ...newCertification, id: certifications[editingCertificationIndex].id || generateUUID() };
                           } else {
-                            // Add new certification
-                            updatedCertifications = [...certifications, { ...newCertification, id: Date.now() }];
+                            // Add new certification with UUID
+                            updatedCertifications = [...certifications, { ...newCertification, id: generateUUID() }];
                           }
                           
                           // Save to database immediately

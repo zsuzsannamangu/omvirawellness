@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { FaStar, FaReply, FaLink } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 // Dashboard sections
@@ -10,21 +11,32 @@ import Spaces from '@/components/Providers/Dashboard/Spaces';
 import Calendar from '@/components/Providers/Dashboard/Calendar';
 import Clients from '@/components/Providers/Dashboard/Clients';
 import Payments from '@/components/Providers/Dashboard/Payments';
-import Analytics from '@/components/Providers/Dashboard/Analytics';
+import Stats from '@/components/Providers/Dashboard/Stats';
 import Messages from '@/components/Providers/Dashboard/Messages';
 import Profile from '@/components/Providers/Dashboard/Profile';
 
 export default function ProvidersDashboard() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const userId = params.userId as string;
   
-  const [activeSection, setActiveSection] = useState('bookings');
-  const [activeSubmenu, setActiveSubmenu] = useState('requests');
+  // Check URL parameters for section
+  const initialSection = searchParams.get('section') || 'bookings';
+  const [activeSection, setActiveSection] = useState(initialSection);
+  const [activeSubmenu, setActiveSubmenu] = useState(
+    initialSection === 'profile' ? 'basic' : 
+    initialSection === 'stats' ? 'traffic' :
+    'requests'
+  );
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [providerName, setProviderName] = useState('Loading...');
   const [providerRating, setProviderRating] = useState<number | null>(null);
+  const [totalReviews, setTotalReviews] = useState<number>(0);
   const [totalClients, setTotalClients] = useState<number>(0);
+  const [totalBookings, setTotalBookings] = useState<number>(0);
+  const [servicesCount, setServicesCount] = useState<number>(0);
+  const [profileUrl, setProfileUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [unreadNotifications, setUnreadNotifications] = useState<number>(0);
@@ -198,6 +210,81 @@ export default function ProvidersDashboard() {
     };
   }, [userId]);
 
+  // Load provider stats (reviews, services, bookings)
+  useEffect(() => {
+    const loadProviderStats = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !userId) return;
+        
+        // Load reviews for rating
+        const reviewsResponse = await fetch(`http://localhost:4000/api/reviews/provider/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (reviewsResponse.ok) {
+          const reviews = await reviewsResponse.json();
+          if (Array.isArray(reviews) && reviews.length > 0) {
+            const avg = reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length;
+            setProviderRating(avg);
+            setTotalReviews(reviews.length);
+          } else {
+            setProviderRating(null);
+            setTotalReviews(0);
+          }
+        }
+        
+        // Load provider profile to get services count
+        const providerResponse = await fetch(`http://localhost:4000/api/providers/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (providerResponse.ok) {
+          const providerData = await providerResponse.json();
+          if (providerData.services && Array.isArray(providerData.services)) {
+            // Filter out empty services
+            const validServices = providerData.services.filter((s: any) => 
+              s && s.name && s.name.trim() !== ''
+            );
+            setServicesCount(validServices.length);
+          } else {
+            setServicesCount(0);
+          }
+        }
+        
+        // Load bookings to get total count
+        const bookingsResponse = await fetch(`http://localhost:4000/api/bookings/provider/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (bookingsResponse.ok) {
+          const bookings = await bookingsResponse.json();
+          if (Array.isArray(bookings)) {
+            setTotalBookings(bookings.length);
+          } else {
+            setTotalBookings(0);
+          }
+        }
+        
+        // Set profile URL
+        if (typeof window !== 'undefined') {
+          const baseUrl = window.location.origin;
+          setProfileUrl(`${baseUrl}/search/${userId}`);
+        }
+      } catch (error) {
+        console.error('Error loading provider stats:', error);
+      }
+    };
+    
+    loadProviderStats();
+  }, [userId]);
+
   // Load unread messages count
   useEffect(() => {
     let isMounted = true;
@@ -252,6 +339,35 @@ export default function ProvidersDashboard() {
     };
     window.addEventListener('switchSubmenu', handler);
     return () => window.removeEventListener('switchSubmenu', handler);
+  }, []);
+
+  // Handle section switching (e.g., from bookings to messages)
+  useEffect(() => {
+    const sectionHandler = (e: any) => {
+      if (e?.detail?.section) {
+        setActiveSection(e.detail.section);
+        if (e?.detail?.submenu) {
+          setActiveSubmenu(e.detail.submenu);
+        } else {
+          // Get submenu items dynamically
+          const submenuItems = {
+            bookings: [{ id: 'requests' }],
+            spaces: [{ id: 'upcoming' }],
+            calendar: [{ id: 'overview' }],
+            clients: [{ id: 'directory' }],
+            payments: [{ id: 'balance' }],
+            stats: [{ id: 'traffic' }],
+            messages: [{ id: 'notifications' }, { id: 'communication' }],
+            profile: [{ id: 'basic' }],
+            settings: [{ id: 'account' }],
+          };
+          const firstSubmenu = submenuItems[e.detail.section as keyof typeof submenuItems]?.[0];
+          setActiveSubmenu(firstSubmenu?.id || e.detail.section);
+        }
+      }
+    };
+    window.addEventListener('switchSection', sectionHandler);
+    return () => window.removeEventListener('switchSection', sectionHandler);
   }, []);
 
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -324,7 +440,7 @@ export default function ProvidersDashboard() {
     { id: 'calendar', label: 'Calendar' },
     { id: 'clients', label: 'Clients' },
     { id: 'payments', label: 'Payments & Earnings' },
-    { id: 'analytics', label: 'Analytics' },
+    { id: 'stats', label: 'Stats' },
     { id: 'messages', label: 'Messages' },
     { id: 'profile', label: 'Profile & Services' },
     { id: 'settings', label: 'Account Settings' },
@@ -357,12 +473,13 @@ export default function ProvidersDashboard() {
       { id: 'balance', label: 'Balance Overview' },
       { id: 'payouts', label: 'Payouts' },
       { id: 'reports', label: 'Reports' },
+      { id: 'statements', label: 'Monthly Statements' },
     ],
-    analytics: [
+    stats: [
+      { id: 'traffic', label: 'Traffic' },
       { id: 'bookings', label: 'Bookings' },
-      { id: 'revenue', label: 'Revenue Trends' },
+      { id: 'revenue', label: 'Revenue' },
       { id: 'reviews', label: 'Reviews' },
-      { id: 'retention', label: 'Retention' },
     ],
     messages: [
       { id: 'notifications', label: 'Notifications' },
@@ -395,8 +512,8 @@ export default function ProvidersDashboard() {
         return <Clients activeSubmenu={activeSubmenu} />;
       case 'payments':
         return <Payments activeSubmenu={activeSubmenu} />;
-      case 'analytics':
-        return <Analytics activeSubmenu={activeSubmenu} />;
+      case 'stats':
+        return <Stats activeSubmenu={activeSubmenu} />;
       case 'messages':
         return <Messages activeSubmenu={activeSubmenu} />;
       case 'profile':
@@ -418,18 +535,17 @@ export default function ProvidersDashboard() {
                   <div className={styles.formSection}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Email Address</label>
-                      <input type="email" className={styles.formInput} defaultValue={email} disabled />
+                      <input type="email" className={`${styles.formInput} ${styles.accountInfoInput}`} defaultValue={email} disabled />
                     </div>
 
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Password</label>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <div className={`${styles.formRowFlex} ${styles.accountInfoRow}`}>
                         <input 
                           type="password" 
-                          className={styles.formInput} 
+                          className={`${styles.formInput} ${styles.formInputFlex} ${styles.formInputDisabled} ${styles.accountInfoInput}`}
                           defaultValue="••••••••" 
                           disabled 
-                          style={{ flex: 1, opacity: 0.5 }}
                         />
                         <button className={styles.secondaryBtn}>Change Password</button>
                       </div>
@@ -444,31 +560,59 @@ export default function ProvidersDashboard() {
               <div className={styles.dashboardSection}>
                 <h2 className={styles.sectionTitle}>Subscription</h2>
                 
-                <div className={styles.settingsForm}>
-                  <div className={styles.formSection}>
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Current Plan</label>
-                      <div className={styles.planInfo}>
-                        <span className={styles.planName}>Professional Plan</span>
-                        <span className={styles.planPrice}>$59/month</span>
+                <div className={styles.subscriptionContainer}>
+                  {/* Current Plan Card */}
+                  <div className={styles.subscriptionCard}>
+                    <div className={styles.subscriptionCardHeader}>
+                      <div className={styles.subscriptionCardTitle}>
+                        <h3>Current Plan</h3>
+                        <span className={styles.activeBadge}>Active</span>
                       </div>
                     </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Next Payment Due</label>
-                      <div className={styles.paymentDueInfo}>
-                        <div className={styles.paymentDueDetails}>
-                          <span className={styles.paymentDate}>January 15, 2025</span>
-                          <span className={styles.paymentAmount}>$59.00</span>
+                    <div className={styles.subscriptionCardBody}>
+                      <div className={styles.planDetails}>
+                        <div className={styles.planNameLarge}>Professional Plan</div>
+                        <div className={styles.planPriceLarge}>$59<span className={styles.planPeriod}>/month</span></div>
+                      </div>
+                      <div className={styles.planFeatures}>
+                        <div className={styles.planFeature}>
+                          <span className={styles.featureCheck}>✓</span>
+                          <span>Unlimited bookings</span>
                         </div>
-                        <p className={styles.paymentDescription}>Professional Plan - Monthly Subscription</p>
+                        <div className={styles.planFeature}>
+                          <span className={styles.featureCheck}>✓</span>
+                          <span>Advanced analytics</span>
+                        </div>
+                        <div className={styles.planFeature}>
+                          <span className={styles.featureCheck}>✓</span>
+                          <span>Priority support</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className={styles.formActions}>
-                    <button className={styles.saveBtn}>Change Plan</button>
-                    <button className={styles.cancelBtn}>Cancel Subscription</button>
+                  {/* Next Payment Card */}
+                  <div className={styles.subscriptionCard}>
+                    <div className={styles.subscriptionCardHeader}>
+                      <h3>Next Payment</h3>
+                    </div>
+                    <div className={styles.subscriptionCardBody}>
+                      <div className={styles.paymentInfo}>
+                        <div className={styles.paymentDateLarge}>January 15, 2025</div>
+                        <div className={styles.paymentAmountLarge}>$59.00</div>
+                      </div>
+                      <p className={styles.paymentDescription}>Your subscription will automatically renew on this date</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className={styles.subscriptionActions}>
+                    <button className={styles.changePlanBtn}>
+                      Change Plan
+                    </button>
+                    <button className={styles.cancelSubscriptionBtn}>
+                      Cancel Subscription
+                    </button>
                   </div>
                 </div>
               </div>
@@ -531,7 +675,7 @@ export default function ProvidersDashboard() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className={styles.centeredContainer}>
         <p>Loading...</p>
       </div>
     );
@@ -593,15 +737,37 @@ export default function ProvidersDashboard() {
               )}
             </div>
             <div className={styles.greetingInfo}>
-              <h1 className={styles.greeting}>Hello, {providerName}</h1>
+              <h1 className={styles.greeting}>
+                Hi there, {providerName}
+                {providerRating !== null && totalReviews > 0 && (
+                  <span className={styles.headerRating}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <FaStar key={i} className={(i + 1) <= Math.round(providerRating) ? styles.headerStarFilled : styles.headerStarEmpty} />
+                    ))}
+                    <strong>{providerRating.toFixed(1)}</strong>
+                    <span className={styles.headerReviewCount}>({totalReviews})</span>
+                  </span>
+                )}
+              </h1>
               <div className={styles.userStats}>
-                {providerRating !== null && (
-                  <span className={styles.rating}>★ {providerRating.toFixed(1)}</span>
+                {servicesCount > 0 && (
+                  <>
+                    <span className={styles.statItem}>{servicesCount} {servicesCount === 1 ? 'service' : 'services'}</span>
+                    <span className={styles.statSeparator}>|</span>
+                  </>
                 )}
-                {totalClients > 0 && (
-                  <span className={styles.clients}>{totalClients} client{totalClients !== 1 ? 's' : ''}</span>
+                {totalBookings > 0 && (
+                  <>
+                    <span className={styles.statItem}>{totalBookings} {totalBookings === 1 ? 'booking' : 'bookings'}</span>
+                    <span className={styles.statSeparator}>|</span>
+                  </>
                 )}
-                <span className={styles.profileLink}>View your profile on Omvira</span>
+                {profileUrl && (
+                  <a href={profileUrl} className={styles.profileLink} target="_blank" rel="noopener noreferrer">
+                    {profileUrl.replace(/^https?:\/\//, '').replace(/^www\./, '')}
+                    <FaLink className={styles.linkIcon} />
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -612,7 +778,7 @@ export default function ProvidersDashboard() {
               ref={fileInputRef}
               onChange={handleImageChange}
               accept="image/*"
-              style={{ display: 'none' }}
+              className={styles.hidden}
             />
           </div>
         </div>

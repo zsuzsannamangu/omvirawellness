@@ -614,11 +614,12 @@
 .listContainer {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $spacing-xs;
+  margin-top: $spacing-lg;
 }
 
 .listItem {
-  margin-bottom: 4px;
+  margin-bottom: 0;
   position: relative;
   padding-left: 1.5rem;
   

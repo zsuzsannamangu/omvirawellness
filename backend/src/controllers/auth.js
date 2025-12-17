@@ -470,7 +470,33 @@ async function registerProvider(req, res) {
  */
 async function registerSpaceOwner(req, res) {
   try {
-    const { email, password, businessName, contactName, phoneNumber } = req.body;
+    const { 
+      email, 
+      password, 
+      businessName, 
+      contactName, 
+      phoneNumber,
+      spaceType,
+      address,
+      city,
+      state,
+      zipCode,
+      description,
+      capacity,
+      squareFootage,
+      amenities,
+      availability,
+      hourlyRate,
+      minimumBooking,
+      cancellationPolicy,
+      photos
+    } = req.body;
+
+    console.log('Space owner registration data:', {
+      email, businessName, contactName, phoneNumber, spaceType,
+      address, city, state, zipCode, description, capacity,
+      squareFootage, amenities, hourlyRate, minimumBooking, cancellationPolicy
+    });
 
     // Validate required fields
     if (!email || !password || !contactName || !phoneNumber) {
@@ -512,17 +538,147 @@ async function registerSpaceOwner(req, res) {
 
       const userId = userResult.rows[0].id;
 
-      // Insert space owner profile
-      await client.query(
-        `INSERT INTO space_owner_profiles (user_id, business_name, contact_name, phone_number) 
-         VALUES ($1, $2, $3, $4)`,
-        [userId, businessName || null, contactName, phoneNumber]
+      // Insert space owner profile with all fields
+      const profileResult = await client.query(
+        `INSERT INTO space_owner_profiles (
+          user_id, 
+          business_name, 
+          contact_name, 
+          phone_number,
+          bio,
+          address_line1,
+          city,
+          state,
+          zip_code,
+          country
+        ) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         RETURNING id`,
+        [
+          userId, 
+          businessName || null, 
+          contactName, 
+          phoneNumber,
+          description || null,
+          address || null,
+          city || null,
+          state || null,
+          zipCode || null,
+          'USA'
+        ]
       );
+      
+      const spaceOwnerProfileId = profileResult.rows[0].id;
+      console.log('Space owner profile created successfully:', spaceOwnerProfileId);
+
+      // Format cancellation policy as readable text
+      let formattedCancellationPolicy = '24 hours notice required';
+      if (cancellationPolicy) {
+        const hours = parseInt(cancellationPolicy);
+        if (hours >= 24 && hours % 24 === 0) {
+          const days = hours / 24;
+          formattedCancellationPolicy = `${days} ${days === 1 ? 'day' : 'days'} notice required`;
+        } else {
+          formattedCancellationPolicy = `${hours} hours notice required`;
+        }
+      }
+
+      console.log('Creating space listing with data:', {
+        owner_id: spaceOwnerProfileId,
+        space_name: businessName || `${contactName}'s Space`,
+        space_type: spaceType || 'wellness_space',
+        description: description || null,
+        address: address || null,
+        city: city || null,
+        state: state || null,
+        zipCode: zipCode || null,
+        square_footage: squareFootage ? parseInt(squareFootage) : null,
+        capacity: capacity ? parseInt(capacity) : null,
+        hourly_rate: hourlyRate ? parseFloat(hourlyRate) : null,
+        minimum_booking_hours: minimumBooking ? parseInt(minimumBooking) : 1,
+        cancellation_policy: formattedCancellationPolicy
+      });
+
+      // Insert space listing with all details
+      const spaceResult = await client.query(
+        `INSERT INTO spaces (
+          owner_id,
+          space_name,
+          space_type,
+          description,
+          address_line1,
+          city,
+          state,
+          zip_code,
+          square_footage,
+          capacity,
+          hourly_rate,
+          minimum_booking_hours,
+          cancellation_policy,
+          is_active
+        ) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, true)
+         RETURNING *`,
+        [
+          spaceOwnerProfileId,
+          businessName || `${contactName}'s Space`,
+          spaceType || 'wellness_space',
+          description || null,
+          address || null,
+          city || null,
+          state || null,
+          zipCode || null,
+          squareFootage ? parseInt(squareFootage) : null,
+          capacity ? parseInt(capacity) : null,
+          hourlyRate ? parseFloat(hourlyRate) : null,
+          minimumBooking ? parseInt(minimumBooking) : 1,
+          formattedCancellationPolicy,
+        ]
+      );
+
+      const spaceId = spaceResult.rows[0].id;
+      const spaceData = spaceResult.rows[0];
+      console.log('✅ Space listing created successfully!');
+      console.log('Space ID:', spaceId);
+      console.log('Space data:', JSON.stringify(spaceData, null, 2));
+
+      // Insert amenities if provided
+      if (amenities && Array.isArray(amenities) && amenities.length > 0) {
+        for (const amenity of amenities) {
+          await client.query(
+            `INSERT INTO space_amenities (space_id, amenity_name)
+             VALUES ($1, $2)`,
+            [spaceId, amenity]
+          );
+        }
+        console.log('Amenities added:', amenities.length);
+      }
+
+      // Insert availability if provided
+      if (availability && typeof availability === 'object') {
+        for (const [day, schedule] of Object.entries(availability)) {
+          if (schedule.isOpen) {
+            await client.query(
+              `INSERT INTO space_availability (
+                space_id, day_of_week, start_time, end_time, is_available
+              )
+               VALUES ($1, $2, $3, $4, true)`,
+              [spaceId, day, schedule.startTime, schedule.endTime]
+            );
+          }
+        }
+        console.log('Availability added for space');
+      }
 
       await client.query('COMMIT');
 
       const user = userResult.rows[0];
       const token = generateToken(user);
+
+      console.log('✅ Space owner registration complete!');
+      console.log('User ID:', user.id);
+      console.log('Space Owner Profile ID:', spaceOwnerProfileId);
+      console.log('Space ID:', spaceId);
 
       res.status(201).json({
         success: true,
@@ -533,6 +689,8 @@ async function registerSpaceOwner(req, res) {
             email: user.email,
             user_type: user.user_type,
           },
+          space_owner_profile_id: spaceOwnerProfileId,
+          space_id: spaceId,
           token,
         },
       });

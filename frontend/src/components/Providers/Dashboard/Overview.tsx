@@ -98,7 +98,7 @@ export default function Overview({ activeSubmenu }: OverviewProps) {
                   <span className={styles.actionLabel}>Manage Services</span>
                 </button>
                 <button className={styles.actionButton}>
-                  <span className={styles.actionLabel}>View Analytics</span>
+                  <span className={styles.actionLabel}>View Stats</span>
                 </button>
               </div>
             </div>

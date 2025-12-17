@@ -1795,8 +1795,17 @@
 
 .amenitiesList {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: $spacing-sm;
+}
+
+.amenityTag {
+  background: $provider-colors-1;
+  color: $bg-white;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .amenityItem {
@@ -1809,6 +1818,24 @@
   width: 18px;
   height: 18px;
   accent-color: $primary-color;
+}
+
+.availabilityList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.availabilityItem {
+  padding: $spacing-sm;
+  background: $bg-light;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  
+  strong {
+    color: $dark-text;
+    margin-right: $spacing-xs;
+  }
 }
 
 .checkboxLabel {
@@ -2257,6 +2284,26 @@
 .formTextarea {
   resize: vertical;
   min-height: 80px;
+}
+
+.saveMessage {
+  padding: 12px 24px;
+  margin: 16px 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.saveMessageSuccess {
+  background-color: $success-bg-light;
+  border: 1px solid $success-color;
+  color: $success-text-dark;
+}
+
+.saveMessageError {
+  background-color: $danger-bg-light;
+  border: 1px solid $error-color;
+  color: $danger-text-dark;
 }
 
 .formActions {

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { FaCheckCircle, FaTimesCircle, FaStar, FaUser, FaCalendarAlt, FaClock, FaEnvelope, FaPhone } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 interface BookingsProps {
@@ -33,6 +34,37 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
   
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set());
+  const [cancelling, setCancelling] = useState(false);
+  const isMountedRef = useRef(true);
+
+  // Cleanup SweetAlert on unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      // Close any open SweetAlert instances
+      try {
+        if (Swal.isVisible()) {
+          Swal.close();
+        }
+      } catch (e) {
+        // Ignore errors during cleanup
+        console.warn('Error closing SweetAlert on unmount:', e);
+      }
+    };
+  }, []);
+
+  // Helper function to safely show SweetAlert
+  const safeSwalFire = async (options: any) => {
+    if (!isMountedRef.current) return null;
+    try {
+      return await Swal.fire(options);
+    } catch (error) {
+      console.error('SweetAlert error:', error);
+      return null;
+    }
+  };
 
   const loadBookings = async () => {
       try {
@@ -139,6 +171,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
   };
 
   useEffect(() => {
+    setSelectedBookings(new Set()); // Clear selections when switching tabs
     loadBookings();
     const refresh = () => loadBookings();
     window.addEventListener('refreshBookings', refresh);
@@ -190,6 +223,101 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     }
   };
 
+  const handleSelectBooking = (bookingId: string) => {
+    setSelectedBookings(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(bookingId)) {
+        newSet.delete(bookingId);
+      } else {
+        newSet.add(bookingId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedBookings.size === bookings.length) {
+      setSelectedBookings(new Set());
+    } else {
+      setSelectedBookings(new Set(bookings.map(b => b.id)));
+    }
+  };
+
+  const handleCancelSelected = async () => {
+    if (selectedBookings.size === 0) return;
+
+    const result = await safeSwalFire({
+      title: 'Cancel Bookings?',
+      text: `Are you sure you want to cancel ${selectedBookings.size} booking${selectedBookings.size > 1 ? 's' : ''}? The client will be notified via email.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#8B7355',
+      confirmButtonText: 'Yes, cancel them',
+      cancelButtonText: 'No, keep them'
+    });
+
+    if (!result || !result.isConfirmed) return;
+
+    setCancelling(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        await safeSwalFire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Please log in again',
+          confirmButtonColor: '#8B7355'
+        });
+        return;
+      }
+
+      const cancelPromises = Array.from(selectedBookings).map(bookingId =>
+        fetch(`http://localhost:4000/api/bookings/${bookingId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: 'cancelled' })
+        })
+      );
+
+      const results = await Promise.allSettled(cancelPromises);
+      const successful = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
+      const failed = results.length - successful;
+
+      if (successful > 0) {
+        await safeSwalFire({
+          icon: 'success',
+          title: 'Bookings Cancelled',
+          text: `${successful} booking${successful > 1 ? 's' : ''} cancelled successfully. ${failed > 0 ? `${failed} failed.` : 'Clients have been notified via email.'}`,
+          confirmButtonColor: '#8B7355'
+        });
+        
+        setSelectedBookings(new Set());
+        window.dispatchEvent(new Event('refreshBookings'));
+      } else {
+        await safeSwalFire({
+          icon: 'error',
+          title: 'Cancellation Failed',
+          text: 'Failed to cancel bookings. Please try again.',
+          confirmButtonColor: '#8B7355'
+        });
+      }
+    } catch (error) {
+      console.error('Error cancelling bookings:', error);
+      await safeSwalFire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred while cancelling bookings.',
+        confirmButtonColor: '#8B7355'
+      });
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -228,39 +356,72 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       );
     }
 
-    if (activeSubmenu === 'upcoming' || activeSubmenu === 'past') {
-      // Table format for upcoming and past
+    if (activeSubmenu === 'upcoming' || activeSubmenu === 'past' || activeSubmenu === 'canceled') {
+      // Table format for upcoming, past, and canceled
       return (
         <div className={styles.historyContent}>
           <h2 className={styles.sectionTitle}>
             {activeSubmenu === 'upcoming' && 'Upcoming Sessions'}
             {activeSubmenu === 'past' && 'Past Sessions'}
+            {activeSubmenu === 'canceled' && 'Canceled Sessions'}
           </h2>
-          <div className={styles.bookingsTableWrapper}>
-            <table className={styles.bookingsTable}>
+          {activeSubmenu === 'upcoming' && selectedBookings.size > 0 && (
+            <div className={styles.cancelActionsBar}>
+              <span className={styles.selectedCount}>
+                {selectedBookings.size} booking{selectedBookings.size > 1 ? 's' : ''} selected
+              </span>
+              <button
+                className={styles.cancelBtn}
+                onClick={handleCancelSelected}
+                disabled={cancelling}
+              >
+                {cancelling ? 'Cancelling...' : 'Cancel Selected'}
+              </button>
+            </div>
+          )}
+          <div className={`${styles.bookingsTableWrapper} ${activeSubmenu === 'canceled' ? styles.compactTableWrapper : ''}`}>
+            <table className={`${styles.bookingsTable} ${activeSubmenu === 'canceled' ? styles.compactTable : ''}`}>
               <thead>
                 <tr>
+                  {activeSubmenu === 'upcoming' && <th className={styles.tableHeaderCheckbox}>
+                    <input
+                      type="checkbox"
+                      checked={selectedBookings.size === bookings.length && bookings.length > 0}
+                      onChange={handleSelectAll}
+                      className={styles.checkbox}
+                    />
+                  </th>}
                   <th>Date</th>
-                  <th>Time</th>
+                  {activeSubmenu !== 'canceled' && <th>Time</th>}
                   <th>Service</th>
                   <th>Client</th>
-                  <th>Location</th>
+                  {activeSubmenu !== 'canceled' && <th>Location</th>}
                   <th>Total</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                  {(activeSubmenu === 'past' || activeSubmenu === 'canceled') && <th>Actions</th>}
                 </tr>
               </thead>
               <tbody>
                 {bookings.map((booking) => {
                   const serviceInfo = parseServiceInfo(booking.provider_notes);
                   const addOns = serviceInfo?.add_ons || [];
+                  const isSelected = selectedBookings.has(booking.id);
                   return (
-                    <tr key={booking.id}>
-                      <td>{formatDate(booking.booking_date, activeSubmenu !== 'past')}</td>
-                      <td>{formatTime(booking.start_time)} - {formatTime(booking.end_time)}</td>
+                    <tr key={booking.id} className={isSelected ? styles.selectedRow : ''}>
+                      {activeSubmenu === 'upcoming' && (
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleSelectBooking(booking.id)}
+                            className={styles.checkbox}
+                          />
+                        </td>
+                      )}
+                      <td>{formatDate(booking.booking_date, activeSubmenu !== 'past' && activeSubmenu !== 'canceled')}</td>
+                      {activeSubmenu !== 'canceled' && <td>{formatTime(booking.start_time)} - {formatTime(booking.end_time)}</td>}
                       <td>
                         <div className={styles.serviceName}>{serviceInfo?.name || 'Service'}</div>
-                        {addOns.length > 0 && (
+                        {activeSubmenu !== 'canceled' && addOns.length > 0 && (
                           <div className={styles.addOnsList}>
                             {addOns.map((addOn: any, idx: number) => (
                               <span key={addOn.id || idx}>
@@ -272,16 +433,29 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                         )}
                       </td>
                       <td>{booking.first_name} {booking.last_name}</td>
-                      <td>{formatLocation(serviceInfo?.location_type)}</td>
+                      {activeSubmenu !== 'canceled' && <td>{formatLocation(serviceInfo?.location_type)}</td>}
                       <td>${parseFloat(booking.total_amount).toFixed(2)}</td>
-                      <td>
-                        <span className={`${styles.statusBadge} ${styles[booking.status]}`}>
-                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                        </span>
-                      </td>
-                      <td>
-                        <button className={styles.secondaryBtn}>Message Client</button>
-                      </td>
+                      {(activeSubmenu === 'past' || activeSubmenu === 'canceled') && (
+                        <td>
+                          <button 
+                            className={styles.secondaryBtn}
+                            onClick={() => {
+                              // Navigate to messages section
+                              const event = new CustomEvent('switchSection', { 
+                                detail: { section: 'messages', submenu: 'communication' } 
+                              });
+                              window.dispatchEvent(event);
+                              // Store client info for messaging
+                              if (booking.user_id) {
+                                localStorage.setItem('messageClientId', booking.user_id);
+                                localStorage.setItem('messageClientName', `${booking.first_name} ${booking.last_name}`);
+                              }
+                            }}
+                          >
+                            Message Client
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   );
                 })}

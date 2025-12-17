@@ -258,7 +258,7 @@ export default function AvailabilityManager() {
           Manage your availability with both one-time slots and recurring patterns. 
           This gives you flexibility while reducing manual scheduling work.
         </p>
-        {saving && <p style={{ color: '#27ab81', marginTop: '8px' }}>Saving...</p>}
+        {saving && <p className={styles.savingIndicator}>Saving...</p>}
       </div>
 
       <div className={styles.quickActions}>
@@ -956,15 +956,7 @@ function AvailabilityForm({ slot, onSave, onCancel }: AvailabilityFormProps) {
             return (
               <>
                 {validationMessage && (
-                  <div style={{ 
-                    color: '#6C4F70', 
-                    fontSize: '0.85rem', 
-                    marginBottom: '12px',
-                    padding: '10px 14px',
-                    backgroundColor: '#F5F0E8',
-                    borderRadius: '6px',
-                    border: '1px solid #A67873'
-                  }}>
+                  <div className={styles.validationMessage}>
                     {validationMessage}
                   </div>
                 )}

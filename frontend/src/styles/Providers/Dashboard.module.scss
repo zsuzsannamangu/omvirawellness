@@ -133,14 +133,62 @@
   font-weight: 600;
   color: $dark-text;
   margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.headerRating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: $spacing-xs;
+}
+
+.headerStarFilled {
+  color: $dark-text;
+  font-size: 0.9rem;
+}
+
+.headerStarEmpty {
+  color: $border-light;
+  font-size: 0.9rem;
+}
+
+.headerReviewCount {
+  font-weight: 400;
+  color: $subtext-color;
 }
 
 .userStats {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
+  gap: $spacing-sm;
   font-size: 0.9rem;
-  color: $subtext-color;
+  color: $dark-text;
+  font-family: $font-main;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+  color: $dark-text;
+  
+  strong {
+    font-weight: 700;
+  }
+}
+
+.statSeparator {
+  color: $divider-color;
+  margin: 0 $spacing-xs;
+  font-weight: 300;
 }
 
 .rating, .clients {
@@ -152,13 +200,22 @@
 }
 
 .profileLink {
-  color: $provider-colors-3;
-  text-decoration: none;
+  color: $dark-text;
+  text-decoration: underline;
   cursor: pointer;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   
   &:hover {
-    text-decoration: underline;
+    color: $provider-colors-3;
   }
+}
+
+.linkIcon {
+  font-size: 0.75rem;
+  opacity: 0.7;
 }
 
 .signOutBtn {
@@ -356,17 +413,17 @@
 
 // Dashboard Section
 .dashboardSection {
-  background: $bg-white;
-  border-radius: 6px;
-  padding: $spacing-lg;
-  box-shadow: 0 1px 3px $shadow-color;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .sectionTitle {
-  font-family: $font-subheading;
-  font-size: 2rem;
+  font-family: $font-main;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: $dark-text;
+  color: $text-form-label;
   margin: 0 0 $spacing-lg 0;
 }
 
@@ -560,6 +617,78 @@
       margin-top: 4px;
       line-height: 1.4;
     }
+
+    tr.selectedRow {
+      background: $info-bg;
+    }
+  }
+
+  .compactTableWrapper {
+    border-radius: 6px;
+  }
+
+  .compactTable {
+    font-size: 0.85rem;
+
+    thead {
+      background: $background-light;
+    }
+
+    th, td {
+      padding: $spacing-xs $spacing-sm;
+      font-size: 0.85rem;
+    }
+
+    .serviceName {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+  }
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: $provider-colors-3;
+}
+
+.cancelActionsBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $background-light;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  margin-bottom: $spacing-md;
+}
+
+.selectedCount {
+  font-weight: 600;
+  color: $dark-text;
+  font-size: 0.95rem;
+}
+
+.cancelBtn {
+  padding: $spacing-xs $spacing-md;
+  background: $cancel-red;
+  color: $bg-white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+
+  &:hover:not(:disabled) {
+    background: darken(#dc3545, 10%);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
@@ -751,30 +880,33 @@
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: capitalize;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 
     &.pending {
-      background: #fff3cd;
-      color: #856404;
+      background: $warning-bg;
+      color: $warning-text;
     }
 
     &.confirmed {
-      background: #d1ecf1;
-      color: #0c5460;
+      background: $info-bg-light;
+      color: $info-text-dark;
     }
 
     &.completed {
-      background: #d4edda;
-      color: #155724;
+      background: $success-bg-light;
+      color: $success-text-dark;
     }
 
     &.cancelled {
-      background: #f8d7da;
-      color: #721c24;
+      background: $danger-bg-light;
+      color: $danger-text-dark;
     }
 
     &.no_show {
-      background: #e2e3e5;
-      color: #383d41;
+      background: $secondary-bg-light;
+      color: $secondary-text-dark;
     }
   }
 
@@ -1149,7 +1281,566 @@
   }
 }
 
-// Analytics Styles
+// Stats Styles
+.statsContent {
+  padding: $spacing-lg;
+}
+
+.statsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+
+  .sectionTitle {
+    margin: 0;
+  }
+}
+
+.trafficStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-sm;
+}
+
+.bookingStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $spacing-sm;
+}
+
+.revenueStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $spacing-sm;
+}
+
+.statCard {
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 4px $shadow-color;
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px $shadow-medium;
+  }
+}
+
+.statCardCompact {
+  background: $bg-white;
+  border-radius: 6px;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px $shadow-medium;
+  }
+}
+
+.statIcon {
+  font-size: 1.25rem;
+  color: $provider-colors-3;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.statCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: $provider-color-3-rgba-10;
+  color: $provider-colors-3;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.statCardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.statCardContentCompact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $dark-text;
+  line-height: 1.2;
+}
+
+.statValueCompact {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $dark-text;
+  line-height: 1.2;
+  font-family: $font-main;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.statLabelCompact {
+  font-size: 0.75rem;
+  color: $subtext-color;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-weight: 600;
+  font-family: $font-main;
+}
+
+.statChange {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: $spacing-xs;
+}
+
+.statChangeCompact {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-top: 2px;
+  font-family: $font-main;
+  
+  svg {
+    font-size: 0.65rem;
+  }
+}
+
+.statChangePositive {
+  color: $positive-change;
+}
+
+.statChangeNegative {
+  color: $negative-change;
+}
+
+.statsChart {
+  background: $bg-white;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  margin-top: $spacing-lg;
+  box-shadow: 0 2px 4px $shadow-color;
+}
+
+// Period Dropdown Styles
+.periodDropdownWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.periodDropdownBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: 8px 16px;
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $dark-text;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: $provider-colors-3;
+    background: $provider-color-3-rgba-02;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $provider-colors-3;
+    box-shadow: 0 0 0 3px $provider-color-3-rgba-10;
+  }
+
+  span {
+    display: inline-block;
+  }
+}
+
+.dropdownIcon {
+  font-size: 0.75rem;
+  color: $subtext-color;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dropdownIconOpen {
+  transform: rotate(180deg);
+}
+
+.periodDropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px $shadow-dark;
+  min-width: 180px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.periodDropdownItem {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: $bg-white;
+  border: none;
+  color: $dark-text;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: rgba($provider-colors-3, 0.05);
+  }
+
+  &:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}
+
+.periodDropdownItemActive {
+  background: rgba($provider-colors-3, 0.1);
+  color: $provider-colors-3;
+  font-weight: 600;
+
+  &:hover {
+    background: $provider-color-3-rgba-15;
+  }
+}
+
+// Chart axis and tooltip styles
+.chartAxis {
+  font-size: $chart-axis-font-size;
+}
+
+.chartTooltip {
+  background-color: $chart-tooltip-bg;
+  border-radius: $chart-tooltip-border-radius;
+  font-size: $chart-tooltip-font-size;
+}
+
+.sectionTitleWithMargin {
+  margin-bottom: 1rem;
+}
+
+// Flex utility classes
+.flexRow {
+  display: flex;
+}
+
+.flexRowBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flexRowGap {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.flexRowGapSmall {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+}
+
+.flexRowGapMedium {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexOne {
+  flex: 1;
+}
+
+// Notifications styles
+.notificationsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.notificationsActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.notificationButton {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.checkboxLabelContainer {
+  margin-bottom: 1rem;
+}
+
+.checkboxInput {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.checkboxText {
+  font-size: 0.9rem;
+  color: $text-muted;
+}
+
+// Service card styles
+.serviceDescription {
+  margin-top: 4px;
+  color: $chart-text-color;
+  font-style: italic;
+}
+
+.serviceDescriptionRegular {
+  margin-top: 4px;
+  color: $chart-text-color;
+}
+
+.serviceActions {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+}
+
+.editServiceBtnInline {
+  background: none;
+  border: none;
+  color: $accent-color;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-family: $font-main;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $provider-color-3-rgba-05;
+    color: darken($accent-color, 10%);
+  }
+}
+
+// Form styles
+.formRowFlex {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.formInputFlex {
+  flex: 1;
+  opacity: 0.5;
+}
+
+.formInputDisabled {
+  opacity: 0.5;
+}
+
+// Table styles
+.tableHeaderCheckbox {
+  width: 40px;
+}
+
+// Character count styles
+.charCount {
+  font-size: 0.75rem;
+  color: $text-muted;
+  text-align: right;
+}
+
+// Modal form group flex
+.modalFormGroupFlex {
+  flex: 1;
+}
+
+.modalFormGroupRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.modalLabelNormal {
+  margin: 0;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.modalCheckbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+// Image upload styles
+.imageUploadPreview {
+  width: 200px;
+  margin-right: $spacing-xs;
+}
+
+.imageUploadButton {
+  margin-right: $spacing-xs;
+}
+
+// Spacing utilities
+.marginTopLarge {
+  margin-top: 100px;
+}
+
+.marginTopSmall {
+  margin-top: 2px;
+}
+
+// Select width
+.selectWidthHalf {
+  width: 50%;
+}
+
+// Hidden element
+.hidden {
+  display: none;
+}
+
+// Loading/centered container
+.centeredContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+// Notification item cursor
+.notificationItemClickable {
+  cursor: pointer;
+  flex: 1;
+}
+
+.notificationItemDefault {
+  cursor: default;
+  flex: 1;
+}
+
+// Saving indicator
+.savingIndicator {
+  color: $success-color;
+  margin-top: $spacing-xs;
+}
+
+// Validation message
+.validationMessage {
+  color: $accent-color;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background-color: $section-bg-2;
+  border-radius: 6px;
+  border: 1px solid $bg-accent;
+}
+
+// Info text
+.infoText {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  line-height: 1.5;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+// Save message styles
+.saveMessage {
+  padding: 12px 24px;
+  margin: 16px 0;
+  border-radius: 8px;
+}
+
+.saveMessageSuccess {
+  background-color: $success-bg-light;
+  border: 1px solid $success-color;
+  color: $success-text-dark;
+}
+
+.saveMessageError {
+  background-color: $danger-bg-light;
+  border: 1px solid $error-color;
+  color: $danger-text-dark;
+}
+
 .revenueContent, .sessionsContent, .reviewsContent {
   .revenueStats, .sessionsStats {
     display: grid;
@@ -1198,31 +1889,83 @@
   .ratingOverview {
     display: flex;
     gap: $spacing-xl;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-lg;
+    background: $bg-white;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    box-shadow: 0 1px 3px $shadow-color;
+    align-items: center;
   }
 
-  .ratingSummary {
-    text-align: center;
+  .ratingSummaryLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-xs;
+    min-width: 120px;
+  }
+
+  .bigStar {
+    font-size: 3rem;
+    color: $stars-color;
   }
 
   .ratingNumber {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
-    color: $provider-colors-3;
-    margin: 0 0 $spacing-sm 0;
-  }
-
-  .ratingStars {
-    font-size: 1.5rem;
-    margin-bottom: $spacing-sm;
+    color: $dark-text;
+    margin: 0;
+    line-height: 1;
   }
 
   .ratingCount {
     color: $subtext-color;
     margin: 0;
+    font-size: 0.85rem;
   }
 
   .ratingBreakdown {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .breakdownRow {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .starLabel {
+    font-size: 0.85rem;
+    color: $dark-text;
+    min-width: 45px;
+  }
+
+  .barContainer {
+    flex: 1;
+    height: 12px;
+    background: $border-light;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .barFill {
+    height: 100%;
+    background: linear-gradient(to right, $gradient-orange-start, $gradient-orange-end);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+  }
+
+  .percentage {
+    font-size: 0.85rem;
+    color: $subtext-color;
+    min-width: 35px;
+    text-align: right;
+  }
+
+  .oldRatingBreakdown {
     flex: 1;
   }
 
@@ -1256,13 +1999,15 @@
   .reviewsList {
     background: $bg-white;
     border-radius: 6px;
-    padding: $spacing-lg;
+    padding: $spacing-md;
     box-shadow: 0 1px 3px $shadow-color;
   }
 
   .reviewItem {
-    padding: $spacing-md 0;
+    padding: $spacing-md;
     border-bottom: 1px solid $border-light;
+    display: flex;
+    flex-direction: column;
 
     &:last-child {
       border-bottom: none;
@@ -1271,24 +2016,24 @@
 
   .reviewHeader {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: $spacing-sm;
     gap: $spacing-md;
+    width: 100%;
   }
 
   .reviewRating {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
     flex-shrink: 0;
+    min-width: 90px;
   }
 
   .stars {
     display: flex;
     gap: 2px;
     color: $stars-color;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .starFilled {
@@ -1304,20 +2049,20 @@
     align-items: center;
     gap: $spacing-sm;
     flex: 1;
-    justify-content: flex-end;
+    min-width: 0;
   }
 
   .avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: $provider-colors-3;
     color: $bg-white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
     font-size: 0.9rem;
+    font-weight: 600;
     flex-shrink: 0;
   }
 
@@ -1325,6 +2070,8 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
+    flex: 1;
   }
 
   .reviewerName {
@@ -1332,6 +2079,9 @@
     color: $dark-text;
     margin: 0;
     font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .reviewStars {
@@ -1342,6 +2092,7 @@
     color: $subtext-color;
     margin: 0;
     font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   .reviewTitle {
@@ -1354,8 +2105,12 @@
   .reviewComment {
     color: $dark-text;
     margin: 0;
+    padding-left: 0;
+    padding-right: 0;
     line-height: 1.5;
     font-size: 0.9rem;
+    width: 100%;
+    text-align: left;
   }
 
   .reviewText {
@@ -1365,58 +2120,258 @@
   }
 }
 
+// New Review Design Styles (matching screenshot)
+.reviewsListNew {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.reviewCardNew {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.reviewCardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+}
+
+.reviewerAvatarContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.reviewerAvatarNew {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $provider-colors-3 0%, darken($provider-colors-3, 10%) 100%);
+  color: $bg-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: $font-main;
+}
+
+.avatarBadge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4a90e2;
+  color: $bg-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  border: 2px solid $bg-white;
+}
+
+.reviewerInfoNew {
+  flex: 1;
+  min-width: 0;
+}
+
+.reviewerNameNew {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: 0 0 4px 0;
+  font-family: $font-main;
+  line-height: 1.4;
+}
+
+.reviewAction {
+  font-weight: 400;
+  color: $subtext-color;
+}
+
+.listingName {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  margin: 0;
+  font-family: $font-main;
+}
+
+.reviewBox {
+  background: $background-light;
+  border-radius: 8px;
+  padding: $spacing-md;
+  margin-top: $spacing-xs;
+}
+
+.reviewStarsInBox {
+  display: flex;
+  gap: 2px;
+  margin-bottom: $spacing-sm;
+}
+
+.starFilledInBox {
+  color: $dark-text;
+  font-size: 1rem;
+}
+
+.starEmptyInBox {
+  color: $border-light;
+  font-size: 1rem;
+}
+
+.reviewTextNew {
+  color: $dark-text;
+  margin: 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  font-family: $font-main;
+  text-align: left;
+}
+
+.reviewFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-xs;
+  padding-top: $spacing-xs;
+}
+
+.reviewTimeAgo {
+  font-size: 0.85rem;
+  color: $subtext-color;
+  font-family: $font-main;
+}
+
+.responseButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: $dark-text;
+  font-size: 0.85rem;
+  font-family: $font-main;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: $provider-colors-3;
+  }
+}
+
+.responseIcon {
+  font-size: 0.75rem;
+  transform: scaleX(-1);
+}
+
 // Settings Styles
 .profileContent, .servicesContent, .pricingContent {
   .profileForm, .servicesForm, .pricingForm {
-    background: $bg-white;
+    background: $bg-form-card;
     border-radius: 8px;
-    padding: $spacing-lg;
-    box-shadow: 0 1px 3px $shadow-color;
-    border: 1px solid $border-color;
+    padding: $spacing-xl;
+    box-shadow: none;
+    border: 1px solid $border-form;
+    margin-top: $spacing-lg;
   }
 
   .formSection {
-    margin-bottom: $spacing-md;
+    margin-bottom: 0;
+    padding: $spacing-lg 0;
+    border-bottom: 1px solid $border-form;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
   }
 
   .formRow {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-sm;
+    grid-template-columns: repeat(2, 200px 1fr);
+    gap: $spacing-md $spacing-lg;
+    margin-bottom: $spacing-lg;
+    align-items: start;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    // For rows with 3 columns (City, State, Zip)
+    &.formRowThree {
+      grid-template-columns: repeat(3, 200px 1fr);
+    }
+
+    // For rows with single field
+    &.formRowSingle {
+      grid-template-columns: 200px 1fr;
+    }
+
+    // Nested formGroups should be part of the grid
+    .formGroup {
+      display: contents;
+    }
   }
 
   .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-    margin-bottom: $spacing-sm;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: $spacing-md;
+    align-items: start;
+    margin-bottom: $spacing-lg;
+    padding: 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    // Reduce gap for compact form groups (like "Your Name")
+    &.formGroupCompact {
+      gap: $spacing-xs;
+      
+      .formLabel {
+        padding-top: 0.5rem;
+      }
+    }
   }
 
   .formLabel {
-    font-weight: 700;
-    color: $dark-text;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    font-weight: 400;
+    color: $text-form-label;
+    font-size: 0.95rem;
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0;
+    padding-top: 0.75rem;
+    line-height: 1.5;
   }
 
   .formInput, .formSelect, .formTextarea {
-    padding: 8px 12px;
-    border: 1px solid $border-color;
+    padding: 0.75rem $spacing-sm;
+    border: 1px solid $border-form;
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-family: $font-main;
-    color: $dark-text;
+    color: $text-form-label;
     transition: all 0.2s ease;
     background: $bg-white;
     height: auto;
+    width: 100%;
 
     &:focus {
       outline: none;
-      border-color: $accent-color;
-      box-shadow: 0 0 0 2px rgba($accent-color, 0.05);
+      border-color: $provider-colors-3;
+      box-shadow: 0 0 0 2px $provider-color-3-rgba-10;
     }
 
     &::placeholder {
@@ -1425,66 +2380,118 @@
     }
   }
 
+  .formTextarea {
+    min-height: 120px;
+    padding: $spacing-sm;
+  }
 }
 
 // Settings Form Styles (for Account Settings)
 .settingsForm {
+  background: $bg-form-card;
+  border: 1px solid $border-form;
+  border-radius: 8px;
+  padding: $spacing-xl;
+  margin-top: $spacing-lg;
+
   h3.subsectionTitle {
-    font-size: 1.3rem !important;
-    font-weight: 600 !important;
-    font-family: $font-subheading;
-    color: $dark-text;
-    margin: 0 0 $spacing-md 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: $font-main;
+    color: $text-form-label;
+    margin: 0 0 $spacing-lg 0;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-form;
   }
   
   .formSection {
-    margin-bottom: $spacing-md;
+    margin-bottom: 0;
+    padding: $spacing-lg 0;
+    border-bottom: 1px solid $border-form;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
   }
 
   .formRow {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-sm;
+    grid-template-columns: repeat(2, 200px 1fr);
+    gap: $spacing-md $spacing-lg;
+    margin-bottom: $spacing-lg;
+    align-items: start;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &.formRowSingle {
+      grid-template-columns: 200px 1fr;
+    }
+
+    // Nested formGroups should be part of the grid
+    .formGroup {
+      display: contents;
+    }
   }
 
   .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-    margin-bottom: $spacing-sm;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: $spacing-md;
+    align-items: start;
+    margin-bottom: $spacing-lg;
+    padding: 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   .formLabel {
-    font-weight: 700;
-    color: $dark-text;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    font-weight: 400;
+    color: $text-form-label;
+    font-size: 0.95rem;
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0;
+    padding-top: 0.75rem;
+    line-height: 1.5;
+    align-self: start;
   }
 
   .formInput, .formSelect, .formTextarea {
-    padding: 8px 12px;
-    border: 1px solid $border-color;
+    padding: 0.75rem $spacing-sm;
+    border: 1px solid $border-form;
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-family: $font-main;
-    color: $dark-text;
+    color: $text-form-label;
     transition: all 0.2s ease;
     background: $bg-white;
     height: auto;
+    width: 100%;
 
     &:focus {
       outline: none;
-      border-color: $accent-color;
-      box-shadow: 0 0 0 2px rgba($accent-color, 0.05);
+      border-color: $provider-colors-3;
+      box-shadow: 0 0 0 2px $provider-color-3-rgba-10;
     }
 
     &::placeholder {
       color: $placeholder-grey;
       font-style: italic;
     }
+  }
+
+  .formTextarea {
+    min-height: 120px;
+    padding: $spacing-sm;
   }
 
   // Card number input - shorter width
@@ -1506,6 +2513,15 @@
     max-width: 120px;
   }
 
+  // Account info inputs - match bank account info width
+  .accountInfoInput {
+    max-width: 400px;
+  }
+
+  .accountInfoRow {
+    max-width: 400px;
+  }
+
   .billingHistory {
     padding: $spacing-md;
     background: $bg-white;
@@ -1521,9 +2537,9 @@
 
   .formTextarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 120px;
     font-family: $font-main;
-    padding: 8px 12px;
+    padding: $spacing-sm;
   }
 
   .priceInput {
@@ -1750,17 +2766,38 @@
 
 // Fee Type Toggle Styles
 
+.feeTypeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  .priceInput {
+    width: auto;
+    max-width: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .feeTypeTabs .feeTypeTab:first-child {
+    min-width: 120px;
+  }
+
+  .priceInput {
+    width: 120px;
+  }
+}
+
 .feeTypeTabs {
   display: flex;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-md;
+  gap: $spacing-xs;
+  margin-bottom: 0;
 }
 
 .feeTypeTab {
-  flex: 1;
-  padding: $spacing-md;
+  flex: 0 0 auto;
+  padding: $spacing-xs $spacing-sm;
   border: 2px solid $border-light;
-  border-radius: 8px;
+  border-radius: 6px;
   background: $bg-white;
   font-family: $font-main;
   font-size: 0.875rem;
@@ -1771,7 +2808,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $spacing-sm;
+  gap: $spacing-xs;
+  white-space: nowrap;
 
   &:hover {
     border-color: $provider-colors-3;
@@ -1785,8 +2823,45 @@
 }
 
 .tabIcon {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
+}
+
+.travelFieldsRow {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-xs;
+  margin-top: $spacing-xs;
+
+  .priceInput {
+    width: fit-content;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+}
+
+.travelDistanceField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.travelDistanceLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $subtext-color;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: $font-main;
+}
+
+.travelDistanceField .formSelect {
+  padding: 4px $spacing-xs;
+  font-size: 0.9rem;
+  min-width: 120px;
+  height: auto;
+  font-family: $font-main;
 }
 
 // Team Members Styles
@@ -1804,7 +2879,7 @@
   background: $bg-white;
   border: 1px solid $border-color;
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px $shadow-medium;
 }
 
 .teamMemberInfo {
@@ -1992,7 +3067,8 @@
   background: $bg-white;
   border: 1px solid $border-color;
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px $shadow-medium;
+  font-family: $font-main;
 }
 
 .serviceCardInfo {
@@ -2000,16 +3076,20 @@
 }
 
 .serviceCardName {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: $dark-text;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
+  line-height: 1.4;
+  font-family: $font-main;
 }
 
 .serviceCardDetails {
   font-size: 0.85rem;
   color: $subtext-color;
   margin: 0;
+  line-height: 1.4;
+  font-family: $font-main;
 }
 
 .removeServiceBtn {
@@ -2208,7 +3288,7 @@
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px $shadow-dark;
   }
 }
 
@@ -2274,20 +3354,29 @@
 }
 
 .formSection {
-  margin-bottom: $spacing-lg;
-  
+  margin-bottom: 0;
+  padding: $spacing-lg 0;
+  border-bottom: 1px solid $border-form;
+
   &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
     margin-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
   }
 }
 
 .formSectionTitle {
-  font-family: $font-heading;
-  font-size: 1.1rem;
-  color: $dark-text;
-  margin-bottom: $spacing-md;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $border-medium;
+  font-family: $font-main;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $text-form-label;
+  margin: 0 0 $spacing-lg 0;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-form;
 }
 
 .formRow {
@@ -2320,7 +3409,7 @@
   &:focus {
     outline: none;
     border-color: $provider-colors-3;
-    box-shadow: 0 0 0 2px rgba(108, 79, 112, 0.1);
+    box-shadow: 0 0 0 2px $accent-color-rgba-10;
   }
 }
 
@@ -2374,7 +3463,7 @@
     &:focus {
       outline: none;
       border-color: $provider-colors-3;
-      box-shadow: 0 0 0 2px rgba(108, 79, 112, 0.1);
+      box-shadow: 0 0 0 2px $accent-color-rgba-10;
     }
   }
   
@@ -2449,7 +3538,7 @@
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px $shadow-dark;
   }
 }
 
@@ -3430,6 +4519,9 @@
   border-radius: 8px;
   padding: $spacing-md;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
 
   &.unread {
     background: rgba($provider-colors-3, 0.05);
@@ -3438,8 +4530,17 @@
 
   &:hover {
     background: $section-bg-1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px $shadow-light;
   }
+}
+
+.notificationCheckbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: $provider-colors-3;
 }
 
 .notificationContent {
@@ -4152,7 +5253,7 @@
   border: 1px solid $border-light;
   border-radius: 8px;
   overflow: visible;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px $shadow-light;
 }
 
 .clientsTable {
@@ -4277,7 +5378,7 @@
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
+    background: $overlay-black-90;
     color: $bg-white;
     padding: 6px 10px;
     border-radius: 6px;
@@ -4342,6 +5443,68 @@
   flex-shrink: 0;
 }
 
+.notesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  .sectionTitle {
+    margin: 0;
+  }
+}
+
+.sortControls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.sortLabel {
+  font-size: 0.9rem;
+  color: $subtext-color;
+  font-weight: 500;
+  margin: 0;
+}
+
+.sortButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: $bg-white;
+  color: $dark-text;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $background-light;
+    border-color: $provider-colors-3;
+  }
+
+  &.sortButtonActive {
+    background: $provider-colors-3;
+    color: $bg-white;
+    border-color: $provider-colors-3;
+
+    &:hover {
+      background: darken($provider-colors-3, 10%);
+    }
+  }
+}
+
+.clientNumber {
+  color: $provider-colors-3;
+  font-weight: 700;
+  margin-right: $spacing-xs;
+}
+
 .notesList {
   display: flex;
   flex-direction: column;
@@ -4355,11 +5518,15 @@
   border-radius: 8px;
   padding: $spacing-lg;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px $shadow-light;
 
   &:hover {
     border-color: $provider-colors-3;
     box-shadow: 0 4px 12px $shadow-color;
+  }
+
+  &.collapsed {
+    padding: $spacing-xs $spacing-md;
   }
 }
 
@@ -4390,6 +5557,25 @@
     color: $dark-text;
     margin: 0;
     font-family: $font-heading;
+  }
+
+  &.collapsible {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &.expanded {
+      margin-bottom: $spacing-md;
+      padding-bottom: $spacing-sm;
+      border-bottom: 1px solid $border-light;
+    }
   }
 }
 
@@ -4500,44 +5686,104 @@
 .bioForm {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+}
+
+.bioForm {
+  background: $bg-form-card;
+  border: 1px solid $border-form;
+  border-radius: 8px;
+  padding: $spacing-xl;
+  margin-top: $spacing-lg;
+}
+
+.bioForm .formSection {
+  margin-bottom: 0;
+  padding: $spacing-lg 0;
+  border-bottom: 1px solid $border-form;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.bioForm .formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .bioForm .formGroup {
-  margin-bottom: $spacing-sm;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: $spacing-md;
+  align-items: start;
+  margin-bottom: $spacing-lg;
+  padding: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  // Reduce gap for compact form groups (like "Your Name")
+  &.formGroupCompact {
+    gap: $spacing-xs;
+    
+    .formLabel {
+      padding-top: 0.5rem;
+    }
+  }
 }
 
 .bioForm .formLabel {
-  font-weight: 700;
-  color: $dark-text;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  font-weight: 400;
+  color: $text-form-label;
+  font-size: 0.95rem;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+  padding-top: 0.75rem;
+  line-height: 1.5;
 }
 
 .bioForm .formInput,
+.bioForm .formSelect,
 .bioForm .formTextarea {
-  padding: 8px 12px;
-  border: 1px solid $border-color;
+  padding: 0.75rem $spacing-sm;
+  border: 1px solid $border-form;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-family: $font-main;
-  color: $dark-text;
+  color: $text-form-label;
   transition: all 0.2s ease;
   background: $bg-white;
   width: 100%;
+  width: 100%;
+  height: auto;
 
-  &:focus {
-    outline: none;
-    border-color: $accent-color;
-    box-shadow: 0 0 0 2px rgba($accent-color, 0.05);
-  }
+    &:focus {
+      outline: none;
+      border-color: $provider-colors-3;
+      box-shadow: 0 0 0 2px $provider-color-3-rgba-10;
+    }
 
   &::placeholder {
     color: $placeholder-grey;
     font-style: italic;
   }
+}
+
+.bioForm .formSelect {
+  padding-right: 2.5rem;
 }
 
 .bioForm .formTextarea {
@@ -4567,7 +5813,7 @@
     appearance: none;
     width: 18px;
     height: 18px;
-    border: 2px solid #999999;
+    border: 2px solid $text-muted;
     border-radius: 50%;
     margin: 0;
     cursor: pointer;
@@ -4834,7 +6080,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: $overlay-black-60;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4842,10 +6088,10 @@
   padding: $spacing-md;
 }
 
-.modalContent, .noteModal {
+.modalContent, .noteModal, .appointmentModal {
   background: $bg-white;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px $shadow-dark;
   max-width: 500px;
   width: 100%;
   max-height: 85vh;
@@ -4904,6 +6150,26 @@
   padding: $spacing-lg;
 }
 
+.totalPriceDisplay {
+  margin-top: $spacing-md;
+  padding: $spacing-sm 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.totalLabel {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $dark-text;
+}
+
+.totalAmount {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $dark-text;
+}
+
 .noteTextarea {
   width: 100%;
   min-height: 200px;
@@ -4943,15 +6209,21 @@
   }
 }
 
-// Compact form styling
+// Compact form styling - matching billing section pattern
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
 }
 
 .formGroup {
-  margin-bottom: $spacing-sm;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: $spacing-md;
+  align-items: start;
+  margin-bottom: $spacing-lg;
+  padding: 0;
 
   &:last-child {
     margin-bottom: 0;
@@ -4960,36 +6232,64 @@
 
 .formLabel {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: $dark-text;
-  margin-bottom: $spacing-xs;
+  font-weight: 400;
+  color: $text-form-label;
+  font-size: 0.95rem;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+  padding-top: 0.75rem;
+  line-height: 1.5;
+  align-self: start;
 }
 
 .formInput, .formSelect, .formTextarea {
   width: 100%;
-  padding: $spacing-xs $spacing-sm;
-  border: 1px solid $border-light;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  padding: 0.75rem $spacing-sm;
+  border: 1px solid $border-form;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: $font-main;
   background: $bg-white;
-  color: $dark-text;
+  color: $text-form-label;
   transition: all 0.2s ease;
+  box-sizing: border-box;
+  height: auto;
 
   &:focus {
     outline: none;
     border-color: $provider-colors-3;
-    box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
+    box-shadow: 0 0 0 2px $provider-color-3-rgba-10;
   }
 
   &::placeholder {
-    color: $subtext-color;
+    color: $placeholder-grey;
+    font-style: italic;
   }
 }
 
 .formTextarea {
+  min-height: 120px;
+  padding: $spacing-sm;
+}
+
+.formInput, .formSelect {
+  height: auto;
+}
+
+.formSelect {
+  padding-left: $spacing-sm;
+  padding-right: 2.5rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  cursor: pointer;
+}
+
+.formTextarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 80px;
 }
 
 .priceInput {
@@ -4998,8 +6298,10 @@
   background: $bg-white;
   border: 1px solid $border-light;
   border-radius: 6px;
-  padding: $spacing-xs $spacing-sm;
-  gap: $spacing-xs;
+  padding: 4px $spacing-xs;
+  gap: 4px;
+  max-width: 200px;
+  font-family: $font-main;
 
   .dollarSign {
     color: $subtext-color;
@@ -5017,6 +6319,8 @@
     font-size: 0.9rem;
     color: $dark-text;
     outline: none;
+    min-width: 0;
+    font-family: $font-main;
 
     &:focus {
       box-shadow: none;
@@ -5208,116 +6512,437 @@
 }
 
 // Subscription Styles
-.planInfo {
+.subscriptionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  max-width: 800px;
+}
+
+.subscriptionCard {
+  background: $bg-white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px $shadow-medium;
+  }
+}
+
+.subscriptionCardHeader {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $border-light;
+  background: linear-gradient(135deg, rgba($provider-colors-3, 0.03) 0%, rgba($provider-colors-1, 0.03) 100%);
+}
+
+.subscriptionCardTitle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $spacing-sm;
-  background: linear-gradient(135deg, $provider-colors-3 0%, darken($provider-colors-3, 15%) 100%);
-  border-radius: 6px;
-  box-shadow: 0 2px 8px $shadow-color;
-  margin-top: $spacing-xs;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: $font-main;
+  }
 }
 
-.planName {
-  font-size: 0.9rem;
-  font-weight: 700;
+.activeBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: $success-color;
   color: $bg-white;
-  letter-spacing: 0.3px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.planPrice {
-  font-size: 1rem;
-  font-weight: 600;
-  color: $bg-white;
-  letter-spacing: 0.3px;
+.subscriptionCardBody {
+  padding: $spacing-lg;
 }
 
-.paymentDueInfo {
-  padding: $spacing-md;
-  background: $background-light;
-  border: 1px solid $border-color;
-  border-radius: 6px;
-  margin-top: $spacing-xs;
-}
-
-.paymentDueDetails {
+.planDetails {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  margin-bottom: $spacing-xs;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $border-light;
 }
 
-.paymentDate {
-  font-size: 1rem;
-  font-weight: 600;
+.planNameLarge {
+  font-size: 1.5rem;
+  font-weight: 700;
   color: $dark-text;
+  font-family: $font-heading;
+  letter-spacing: -0.5px;
 }
 
-.paymentAmount {
-  font-size: 1.1rem;
+.planPriceLarge {
+  font-size: 2rem;
   font-weight: 700;
   color: $provider-colors-3;
+  font-family: $font-heading;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.planPeriod {
+  font-size: 1rem;
+  font-weight: 500;
+  color: $subtext-color;
+  font-family: $font-main;
+}
+
+.planFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.planFeature {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: 0.95rem;
+  color: $dark-text;
+  font-family: $font-main;
+
+  .featureCheck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba($success-color, 0.1);
+    color: $success-color;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+}
+
+.paymentInfo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.paymentDateLarge {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $dark-text;
+  font-family: $font-heading;
+}
+
+.paymentAmountLarge {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: $provider-colors-3;
+  font-family: $font-heading;
 }
 
 .paymentDescription {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: $subtext-color;
   margin: 0;
-  font-style: italic;
+  font-family: $font-main;
+  line-height: 1.5;
 }
 
-.cancelBtn {
+.subscriptionActions {
+  display: flex;
+  gap: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.changePlanBtn {
+  flex: 1;
+  padding: $spacing-sm $spacing-lg;
+  background: $provider-colors-3;
+  color: $bg-white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: $font-main;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($provider-colors-3, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px $shadow-dark;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.cancelSubscriptionBtn {
+  flex: 1;
+  padding: $spacing-sm $spacing-lg;
   background: $bg-white;
   color: $error-color;
-  border: 1px solid $error-color;
-  padding: $spacing-sm $spacing-md;
-  border-radius: 6px;
-  font-weight: 500;
+  border: 2px solid $error-color;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: $font-main;
   cursor: pointer;
-  font-size: 0.9rem;
   transition: all 0.2s ease;
 
   &:hover {
     background: $error-color;
     color: $bg-white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px $shadow-dark;
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
-// Wellness Practice Selection Styles
-.practiceOptions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-xs;
+// Monthly Statements Styles
+.statementsBreadcrumb {
+  margin-bottom: $spacing-md;
+  font-size: 0.9rem;
+  color: $subtext-color;
+  
+  .breadcrumbLink {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font-size: inherit;
+    
+    &:hover {
+      color: $provider-colors-3;
+    }
+  }
+  
+  .breadcrumbSeparator {
+    margin: 0 $spacing-xs;
+    color: $subtext-color;
+  }
 }
 
-.practiceOption {
-  padding: 6px $spacing-sm;
-  background: $bg-white;
-  border: 1px solid $provider-colors-3;
-  border-radius: 4px;
+.currentBalance {
+  margin-bottom: $spacing-lg;
+  font-size: 0.95rem;
   color: $dark-text;
-  font-size: 0.9rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: $font-main;
-  text-align: center;
+  
+  .balanceAmount {
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+  }
+}
 
-  &:hover {
-    background: $provider-colors-3;
-    color: $bg-white;
+.statementsYearSelector {
+  margin-bottom: $spacing-md;
+}
+
+.yearDropdown {
+  padding: 8px 16px;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: $font-main;
+  color: $dark-text;
+  background: $bg-white;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+  
+  &:focus {
+    outline: none;
     border-color: $provider-colors-3;
   }
 }
 
-.practiceSelected {
-  background: $provider-colors-3 !important;
-  color: $bg-white !important;
-  border-color: $provider-colors-3 !important;
+.statementsList {
+  margin-top: $spacing-md;
+}
+
+.monthHeading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+  font-family: $font-main;
+}
+
+.statementMonthLink {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: $dark-text;
+  font-size: 0.95rem;
+  font-family: $font-main;
+  padding: $spacing-sm 0;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: $provider-colors-3;
+  }
+}
+
+.statementDivider {
+  border: none;
+  border-top: 1px solid $border-light;
+  margin: 0;
+}
+
+.statementsTableWrapper {
+  margin-top: $spacing-lg;
+  background: $bg-white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px $shadow-color;
+}
+
+.statementsTable {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background: $background-light;
+    border-bottom: 1px solid $border-color;
+    
+    th {
+      padding: $spacing-sm $spacing-md;
+      text-align: left;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $dark-text;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: $font-main;
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid $border-light;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:hover {
+        background: $provider-color-3-rgba-02;
+      }
+    }
+    
+    td {
+      padding: $spacing-md;
+      font-size: 0.9rem;
+      color: $dark-text;
+      font-family: $font-main;
+      vertical-align: top;
+    }
+  }
+}
+
+.statementDateCell {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.statementIcon {
+  font-size: 1rem;
+  color: $subtext-color;
+  flex-shrink: 0;
+}
+
+.statementDescription {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  
+  .orderLink {
+    color: $dark-text;
+    text-decoration: underline;
+    cursor: pointer;
+    
+    &:hover {
+      color: $provider-colors-3;
+    }
+  }
+}
+
+.negativeAmount {
+  color: $error-color;
+  font-weight: 600;
+}
+
+// Wellness Practice Selection Styles
+.practiceOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  margin-top: 0;
+  padding-top: 0.75rem;
+}
+
+.practiceOption {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  padding: $spacing-xs 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    .practiceLabel {
+      color: $provider-colors-3;
+    }
+  }
+}
+
+.practiceCheckbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: $provider-colors-3;
+  flex-shrink: 0;
+}
+
+.practiceLabel {
+  font-size: 0.95rem;
+  color: $text-form-label;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
 // Calendar View Styles
@@ -5677,4 +7302,313 @@
       visibility: visible;
     }
   }
+}
+
+// Payments & Earnings Styles
+.paymentsContent {
+  padding: $spacing-lg;
+  background: $bg-white;
+  min-height: 100%;
+  
+  .placeholderText {
+    color: $text-muted;
+    font-size: 0.9rem;
+    font-family: $font-main;
+    margin: $spacing-lg 0;
+    
+    p {
+      margin: 0;
+      color: $text-muted;
+    }
+  }
+}
+
+.earningsCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.earningsCard {
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px $shadow-medium;
+    transform: translateY(-2px);
+  }
+
+  &.earningsCardSuccess {
+    border-left: 4px solid $success-color;
+  }
+
+  &.earningsCardPending {
+    border-left: 4px solid #ffc107;
+  }
+}
+
+.earningsCardIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: $provider-colors-3;
+  color: $bg-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+
+  .earningsCardSuccess & {
+    background: $success-color;
+  }
+
+  .earningsCardPending & {
+    background: $warning-yellow;
+    color: $dark-text;
+  }
+}
+
+.earningsCardContent {
+  flex: 1;
+
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $subtext-color;
+    margin: 0 0 $spacing-xs 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.earningsAmount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: $spacing-xs 0;
+  font-family: $font-heading;
+}
+
+.earningsSubtext {
+  font-size: 0.85rem;
+  color: $subtext-color;
+}
+
+.amountCell {
+  font-weight: 600;
+  color: $success-color;
+}
+
+.statusPaid {
+  background: #d4edda !important;
+  color: #155724 !important;
+}
+
+.statusUnpaid {
+  background: $warning-bg !important;
+  color: $warning-text !important;
+}
+
+.statusRefunded {
+  background: $danger-bg-light !important;
+  color: $danger-text-dark !important;
+}
+
+.statusPartial {
+  background: $highlight-yellow !important;
+  color: $warning-text !important;
+}
+
+.reportsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $divider-color;
+
+  .sectionTitle {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $dark-text;
+    font-family: $font-main;
+  }
+}
+
+.periodFilters {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+}
+
+.periodFilterBtn {
+  padding: 8px 16px;
+  background: $bg-white;
+  color: $dark-text;
+  border: 1px solid $divider-color;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-family: $font-main;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $background-gray;
+    border-color: $text-muted;
+  }
+
+  &.periodFilterActive {
+    padding: 10px 18px;
+    background: $bg-white;
+    color: $dark-text;
+    border-color: $dark-text;
+    font-weight: 600;
+  }
+}
+
+.reportsSummary {
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.reportSummaryCard {
+  background: $bg-white;
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  display: flex;
+  gap: $spacing-xl;
+  box-shadow: none;
+}
+
+.reportSummaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reportSummaryLabel {
+  font-size: 0.9rem;
+  color: $dark-text;
+  font-weight: 700;
+  font-family: $font-main;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.reportSummaryValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $dark-text;
+  font-family: $font-main;
+  line-height: 1.2;
+}
+
+.reportCard {
+  background: $bg-white;
+  border: none;
+  border-radius: 0;
+  padding: $spacing-lg $spacing-lg;
+  box-shadow: none;
+  margin-top: 0;
+  border-top: 1px solid $divider-color;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $dark-text;
+    margin: 0 0 $spacing-md 0;
+    font-family: $font-main;
+    padding: 0;
+  }
+}
+
+.monthlyBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.monthlyItem {
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border-radius: 0;
+  border-left: none;
+  border-bottom: 1px solid $divider-color;
+  transition: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $provider-color-3-rgba-02;
+  }
+}
+
+.monthlyHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.monthName {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: $dark-text;
+  font-family: $font-main;
+}
+
+.monthCount {
+  font-size: 0.95rem;
+  color: $dark-text;
+  font-weight: 400;
+  font-family: $font-main;
+  text-align: right;
+  min-width: 40px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.monthlyAmount {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: $dark-text;
+  font-family: $font-main;
+  text-align: right;
+}
+
+// Add-ons list styles
+.addOnsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.addOnItem {
+  font-size: 0.85rem;
+  color: $subtext-color;
+  padding: 2px 0;
+}
+
+.noAddOns {
+  color: $text-muted;
+  font-style: italic;
 }

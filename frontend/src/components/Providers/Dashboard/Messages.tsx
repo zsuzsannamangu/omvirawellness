@@ -22,6 +22,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (activeSubmenu === 'notifications') {
@@ -42,6 +43,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
 
   const loadNotifications = async () => {
     setLoading(true);
+    setSelectedIds([]); // Clear selection when reloading
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -145,6 +147,50 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
     }
   };
 
+  const toggleSelectNotification = (notificationId: string) => {
+    setSelectedIds(prev => 
+      prev.includes(notificationId) 
+        ? prev.filter(id => id !== notificationId)
+        : [...prev, notificationId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === notifications.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(notifications.map(n => n.id));
+    }
+  };
+
+  const deleteSelectedNotifications = async () => {
+    if (selectedIds.length === 0) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('http://localhost:4000/api/notifications/bulk-delete', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ notificationIds: selectedIds })
+      });
+
+      if (response.ok) {
+        setNotifications(prev => prev.filter(n => !selectedIds.includes(n.id)));
+        setSelectedIds([]);
+        window.dispatchEvent(new CustomEvent('refreshNotifications'));
+        // Reload to update unread count
+        loadNotifications();
+      }
+    } catch (error) {
+      console.error('Error deleting notifications:', error);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -165,21 +211,26 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
       case 'notifications':
         return (
           <div className={styles.dashboardSection}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div className={styles.notificationsHeader}>
               <h2 className={styles.sectionTitle}>Notifications</h2>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div className={styles.notificationsActions}>
                 <button 
                   onClick={loadNotifications}
-                  className={styles.secondaryBtn}
-                  style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+                  className={`${styles.secondaryBtn} ${styles.notificationButton}`}
                 >
                   Refresh
                 </button>
-                {unreadCount > 0 && (
+                {selectedIds.length > 0 ? (
+                  <button 
+                    onClick={deleteSelectedNotifications}
+                    className={`${styles.deleteBtn} ${styles.notificationButton}`}
+                  >
+                    Delete ({selectedIds.length})
+                  </button>
+                ) : unreadCount > 0 && (
                   <button 
                     onClick={markAllAsRead}
-                    className={styles.secondaryBtn}
-                    style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+                    className={`${styles.secondaryBtn} ${styles.notificationButton}`}
                   >
                     Mark all as read
                   </button>
@@ -194,25 +245,47 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                 <p>No notifications yet.</p>
               </div>
             ) : (
-              <div className={styles.notificationsList}>
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`${styles.notificationItem} ${!notification.is_read ? styles.unread : ''}`}
-                    onClick={() => !notification.is_read && markAsRead(notification.id)}
-                    style={{ cursor: !notification.is_read ? 'pointer' : 'default' }}
-                  >
-                    <div className={styles.notificationContent}>
-                      <div className={styles.notificationHeader}>
-                        <h4 className={styles.notificationTitle}>{notification.title}</h4>
-                        {!notification.is_read && <span className={styles.unreadDot}></span>}
-                      </div>
-                      <p className={styles.notificationMessage}>{notification.message}</p>
-                      <span className={styles.notificationTime}>{formatDate(notification.created_at)}</span>
-                    </div>
+              <>
+                {notifications.length > 0 && (
+                  <div className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length === notifications.length}
+                      onChange={toggleSelectAll}
+                      className={styles.checkboxInput}
+                    />
+                    <span className={styles.checkboxText}>Select all</span>
                   </div>
-                ))}
-              </div>
+                )}
+                <div className={styles.notificationsList}>
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`${styles.notificationItem} ${!notification.is_read ? styles.unread : ''}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(notification.id)}
+                        onChange={() => toggleSelectNotification(notification.id)}
+                        className={styles.notificationCheckbox}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <div 
+                        className={styles.notificationContent}
+                        onClick={() => !notification.is_read && markAsRead(notification.id)}
+                        className={!notification.is_read ? styles.notificationItemClickable : styles.notificationItemDefault}
+                      >
+                        <div className={styles.notificationHeader}>
+                          <h4 className={styles.notificationTitle}>{notification.title}</h4>
+                          {!notification.is_read && <span className={styles.unreadDot}></span>}
+                        </div>
+                        <p className={styles.notificationMessage}>{notification.message}</p>
+                        <span className={styles.notificationTime}>{formatDate(notification.created_at)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         );

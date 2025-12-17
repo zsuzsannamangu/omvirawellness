@@ -787,20 +787,111 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
     }
     const providerProfileId = profileResult.rows[0].id;
 
-    // 2) verify booking belongs to provider
+    // 2) verify booking belongs to provider and get booking details
     const bookingResult = await pool.query(
-      'SELECT id FROM client_provider_bookings WHERE id = $1 AND provider_id = $2',
+      `SELECT b.*, c.user_id as client_user_id, c.first_name, c.last_name, u.email as client_email
+       FROM client_provider_bookings b
+       JOIN client_profiles c ON b.client_id = c.id
+       JOIN users u ON c.user_id = u.id
+       WHERE b.id = $1 AND b.provider_id = $2`,
       [bookingId, providerProfileId]
     );
     if (bookingResult.rows.length === 0) {
       return res.status(404).json({ error: 'Booking not found for this provider' });
     }
 
+    const booking = bookingResult.rows[0];
+
     // 3) update status
+    const updateFields = status === 'cancelled' 
+      ? `status = $1, cancelled_by = 'provider', updated_at = CURRENT_TIMESTAMP`
+      : `status = $1, updated_at = CURRENT_TIMESTAMP`;
+    
     const updateResult = await pool.query(
-      'UPDATE client_provider_bookings SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+      `UPDATE client_provider_bookings SET ${updateFields} WHERE id = $2 RETURNING *`,
       [status, bookingId]
     );
+
+    // 4) If cancelling, restore availability and create notification
+    if (status === 'cancelled') {
+      // Restore availability
+      try {
+        const availRes = await pool.query(
+          'SELECT availability FROM provider_profiles WHERE id = $1',
+          [providerProfileId]
+        );
+        
+        let availability = [];
+        if (availRes.rows.length > 0 && availRes.rows[0].availability) {
+          if (typeof availRes.rows[0].availability === 'string') {
+            try { availability = JSON.parse(availRes.rows[0].availability); } catch { availability = []; }
+          } else {
+            availability = availRes.rows[0].availability;
+          }
+        }
+
+        const normalizedDate = String(booking.booking_date).slice(0, 10);
+        const normalizedTime = String(booking.start_time).slice(0, 5);
+        
+        // Remove the blocked slot for this cancelled booking
+        const filtered = Array.isArray(availability)
+          ? availability.filter((slot) => {
+              if (!slot || slot.type !== 'blocked') return true;
+              const slotDate = String(slot.date).slice(0, 10);
+              const slotTime = String(slot.time).slice(0, 5);
+              return !(slotDate === normalizedDate && slotTime === normalizedTime);
+            })
+          : [];
+
+        await pool.query(
+          'UPDATE provider_profiles SET availability = $1::JSONB, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+          [JSON.stringify(filtered), providerProfileId]
+        );
+      } catch (availabilityError) {
+        console.error('Error restoring availability on cancel:', availabilityError);
+        // Don't fail the cancellation if availability update fails
+      }
+
+      // Create notification for client
+      try {
+        const formatDate = (dateInput) => {
+          if (!dateInput) return 'Unknown date';
+          let dateStr = String(dateInput).slice(0, 10);
+          const [year, month, day] = dateStr.split('-').map(Number);
+          const date = new Date(year, month - 1, day);
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        };
+
+        const formatTime = (timeInput) => {
+          if (!timeInput) return 'Unknown time';
+          const timeStr = String(timeInput).slice(0, 5);
+          const [hours, minutes] = timeStr.split(':').map(Number);
+          const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+        };
+
+        const notificationMessage = `Your appointment scheduled for ${formatDate(booking.booking_date)} at ${formatTime(booking.start_time)} has been cancelled by the provider.`;
+
+        await pool.query(
+          `INSERT INTO notifications (user_id, notification_type, title, message, booking_id, is_read, created_at)
+           VALUES ($1, $2, $3, $4, $5, false, CURRENT_TIMESTAMP)`,
+          [
+            booking.client_user_id,
+            'booking_cancelled',
+            'Appointment Cancelled',
+            notificationMessage,
+            bookingId
+          ]
+        );
+
+        // TODO: Send email to client when email service is implemented
+        console.log(`Email notification should be sent to: ${booking.client_email}`);
+      } catch (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        // Don't fail the cancellation if notification fails
+      }
+    }
 
     res.json({ success: true, booking: updateResult.rows[0] });
   } catch (err) {
@@ -809,16 +900,17 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
   }
 });
 
-// POST a new booking (client must be authenticated)
+// POST a new booking (client or provider must be authenticated)
 router.post('/', verifyToken, async (req, res) => {
   try {
-    // Verify user is a client
-    if (req.userType !== 'client') {
-      return res.status(403).json({ error: 'Only clients can create bookings' });
+    // Allow both clients and providers to create bookings
+    if (req.userType !== 'client' && req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Only clients and providers can create bookings' });
     }
     
     const {
       provider_id, // This is the user_id of the provider
+      client_id, // This is the user_id of the client (required when provider creates booking)
       service_name,
       service_duration,
       service_price,
@@ -828,18 +920,44 @@ router.post('/', verifyToken, async (req, res) => {
       location_details,
       add_ons,
       total_amount,
-      client_notes
+      client_notes,
+      status, // Allow provider to set initial status
+      date, // Alternative field name
+      time, // Alternative field name  
+      duration, // Alternative field name
+      price, // Alternative field name
+      service_id // Alternative field name
     } = req.body;
 
+    // Normalize field names (support both old and new formats)
+    const normalizedDate = booking_date || date;
+    const normalizedTime = start_time || time;
+    const normalizedDuration = service_duration || duration;
+    const normalizedPrice = service_price || price || total_amount;
+    const normalizedServiceName = service_name || `Service ${service_id || ''}`;
+
     // Validate required fields
-    if (!provider_id || !service_name || !booking_date || !start_time || !total_amount) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!provider_id || !normalizedDate || !normalizedTime) {
+      return res.status(400).json({ error: 'Missing required fields: provider_id, date, and time are required' });
+    }
+
+    // Determine client ID based on who is creating the booking
+    let clientUserId;
+    if (req.userType === 'client') {
+      // Client is creating their own booking
+      clientUserId = req.userId;
+    } else if (req.userType === 'provider') {
+      // Provider is creating booking for a client
+      if (!client_id) {
+        return res.status(400).json({ error: 'client_id is required when provider creates booking' });
+      }
+      clientUserId = client_id;
     }
 
     // Get client profile ID
     const clientProfileResult = await pool.query(
       'SELECT id FROM client_profiles WHERE user_id = $1',
-      [req.userId]
+      [clientUserId]
     );
     
     if (clientProfileResult.rows.length === 0) {
@@ -868,7 +986,7 @@ router.post('/', verifyToken, async (req, res) => {
        AND booking_date = $3 
        AND start_time = $4 
        AND status NOT IN ('cancelled', 'no_show')`,
-      [clientProfileId, providerProfileId, booking_date, start_time]
+      [clientProfileId, providerProfileId, normalizedDate, normalizedTime]
     );
 
     if (duplicateCheck.rows.length > 0) {
@@ -878,8 +996,8 @@ router.post('/', verifyToken, async (req, res) => {
     }
 
     // Calculate end time from duration
-    const durationMinutes = service_duration || 60;
-    const [hours, minutes] = start_time.split(':').map(Number);
+    const durationMinutes = normalizedDuration || 60;
+    const [hours, minutes] = normalizedTime.split(':').map(Number);
     const startDateTime = new Date();
     startDateTime.setHours(hours, minutes, 0, 0);
     const endDateTime = new Date(startDateTime.getTime() + durationMinutes * 60000);
@@ -888,13 +1006,19 @@ router.post('/', verifyToken, async (req, res) => {
     // For now, service_id is nullable - we'll store service info in notes or create a migration later
     // Store service details in provider_notes as JSON for now
     const serviceInfo = JSON.stringify({
-      name: service_name,
+      name: normalizedServiceName,
       duration: durationMinutes,
-      price: service_price,
+      price: normalizedPrice,
       location_type,
       location_details,
       add_ons: add_ons || []
     });
+
+    // Determine initial status (provider can set to 'confirmed', otherwise 'pending')
+    const bookingStatus = (req.userType === 'provider' && status === 'confirmed') ? 'confirmed' : 'pending';
+
+    // Store service info in provider_notes for reference
+    const providerNotesField = serviceInfo;
 
     // Insert booking
     // Note: service_id is NULL since services are stored as JSONB in provider_profiles
@@ -904,18 +1028,19 @@ router.post('/', verifyToken, async (req, res) => {
         `INSERT INTO client_provider_bookings 
         (client_id, provider_id, service_id, booking_date, start_time, end_time, duration_minutes, 
          total_amount, payment_status, client_notes, provider_notes, status) 
-        VALUES ($1, $2, NULL, $3, $4, $5, $6, $7, 'unpaid', $8, $9, 'pending') 
+        VALUES ($1, $2, NULL, $3, $4, $5, $6, $7, 'unpaid', $8, $9, $10) 
         RETURNING *`,
         [
           clientProfileId,
           providerProfileId,
-          booking_date,
-          start_time,
+          normalizedDate,
+          normalizedTime,
           end_time,
           durationMinutes,
-          total_amount,
+          normalizedPrice || 0,
           client_notes || null,
-          serviceInfo
+          providerNotesField,
+          bookingStatus
         ]
       );
     } catch (dbError) {
@@ -941,8 +1066,8 @@ router.post('/', verifyToken, async (req, res) => {
         }
       }
 
-      const normalizedDate = String(booking_date).slice(0,10);
-      const normalizedTime = String(start_time).slice(0,5);
+      const availNormalizedDate = String(normalizedDate).slice(0,10);
+      const availNormalizedTime = String(normalizedTime).slice(0,5);
       let filtered = Array.isArray(availability)
         ? availability.filter((slot) => {
             if (!slot || !slot.date || !slot.time) return true;
@@ -950,7 +1075,7 @@ router.post('/', verifyToken, async (req, res) => {
             const slotTime = String(slot.time).slice(0,5);
             // Only remove non-recurring exact matches
             if (slot.isRecurring) return true;
-            return !(slotDate === normalizedDate && slotTime === normalizedTime);
+            return !(slotDate === availNormalizedDate && slotTime === availNormalizedTime);
           })
         : [];
 
@@ -959,8 +1084,8 @@ router.post('/', verifyToken, async (req, res) => {
         ...filtered,
         {
           id: Date.now().toString(),
-          date: normalizedDate,
-          time: normalizedTime,
+          date: availNormalizedDate,
+          time: availNormalizedTime,
           duration: durationMinutes,
           isRecurring: false,
           type: 'blocked',
