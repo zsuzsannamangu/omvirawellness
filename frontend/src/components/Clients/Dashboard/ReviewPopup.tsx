@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FaStar, FaTimes } from 'react-icons/fa';
 import styles from '@/styles/ReviewModal.module.scss';
 
@@ -24,6 +24,31 @@ export default function ReviewPopup({ isOpen, onClose, providerName, serviceName
   const [comment, setComment] = useState('');
   const [recommends, setRecommends] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,8 +87,18 @@ export default function ReviewPopup({ isOpen, onClose, providerName, serviceName
 
   if (!isOpen) return null;
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === overlayRef.current) {
+      onClose();
+    }
+  };
+
   return (
-    <div className={styles.reviewModalOverlay}>
+    <div 
+      ref={overlayRef}
+      className={styles.reviewModalOverlay}
+      onClick={handleOverlayClick}
+    >
       <div className={styles.reviewModalContent}>
         <div className={styles.reviewModalHeader}>
           <h2 className={styles.reviewModalTitle}>Leave a Review</h2>

@@ -162,7 +162,7 @@
   transition: background-color 0.2s ease;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($client-colors-1, 10%);
   }
 }
 
@@ -818,7 +818,7 @@
     max-width: 300px;
     
     &:hover {
-      background: $button-pink-hover;
+      background: darken($client-colors-1, 10%);
     }
   }
 }
@@ -970,7 +970,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: $button-pink-hover;
+      background: darken($client-colors-1, 10%);
     }
   }
 }
@@ -1003,6 +1003,86 @@
 
 // Favorites Styles
 .favoritesContent {
+  .favoritesHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
+  .sortContainer {
+    position: relative;
+  }
+
+  .sortButton {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: $dark-text;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: $font-main;
+
+    &:hover {
+      border-color: $client-colors-1;
+      background: $section-bg-1;
+    }
+  }
+
+  .sortChevron {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    color: $subtext-color;
+
+    &.sortChevronOpen {
+      transform: rotate(180deg);
+    }
+  }
+
+  .sortDropdown {
+    position: absolute;
+    top: calc(100% + $spacing-xs);
+    right: 0;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px $shadow-color;
+    z-index: 100;
+    min-width: 180px;
+    overflow: hidden;
+  }
+
+  .sortOption {
+    display: block;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.875rem;
+    color: $dark-text;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: $font-main;
+
+    &:hover {
+      background: $section-bg-1;
+    }
+
+    &.sortOptionActive {
+      background: $section-bg-2;
+      color: $client-colors-1;
+      font-weight: 600;
+    }
+  }
+
   .providersGrid, .servicesGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1132,7 +1212,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: $button-pink-hover;
+      background: darken($client-colors-1, 10%);
     }
   }
   
@@ -1194,7 +1274,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: $button-pink-hover;
+        background: darken($client-colors-1, 10%);
       }
     }
   }
@@ -1245,7 +1325,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($client-colors-1, 10%);
   }
 }
 
@@ -1453,7 +1533,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: $button-pink-hover;
+        background: darken($client-colors-1, 10%);
       }
     }
   }
@@ -1504,7 +1584,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($client-colors-1, 10%);
   }
 }
 
@@ -1990,7 +2070,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: $button-pink-hover;
+        background: darken($client-colors-1, 10%);
       }
     }
   }
@@ -2041,7 +2121,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($client-colors-1, 10%);
   }
 }
 
@@ -2184,7 +2264,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: $button-pink-hover;
+      background: darken($client-colors-1, 10%);
     }
   }
   
@@ -2295,7 +2375,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: $button-pink-hover;
+        background: darken($client-colors-1, 10%);
       }
     }
   }
@@ -2346,7 +2426,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: $button-pink-hover;
+    background: darken($client-colors-1, 10%);
   }
 }
 

@@ -62,6 +62,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       setSaveMessage('Profile updated successfully!');
       
       // Update local storage with data from server response
+      // Note: updateClientProfile returns data.data, which contains { profile: ... }
       if (userData && result && result.profile) {
         const updatedUser = {
           ...userData,
@@ -69,10 +70,20 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUserData(updatedUser);
+        
+        // Dispatch custom event to notify dashboard of profile update
+        window.dispatchEvent(new Event('profileUpdated'));
+        
+        // Also dispatch event to refresh profile image
+        if (result.profile.profile_photo_url) {
+          window.dispatchEvent(new CustomEvent('profileImageUpdated', { 
+            detail: { profilePhotoUrl: result.profile.profile_photo_url } 
+          }));
+        }
+      } else {
+        // Fallback: just dispatch the update event
+        window.dispatchEvent(new Event('profileUpdated'));
       }
-      
-      // Dispatch custom event to notify dashboard of profile update
-      window.dispatchEvent(new Event('profileUpdated'));
     } catch (error: any) {
       setSaveMessage(`Error: ${error.message}`);
     } finally {

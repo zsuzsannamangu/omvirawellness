@@ -22,13 +22,12 @@ export default function ClientDashboard() {
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userName, setUserName] = useState('User'); // Will be loaded from user data
-  const [userRating] = useState(4.8);
-  const [totalBookings] = useState(24);
+  const [totalBookings, setTotalBookings] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const loadUserData = () => {
+    const loadUserData = async () => {
       // Check if user is authenticated
       const token = localStorage.getItem('token');
       const user = localStorage.getItem('user');
@@ -55,6 +54,29 @@ export default function ClientDashboard() {
           setUserName(userData.email.split('@')[0]);
         }
         
+        // Load profile image from database
+        if (userData.profile?.profile_photo_url) {
+          setProfileImage(userData.profile.profile_photo_url);
+        }
+        
+        // Load bookings count
+        try {
+          const bookingsResponse = await fetch(`http://localhost:4000/api/bookings/client/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (bookingsResponse.ok) {
+            const bookings = await bookingsResponse.json();
+            if (Array.isArray(bookings)) {
+              setTotalBookings(bookings.length);
+            }
+          }
+        } catch (error) {
+          console.error('Error loading bookings count:', error);
+        }
+        
       } catch (error) {
         console.error('Error parsing user data:', error);
         router.push('/login');
@@ -66,7 +88,7 @@ export default function ClientDashboard() {
 
     loadUserData();
 
-    // Listen for profile update events to refresh name
+    // Listen for profile update events to refresh name and image
     const handleProfileUpdate = () => {
       const user = localStorage.getItem('user');
       if (user) {
@@ -75,25 +97,86 @@ export default function ClientDashboard() {
           if (userData.profile?.first_name && userData.profile?.last_name) {
             setUserName(`${userData.profile.first_name} ${userData.profile.last_name}`);
           }
+          if (userData.profile?.profile_photo_url) {
+            setProfileImage(userData.profile.profile_photo_url);
+          }
         } catch (error) {
           console.error('Error parsing user data on profile update:', error);
         }
       }
     };
 
+    const handleProfileImageUpdate = (event: any) => {
+      if (event.detail?.profilePhotoUrl) {
+        setProfileImage(event.detail.profilePhotoUrl);
+      }
+    };
+
     window.addEventListener('profileUpdated', handleProfileUpdate);
+    window.addEventListener('profileImageUpdated', handleProfileImageUpdate);
     
     return () => {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
+      window.removeEventListener('profileImageUpdated', handleProfileImageUpdate);
     };
   }, [userId, router]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target?.result as string);
+      reader.onload = async (e) => {
+        const imageDataUrl = e.target?.result as string;
+        setProfileImage(imageDataUrl);
+        
+        // Save to localStorage
+        try {
+          const user = localStorage.getItem('user');
+          if (user) {
+            const userData = JSON.parse(user);
+            if (userData.profile) {
+              userData.profile.profile_photo_url = imageDataUrl;
+              localStorage.setItem('user', JSON.stringify(userData));
+            }
+          }
+        } catch (error) {
+          console.error('Error saving profile image to localStorage:', error);
+        }
+        
+        // Save to database
+        try {
+          const token = localStorage.getItem('token');
+          if (token) {
+            const response = await fetch('http://localhost:4000/api/auth/profile/client', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                profilePhotoUrl: imageDataUrl
+              })
+            });
+            
+            if (!response.ok) {
+              console.error('Failed to save profile image to database');
+            } else {
+              console.log('Profile image saved successfully to database');
+              // Update localStorage with server response
+              const result = await response.json();
+              if (result.data?.profile) {
+                const user = localStorage.getItem('user');
+                if (user) {
+                  const userData = JSON.parse(user);
+                  userData.profile = result.data.profile;
+                  localStorage.setItem('user', JSON.stringify(userData));
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error saving profile image to database:', error);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -230,7 +313,6 @@ export default function ClientDashboard() {
             <div className={styles.greetingInfo}>
               <div className={styles.greetingRow}>
                 <h1 className={styles.greeting}>Hello, {userName}</h1>
-                <span className={styles.rating}>★ {userRating} (12 reviews)</span>
               </div>
               <div className={styles.statsRow}>
                 <span className={styles.bookings}>{totalBookings} bookings</span>

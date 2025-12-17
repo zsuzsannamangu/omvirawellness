@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 interface RescheduleModalProps {
@@ -271,8 +271,18 @@ export default function RescheduleModal({
   const calendarDays = getCalendarDays();
   const availableTimes = selectedDate ? getAvailableTimes(selectedDate) : [];
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === overlayRef.current) {
+      onClose();
+    }
+  };
+
   return (
-    <div className={styles.rescheduleModalOverlay} onClick={onClose}>
+    <div 
+      ref={overlayRef}
+      className={styles.rescheduleModalOverlay} 
+      onClick={handleOverlayClick}
+    >
       <div className={styles.rescheduleModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.rescheduleModalHeader}>
           <h2>Reschedule Appointment</h2>
