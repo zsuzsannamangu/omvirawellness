@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from '@/styles/Spaces/SpaceSignup.module.scss';
 
 // Step components
@@ -17,7 +18,10 @@ import PhotosStep from '@/components/Spaces/SignupSteps/PhotosStep';
 import PaymentStep from '@/components/Spaces/SignupSteps/PaymentStep';
 
 export default function SpaceSignupPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     businessName: '',
@@ -75,10 +79,60 @@ export default function SpaceSignupPage() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (finalData: any) => {
-    console.log('Space signup data:', { ...formData, ...finalData });
-    // Here you would typically send the data to your backend
-    alert('Space signup completed! (This is a demo)');
+  const handleSubmit = async (finalData: any) => {
+    const completeData = { ...formData, ...finalData };
+    console.log('Space signup data:', completeData);
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      // Register the space owner
+      const response = await fetch('http://localhost:4000/api/auth/register/space-owner', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: completeData.email,
+          password: completeData.password,
+          businessName: completeData.businessName,
+          contactName: completeData.contactName,
+          phoneNumber: completeData.phoneNumber,
+          spaceType: completeData.spaceType,
+          address: completeData.spaceDetails?.address,
+          city: completeData.spaceDetails?.city,
+          state: completeData.spaceDetails?.state,
+          zipCode: completeData.spaceDetails?.zipCode,
+          description: completeData.spaceDetails?.description,
+          capacity: completeData.spaceDetails?.capacity,
+          squareFootage: completeData.spaceDetails?.squareFootage,
+          amenities: completeData.amenities,
+          availability: completeData.availability,
+          hourlyRate: completeData.pricing?.hourlyRate,
+          minimumBooking: completeData.pricing?.minimumBooking,
+          cancellationPolicy: completeData.pricing?.cancellationPolicy,
+          photos: completeData.photos,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
+
+      // Store token and user data
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('user', JSON.stringify(data.data.user));
+
+      // Redirect to dashboard
+      router.push(`/spaces/dashboard/${data.data.user.id}`);
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Registration failed. Please try again.');
+      setLoading(false);
+    }
   };
 
   const renderStep = () => {
@@ -102,7 +156,7 @@ export default function SpaceSignupPage() {
       case 9:
         return <PhotosStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 10:
-        return <PaymentStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} />;
+        return <PaymentStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} loading={loading} />;
       default:
         return <EmailStep onNext={handleNext} initialData={formData} />;
     }
@@ -133,6 +187,19 @@ export default function SpaceSignupPage() {
             Step {currentStep} of {totalSteps}
           </span>
         </div>
+
+        {error && (
+          <div style={{ 
+            background: '#fee', 
+            border: '1px solid #fcc', 
+            padding: '1rem', 
+            borderRadius: '6px', 
+            margin: '1rem 0',
+            color: '#c33'
+          }}>
+            {error}
+          </div>
+        )}
 
         <div className={styles.stepContainer}>
           {renderStep()}

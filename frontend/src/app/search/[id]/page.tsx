@@ -178,6 +178,7 @@ export default function ProviderDetailPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
     const fetchProvider = async () => {
@@ -256,6 +257,19 @@ export default function ProviderDetailPage() {
             setProvider(transformedProvider);
             if (transformedProvider?.serviceDetails?.length > 0) {
               setSelectedService(transformedProvider.serviceDetails[0]);
+            }
+
+            // Check if this is the logged-in provider viewing their own profile
+            try {
+              const userData = localStorage.getItem('user');
+              if (userData) {
+                const user = JSON.parse(userData);
+                if (user.user_type === 'provider' && user.id === data.id) {
+                  setIsOwnProfile(true);
+                }
+              }
+            } catch (e) {
+              console.error('Error checking own profile:', e);
             }
 
             // Fetch reviews separately
@@ -616,15 +630,25 @@ export default function ProviderDetailPage() {
         <div className={styles.providerMainSection}>
           <div className={styles.providerNameRow}>
             <h1 className={styles.providerName}>{provider.name}</h1>
-            {isAuthenticated && (
-            <button
-                className={`${styles.favoriteButton} ${isFavorited ? styles.favorited : ''}`}
-              onClick={toggleFavorite}
-                title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-            >
-                {isFavorited ? <FaHeart /> : <FaRegHeart />}
-            </button>
-            )}
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              {isOwnProfile && (
+                <Link 
+                  href={`/providers/dashboard/${provider.id}?section=profile`}
+                  className={styles.editProfileButton}
+                >
+                  Edit Profile
+                </Link>
+              )}
+              {isAuthenticated && !isOwnProfile && (
+                <button
+                  className={`${styles.favoriteButton} ${isFavorited ? styles.favorited : ''}`}
+                  onClick={toggleFavorite}
+                  title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  {isFavorited ? <FaHeart /> : <FaRegHeart />}
+                </button>
+              )}
+            </div>
           </div>
           <div className={styles.rating}>
             <span className={styles.stars}>★★★★★</span>

@@ -21,9 +21,9 @@ export default function SpacesDashboard() {
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [spaceName] = useState('Zen Wellness Studio');
-  const [spaceRating] = useState(4.7);
-  const [totalBookings] = useState(89);
+  const [spaceName, setSpaceName] = useState('Loading...');
+  const [spaceRating, setSpaceRating] = useState<number | null>(null);
+  const [totalBookings, setTotalBookings] = useState(0);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,14 +51,46 @@ export default function SpacesDashboard() {
         router.push('/spaces/login');
         return;
       }
+
+      // Fetch space owner profile data
+      fetchSpaceOwnerProfile();
     } catch (error) {
       console.error('Error parsing user data:', error);
       router.push('/spaces/login');
       return;
     }
-    
-    setLoading(false);
   }, [userId, router]);
+
+  const fetchSpaceOwnerProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch(`http://localhost:4000/api/space-owners/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Space owner profile data:', data);
+        // Use contact_name for greeting, not business_name
+        setSpaceName(data.contact_name || data.business_name || 'Space Owner');
+        setSpaceRating(data.average_rating);
+        setTotalBookings(data.total_bookings || 0);
+        // Profile photo will be handled later when column is added
+        // setProfileImage(data.profile_photo_url || null);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to fetch space owner profile:', response.status, errorData);
+      }
+    } catch (error) {
+      console.error('Error fetching space owner profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -208,8 +240,12 @@ export default function SpacesDashboard() {
             <div className={styles.greetingInfo}>
               <h1 className={styles.greeting}>Hello, {spaceName}</h1>
               <div className={styles.userStats}>
-                <span className={styles.rating}>★ {spaceRating} (23 reviews)</span>
-                <span className={styles.bookings}>{totalBookings} bookings</span>
+                {spaceRating !== null && (
+                  <span className={styles.rating}>★ {spaceRating.toFixed(1)}</span>
+                )}
+                {totalBookings > 0 && (
+                  <span className={styles.bookings}>{totalBookings} booking{totalBookings !== 1 ? 's' : ''}</span>
+                )}
                 <span className={styles.profileLink}>View your profile on Omvira</span>
               </div>
             </div>

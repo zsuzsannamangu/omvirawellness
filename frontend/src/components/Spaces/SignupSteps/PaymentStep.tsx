@@ -7,9 +7,10 @@ interface PaymentStepProps {
   onSubmit: (data: { payment: any }) => void;
   onBack: () => void;
   initialData: any;
+  loading?: boolean;
 }
 
-export default function PaymentStep({ onSubmit, onBack, initialData }: PaymentStepProps) {
+export default function PaymentStep({ onSubmit, onBack, initialData, loading }: PaymentStepProps) {
   const [payment, setPayment] = useState(initialData.payment || {
     selectedPlan: 'space-owner',
     billingCycle: 'monthly',
@@ -44,11 +45,11 @@ export default function PaymentStep({ onSubmit, onBack, initialData }: PaymentSt
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.buttonContainer}>
-          <button type="button" onClick={onBack} className={styles.backButton}>
+          <button type="button" onClick={onBack} className={styles.backButton} disabled={loading}>
             Back
           </button>
-          <button type="submit" className={styles.continueButton}>
-            COMPLETE SETUP
+          <button type="submit" className={styles.continueButton} disabled={loading}>
+            {loading ? 'CREATING ACCOUNT...' : 'COMPLETE SETUP'}
           </button>
         </div>
       </form>

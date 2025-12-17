@@ -111,5 +111,30 @@ router.put('/read-all', verifyToken, async (req, res) => {
   }
 });
 
+// DELETE - Delete selected notifications (bulk delete)
+router.delete('/bulk-delete', verifyToken, async (req, res) => {
+  try {
+    const { notificationIds } = req.body;
+
+    if (!notificationIds || !Array.isArray(notificationIds) || notificationIds.length === 0) {
+      return res.status(400).json({ error: 'No notification IDs provided' });
+    }
+
+    console.log('Deleting notifications:', notificationIds, 'for user:', req.userId);
+
+    // Delete notifications that belong to this user
+    const result = await pool.query(
+      'DELETE FROM notifications WHERE id = ANY($1) AND user_id = $2',
+      [notificationIds, req.userId]
+    );
+
+    console.log('Deleted notifications count:', result.rowCount);
+    res.json({ success: true, deletedCount: result.rowCount });
+  } catch (err) {
+    console.error('Error deleting notifications:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
 module.exports = router;
 

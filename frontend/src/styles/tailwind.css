@@ -12,4 +12,9 @@
   body {
     font-family: 'Inter', system-ui, sans-serif;
   }
+}
+
+/* SweetAlert2 timer progress bar - make it fill from left to right */
+.swal2-timer-progress-bar {
+  transform: scaleX(-1);
 } 

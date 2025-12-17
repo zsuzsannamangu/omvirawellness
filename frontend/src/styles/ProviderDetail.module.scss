@@ -284,6 +284,26 @@
   }
 }
 
+.editProfileButton {
+  background: $provider-colors-3;
+  color: $bg-white;
+  border: none;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover {
+    background: darken($provider-colors-3, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
 .rating {
   display: flex;
   align-items: center;
