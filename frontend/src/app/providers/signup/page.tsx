@@ -161,8 +161,8 @@ export default function ProviderSignupPage() {
   return (
     <div className={styles.signupPage}>
       <div className={styles.header}>
-        <Link href="/providers" className={styles.logo}>
-          Omvira Wellness
+        <Link href="/" className={styles.backLink}>
+          <span className={styles.backArrow}>←</span> Back to Homepage
         </Link>
         <div className={styles.headerRight}>
           <Link href="/providers/login" className={styles.loginLink}>

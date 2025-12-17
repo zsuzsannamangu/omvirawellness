@@ -146,7 +146,7 @@
 .emailInput {
   width: 100%;
   padding: 1rem 1.25rem;
-  border: 2px solid rgba($primary-color, 0.15);
+  border: 2px solid $border-light;
   border-radius: 12px;
   font-family: $font-main;
   font-size: 1rem;
@@ -156,7 +156,7 @@
   &:focus {
     outline: none;
     border-color: $client-colors-1;
-    box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+    box-shadow: 0 0 0 4px rgba($client-colors-1, 0.1);
   }
   
   &::placeholder {
@@ -238,17 +238,19 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba($primary-color, 0.2);
+    background: $border-light;
   }
 }
 
 .dividerText {
   background: $bg-white;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
   color: $subtext-color;
   font-family: $font-main;
   font-size: 0.875rem;
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
 // Social Buttons
@@ -263,7 +265,7 @@
   width: 100%;
   padding: 0.75rem 1.25rem;
   background: $bg-white;
-  border: 2px solid rgba($primary-color, 0.15);
+  border: 2px solid $border-light;
   border-radius: 8px;
   font-family: $font-main;
   font-weight: 500;
@@ -277,7 +279,7 @@
   height: 48px;
   
   &:hover {
-    background: rgba($primary-color, 0.05);
+    background: rgba($client-colors-1, 0.05);
     border-color: $client-colors-1;
     transform: translateY(-1px);
   }
@@ -306,7 +308,7 @@
 }
 
 .legalLink {
-  color: $primary-color;
+  color: $client-colors-1;
   text-decoration: none;
   font-weight: 600;
   
@@ -378,16 +380,27 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: 0.875rem;
+  }
 }
 
 .requirementMet {
-  color: $primary-color;
-  font-size: 0.875rem;
+  color: $hover-green;
+  
+  .checkIcon {
+    color: $hover-green;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
 }
 
 .requirementUnmet {
   color: $subtext-color;
-  font-size: 0.875rem;
 }
 
 // Goals and services grid
@@ -409,10 +422,16 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  background: $bg-white;
   
   &:hover {
     border-color: $client-colors-1;
-    background: rgba($primary-color, 0.05);
+    background: $bg-white;
+  }
+  
+  &:has(input[type="checkbox"]:checked) {
+    border-color: $client-colors-1;
+    background: $bg-white;
   }
 }
 

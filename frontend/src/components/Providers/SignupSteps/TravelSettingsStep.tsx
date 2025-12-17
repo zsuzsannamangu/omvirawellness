@@ -161,6 +161,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
                 className={styles.textInput}
                 placeholder="123 Main Street"
                 required
+                autoComplete="off"
               />
             </div>
           </div>
@@ -175,6 +176,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
                 className={styles.textInput}
                 placeholder="San Francisco"
                 required
+                autoComplete="off"
               />
             </div>
             <div className={`${styles.formGroup} ${styles.stateField}`}>
@@ -187,6 +189,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
                 placeholder="CA"
                 maxLength={2}
                 required
+                autoComplete="off"
               />
             </div>
             <div className={`${styles.formGroup} ${styles.zipField}`}>
@@ -200,6 +203,7 @@ export default function TravelSettingsStep({ onNext, onBack, initialData }: Trav
                 placeholder="94102"
                 maxLength={10}
                 required
+                autoComplete="off"
               />
             </div>
           </div>

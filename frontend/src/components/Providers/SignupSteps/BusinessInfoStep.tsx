@@ -60,6 +60,7 @@ export default function BusinessInfoStep({ onNext, onBack, initialData }: Busine
             className={styles.textInput}
             placeholder="Business name"
             required
+            autoComplete="off"
           />
         </div>
 
@@ -75,6 +76,7 @@ export default function BusinessInfoStep({ onNext, onBack, initialData }: Busine
             className={styles.textInput}
             placeholder="Your name"
             required
+            autoComplete="off"
           />
         </div>
 
@@ -96,6 +98,7 @@ export default function BusinessInfoStep({ onNext, onBack, initialData }: Busine
               className={styles.phoneInput}
               placeholder="Your phone number"
               required
+              autoComplete="off"
             />
           </div>
         </div>

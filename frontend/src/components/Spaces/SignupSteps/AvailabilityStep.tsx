@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styles from '@/styles/Spaces/SignupSteps.module.scss';
 
 interface AvailabilityStepProps {
@@ -22,6 +22,8 @@ const timeSlots = [
 ];
 
 export default function AvailabilityStep({ onNext, onBack, initialData }: AvailabilityStepProps) {
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+
   // Migrate old data format to new format
   const migrateAvailability = (data: any) => {
     const migrated: any = {};
@@ -192,9 +194,22 @@ export default function AvailabilityStep({ onNext, onBack, initialData }: Availa
                           tooltip.style.top = (rect.top - tooltip.offsetHeight - 5) + 'px';
                         }}
                         onMouseLeave={() => {
-                          const tooltip = document.getElementById('custom-tooltip');
-                          if (tooltip) {
-                            tooltip.remove();
+                          if (typeof document !== 'undefined') {
+                            const tooltip = document.getElementById('custom-tooltip');
+                            if (tooltip) {
+                              try {
+                                tooltip.remove();
+                              } catch (error) {
+                                // If remove() fails, try removeChild as fallback
+                                try {
+                                  if (tooltip.parentNode) {
+                                    tooltip.parentNode.removeChild(tooltip);
+                                  }
+                                } catch (e) {
+                                  // Silently fail if parent is null
+                                }
+                              }
+                            }
                           }
                         }}
                       >

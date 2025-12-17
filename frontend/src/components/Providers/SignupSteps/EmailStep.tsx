@@ -45,6 +45,7 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
               className={styles.emailInput}
               placeholder="Enter your email"
               required
+              autoComplete="email"
             />
             <div className={styles.inputIcons}>
               <FaLock className={styles.lockIcon} />

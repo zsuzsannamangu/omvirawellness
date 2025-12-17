@@ -2,7 +2,7 @@
 
 .signupPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, $section-bg-1 0%, $section-bg-3 100%);
+  background: $bg-white;
   font-family: $font-main;
 }
 
@@ -15,16 +15,25 @@
   box-shadow: 0 2px 10px $shadow-color;
 }
 
-.logo {
-  font-family: $font-heading;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: $primary-color;
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
+  color: $primary-color;
+  font-family: $font-main;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
   
   &:hover {
-    color: $hover-green;
+    color: darken($primary-color, 10%);
   }
+}
+
+.backArrow {
+  font-size: 1.2rem;
+  line-height: 1;
 }
 
 .headerRight {

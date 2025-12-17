@@ -15,21 +15,25 @@
   box-shadow: 0 2px 10px $shadow-color;
 }
 
-.logo {
+.backLink {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
+  color: $client-colors-1;
+  font-family: $font-main;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
   
   &:hover {
-    opacity: 0.9;
+    color: darken($client-colors-1, 10%);
   }
 }
 
-.logoImage {
-  width: 200px;
-  height: auto;
-  max-height: 50px;
-  object-fit: contain;
+.backArrow {
+  font-size: 1.2rem;
+  line-height: 1;
 }
 
 .headerRight {

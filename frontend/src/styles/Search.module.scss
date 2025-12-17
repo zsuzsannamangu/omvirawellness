@@ -84,13 +84,54 @@
   
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    border-color: $border-light;
   }
   
   &::placeholder {
     color: $subtext-color;
   }
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  justify-self: end;
+  
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    gap: $spacing-sm;
+  }
+}
+
+.dashboardLink {
+  font-family: $font-main;
+  font-size: 0.95rem;
+  color: #4F8B7F;
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
+  
+  &:hover {
+    color: darken(#4F8B7F, 10%);
+  }
+}
+
+.dashboardArrow {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .menuButton {
@@ -101,13 +142,6 @@
   padding: $spacing-sm;
   border-radius: 4px;
   transition: background-color 0.2s ease;
-  justify-self: end;
-  
-  @media (max-width: 768px) {
-    position: absolute;
-    top: 0;
-    right: $spacing-sm;
-  }
   
   &:hover {
     background-color: $muted-bg;
@@ -235,8 +269,7 @@
   
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    border-color: $border-light;
   }
 }
 

@@ -96,6 +96,8 @@ export default function StaffMembersStep({ onNext, onBack, initialData }: StaffM
                   onChange={(e) => setNewMember({...newMember, name: e.target.value})}
                   className={styles.textInput}
                   placeholder="Enter full name"
+                  autoComplete="off"
+                  data-form-type="other"
                 />
               </div>
             </div>
@@ -109,6 +111,8 @@ export default function StaffMembersStep({ onNext, onBack, initialData }: StaffM
                   onChange={(e) => setNewMember({...newMember, email: e.target.value})}
                   className={styles.textInput}
                   placeholder="Enter email address"
+                  autoComplete="off"
+                  data-form-type="other"
                 />
               </div>
             </div>

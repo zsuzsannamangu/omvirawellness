@@ -48,6 +48,29 @@ export default function ClientDashboard() {
         return;
       }
       
+      // Validate token with backend
+      try {
+        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!verifyResponse.ok) {
+          // Token is invalid or expired
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          router.push('/login');
+          return;
+        }
+      } catch (verifyError) {
+        // Network error or token validation failed
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        router.push('/login');
+        return;
+      }
+      
       try {
         const userData = JSON.parse(user);
         // Verify the userId matches the logged-in user

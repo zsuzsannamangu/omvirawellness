@@ -207,6 +207,9 @@ const formatBusinessType = (businessType: string | null | undefined): string => 
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedService, setSelectedService] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedPriceRange, setSelectedPriceRange] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [comesToMe, setComesToMe] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 500]);
@@ -217,6 +220,7 @@ export default function SearchPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [providers, setProviders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardUrl, setDashboardUrl] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -319,6 +323,34 @@ export default function SearchPage() {
     };
   }, [isMenuOpen]);
 
+  // Check for dashboard URL on client side only
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userDataStr = localStorage.getItem('user');
+    
+    if (!token || !userDataStr) {
+      setDashboardUrl(null);
+      return;
+    }
+    
+    try {
+      const userData = JSON.parse(userDataStr);
+      const userId = userData.id || userData.userId;
+      const userType = userData.user_type || userData.userType;
+      
+      if (userType === 'client') {
+        setDashboardUrl(`/dashboard/${userId}`);
+      } else if (userType === 'provider') {
+        setDashboardUrl(`/providers/dashboard/${userId}`);
+      } else if (userType === 'space_owner') {
+        setDashboardUrl(`/spaces/dashboard/${userId}`);
+      }
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+      setDashboardUrl(null);
+    }
+  }, []);
+
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories(prev => 
       prev.includes(category) 
@@ -370,6 +402,101 @@ export default function SearchPage() {
     }
   };
 
+  // Reset all filters
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedService('');
+    setSelectedLocation('');
+    setSelectedPriceRange('');
+    setSortBy('Most Relevant');
+  };
+
+  // Filter and sort providers
+  const filteredAndSortedProviders = React.useMemo(() => {
+    let filtered = [...providers];
+
+    // Search filter (name, business name, city, state, business type)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(provider => 
+        (provider.contact_name && provider.contact_name.toLowerCase().includes(query)) ||
+        (provider.business_name && provider.business_name.toLowerCase().includes(query)) ||
+        (provider.city && provider.city.toLowerCase().includes(query)) ||
+        (provider.state && provider.state.toLowerCase().includes(query)) ||
+        (provider.business_type && provider.business_type.toLowerCase().includes(query))
+      );
+    }
+
+    // Service filter
+    if (selectedService && selectedService !== 'Service') {
+      filtered = filtered.filter(provider => {
+        if (!provider.business_type) return false;
+        const businessTypes = provider.business_type.toLowerCase().split(',').map((t: string) => t.trim());
+        return businessTypes.some((type: string) => type.includes(selectedService.toLowerCase()));
+      });
+    }
+
+    // Location filter
+    if (selectedLocation && selectedLocation !== 'Location') {
+      filtered = filtered.filter(provider => {
+        if (!provider.work_location || !Array.isArray(provider.work_location)) return false;
+        
+        if (selectedLocation === 'Comes to Me') {
+          return provider.work_location.includes('at-client-location');
+        } else if (selectedLocation === "Provider's Studio") {
+          return provider.work_location.includes('from-booked-studio');
+        } else if (selectedLocation === "Provider's Home") {
+          return provider.work_location.includes('at-my-place');
+        } else if (selectedLocation === 'Virtual Session') {
+          return provider.work_location.includes('online');
+        }
+        return true;
+      });
+    }
+
+    // Price range filter
+    if (selectedPriceRange && selectedPriceRange !== 'Price Range') {
+      filtered = filtered.filter(provider => {
+        if (!provider.services || provider.services.length === 0) return false;
+        const minPrice = Math.min(...provider.services.map((s: any) => parseFloat(s.price) || 0));
+        
+        if (selectedPriceRange === '$0 - $50') {
+          return minPrice >= 0 && minPrice <= 50;
+        } else if (selectedPriceRange === '$50 - $100') {
+          return minPrice >= 50 && minPrice <= 100;
+        } else if (selectedPriceRange === '$100 - $150') {
+          return minPrice >= 100 && minPrice <= 150;
+        } else if (selectedPriceRange === '$150 - $200') {
+          return minPrice >= 150 && minPrice <= 200;
+        } else if (selectedPriceRange === '$200+') {
+          return minPrice >= 200;
+        }
+        return true;
+      });
+    }
+
+    // Sort
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'Highest Rated') {
+        return (b.average_rating || 0) - (a.average_rating || 0);
+      } else if (sortBy === 'Lowest Price') {
+        const aMin = a.services?.length > 0 ? Math.min(...a.services.map((s: any) => parseFloat(s.price) || 999999)) : 999999;
+        const bMin = b.services?.length > 0 ? Math.min(...b.services.map((s: any) => parseFloat(s.price) || 999999)) : 999999;
+        return aMin - bMin;
+      } else if (sortBy === 'Highest Price') {
+        const aMax = a.services?.length > 0 ? Math.max(...a.services.map((s: any) => parseFloat(s.price) || 0)) : 0;
+        const bMax = b.services?.length > 0 ? Math.max(...b.services.map((s: any) => parseFloat(s.price) || 0)) : 0;
+        return bMax - aMax;
+      } else if (sortBy === 'Most Experienced') {
+        return (b.total_reviews || 0) - (a.total_reviews || 0);
+      }
+      // Most Relevant (default) - could be based on rating + reviews
+      return ((b.average_rating || 0) * (b.total_reviews || 0)) - ((a.average_rating || 0) * (a.total_reviews || 0));
+    });
+
+    return sorted;
+  }, [providers, searchQuery, selectedService, selectedLocation, selectedPriceRange, sortBy]);
+
   return (
     <div className={styles.searchPage}>
       {/* Header */}
@@ -392,15 +519,23 @@ export default function SearchPage() {
             />
           </div>
 
-          <button 
-            ref={buttonRef}
-            className={styles.menuButton}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-            </svg>
-          </button>
+          <div className={styles.headerActions}>
+            {dashboardUrl && (
+              <Link href={dashboardUrl} className={styles.dashboardLink}>
+                <span className={styles.dashboardArrow}>←</span>
+                Back to Dashboard
+              </Link>
+            )}
+            <button 
+              ref={buttonRef}
+              className={styles.menuButton}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -424,41 +559,58 @@ export default function SearchPage() {
       <div className={styles.mainContent}>
         {/* Filter Bar */}
         <div className={styles.filterBar}>
-          <button className={styles.resetButton}>RESET FILTERS</button>
+          <button 
+            className={styles.resetButton}
+            onClick={handleResetFilters}
+          >
+            RESET FILTERS
+          </button>
           
           <div className={styles.filterDropdowns}>
-            <select className={styles.filterDropdown}>
-              <option>Service</option>
-              <option>Private Yoga</option>
-              <option>Yoga Therapy</option>
-              <option>Massage</option>
-              <option>Skincare</option>
-              <option>Reiki</option>
-              <option>Energy Work</option>
-              <option>Ayurveda</option>
-              <option>Acupuncture</option>
-              <option>Personal Training</option>
-              <option>Doula Care</option>
-              <option>Hair Styling</option>
-              <option>Nail Care</option>
-              <option>Makeup</option>
+            <select 
+              className={styles.filterDropdown}
+              value={selectedService}
+              onChange={(e) => setSelectedService(e.target.value)}
+            >
+              <option value="">Service</option>
+              <option value="Private Yoga">Private Yoga</option>
+              <option value="Yoga Therapy">Yoga Therapy</option>
+              <option value="Massage">Massage</option>
+              <option value="Skincare">Skincare</option>
+              <option value="Reiki">Reiki</option>
+              <option value="Energy Work">Energy Work</option>
+              <option value="Ayurveda">Ayurveda</option>
+              <option value="Acupuncture">Acupuncture</option>
+              <option value="Personal Training">Personal Training</option>
+              <option value="Doula Care">Doula Care</option>
+              <option value="Hair Styling">Hair Styling</option>
+              <option value="Nail Care">Nail Care</option>
+              <option value="Makeup">Makeup</option>
             </select>
             
-            <select className={styles.filterDropdown}>
-              <option>Location</option>
-              <option>Comes to Me</option>
-              <option>Provider's Studio</option>
-              <option>Provider's Home</option>
-              <option>Virtual Session</option>
+            <select 
+              className={styles.filterDropdown}
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+            >
+              <option value="">Location</option>
+              <option value="Comes to Me">Comes to Me</option>
+              <option value="Provider's Studio">Provider's Studio</option>
+              <option value="Provider's Home">Provider's Home</option>
+              <option value="Virtual Session">Virtual Session</option>
             </select>
             
-            <select className={styles.filterDropdown}>
-              <option>Price Range</option>
-              <option>$0 - $50</option>
-              <option>$50 - $100</option>
-              <option>$100 - $150</option>
-              <option>$150 - $200</option>
-              <option>$200+</option>
+            <select 
+              className={styles.filterDropdown}
+              value={selectedPriceRange}
+              onChange={(e) => setSelectedPriceRange(e.target.value)}
+            >
+              <option value="">Price Range</option>
+              <option value="$0 - $50">$0 - $50</option>
+              <option value="$50 - $100">$50 - $100</option>
+              <option value="$100 - $150">$100 - $150</option>
+              <option value="$150 - $200">$150 - $200</option>
+              <option value="$200+">$200+</option>
             </select>
           </div>
         </div>
@@ -483,10 +635,12 @@ export default function SearchPage() {
           <div className={styles.loading}>Loading providers...</div>
         ) : (
           <div className={styles.providersGrid}>
-            {providers.length === 0 ? (
-              <div className={styles.noResults}>No providers found</div>
+            {filteredAndSortedProviders.length === 0 ? (
+              <div className={styles.noResults}>
+                {providers.length === 0 ? 'No providers found' : 'No providers match your filters. Try adjusting your search criteria.'}
+              </div>
             ) : (
-              providers.map((provider: any) => (
+              filteredAndSortedProviders.map((provider: any) => (
                 <Link key={provider.id} href={`/search/${provider.id}`} className={styles.providerCardLink}>
                   <div className={styles.providerCard}>
                     <div className={styles.providerImage}>

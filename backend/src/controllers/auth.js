@@ -366,7 +366,7 @@ async function registerProvider(req, res) {
           travelPolicy || null,
           parseFloat(travelFee) || 0,
           parseInt(maxDistance) || 15,
-          teamMembers.length > 0 ? JSON.stringify(teamMembers) : null
+          teamMembers && teamMembers.length > 0 ? JSON.stringify(teamMembers) : '[]'
         ]
       );
       
@@ -1189,8 +1189,6 @@ async function updateProviderProfile(req, res) {
       }
     }
 
-    console.log('Updating provider profile for user:', userId);
-    console.log('Update data received:', req.body);
 
     // Process travel_fee and max_distance with special handling
     let travelFeeValue = null;
@@ -1333,7 +1331,16 @@ async function updateProviderProfile(req, res) {
     }
     if (wasProvided('team_members')) {
       updateFields.push(`team_members = $${paramCounter}::JSONB`);
-      values.push(toJsonb(team_members, 'team_members'));
+      let teamMembersValue;
+      if (Array.isArray(team_members)) {
+        // Always save as JSON string, even if empty array
+        teamMembersValue = JSON.stringify(team_members);
+      } else if (team_members === null || team_members === undefined) {
+        teamMembersValue = null;
+      } else {
+        teamMembersValue = toJsonb(team_members, 'team_members');
+      }
+      values.push(teamMembersValue);
       paramCounter++;
     }
     if (wasProvided('profile_photo_url')) {
@@ -1364,9 +1371,6 @@ async function updateProviderProfile(req, res) {
       WHERE user_id = $${whereParamNumber}
       RETURNING *
     `;
-    
-    console.log('Update query:', updateQuery);
-    console.log('Update values:', values);
     console.log('Number of parameters needed:', paramCounter);
     console.log('Number of values provided:', values.length);
 
@@ -1454,6 +1458,32 @@ async function updateProviderProfile(req, res) {
   }
 }
 
+/**
+ * Verify JWT token
+ */
+async function verifyToken(req, res) {
+  try {
+    // Token is already verified by middleware, just return success
+    res.json({
+      success: true,
+      message: 'Token is valid',
+      data: {
+        user: {
+          id: req.user.id,
+          email: req.user.email,
+          user_type: req.user.user_type,
+        },
+      },
+    });
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message: 'Invalid or expired token',
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   registerClient,
   registerProvider,
@@ -1461,5 +1491,6 @@ module.exports = {
   login,
   updateClientProfile,
   updateProviderProfile,
+  verifyToken,
 };
 

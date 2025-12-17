@@ -48,6 +48,7 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
               className={styles.passwordInput}
               placeholder="Password"
               required
+              autoComplete="new-password"
             />
             <button
               type="button"

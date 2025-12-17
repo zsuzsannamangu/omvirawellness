@@ -60,7 +60,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(21, 123, 127, 0.2);
+  box-shadow: 0 4px 12px $client-color-rgba-20;
   z-index: 10;
   flex-shrink: 0;
 
@@ -129,7 +129,7 @@
 .card {
   background-color: $muted-bg;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 8px $shadow-light;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -230,11 +230,11 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(21, 123, 127, 0.2);
+  box-shadow: 0 8px 24px $client-color-rgba-20;
   
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(21, 123, 127, 0.3);
+    box-shadow: 0 12px 32px $client-color-rgba-30;
   }
   
   @media (max-width: 640px) {

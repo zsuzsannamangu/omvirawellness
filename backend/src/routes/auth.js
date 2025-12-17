@@ -8,7 +8,9 @@ const {
   login,
   updateClientProfile,
   updateProviderProfile,
+  verifyToken,
 } = require('../controllers/auth');
+const { authenticate } = require('../middleware/auth');
 
 /**
  * @route   POST /api/auth/register/client
@@ -51,6 +53,13 @@ router.put('/profile/client', updateClientProfile);
  * @access  Protected
  */
 router.put('/profile/provider', updateProviderProfile);
+
+/**
+ * @route   GET /api/auth/verify
+ * @desc    Verify JWT token
+ * @access  Protected
+ */
+router.get('/verify', authenticate, verifyToken);
 
 module.exports = router;
 

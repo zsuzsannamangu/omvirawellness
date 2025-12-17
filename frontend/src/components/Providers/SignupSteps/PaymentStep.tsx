@@ -86,10 +86,9 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
         <div className={styles.trialBanner}>
           <div className={styles.trialIcon}>🎉</div>
           <div className={styles.trialContent}>
-            <h3 className={styles.trialTitle}>Free 2-Week Trial</h3>
+            <h3 className={styles.trialTitle}>14-Day Free Trial</h3>
             <p className={styles.trialDescription}>
-              Try any plan free for 14 days. No credit card required to start. 
-              Cancel anytime during your trial.
+              No credit card required. Cancel anytime.
             </p>
           </div>
         </div>

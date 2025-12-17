@@ -66,7 +66,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
             setProviders(data);
           }
         } catch (error) {
-          console.error('Error fetching providers:', error);
+          // Error fetching providers
         } finally {
           setLoadingProviders(false);
         }
@@ -89,7 +89,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.warn('No authentication token found');
+        // No authentication token found
         setLoading(false);
         setMessages([]);
         return;
@@ -117,15 +117,10 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         setMessages(data);
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Failed to fetch messages:', response.status, errorData);
         setMessages([]);
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      // Check if it's a network error
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        console.error('Network error - make sure backend server is running on http://localhost:4000');
-      }
+      // Error fetching messages
       setMessages([]);
     } finally {
       setLoading(false);
@@ -203,7 +198,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         window.dispatchEvent(new CustomEvent('refreshMessages'));
       }
     } catch (error) {
-      console.error('Error deleting message:', error);
+      // Error deleting message
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -265,7 +260,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         window.dispatchEvent(new CustomEvent('refreshMessages'));
       }
     } catch (error) {
-      console.error('Error permanently deleting message:', error);
+      // Error permanently deleting message
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -335,7 +330,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         setSelectedMessageIds([]);
         window.dispatchEvent(new CustomEvent('refreshMessages'));
       } catch (error) {
-        console.error('Error deleting messages:', error);
+        // Error deleting messages
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -356,7 +351,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         document.execCommand(command, false, value);
       }
     } catch (error) {
-      console.error('Error formatting text:', error);
+      // Error formatting text
     }
   };
 
@@ -450,7 +445,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         });
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      // Error sending message
       await Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -626,7 +621,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
             {activeSubmenu === 'sent' && 'Sent'}
             {activeSubmenu === 'trash' && 'Trash'}
           </h2>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div className={styles.messagesToolbar}>
             {selectedMessageIds.length > 0 ? (
               <button
                 onClick={handleBulkDelete}
@@ -842,23 +837,14 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         ) : (
           <>
             {activeSubmenu === 'trash' && (
-              <div style={{ 
-                padding: '12px 16px', 
-                marginBottom: '1rem', 
-                backgroundColor: '#fff3cd', 
-                border: '1px solid #ffc107', 
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                color: '#856404'
-              }}>
+              <div className={styles.trashWarningNote}>
                 <strong>Note:</strong> Messages in trash will be automatically deleted after 30 days.
               </div>
             )}
             {filteredMessages.length > 0 && (
               <button
                 onClick={toggleSelectAll}
-                className={styles.secondaryBtn}
-                style={{ marginBottom: '1rem' }}
+                className={`${styles.secondaryBtn} ${styles.selectAllButton}`}
               >
                 <input
                   type="checkbox"
@@ -868,7 +854,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                     e.stopPropagation();
                     toggleSelectAll();
                   }}
-                  style={{ marginRight: '8px', cursor: 'pointer', width: '16px', height: '16px', flexShrink: 0 }}
+                  className={styles.messageCheckbox}
                 />
                 <span>Select all</span>
               </button>
@@ -899,7 +885,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                           // Dispatch event to refresh unread count
                           window.dispatchEvent(new CustomEvent('refreshMessages'));
                         } catch (error) {
-                          console.error('Error marking message as read:', error);
+                          // Error marking message as read
                         }
                       }
                     }

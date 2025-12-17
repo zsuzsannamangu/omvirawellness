@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -179,6 +179,7 @@ export default function ProviderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const visitTrackedRef = useRef(false);
 
   useEffect(() => {
     const fetchProvider = async () => {
@@ -257,6 +258,38 @@ export default function ProviderDetailPage() {
             setProvider(transformedProvider);
             if (transformedProvider?.serviceDetails?.length > 0) {
               setSelectedService(transformedProvider.serviceDetails[0]);
+            }
+
+            // Track profile visit (only once per page load)
+            if (!visitTrackedRef.current) {
+              visitTrackedRef.current = true;
+              
+              const trackVisit = async () => {
+                try {
+                  const userData = localStorage.getItem('user');
+                  let visitorId = null;
+                  
+                  // Check if logged-in user is NOT the provider themselves
+                  if (userData) {
+                    const user = JSON.parse(userData);
+                    if (user.id !== data.id) {
+                      visitorId = user.id;
+                    } else {
+                      // Provider viewing their own profile, don't track
+                      return;
+                    }
+                  }
+                  
+                  await fetch(`http://localhost:4000/api/providers/${params.id}/visit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ visitorId })
+                  });
+                } catch (error) {
+                  // Silently fail - tracking shouldn't break the page
+                }
+              };
+              trackVisit();
             }
 
             // Check if this is the logged-in provider viewing their own profile

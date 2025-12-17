@@ -46,33 +46,59 @@ export default function ProvidersDashboard() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    
-    if (!token || !user) {
-      // Clear any remaining state and redirect
-      setLoading(false);
-      router.replace('/providers/login');
-      return;
-    }
-    
-    let handleProfileUpdate: (() => void) | null = null;
-    
-    try {
-      const userData = JSON.parse(user);
-      // Verify the userId matches the logged-in user
-      if (userData.id !== userId) {
-        console.error('User ID mismatch');
-        router.push('/providers/login');
+    const loadUserData = async () => {
+      // Check if user is authenticated
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      
+      if (!token || !user) {
+        // Clear any remaining state and redirect
+        setLoading(false);
+        router.replace('/providers/login');
         return;
       }
       
-      // Verify user is a provider
-      if (userData.user_type !== 'provider') {
-        router.push('/providers/login');
+      // Validate token with backend
+      try {
+        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!verifyResponse.ok) {
+          // Token is invalid or expired
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setLoading(false);
+          router.replace('/providers/login');
+          return;
+        }
+      } catch (verifyError) {
+        // Network error or token validation failed
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setLoading(false);
+        router.replace('/providers/login');
         return;
       }
+      
+      let handleProfileUpdate: (() => void) | null = null;
+      
+      try {
+        const userData = JSON.parse(user);
+        // Verify the userId matches the logged-in user
+        if (userData.id !== userId) {
+          console.error('User ID mismatch');
+          router.push('/providers/login');
+          return;
+        }
+        
+        // Verify user is a provider
+        if (userData.user_type !== 'provider') {
+          router.push('/providers/login');
+          return;
+        }
 
       // Set provider name from profile
       const updateProviderName = () => {
@@ -113,20 +139,23 @@ export default function ProvidersDashboard() {
       };
 
       window.addEventListener('profileUpdated', handleProfileUpdate);
+      
+      setLoading(false);
+
+      // Cleanup listener on unmount
+      return () => {
+        if (handleProfileUpdate) {
+          window.removeEventListener('profileUpdated', handleProfileUpdate);
+        }
+      };
     } catch (error) {
       console.error('Error parsing user data:', error);
       router.push('/providers/login');
       return;
     }
-    
-    setLoading(false);
-
-    // Cleanup listener on unmount
-    return () => {
-      if (handleProfileUpdate) {
-        window.removeEventListener('profileUpdated', handleProfileUpdate);
-      }
     };
+
+    loadUserData();
   }, [userId, router]);
 
   // Load pending requests count
@@ -488,13 +517,11 @@ export default function ProvidersDashboard() {
     stats: [
       { id: 'traffic', label: 'Traffic' },
       { id: 'bookings', label: 'Bookings' },
-      { id: 'revenue', label: 'Revenue' },
       { id: 'reviews', label: 'Reviews' },
     ],
     messages: [
       { id: 'notifications', label: 'Notifications' },
       { id: 'communication', label: 'Client Communication' },
-      { id: 'reminders', label: 'Reminders' },
     ],
     profile: [
       { id: 'basic', label: 'Basic Information' },

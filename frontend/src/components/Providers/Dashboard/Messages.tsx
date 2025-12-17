@@ -83,7 +83,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
             setClients(data);
           }
         } catch (error) {
-          console.error('Error fetching clients:', error);
+          // Error fetching clients
         } finally {
           setLoadingClients(false);
         }
@@ -121,11 +121,9 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.error('No token found');
         return;
       }
 
-      console.log('Loading notifications...');
       const [notificationsRes, countRes] = await Promise.all([
         fetch('http://localhost:4000/api/notifications', {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -137,40 +135,17 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
 
       if (notificationsRes.ok) {
         const data = await notificationsRes.json();
-        console.log('Notifications loaded:', data);
         setNotifications(data);
-      } else {
-        const errorText = await notificationsRes.text();
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = { error: errorText || 'Unknown error', status: notificationsRes.status };
-        }
-        console.error('Error fetching notifications:', errorData);
-        console.error('Response status:', notificationsRes.status);
-        console.error('Response text:', errorText);
       }
 
       if (countRes.ok) {
         const countData = await countRes.json();
-        console.log('Unread count:', countData.count);
         setUnreadCount(countData.count || 0);
         // Trigger event to update badge in parent dashboard
         window.dispatchEvent(new CustomEvent('refreshNotifications'));
-      } else {
-        const errorText = await countRes.text();
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = { error: errorText || 'Unknown error', status: countRes.status };
-        }
-        console.error('Error fetching unread count:', errorData);
-        console.error('Response status:', countRes.status);
       }
     } catch (error) {
-      console.error('Error loading notifications:', error);
+      // Error loading notifications
     } finally {
       setLoading(false);
     }
@@ -197,7 +172,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         });
       }
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      // Error marking notification as read
     }
   };
 
@@ -217,7 +192,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         window.dispatchEvent(new CustomEvent('refreshNotifications'));
       }
     } catch (error) {
-      console.error('Error marking all as read:', error);
+      // Error marking all as read
     }
   };
 
@@ -261,7 +236,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         loadNotifications();
       }
     } catch (error) {
-      console.error('Error deleting notifications:', error);
+      // Error deleting notifications
     }
   };
 
@@ -270,7 +245,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.warn('No authentication token found');
+        // No authentication token found
         setMessagesLoading(false);
         setMessages([]);
         return;
@@ -295,7 +270,6 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Raw messages data from API:', data);
         // Transform API response to Message interface
         // Backend already formats senderName and recipientName, so use them directly
         const transformedMessages: Message[] = data.map((msg: any) => {
@@ -315,22 +289,8 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
             recipientId = String(msg.recipient_id);
           }
           
-          console.log('Transforming message:', {
-            id: msg.id,
-            raw_senderId: msg.senderId,
-            raw_sender_id: msg.sender_id,
-            final_senderId: senderId,
-            raw_recipientId: msg.recipientId,
-            raw_recipient_id: msg.recipient_id,
-            final_recipientId: recipientId,
-            senderName: msg.senderName,
-            recipientName: msg.recipientName,
-            full_msg: msg
-          });
-          
-          if (!senderId && activeSubmenu === 'inbox') {
-            console.error('WARNING: senderId is missing for inbox message!', msg);
-          }
+          // Transforming message
+          // Check senderId for inbox messages
           
           return {
             id: msg.id,
@@ -347,15 +307,12 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
             folder: msg.folder || 'inbox'
           };
         });
-        console.log('Transformed messages:', transformedMessages);
         setMessages(transformedMessages);
       } else {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Failed to fetch messages:', response.status, errorData);
         setMessages([]);
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      // Error fetching messages
       setMessages([]);
     } finally {
       setMessagesLoading(false);
@@ -386,7 +343,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
           window.dispatchEvent(new CustomEvent('refreshMessages'));
         }
       } catch (error) {
-        console.error('Error marking message as read:', error);
+        // Error marking message as read
       }
     }
   };
@@ -409,7 +366,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         ));
       }
     } catch (error) {
-      console.error('Error updating star status:', error);
+      // Error updating star status
     }
   };
 
@@ -447,7 +404,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         window.dispatchEvent(new CustomEvent('refreshMessages'));
       }
     } catch (error) {
-      console.error('Error deleting message:', error);
+      // Error deleting message
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -487,7 +444,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         }
       }
     } catch (error) {
-      console.error('Error permanently deleting message:', error);
+      // Error permanently deleting message
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -558,7 +515,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         setSelectedMessageIds([]);
         window.dispatchEvent(new CustomEvent('refreshMessages'));
       } catch (error) {
-        console.error('Error deleting messages:', error);
+        // Error deleting messages
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -579,7 +536,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         document.execCommand(command, false, value);
       }
     } catch (error) {
-      console.error('Error formatting text:', error);
+      // Error formatting text
     }
   };
 
@@ -609,7 +566,6 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
             });
           } catch (error) {
             // Ignore Swal errors
-            console.warn('Swal error:', error);
           }
           continue;
         }
@@ -675,7 +631,6 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
             });
           } catch (error) {
             // Ignore Swal errors
-            console.warn('Swal error:', error);
           }
         }
       }
@@ -690,10 +645,6 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
   const handleSendMessage = async () => {
     if (!messageBodyRef.current) return;
     
-    // Debug logging
-    console.log('Compose data before validation:', composeData);
-    console.log('recipientId type:', typeof composeData.recipientId, 'value:', composeData.recipientId);
-    
     // Check each field individually for better error messages
     // recipientId can be a string or number
     const recipientId = composeData.recipientId ? String(composeData.recipientId).trim() : '';
@@ -705,10 +656,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
     // Strip HTML tags to check if there's actual text content
     const textOnly = textContent.trim();
     
-    console.log('After processing - recipientId:', recipientId, 'subject:', subject, 'body HTML length:', bodyContent.length, 'text length:', textOnly.length);
-    
     if (!recipientId || recipientId === '') {
-      console.error('Missing recipientId - raw value:', composeData.recipientId, 'processed:', recipientId);
       Swal.fire({
         icon: 'warning',
         title: 'Missing Information',
@@ -719,7 +667,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
     }
     
     if (!subject) {
-      console.error('Missing subject:', composeData.subject);
+      // Missing subject
       Swal.fire({
         icon: 'warning',
         title: 'Missing Information',
@@ -731,7 +679,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
     
     // Check if there's actual text content (not just empty HTML tags or whitespace)
     if (!textOnly) {
-      console.error('Missing body content - textOnly is empty');
+      // Missing body content
       Swal.fire({
         icon: 'warning',
         title: 'Missing Information',
@@ -787,7 +735,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         } catch {
           errorData = { error: errorText || 'Unknown error' };
         }
-        console.error('Error response:', response.status, errorData);
+        // Error response
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -796,7 +744,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
         });
       }
     } catch (error: any) {
-      console.error('Error sending message:', error);
+      // Error sending message
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -930,7 +878,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
                 {activeSubmenu === 'sent' && 'Sent'}
                 {activeSubmenu === 'trash' && 'Trash'}
               </h2>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div className={styles.messagesToolbar}>
                 {selectedMessageIds.length > 0 ? (
                   <button
                     onClick={handleBulkDelete}
@@ -1021,13 +969,8 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
                     <button
                       className={styles.replyBtn}
                       onClick={() => {
-                        console.log('Reply clicked - selectedMessage:', selectedMessage);
-                        console.log('senderId:', selectedMessage.senderId, 'type:', typeof selectedMessage.senderId, 'value:', selectedMessage.senderId);
-                        console.log('senderName:', selectedMessage.senderName);
-                        
                         // Ensure we have a valid senderId
                         if (!selectedMessage.senderId || selectedMessage.senderId === '') {
-                          console.error('ERROR: senderId is missing or empty!', selectedMessage);
                           Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -1038,10 +981,8 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
                         }
                         
                         const recipientId = String(selectedMessage.senderId).trim();
-                        console.log('Setting recipientId:', recipientId);
                         
                         if (!recipientId || recipientId === '') {
-                          console.error('ERROR: recipientId is still empty after conversion!');
                           Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -1062,12 +1003,6 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
                           body: ''
                         });
                         setIsReply(true);
-                        console.log('Compose data set:', {
-                          recipientId: recipientId,
-                          recipientName: selectedMessage.senderName,
-                          subject: replySubject,
-                          body: ''
-                        });
                         setSelectedMessage(null);
                         setShowCompose(true);
                       }}
@@ -1102,15 +1037,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
             ) : (
               <>
                 {activeSubmenu === 'trash' && (
-                  <div style={{ 
-                    padding: '12px 16px', 
-                    marginBottom: '1rem', 
-                    backgroundColor: '#fff3cd', 
-                    border: '1px solid #ffc107', 
-                    borderRadius: '6px',
-                    fontSize: '0.875rem',
-                    color: '#856404'
-                  }}>
+                  <div className={styles.trashWarningNote}>
                     <strong>Note:</strong> Messages in trash will be automatically deleted after 30 days.
                   </div>
                 )}
@@ -1358,16 +1285,6 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
                 </div>
               </>
             )}
-          </div>
-        );
-      
-      case 'reminders':
-        return (
-          <div className={styles.dashboardSection}>
-            <h2 className={styles.sectionTitle}>Reminders</h2>
-            <div className={styles.placeholderText}>
-              <p>No reminders set up yet.</p>
-            </div>
           </div>
         );
       

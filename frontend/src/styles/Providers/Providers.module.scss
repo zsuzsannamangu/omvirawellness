@@ -6,7 +6,7 @@
 
 // Hero Section
 .hero {
-  background: linear-gradient(135deg, $dark-text 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, $dark-text 0%, darken($dark-text, 10%) 100%);
   padding: $spacing-xxl 2rem;
   color: $light-text;
   
@@ -62,7 +62,7 @@
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px $black-rgba-30;
 }
 
 .heroImg {
@@ -103,12 +103,10 @@
   font-family: $font-main;
   font-weight: 600;
   font-size: 1.1rem;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
   
   &:hover {
-    background-color: $button-pink-hover;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+    background-color: darken($primary-color, 8%);
   }
 }
 
@@ -215,7 +213,7 @@
 
 .whoCtaButton {
   display: inline-block;
-  background: linear-gradient(135deg, $primary-color 0%, $button-pink-hover 100%);
+  background: $primary-color;
   color: $light-text;
   padding: 1rem 2.5rem;
   border-radius: 50px;
@@ -223,14 +221,11 @@
   font-family: $font-main;
   font-weight: 600;
   font-size: 1.1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+  transition: background-color 0.3s ease;
   margin-bottom: $spacing-lg;
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 35px rgba($primary-color, 0.4);
-    background: linear-gradient(135deg, darken($primary-color, 5%) 0%, darken($button-pink-hover, 5%) 100%);
+    background: darken($primary-color, 8%);
   }
 }
 
@@ -487,7 +482,7 @@
 .ctaSection {
   padding: $spacing-xxl 2rem $spacing-xxl 2rem;
   // background: linear-gradient(135deg, $primary-color 0%, #0d5a5d 100%);
-  background: linear-gradient(135deg, $primary-color 0%, #3f4c77 100%);
+  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
   color: $light-text;
   text-align: center;
   
@@ -855,12 +850,10 @@
   font-family: $font-main;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
   
   &:hover {
-    background-color: $button-pink-hover;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    background-color: darken($primary-color, 8%);
   }
 }
 
@@ -929,7 +922,7 @@
 // Mission/Vision Section
 .missionSection {
   padding: $spacing-xxl 2rem $spacing-xxl 2rem;
-  background: linear-gradient(135deg, $dark-text 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, $dark-text 0%, darken($dark-text, 10%) 100%);
   color: $light-text;
   margin-top: 100px;
   
@@ -990,12 +983,6 @@
   background: rgba($light-text, 0.1);
   border-radius: 12px;
   border-top: 3px solid $primary-color;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
-  }
   
   h3 {
     font-family: $font-heading;
@@ -1081,14 +1068,8 @@
   padding: $spacing-lg;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba($primary-color, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   gap: $spacing-lg;
   width: 100%;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba($primary-color, 0.15);
-  }
   
   @media (max-width: 768px) {
     flex-direction: column;

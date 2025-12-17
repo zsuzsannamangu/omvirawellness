@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '@/services/auth';
@@ -12,6 +12,51 @@ const SpaceLoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      
+      if (!token || !user) {
+        return; // Not authenticated, show login form
+      }
+      
+      // Validate token with backend
+      try {
+        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (verifyResponse.ok) {
+          // Token is valid, check if it's a space owner and redirect
+          try {
+            const userData = JSON.parse(user);
+            if (userData.user_type === 'space_owner') {
+              router.push(`/spaces/dashboard/${userData.id}`);
+            } else if (userData.user_type === 'client') {
+              router.push(`/dashboard/${userData.id}`);
+            } else if (userData.user_type === 'provider') {
+              router.push(`/providers/dashboard/${userData.id}`);
+            }
+          } catch (parseError) {
+            // Invalid user data, show login form
+          }
+        } else {
+          // Token is invalid or expired, clear it
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      } catch (verifyError) {
+        // Network error, show login form
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

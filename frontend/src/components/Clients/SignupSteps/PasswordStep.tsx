@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
 import styles from '@/styles/Clients/SignupSteps.module.scss';
 
 interface PasswordStepProps {
@@ -56,16 +56,20 @@ export default function PasswordStep({ onNext, onBack, initialData }: PasswordSt
           <p className={styles.requirementsTitle}>Password must contain:</p>
           <ul className={styles.requirementsList}>
             <li className={password.length >= 8 ? styles.requirementMet : styles.requirementUnmet}>
-              At least 8 characters
+              {password.length >= 8 && <FaCheck className={styles.checkIcon} />}
+              <span>At least 8 characters</span>
             </li>
             <li className={/[A-Z]/.test(password) ? styles.requirementMet : styles.requirementUnmet}>
-              One uppercase letter
+              {/[A-Z]/.test(password) && <FaCheck className={styles.checkIcon} />}
+              <span>One uppercase letter</span>
             </li>
             <li className={/[a-z]/.test(password) ? styles.requirementMet : styles.requirementUnmet}>
-              One lowercase letter
+              {/[a-z]/.test(password) && <FaCheck className={styles.checkIcon} />}
+              <span>One lowercase letter</span>
             </li>
             <li className={/\d/.test(password) ? styles.requirementMet : styles.requirementUnmet}>
-              One number
+              {/\d/.test(password) && <FaCheck className={styles.checkIcon} />}
+              <span>One number</span>
             </li>
           </ul>
         </div>

@@ -46,6 +46,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string>('');
   const [selectedPractices, setSelectedPractices] = useState<string[]>([]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const loadUserData = async () => {
     try {
@@ -278,8 +279,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         // Certifications fields
         profileData.certifications = certifications;
       }
-      
-      console.log('Sending profile data to backend:', profileData);
 
       // Send to backend
       const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
@@ -574,6 +573,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       maxLength={50}
                       value={newService.name}
                       onChange={(e) => setNewService({ ...newService, name: e.target.value })}
+                      autoComplete="off"
+                      data-form-type="other"
                     />
                     <span className={styles.charCount}>{newService.name.length}/50</span>
                     </div>
@@ -621,6 +622,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                           placeholder="0"
                           value={newService.price}
                           onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+                          autoComplete="off"
+                          data-form-type="other"
                         />
                       </div>
                     </div>
@@ -634,6 +637,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       maxLength={200}
                       value={newService.description}
                       onChange={(e) => setNewService({ ...newService, description: e.target.value })}
+                      autoComplete="off"
+                      data-form-type="other"
                     />
                     <span className={styles.charCount}>{newService.description.length}/200</span>
                   </div>
@@ -919,6 +924,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         maxLength={50}
                         value={newAddOn.name}
                         onChange={(e) => setNewAddOn({ ...newAddOn, name: e.target.value })}
+                        autoComplete="off"
+                        data-form-type="other"
                       />
                       <span className={styles.charCount}>{newAddOn.name.length}/50</span>
                     </div>
@@ -932,6 +939,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         maxLength={200}
                         value={newAddOn.description}
                         onChange={(e) => setNewAddOn({ ...newAddOn, description: e.target.value })}
+                        autoComplete="off"
+                        data-form-type="other"
                       />
                       <span className={styles.charCount}>{newAddOn.description.length}/200</span>
                   </div>
@@ -947,6 +956,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             placeholder="0"
                             value={newAddOn.price}
                             onChange={(e) => setNewAddOn({ ...newAddOn, price: e.target.value })}
+                            autoComplete="off"
+                            data-form-type="other"
                           />
                         </div>
                       </div>
@@ -1213,21 +1224,21 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
 
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Address</label>
-                  <input type="text" data-field="address_line1" className={styles.formInput} defaultValue={profileBasic.address_line1 || ''} placeholder="Street address" />
+                  <input type="text" data-field="address_line1" className={styles.formInput} defaultValue={profileBasic.address_line1 || ''} placeholder="Street address" autoComplete="off" />
               </div>
 
                 <div className={`${styles.formRow} ${styles.formRowThree}`}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>City</label>
-                    <input type="text" data-field="city" className={styles.formInput} defaultValue={profileBasic.city || ''} />
+                    <input type="text" data-field="city" className={styles.formInput} defaultValue={profileBasic.city || ''} autoComplete="off" />
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>State</label>
-                    <input type="text" data-field="state" className={styles.formInput} defaultValue={profileBasic.state || ''} />
+                    <input type="text" data-field="state" className={styles.formInput} defaultValue={profileBasic.state || ''} autoComplete="off" />
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Zip Code</label>
-                    <input type="text" data-field="zip_code" className={styles.formInput} defaultValue={profileBasic.zip_code || ''} />
+                    <input type="text" data-field="zip_code" className={styles.formInput} defaultValue={profileBasic.zip_code || ''} autoComplete="off" />
                   </div>
                 </div>
 
@@ -1398,6 +1409,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             placeholder="Enter full name"
                             value={newMemberName}
                             onChange={(e) => setNewMemberName(e.target.value)}
+                            autoComplete="off"
+                            data-form-type="other"
                           />
                         </div>
                         <div className={styles.modalFormGroup}>
@@ -1408,6 +1421,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             placeholder="Enter email address"
                             value={newMemberEmail}
                             onChange={(e) => setNewMemberEmail(e.target.value)}
+                            autoComplete="off"
+                            data-form-type="other"
                           />
                         </div>
                         <div className={styles.modalActions}>
@@ -1425,10 +1440,16 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             className={styles.modalAddBtn}
                             onClick={() => {
                               if (newMemberName && newMemberEmail) {
-                                setTeamMembers([...teamMembers, { name: newMemberName, email: newMemberEmail, role: 'Team Member' }]);
+                                const newMember = { name: newMemberName, email: newMemberEmail, role: 'Team Member' };
+                                setTeamMembers([...teamMembers, newMember]);
                                 setShowAddTeamMember(false);
                                 setNewMemberName('');
                                 setNewMemberEmail('');
+                                setHasUnsavedChanges(true);
+                                // Show a reminder to save
+                                setSaveMessage('✓ Team member added! SCROLL DOWN and click "SAVE CHANGES" button to save to database.');
+                                // Keep message visible longer
+                                setTimeout(() => setSaveMessage(''), 15000);
                               }
                             }}
                           >
@@ -1446,8 +1467,15 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                   </div>
                 )}
                 <div className={styles.bioActions}>
-                  <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
-                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  <button 
+                    className={`${styles.saveBtn} ${hasUnsavedChanges ? styles.saveBtnHighlight : ''}`} 
+                    onClick={() => {
+                      handleSave();
+                      setHasUnsavedChanges(false);
+                    }} 
+                    disabled={isSaving}
+                  >
+                    {isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save Changes (Unsaved Team Members)' : 'Save Changes'}
                   </button>
                 </div>
               </div>
@@ -1806,6 +1834,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       maxLength={100}
                       value={newCertification.name}
                       onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
+                      autoComplete="off"
+                      data-form-type="other"
                     />
                     <span className={styles.charCount}>{newCertification.name.length}/100</span>
                   </div>
@@ -1819,6 +1849,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       maxLength={100}
                       value={newCertification.issuer}
                       onChange={(e) => setNewCertification({ ...newCertification, issuer: e.target.value })}
+                      autoComplete="off"
+                      data-form-type="other"
                     />
                     <span className={styles.charCount}>{newCertification.issuer.length}/100</span>
                   </div>
@@ -1831,6 +1863,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         className={styles.modalInput}
                         value={newCertification.issueDate}
                         onChange={(e) => setNewCertification({ ...newCertification, issueDate: e.target.value })}
+                        autoComplete="off"
                       />
                     </div>
                     <div className={`${styles.modalFormGroup} ${styles.modalFormGroupFlex}`}>
@@ -1840,6 +1873,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         className={styles.modalInput}
                         value={newCertification.expirationDate}
                         onChange={(e) => setNewCertification({ ...newCertification, expirationDate: e.target.value })}
+                        autoComplete="off"
                       />
                     </div>
                   </div>
@@ -1853,6 +1887,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       maxLength={50}
                       value={newCertification.licenseNumber}
                       onChange={(e) => setNewCertification({ ...newCertification, licenseNumber: e.target.value })}
+                      autoComplete="off"
+                      data-form-type="other"
                     />
                   </div>
                   

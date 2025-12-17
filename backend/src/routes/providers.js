@@ -24,10 +24,67 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// GET all providers
+// GET all providers with optional search and filters
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query(`
+    // Extract query parameters
+    const { search, service, location, minPrice, maxPrice, sortBy } = req.query;
+    
+    // Build WHERE clause conditions
+    const conditions = ['u.user_type = $1', 'u.is_active = true'];
+    const params = ['provider'];
+    let paramCounter = 2;
+    
+    // Search filter (name, business name, city, state, business type)
+    if (search) {
+      conditions.push(`(
+        LOWER(pp.contact_name) LIKE $${paramCounter} OR 
+        LOWER(pp.business_name) LIKE $${paramCounter} OR 
+        LOWER(pp.city) LIKE $${paramCounter} OR 
+        LOWER(pp.state) LIKE $${paramCounter} OR 
+        LOWER(pp.business_type) LIKE $${paramCounter}
+      )`);
+      params.push(`%${search.toLowerCase()}%`);
+      paramCounter++;
+    }
+    
+    // Service/business type filter
+    if (service) {
+      conditions.push(`LOWER(pp.business_type) LIKE $${paramCounter}`);
+      params.push(`%${service.toLowerCase()}%`);
+      paramCounter++;
+    }
+    
+    // Location filter (work_location is JSONB array)
+    if (location) {
+      let locationValue;
+      if (location === 'Comes to Me') {
+        locationValue = 'at-client-location';
+      } else if (location === "Provider's Studio") {
+        locationValue = 'from-booked-studio';
+      } else if (location === "Provider's Home") {
+        locationValue = 'at-my-place';
+      } else if (location === 'Virtual Session') {
+        locationValue = 'online';
+      }
+      
+      if (locationValue) {
+        conditions.push(`pp.work_location::jsonb ? $${paramCounter}`);
+        params.push(locationValue);
+        paramCounter++;
+      }
+    }
+    
+    // Build ORDER BY clause
+    let orderBy = 'pp.average_rating DESC, pp.total_reviews DESC';
+    if (sortBy === 'Highest Rated') {
+      orderBy = 'pp.average_rating DESC, pp.total_reviews DESC';
+    } else if (sortBy === 'Most Experienced') {
+      orderBy = 'pp.total_reviews DESC, pp.average_rating DESC';
+    }
+    // Price sorting would need to be done client-side since services is JSONB
+    
+    const query = `
       SELECT 
         u.id,
         u.email,
@@ -57,12 +114,14 @@ router.get('/', async (req, res) => {
         pp.availability
       FROM users u
       JOIN provider_profiles pp ON u.id = pp.user_id
-      WHERE u.user_type = 'provider' AND u.is_active = true
-      ORDER BY pp.average_rating DESC
-    `);
+      WHERE ${conditions.join(' AND ')}
+      ORDER BY ${orderBy}
+    `;
+    
+    const result = await pool.query(query, params);
     
     // Parse JSONB fields
-    const providers = result.rows.map(row => {
+    let providers = result.rows.map(row => {
       // Parse availability
       let availability = [];
       if (row.availability) {
@@ -86,6 +145,19 @@ router.get('/', async (req, res) => {
         availability: availability,
       };
     });
+    
+    // Client-side price filtering (since services is JSONB)
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      providers = providers.filter(provider => {
+        if (!provider.services || provider.services.length === 0) return false;
+        const prices = provider.services.map(s => parseFloat(s.price) || 0);
+        const providerMinPrice = Math.min(...prices);
+        
+        if (minPrice !== undefined && providerMinPrice < parseFloat(minPrice)) return false;
+        if (maxPrice !== undefined && providerMinPrice > parseFloat(maxPrice)) return false;
+        return true;
+      });
+    }
     
     res.json(providers);
   } catch (err) {
@@ -388,7 +460,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     
     const result = await pool.query(`
-      SELECT 
+      SELECT
         u.id,
         u.email,
         pp.business_name,
@@ -413,6 +485,7 @@ router.get('/:id', async (req, res) => {
         pp.travel_policy,
         pp.travel_fee,
         pp.max_distance,
+        pp.team_members,
         pp.average_rating,
         pp.total_reviews,
         pp.availability
@@ -432,6 +505,7 @@ router.get('/:id', async (req, res) => {
     provider.services = typeof provider.services === 'string' ? JSON.parse(provider.services) : provider.services;
     provider.add_ons = typeof provider.add_ons === 'string' ? JSON.parse(provider.add_ons) : (provider.add_ons || []);
     provider.certifications = typeof provider.certifications === 'string' ? JSON.parse(provider.certifications) : (provider.certifications || []);
+    provider.team_members = typeof provider.team_members === 'string' ? JSON.parse(provider.team_members) : (provider.team_members || []);
     
     // Parse credentials (TEXT[] array in PostgreSQL)
     if (provider.credentials && typeof provider.credentials !== 'object') {
@@ -457,6 +531,116 @@ router.get('/:id', async (req, res) => {
     res.json(provider);
   } catch (err) {
     console.error('Error fetching provider:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Track profile visit
+router.post('/:id/visit', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { visitorId } = req.body; // Optional: logged-in user ID
+    const visitorIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const userAgent = req.headers['user-agent'];
+    const referrer = req.headers['referer'] || req.headers['referrer'];
+    
+    // Insert visit record
+    await pool.query(`
+      INSERT INTO profile_visits (provider_id, visitor_id, visitor_ip, user_agent, referrer)
+      VALUES ($1, $2, $3, $4, $5)
+    `, [id, visitorId || null, visitorIp, userAgent, referrer]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error tracking visit:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get visit statistics for a provider
+router.get('/:id/visits/stats', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { period = 'today' } = req.query;
+    
+    // Calculate date range based on period
+    let dateCondition = '';
+    const now = new Date();
+    
+    switch (period) {
+      case 'today':
+        dateCondition = `visited_at >= DATE_TRUNC('day', NOW())`;
+        break;
+      case 'yesterday':
+        dateCondition = `visited_at >= DATE_TRUNC('day', NOW() - INTERVAL '1 day') 
+                         AND visited_at < DATE_TRUNC('day', NOW())`;
+        break;
+      case 'last_7_days':
+        dateCondition = `visited_at >= NOW() - INTERVAL '7 days'`;
+        break;
+      case 'last_30_days':
+        dateCondition = `visited_at >= NOW() - INTERVAL '30 days'`;
+        break;
+      case 'this_month':
+        dateCondition = `visited_at >= DATE_TRUNC('month', NOW())`;
+        break;
+      case 'last_month':
+        dateCondition = `visited_at >= DATE_TRUNC('month', NOW() - INTERVAL '1 month') 
+                         AND visited_at < DATE_TRUNC('month', NOW())`;
+        break;
+      case 'this_year':
+        dateCondition = `visited_at >= DATE_TRUNC('year', NOW())`;
+        break;
+      case 'last_year':
+        dateCondition = `visited_at >= DATE_TRUNC('year', NOW() - INTERVAL '1 year') 
+                         AND visited_at < DATE_TRUNC('year', NOW())`;
+        break;
+      default:
+        dateCondition = `visited_at >= DATE_TRUNC('day', NOW())`;
+    }
+    
+    // Get total count for the period
+    const countResult = await pool.query(`
+      SELECT COUNT(*) as count
+      FROM profile_visits
+      WHERE provider_id = $1 AND ${dateCondition}
+    `, [id]);
+    
+    // Get breakdown for charts - hourly for today/yesterday, daily for others
+    let dailyResult;
+    if (period === 'today' || period === 'yesterday') {
+      // Hourly breakdown for today/yesterday
+      dailyResult = await pool.query(`
+        SELECT 
+          visited_at as date,
+          1 as count
+        FROM profile_visits
+        WHERE provider_id = $1 AND ${dateCondition}
+        ORDER BY visited_at ASC
+      `, [id]);
+    } else {
+      // Daily breakdown for other periods
+      dailyResult = await pool.query(`
+        SELECT 
+          DATE_TRUNC('day', visited_at) as date,
+          COUNT(*) as count
+        FROM profile_visits
+        WHERE provider_id = $1 
+          AND visited_at >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE_TRUNC('day', visited_at)
+        ORDER BY date ASC
+      `, [id]);
+    }
+    
+    res.json({
+      count: parseInt(countResult.rows[0].count),
+      daily: dailyResult.rows.map(row => ({
+        date: row.date,
+        count: parseInt(row.count)
+      }))
+    });
+  } catch (err) {
+    console.error('Error fetching visit stats:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

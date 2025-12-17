@@ -102,6 +102,7 @@ export default function ProfileSetupStep({ onNext, onBack, initialData }: Profil
               placeholder="Tell clients about your wellness practice, experience, and approach..."
               rows={4}
               maxLength={500}
+              autoComplete="off"
             />
             <span className={styles.charCount}>{profile.bio.length}/500</span>
           </div>
@@ -118,6 +119,7 @@ export default function ProfileSetupStep({ onNext, onBack, initialData }: Profil
               placeholder="Describe your specialties and techniques (e.g., Deep Tissue Massage, Hot Stone Therapy...)"
               rows={4}
               maxLength={500}
+              autoComplete="off"
             />
             <span className={styles.charCount}>{profile.specialties.length}/500</span>
           </div>
@@ -193,6 +195,7 @@ export default function ProfileSetupStep({ onNext, onBack, initialData }: Profil
                     className={styles.textInput}
                     placeholder="Enter language"
                     onKeyPress={(e) => e.key === 'Enter' && handleAddOtherLanguage()}
+                    autoComplete="off"
                   />
                   <button
                     type="button"

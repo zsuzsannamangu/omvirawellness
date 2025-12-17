@@ -90,7 +90,7 @@
   right: $spacing-sm;
   top: 100%;
   font-size: 0.75rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   margin-top: $spacing-sm;
   font-weight: 500;
 }
@@ -162,7 +162,7 @@
   font-family: $font-main;
   font-size: 0.875rem;
   font-weight: 600;
-  color: $primary-color;
+  color: $provider-colors-3;
   cursor: pointer;
   padding: $spacing-xs;
 }
@@ -170,7 +170,7 @@
 .requirements {
   margin-top: $spacing-md;
   padding: $spacing-md;
-  background: $muted-bg;
+  background: transparent;
   border-radius: 8px;
 }
 
@@ -233,7 +233,7 @@
 
   &.selected {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
   }
 }
 
@@ -283,17 +283,17 @@
 
   &:hover {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
   }
 
   &.selected {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.1);
+    background: $provider-color-3-rgba-10;
   }
 }
 
 .arrow {
-  color: $primary-color;
+  color: $provider-colors-3;
   font-weight: bold;
 }
 
@@ -321,7 +321,7 @@
 
   &.selected {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
   }
 }
 
@@ -352,7 +352,7 @@
 
 .locationCheckbox {
   font-size: 1.25rem;
-  color: $primary-color;
+  color: $success-light;
   margin-left: $spacing-sm;
 }
 
@@ -382,7 +382,7 @@
   margin-right: $spacing-md;
   width: 18px;
   height: 18px;
-  accent-color: $primary-color;
+  accent-color: $provider-colors-3;
 }
 
 .radioLabel {
@@ -509,7 +509,7 @@
   height: 48px;
 
   &:hover {
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
     border-color: $provider-colors-3;
     transform: translateY(-1px);
   }
@@ -538,7 +538,7 @@
 }
 
 .legalLink {
-  color: $primary-color;
+  color: $provider-colors-3;
   text-decoration: none;
 
   &:hover {
@@ -605,7 +605,7 @@
   font-family: $font-main;
   font-size: 1rem;
   font-weight: 600;
-  color: $primary-color;
+  color: $provider-colors-3;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -615,7 +615,7 @@
 
   &:hover {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
   }
 }
 
@@ -654,7 +654,7 @@
 
 .charCount {
   font-size: 0.75rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   font-weight: 600;
   text-align: right;
   display: block;
@@ -705,7 +705,7 @@
   &:focus {
     outline: none;
     border-color: $provider-colors-3;
-    background-color: rgba($primary-color, 0.02);
+    background-color: $provider-color-3-rgba-02;
   }
 
   &:hover {
@@ -722,11 +722,11 @@
   }
 
   option:hover {
-    background-color: rgba($primary-color, 0.1);
+    background-color: $provider-color-3-rgba-10;
   }
 
   option:checked {
-    background-color: $primary-color;
+    background-color: $provider-colors-3;
     color: $bg-white;
   }
 }
@@ -850,7 +850,7 @@
 .dayCheckbox {
   width: 18px;
   height: 18px;
-  accent-color: $primary-color;
+  accent-color: $provider-colors-3;
   cursor: pointer;
 }
 
@@ -902,7 +902,7 @@
   &:focus {
     outline: none;
     border-color: $provider-colors-3;
-    background-color: rgba($primary-color, 0.02);
+    background-color: $provider-color-3-rgba-02;
   }
 
   &:hover {
@@ -919,11 +919,11 @@
   }
 
   option:hover {
-    background-color: rgba($primary-color, 0.1);
+    background-color: $provider-color-3-rgba-10;
   }
 
   option:checked {
-    background-color: $primary-color;
+    background-color: $provider-colors-3;
     color: $bg-white;
   }
 }
@@ -951,7 +951,7 @@
 }
 
 .hoursNote {
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-lg;
@@ -1027,7 +1027,7 @@
 }
 
 .serviceAreaNote {
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   padding: $spacing-md;
   border-radius: 8px;
   margin-top: $spacing-md;
@@ -1062,7 +1062,7 @@
 
   &.active {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
     color: $provider-colors-3;
   }
 }
@@ -1142,7 +1142,7 @@
 }
 
 .travelNote {
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-lg;
@@ -1158,9 +1158,9 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-md;
-  border: 2px solid $primary-color;
+  border: 2px solid $provider-colors-3;
   border-radius: 12px;
-  background: rgba($primary-color, 0.05);
+  background: $provider-color-3-rgba-05;
 }
 
 .ownerInfo {
@@ -1235,7 +1235,7 @@
   font-family: $font-main;
   font-size: 1rem;
   font-weight: 600;
-  color: $primary-color;
+  color: $provider-colors-3;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -1246,7 +1246,7 @@
 
   &:hover {
     border-color: $provider-colors-3;
-    background: rgba($primary-color, 0.05);
+    background: $provider-color-3-rgba-05;
   }
 }
 
@@ -1276,7 +1276,7 @@
 }
 
 .staffNote {
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-lg;
@@ -1396,7 +1396,7 @@
 }
 
 .profileNote {
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-lg;
@@ -1406,16 +1406,16 @@
 .trialBanner {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  background: linear-gradient(135deg, $primary-color, $hover-green);
-  color: $bg-white;
-  padding: $spacing-lg;
-  border-radius: 12px;
-  margin-bottom: $spacing-lg;
+  gap: $spacing-sm;
+  background: linear-gradient(135deg, $provider-colors-3, darken($provider-colors-3, 15%));
+  color: $light-text;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 8px;
+  margin-bottom: $spacing-md;
 }
 
 .trialIcon {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .trialContent {
@@ -1424,23 +1424,24 @@
 
 .trialTitle {
   font-family: $font-main;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0 0 $spacing-xs 0;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
   color: $secondary-color;
 }
 
 .trialDescription {
   font-family: $font-main;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   margin: 0;
-  opacity: 0.9;
-  line-height: 1.4;
+  opacity: 0.85;
+  line-height: 1.3;
 }
 
 .billingToggle {
   display: flex;
-  background: $muted-bg;
+  background: $section-bg-2;
+  border: 1px solid $border-light;
   border-radius: 8px;
   padding: 4px;
   margin-bottom: $spacing-lg;
@@ -1454,7 +1455,7 @@
   flex: 1;
   padding: $spacing-sm $spacing-md;
   border: none;
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   border-radius: 6px;
   font-family: $font-main;
   font-size: 0.875rem;
@@ -1467,7 +1468,6 @@
   &.active {
     background: $bg-white;
     color: $dark-text;
-    box-shadow: 0 2px 4px $shadow-color;
   }
 }
 
@@ -1493,27 +1493,23 @@
 
 .planCard {
   background: $bg-white;
-  border: 1px solid rgba($dark-text, 0.08);
-  border-radius: 24px;
+  border: 2px solid rgba($dark-text, 0.1);
+  border-radius: 16px;
   padding: $spacing-xl $spacing-lg;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: border-color 0.2s ease;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 18px 45px rgba($primary-color, 0.12);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 28px 60px rgba($primary-color, 0.18);
-    border-color: rgba($primary-color, 0.35);
+    border-color: $provider-colors-3;
   }
 
   &.selected {
     border-color: $provider-colors-3;
-    box-shadow: 0 32px 70px rgba($primary-color, 0.22);
   }
 
   &.popular {
@@ -1563,7 +1559,7 @@
   font-family: $font-heading;
   font-size: 2.5rem;
   font-weight: 700;
-  color: $primary-color;
+  color: $provider-colors-3;
 }
 
 .period {
@@ -1575,7 +1571,7 @@
 .billingNote {
   font-family: $font-main;
   font-size: 0.75rem;
-  color: $primary-color;
+  color: $provider-colors-3;
   font-weight: 600;
   margin: 0;
   margin-top: 2px;
@@ -1641,25 +1637,23 @@
   font-weight: 600;
   color: $light-text;
   background: $provider-colors-3;
-  box-shadow: 0 12px 25px rgba($primary-color, 0.25);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition: background 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba($primary-color, 0.25);
+    background: darken($provider-colors-3, 5%);
   }
 }
 
 .planCard.selected .planRadioLabel {
   background: $secondary-color;
-  box-shadow: 0 16px 32px rgba($secondary-color, 0.3);
 }
 
 .pricingSummary {
-  background: $muted-bg;
-  border-radius: 8px;
-  padding: $spacing-lg;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   margin-bottom: $spacing-lg;
 }
 
@@ -1688,7 +1682,7 @@
 }
 
 .termsNote {
-  background: rgba($primary-color, 0.05);
+  background: transparent;
   padding: $spacing-md;
   border-radius: 8px;
   margin-bottom: $spacing-lg;
@@ -1703,12 +1697,12 @@
 }
 
 .termsLink {
-  color: $primary-color;
+  color: $provider-colors-3;
   text-decoration: underline;
   font-weight: 600;
   
   &:hover {
-    color: $hover-green;
+    color: darken($provider-colors-3, 10%);
     text-decoration: none;
   }
 }

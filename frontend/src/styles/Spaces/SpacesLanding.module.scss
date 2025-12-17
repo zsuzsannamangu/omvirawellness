@@ -121,7 +121,7 @@
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px $shadow-dark;
   width: 100%;
   aspect-ratio: 2 / 3;
   
@@ -330,7 +330,7 @@
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px $shadow-dark;
   }
 }
 

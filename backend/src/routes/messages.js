@@ -36,7 +36,6 @@ router.get('/unread-count', verifyToken, async (req, res) => {
     
     res.json({ count: parseInt(result.rows[0].count) || 0 });
   } catch (err) {
-    console.error('Error fetching unread messages count:', err);
     res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
@@ -51,7 +50,6 @@ router.get('/test', verifyToken, async (req, res) => {
       userId: req.userId 
     });
   } catch (err) {
-    console.error('Test query error:', err);
     res.status(500).json({ 
       error: 'Server error', 
       message: err.message,
@@ -110,19 +108,11 @@ router.post('/', verifyToken, async (req, res) => {
       [messageId, recipientId]
     );
 
-    console.log('Message created:', {
-      id: messageId,
-      sender_id: result.rows[0].sender_id,
-      recipient_id: result.rows[0].recipient_id,
-      subject: result.rows[0].subject
-    });
-
     res.status(201).json({
       success: true,
       message: result.rows[0]
     });
   } catch (err) {
-    console.error('Error sending message:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -251,23 +241,7 @@ router.get('/', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Invalid folder parameter' });
     }
 
-    console.log('Executing query for folder:', folder, 'userId:', req.userId);
-    console.log('Query:', query.substring(0, 200) + '...');
-    
     const result = await pool.query(query, params);
-    console.log('Query result:', result.rows.length, 'messages found');
-    
-    // Debug: Log first message to see what fields are returned
-    if (result.rows.length > 0) {
-      console.log('First message row sample:', {
-        id: result.rows[0].id,
-        sender_id: result.rows[0].sender_id,
-        recipient_id: result.rows[0].recipient_id,
-        sender_client_first_name: result.rows[0].sender_client_first_name,
-        sender_client_last_name: result.rows[0].sender_client_last_name,
-        sender_contact_name: result.rows[0].sender_contact_name
-      });
-    }
 
     // Format the response
     const messages = result.rows.map(row => {
@@ -310,32 +284,15 @@ router.get('/', verifyToken, async (req, res) => {
           folder: row.folder || (isSent ? 'sent' : 'inbox')
         };
         
-        console.log('Mapping message row:', {
-          id: row.id,
-          sender_id: row.sender_id,
-          recipient_id: row.recipient_id,
-          senderId: message.senderId,
-          recipientId: message.recipientId,
-          isSent: isSent,
-          senderName: message.senderName
-        });
-        
         return message;
       } catch (mapError) {
-        console.error('Error mapping message row:', mapError, row);
+        // Error mapping message row
         return null;
       }
     }).filter(msg => msg !== null);
 
     res.json(messages);
   } catch (err) {
-    console.error('Error fetching messages:', err);
-    console.error('Error details:', {
-      message: err.message,
-      stack: err.stack,
-      folder: req.query.folder,
-      userId: req.userId
-    });
     res.status(500).json({ 
       error: 'Server error',
       message: err.message,
@@ -445,7 +402,6 @@ router.patch('/:messageId', verifyToken, async (req, res) => {
 
     res.json({ success: true, message: 'Message updated' });
   } catch (err) {
-    console.error('Error updating message:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -472,7 +428,6 @@ router.delete('/:messageId', verifyToken, async (req, res) => {
 
     res.json({ success: true, message: 'Message permanently deleted' });
   } catch (err) {
-    console.error('Error deleting message:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -486,10 +441,9 @@ const cleanupOldTrashMessages = async () => {
        AND updated_at < NOW() - INTERVAL '30 days'`
     );
     
-    console.log(`Cleaned up ${result.rowCount} old trash messages (older than 30 days)`);
     return result.rowCount;
   } catch (err) {
-    console.error('Error cleaning up old trash messages:', err);
+    // Error cleaning up old trash messages
     return 0;
   }
 };

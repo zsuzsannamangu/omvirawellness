@@ -46,6 +46,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
   const [totalReviews, setTotalReviews] = useState<number>(0);
   const [trafficPeriod, setTrafficPeriod] = useState<TrafficPeriod>('today');
   const [trafficData, setTrafficData] = useState<{ [key: string]: number }>({});
+  const [dailyTrafficData, setDailyTrafficData] = useState<{ date: string; count: number }[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -94,7 +95,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
       loadReviews();
       loadBookings(); // Load bookings to get service names for reviews
     }
-    if ((activeSubmenu === 'traffic' || activeSubmenu === 'bookings' || activeSubmenu === 'revenue') && userId) {
+    if ((activeSubmenu === 'traffic' || activeSubmenu === 'bookings') && userId) {
       loadBookings();
       loadTrafficData();
     }
@@ -110,13 +111,15 @@ export default function Stats({ activeSubmenu }: StatsProps) {
       }
     };
 
-    if (dropdownOpen) {
+    if (dropdownOpen && typeof document !== 'undefined') {
       document.addEventListener('mousedown', handleClickOutside);
+      
+      return () => {
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('mousedown', handleClickOutside);
+        }
+      };
     }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
   }, [dropdownOpen]);
 
   const loadReviews = async () => {
@@ -175,19 +178,49 @@ export default function Stats({ activeSubmenu }: StatsProps) {
   };
 
   const loadTrafficData = async () => {
-    // TODO: Replace with actual API call when backend endpoint is available
-    // For now, using mock data based on bookings as a proxy
-    const mockTraffic: { [key: string]: number } = {
-      today: Math.floor(Math.random() * 50) + 10,
-      yesterday: Math.floor(Math.random() * 50) + 10,
-      last_7_days: Math.floor(Math.random() * 200) + 50,
-      last_30_days: Math.floor(Math.random() * 800) + 200,
-      this_month: Math.floor(Math.random() * 600) + 150,
-      last_month: Math.floor(Math.random() * 600) + 150,
-      this_year: Math.floor(Math.random() * 5000) + 2000,
-      last_year: Math.floor(Math.random() * 5000) + 2000,
-    };
-    setTrafficData(mockTraffic);
+    try {
+      // Fetch real traffic data for all periods
+      const periods: TrafficPeriod[] = ['today', 'yesterday', 'last_7_days', 'last_30_days', 'this_month', 'last_month', 'this_year', 'last_year'];
+      const trafficPromises = periods.map(period =>
+        fetch(`http://localhost:4000/api/providers/${userId}/visits/stats?period=${period}`)
+          .then(res => res.json())
+          .then(data => ({ 
+            period, 
+            count: data.count || 0,
+            daily: data.daily || []
+          }))
+          .catch(() => ({ period, count: 0, daily: [] }))
+      );
+      
+      const results = await Promise.all(trafficPromises);
+      const newTrafficData: { [key: string]: number } = {};
+      let dailyData: { date: string; count: number }[] = [];
+      
+      results.forEach(({ period, count, daily }) => {
+        newTrafficData[period] = count;
+        // Store daily data for the current selected period
+        if (period === trafficPeriod) {
+          dailyData = daily || [];
+        }
+      });
+      
+      setTrafficData(newTrafficData);
+      setDailyTrafficData(dailyData);
+    } catch (error) {
+      console.error('Error loading traffic data:', error);
+      // Set all to 0 if there's an error
+      setTrafficData({
+        today: 0,
+        yesterday: 0,
+        last_7_days: 0,
+        last_30_days: 0,
+        this_month: 0,
+        last_month: 0,
+        this_year: 0,
+        last_year: 0,
+      });
+      setDailyTrafficData([]);
+    }
   };
 
   const getTrafficCount = (period: TrafficPeriod): number => {
@@ -195,29 +228,50 @@ export default function Stats({ activeSubmenu }: StatsProps) {
   };
 
   const getDateRange = (period: TrafficPeriod): { start: Date; end: Date } => {
+    // Get current date in LOCAL timezone
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+    // Create today at midnight local time
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+
     switch (period) {
       case 'today':
-        return { start: today, end: new Date(today.getTime() + 24 * 60 * 60 * 1000) };
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return { start: today, end: tomorrow };
       case 'yesterday':
-        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
         return { start: yesterday, end: today };
       case 'last_7_days':
-        return { start: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000), end: today };
+        const sevenDaysAgo = new Date(today);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const nextDay = new Date(today);
+        nextDay.setDate(nextDay.getDate() + 1);
+        return { start: sevenDaysAgo, end: nextDay };
       case 'last_30_days':
-        return { start: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000), end: today };
+        const thirtyDaysAgo = new Date(today);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const nextDay30 = new Date(today);
+        nextDay30.setDate(nextDay30.getDate() + 1);
+        return { start: thirtyDaysAgo, end: nextDay30 };
       case 'this_month':
-        return { start: new Date(now.getFullYear(), now.getMonth(), 1), end: now };
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+        const nextDay2 = new Date(today);
+        nextDay2.setDate(nextDay2.getDate() + 1);
+        return { start: monthStart, end: nextDay2 };
       case 'last_month':
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-        return { start: lastMonth, end: lastMonthEnd };
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0, 0);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+        return { start: lastMonthStart, end: lastMonthEnd };
       case 'this_year':
-        return { start: new Date(now.getFullYear(), 0, 1), end: now };
+        const yearStart = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+        const nextDay3 = new Date(today);
+        nextDay3.setDate(nextDay3.getDate() + 1);
+        return { start: yearStart, end: nextDay3 };
       case 'last_year':
-        return { start: new Date(now.getFullYear() - 1, 0, 1), end: new Date(now.getFullYear() - 1, 11, 31, 23, 59, 59) };
+        const lastYearStart = new Date(now.getFullYear() - 1, 0, 1, 0, 0, 0, 0);
+        const lastYearEnd = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+        return { start: lastYearStart, end: lastYearEnd };
       default:
         return { start: today, end: today };
     }
@@ -225,33 +279,72 @@ export default function Stats({ activeSubmenu }: StatsProps) {
 
   const filterBookingsByPeriod = (period: TrafficPeriod): Booking[] => {
     const { start, end } = getDateRange(period);
+
     return bookings.filter(booking => {
-      const bookingDate = new Date(booking.booking_date);
-      return bookingDate >= start && bookingDate <= end;
+      // Parse the booking_date which could be ISO timestamp or YYYY-MM-DD
+      let bookingDateStr = booking.booking_date;
+      
+      // If it's an ISO timestamp, extract just the date part
+      if (bookingDateStr.includes('T')) {
+        bookingDateStr = bookingDateStr.split('T')[0];
+      }
+      
+      const [year, month, day] = bookingDateStr.split('-').map(Number);
+      // Create date at midnight LOCAL time (month is 0-indexed)
+      const bookingDateOnly = new Date(year, month - 1, day, 0, 0, 0, 0);
+
+      // Compare dates (end is exclusive)
+      const isInRange = bookingDateOnly >= start && bookingDateOnly < end;
+
+      return isInRange;
+    });
+  };
+
+  // Get upcoming bookings (future bookings)
+  const getUpcomingBookings = (): Booking[] => {
+    // Get today at midnight in local time
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    
+    return bookings.filter(booking => {
+      // Parse booking date in local time
+      let bookingDateStr = booking.booking_date;
+      
+      // If it's an ISO timestamp, extract just the date part
+      if (bookingDateStr.includes('T')) {
+        bookingDateStr = bookingDateStr.split('T')[0];
+      }
+      
+      const [year, month, day] = bookingDateStr.split('-').map(Number);
+      const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+      
+      return bookingDate >= today && (booking.status === 'confirmed' || booking.status === 'pending');
     });
   };
 
   const calculateBookingStats = (period: TrafficPeriod) => {
     const filteredBookings = filterBookingsByPeriod(period);
     const total = filteredBookings.length;
-    const confirmed = filteredBookings.filter(b => b.status === 'confirmed').length;
-    const completed = filteredBookings.filter(b => b.status === 'completed').length;
-    const cancelled = filteredBookings.filter(b => b.status === 'cancelled').length;
-    const pending = filteredBookings.filter(b => b.status === 'pending').length;
     
-    return { total, confirmed, completed, cancelled, pending };
+    // Get today to determine if a booking is in the past
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    
+    // Count completed: bookings with past dates (regardless of status except cancelled)
+    const completed = filteredBookings.filter(b => {
+      let bookingDateStr = b.booking_date;
+      if (bookingDateStr.includes('T')) {
+        bookingDateStr = bookingDateStr.split('T')[0];
+      }
+      const [year, month, day] = bookingDateStr.split('-').map(Number);
+      const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+      
+      return bookingDate < today && b.status !== 'cancelled';
+    }).length;
+    
+    return { total, completed };
   };
 
-  const calculateRevenueStats = (period: TrafficPeriod) => {
-    const filteredBookings = filterBookingsByPeriod(period);
-    const totalRevenue = filteredBookings.reduce((sum, b) => sum + (parseFloat(String(b.total_amount)) || 0), 0);
-    const averageBookingValue = filteredBookings.length > 0 ? totalRevenue / filteredBookings.length : 0;
-    const completedRevenue = filteredBookings
-      .filter(b => b.status === 'completed')
-      .reduce((sum, b) => sum + (parseFloat(String(b.total_amount)) || 0), 0);
-    
-    return { totalRevenue, averageBookingValue, completedRevenue, bookingCount: filteredBookings.length };
-  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -265,7 +358,49 @@ export default function Stats({ activeSubmenu }: StatsProps) {
     const { start, end } = getDateRange(period);
     const data: { time: string; value: number }[] = [];
     
-    // Determine interval and format based on period
+    // For yearly periods, use monthly iteration
+    if (period === 'this_year' || period === 'last_year') {
+      const startYear = start.getFullYear();
+      const endYear = end.getFullYear();
+      
+      // Generate data for each month
+      for (let month = 0; month < 12; month++) {
+        const monthStart = new Date(startYear, month, 1, 0, 0, 0, 0);
+        const monthEnd = new Date(startYear, month + 1, 1, 0, 0, 0, 0);
+        let value = 0;
+        
+        if (dataType === 'traffic') {
+          if (dailyTrafficData.length > 0) {
+            const monthStr = monthStart.toISOString().substring(0, 7); // YYYY-MM
+            value = dailyTrafficData.filter(d => {
+              const dateDateStr = d.date.substring(0, 7); // YYYY-MM
+              return dateDateStr === monthStr;
+            }).reduce((sum, d) => sum + d.count, 0);
+          }
+        } else if (dataType === 'bookings') {
+          value = bookings.filter(b => {
+            const [year, month_num, day] = b.booking_date.split('-').map(Number);
+            const bookingDate = new Date(year, month_num - 1, day, 0, 0, 0, 0);
+            return bookingDate >= monthStart && bookingDate < monthEnd;
+          }).length;
+        } else if (dataType === 'revenue') {
+          value = bookings.filter(b => {
+            const [year, month_num, day] = b.booking_date.split('-').map(Number);
+            const bookingDate = new Date(year, month_num - 1, day, 0, 0, 0, 0);
+            return bookingDate >= monthStart && bookingDate < monthEnd;
+          }).reduce((sum, b) => sum + (parseFloat(String(b.total_amount)) || 0), 0);
+        }
+        
+        data.push({
+          time: monthStart.toLocaleDateString('en-US', { month: 'short' }),
+          value: value
+        });
+      }
+      
+      return data.length > 0 ? data : [{ time: 'No data', value: 0 }];
+    }
+    
+    // For other periods, use time-based intervals
     let intervalMs = 60 * 60 * 1000; // Default 1 hour
     let formatTime = (date: Date) => date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
     
@@ -283,30 +418,73 @@ export default function Stats({ activeSubmenu }: StatsProps) {
     } else if (period === 'last_30_days' || period === 'this_month' || period === 'last_month') {
       intervalMs = 24 * 60 * 60 * 1000; // Daily intervals
       formatTime = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    } else {
-      intervalMs = 30 * 24 * 60 * 60 * 1000; // Monthly intervals
-      formatTime = (date: Date) => date.toLocaleDateString('en-US', { month: 'short' });
     }
 
     const current = new Date(start);
     const endTime = end.getTime();
     
-    while (current.getTime() <= endTime) {
+    while (current.getTime() < endTime) {
       const intervalEnd = new Date(current.getTime() + intervalMs);
       let value = 0;
       
       if (dataType === 'traffic') {
-        // Mock traffic data - in real app, fetch from API
-        value = Math.floor(Math.random() * 20);
+        // Use real traffic data from API
+        if (dailyTrafficData.length > 0) {
+          // For daily/weekly/monthly data, match by date only
+          if (period === 'last_7_days' || period === 'last_30_days' || period === 'this_month' || period === 'last_month') {
+            const currentDateStr = current.toISOString().split('T')[0]; // YYYY-MM-DD
+            const matchingData = dailyTrafficData.find(d => {
+              const dateDateStr = d.date.split('T')[0]; // YYYY-MM-DD
+              return dateDateStr === currentDateStr;
+            });
+            value = matchingData ? matchingData.count : 0;
+          } else if (period === 'today' || period === 'yesterday') {
+            // For hourly data (today/yesterday), match by hour in local timezone
+            value = dailyTrafficData.filter(d => {
+              // Parse the UTC timestamp from backend
+              const dataDate = new Date(d.date);
+              
+              // Get the hour of this interval in local time
+              const currentHour = current.getHours();
+              const currentDay = current.getDate();
+              const currentMonth = current.getMonth();
+              const currentYear = current.getFullYear();
+              
+              // Get the hour of the data point in local time
+              const dataHour = dataDate.getHours();
+              const dataDay = dataDate.getDate();
+              const dataMonth = dataDate.getMonth();
+              const dataYear = dataDate.getFullYear();
+              
+              // Match if same day and same hour
+              return dataYear === currentYear && 
+                     dataMonth === currentMonth && 
+                     dataDay === currentDay && 
+                     dataHour === currentHour;
+            }).reduce((sum, d) => sum + d.count, 0);
+          }
+        } else {
+          value = 0;
+        }
       } else if (dataType === 'bookings') {
         const periodBookings = bookings.filter(b => {
-          const bookingDate = new Date(b.booking_date);
+          let bookingDateStr = b.booking_date;
+          if (bookingDateStr.includes('T')) {
+            bookingDateStr = bookingDateStr.split('T')[0];
+          }
+          const [year, month, day] = bookingDateStr.split('-').map(Number);
+          const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
           return bookingDate >= current && bookingDate < intervalEnd;
         });
         value = periodBookings.length;
       } else if (dataType === 'revenue') {
         const periodBookings = bookings.filter(b => {
-          const bookingDate = new Date(b.booking_date);
+          let bookingDateStr = b.booking_date;
+          if (bookingDateStr.includes('T')) {
+            bookingDateStr = bookingDateStr.split('T')[0];
+          }
+          const [year, month, day] = bookingDateStr.split('-').map(Number);
+          const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
           return bookingDate >= current && bookingDate < intervalEnd;
         });
         value = periodBookings.reduce((sum, b) => sum + (parseFloat(String(b.total_amount)) || 0), 0);
@@ -487,13 +665,14 @@ export default function Stats({ activeSubmenu }: StatsProps) {
                               trafficPeriod === 'this_year' ? 'last_year' : 'this_year';
         const bookingStats = calculateBookingStats(trafficPeriod);
         const previousBookingStats = calculateBookingStats(bookingPreviousPeriod as TrafficPeriod);
-        const bookingChange = previousBookingStats.total > 0 
-          ? ((bookingStats.total - previousBookingStats.total) / previousBookingStats.total * 100) 
+        const bookingChange = previousBookingStats.total > 0
+          ? ((bookingStats.total - previousBookingStats.total) / previousBookingStats.total * 100)
           : 0;
         const bookingPreviousPeriodLabel = getPeriodLabel(bookingPreviousPeriod as TrafficPeriod);
+        const upcomingBookings = getUpcomingBookings();
 
         return (
-          <div className={styles.statsContent}>
+          <div className={styles.statsContent} key={`bookings-${trafficPeriod}`}>
             <div className={styles.statsHeader}>
               <h2 className={styles.sectionTitle}>Bookings Stats</h2>
               <div className={styles.periodDropdownWrapper} ref={dropdownRef}>
@@ -523,50 +702,28 @@ export default function Stats({ activeSubmenu }: StatsProps) {
               </div>
             </div>
 
-            <div className={styles.bookingStatsGrid}>
+            <div className={styles.bookingStatsGrid} key={`bookings-grid-${trafficPeriod}`}>
               <div className={styles.statCardCompact}>
                 <FaCalendarAlt className={styles.statIcon} />
                 <div className={styles.statCardContentCompact}>
                   <div className={styles.statValueCompact}>{bookingStats.total}</div>
-                  <div className={styles.statLabelCompact}>Total Bookings</div>
-                  {previousBookingStats.total > 0 && (
-                    <div className={`${styles.statChangeCompact} ${bookingChange >= 0 ? styles.statChangePositive : styles.statChangeNegative}`}>
-                      {bookingChange >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                      {Math.abs(bookingChange).toFixed(1)}%
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.statCardCompact}>
-                <FaCheckCircle className={styles.statIcon} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{bookingStats.confirmed}</div>
-                  <div className={styles.statLabelCompact}>Confirmed</div>
-                </div>
-              </div>
-
-              <div className={styles.statCardCompact}>
-                <FaCheckCircle className={`${styles.statIcon} ${styles.statIconSuccess}`} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{bookingStats.completed}</div>
-                  <div className={styles.statLabelCompact}>Completed</div>
+                  <div className={styles.statLabelCompact}>Total ({getPeriodDisplayLabel(trafficPeriod)})</div>
                 </div>
               </div>
 
               <div className={styles.statCardCompact}>
                 <FaClock className={styles.statIcon} />
                 <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{bookingStats.pending}</div>
-                  <div className={styles.statLabelCompact}>Pending</div>
+                  <div className={styles.statValueCompact}>{upcomingBookings.length}</div>
+                  <div className={styles.statLabelCompact}>Upcoming</div>
                 </div>
               </div>
 
               <div className={styles.statCardCompact}>
-                <FaTimesCircle className={styles.statIcon} />
+                <FaCheckCircle className={styles.statIcon} />
                 <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{bookingStats.cancelled}</div>
-                  <div className={styles.statLabelCompact}>Cancelled</div>
+                  <div className={styles.statValueCompact}>{bookingStats.completed}</div>
+                  <div className={styles.statLabelCompact}>Completed ({getPeriodDisplayLabel(trafficPeriod)})</div>
                 </div>
               </div>
             </div>
@@ -595,130 +752,6 @@ export default function Stats({ activeSubmenu }: StatsProps) {
                     dataKey="value" 
                     strokeWidth={2}
                     dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        );
-
-      case 'revenue':
-        const revenuePreviousPeriod = trafficPeriod === 'today' ? 'yesterday' : 
-                              trafficPeriod === 'yesterday' ? 'today' :
-                              trafficPeriod === 'last_7_days' ? 'last_30_days' :
-                              trafficPeriod === 'last_30_days' ? 'last_7_days' :
-                              trafficPeriod === 'this_month' ? 'last_month' :
-                              trafficPeriod === 'last_month' ? 'this_month' :
-                              trafficPeriod === 'this_year' ? 'last_year' : 'this_year';
-        const revenueStats = calculateRevenueStats(trafficPeriod);
-        const previousRevenueStats = calculateRevenueStats(revenuePreviousPeriod as TrafficPeriod);
-        const revenueChange = previousRevenueStats.totalRevenue > 0
-          ? ((revenueStats.totalRevenue - previousRevenueStats.totalRevenue) / previousRevenueStats.totalRevenue * 100)
-          : 0;
-        const revenuePreviousPeriodLabel = getPeriodLabel(revenuePreviousPeriod as TrafficPeriod);
-
-        return (
-          <div className={styles.statsContent}>
-            <div className={styles.statsHeader}>
-              <h2 className={styles.sectionTitle}>Revenue Stats</h2>
-              <div className={styles.periodDropdownWrapper} ref={dropdownRef}>
-                <button
-                  className={styles.periodDropdownBtn}
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                >
-                  <span>{getPeriodDisplayLabel(trafficPeriod)}</span>
-                  <FaChevronDown className={`${styles.dropdownIcon} ${dropdownOpen ? styles.dropdownIconOpen : ''}`} />
-                </button>
-                {dropdownOpen && (
-                  <div className={styles.periodDropdownMenu}>
-                    {periodOptions.map(option => (
-                      <button
-                        key={option.value}
-                        className={`${styles.periodDropdownItem} ${trafficPeriod === option.value ? styles.periodDropdownItemActive : ''}`}
-                        onClick={() => {
-                          setTrafficPeriod(option.value);
-                          setDropdownOpen(false);
-                        }}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className={styles.revenueStatsGrid}>
-              <div className={styles.statCardCompact}>
-                <FaDollarSign className={styles.statIcon} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{formatCurrency(revenueStats.totalRevenue)}</div>
-                  <div className={styles.statLabelCompact}>Total Revenue</div>
-                  {previousRevenueStats.totalRevenue > 0 && (
-                    <div className={`${styles.statChangeCompact} ${revenueChange >= 0 ? styles.statChangePositive : styles.statChangeNegative}`}>
-                      {revenueChange >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                      {Math.abs(revenueChange).toFixed(1)}%
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.statCardCompact}>
-                <FaCheckCircle className={`${styles.statIcon} ${styles.statIconSuccess}`} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{formatCurrency(revenueStats.completedRevenue)}</div>
-                  <div className={styles.statLabelCompact}>Completed Revenue</div>
-                </div>
-              </div>
-
-              <div className={styles.statCardCompact}>
-                <FaChartLine className={styles.statIcon} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{formatCurrency(revenueStats.averageBookingValue)}</div>
-                  <div className={styles.statLabelCompact}>Avg Booking Value</div>
-                </div>
-              </div>
-
-              <div className={styles.statCardCompact}>
-                <FaCalendarAlt className={styles.statIcon} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{revenueStats.bookingCount}</div>
-                  <div className={styles.statLabelCompact}>Total Bookings</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Chart */}
-            <div className={styles.statsChart}>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={generateChartData(trafficPeriod, 'revenue')}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-                  <XAxis 
-                    dataKey="time" 
-                    stroke="#666"
-                    className={styles.chartAxis}
-                  />
-                  <YAxis 
-                    stroke="#666"
-                    className={styles.chartAxis}
-                    tickFormatter={(value) => `$${value}`}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#fff', 
-                      border: '1px solid #e5e5e5',
-                      borderRadius: '4px',
-                      fontSize: '0.85rem'
-                    }}
-                    formatter={(value: number) => formatCurrency(value)}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#455F76" 
-                    strokeWidth={2}
-                    dot={{ fill: '#455F76', r: 4 }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>

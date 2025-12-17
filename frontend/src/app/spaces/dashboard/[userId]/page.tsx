@@ -28,37 +28,64 @@ export default function SpacesDashboard() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    
-    if (!token || !user) {
-      router.push('/spaces/login');
-      return;
-    }
-    
-    try {
-      const userData = JSON.parse(user);
-      // Verify the userId matches the logged-in user
-      if (userData.id !== userId) {
-        console.error('User ID mismatch');
+    const loadUserData = async () => {
+      // Check if user is authenticated
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      
+      if (!token || !user) {
         router.push('/spaces/login');
         return;
       }
       
-      // Verify user is a space owner
-      if (userData.user_type !== 'space_owner') {
+      // Validate token with backend
+      try {
+        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!verifyResponse.ok) {
+          // Token is invalid or expired
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          router.push('/spaces/login');
+          return;
+        }
+      } catch (verifyError) {
+        // Network error or token validation failed
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         router.push('/spaces/login');
         return;
       }
+      
+      try {
+        const userData = JSON.parse(user);
+        // Verify the userId matches the logged-in user
+        if (userData.id !== userId) {
+          console.error('User ID mismatch');
+          router.push('/spaces/login');
+          return;
+        }
+        
+        // Verify user is a space owner
+        if (userData.user_type !== 'space_owner') {
+          router.push('/spaces/login');
+          return;
+        }
 
-      // Fetch space owner profile data
-      fetchSpaceOwnerProfile();
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      router.push('/spaces/login');
-      return;
-    }
+        // Fetch space owner profile data
+        fetchSpaceOwnerProfile();
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        router.push('/spaces/login');
+        return;
+      }
+    };
+
+    loadUserData();
   }, [userId, router]);
 
   const fetchSpaceOwnerProfile = async () => {

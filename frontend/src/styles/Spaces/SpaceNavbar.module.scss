@@ -119,12 +119,12 @@
   font-family: $font-main;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: $white-rgba-10;
+  border: 1px solid $white-rgba-20;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: $white-rgba-20;
+    border-color: $white-rgba-30;
     transform: translateY(-1px);
   }
   
@@ -142,12 +142,12 @@
   font-family: $font-main;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: $white-rgba-10;
+  border: 1px solid $white-rgba-20;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: $white-rgba-20;
+    border-color: $white-rgba-30;
     transform: translateY(-1px);
   }
   
@@ -181,7 +181,7 @@
   transition: all 0.2s ease;
   font-family: $font-main;
   box-shadow: 0 4px 15px rgba(166, 120, 115, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid $white-rgba-20;
   
   &:hover {
     background: linear-gradient(135deg, $primary-color 0%, $hover-green 100%);
@@ -231,7 +231,7 @@
   max-width: 300px;
   height: 100vh;
   background-color: $bg-white;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  box-shadow: -2px 0 8px $shadow-dark;
   z-index: 200;
   animation: slideIn 0.3s ease-out;
   overflow-y: auto;

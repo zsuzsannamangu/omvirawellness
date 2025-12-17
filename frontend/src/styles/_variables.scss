@@ -10,7 +10,6 @@ $light-text: #FAFAFA;
 $hover-green: #5C3E5B;        // Light text (unchanged)
 $muted-bg: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($accent-color, 0.08) 50%, rgba($hover-green, 0.05) 100%);              // Soft background (unchanged)
 $subtext-color: #455F76;
-$subtext-color-2: #4F8D80;
 $placeholder-grey: #999999;
 $disabled-button-grey: #cccccc;
 
@@ -30,14 +29,12 @@ $cta-green: #6C4F70;             // CTA background
 $cta-hover-green: #5C3E5B;       // CTA hover color
 $cta-text: #FAFAFA;              // CTA text
 $cta-border: #6C4F70;            // CTA border
-$cta-hover-border: #5C3E5B;      // CTA border on hover
 $cta-text-hover: #FFFFFF;        // Optional bright hover text
 
 // Standardized button hover colors
 $button-yellow-hover: darken($secondary-color, 8%);  // Standard yellow button hover
 $button-pink-hover: darken($client-colors-1, 10%);   // Teal button hover (changed from pink)
 
-$logo-yellow: #E6C27A;           // Soft Gold (more cohesive with plum)
 $stars-color: #ffc107;           // Star color for ratings
 $signup-color: #adb5bd;          // Color used at the signup pages
 $calendar-has-appointment: #fef3c7;
@@ -46,29 +43,16 @@ $favorite-red: #dc2626;
 
 // Background Colors
 $bg-primary: #6C4F70;            // Primary background
-$bg-secondary: #EDE4DA;          // Secondary background
 $bg-accent: #A67873;             // Accent background
 $bg-light: #FAFAFA;              // Light background
 $bg-white: #FFFFFF;              // Pure white background
-$bg-dark: #2C2C2C;               // Dark background
 $bg-footer: #F4B763;             // Footer background
-$bg-gradient-primary: linear-gradient(135deg, #6C4F70 0%, #5C3E5B 100%);
-$bg-gradient-navbar: linear-gradient(135deg, #ED6E95 0%, #5C3E5B 100%);
-$bg-gradient-secondary: linear-gradient(135deg, #EDE4DA 0%, #F5F0E8 100%);
-$bg-gradient-accent: linear-gradient(135deg, #A67873 0%, #9A6B66 100%);
-$bg-gradient-warm: linear-gradient(135deg, #F5F0E8 0%, #EDE4DA 50%, #E6C27A 100%);
-$bg-gradient-cool: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 50%, #DEE2E6 100%);
-$bg-gradient-hero: linear-gradient(135deg, #6C4F70 0%, #A67873 50%, #5C3E5B 100%);
 
 // Section Backgrounds
 $section-bg-1: #F8F9FA;          // Very light gray
 $section-bg-2: #F5F0E8;          // Warm cream
 $section-bg-3: #E9ECEF;          // Light gray
-$section-bg-4: #E6C27A;          // Soft gold
 $section-bg-5: #DEE2E6;          // Medium gray
-$section-bg-6: #6C4F70;          // Primary color
-$section-bg-7: #A67873;          // Accent color
-$section-bg-8: #5C3E5B;          // Dark plum
 
 // Fonts
 $font-main: 'Avenir', sans-serif;              // Paragraphs (Avenir Light)
@@ -76,12 +60,9 @@ $font-heading: 'Forum', serif;                 // Headings
 $font-mainheading: 'Playfair Display', serif;       
 $font-subheading: 'Forum', serif;              // Subheadings
 // Display / bold utility font
-$font-display: 'Archivo Black', sans-serif;
-       // Main heading
 
 // Font Weights
 $font-weight-light: 300;
-$font-weight-normal: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
@@ -94,9 +75,7 @@ $border-medium: #e0e0e0;             // Medium border color
 $border-color: #d0d0d0;               // Dark border color
 $border-form: #cccccc;                // Form border color (light gray)
 $bg-form-card: #FFFFFF;                // Form card background (white)
-$bg-form-section: #f5f5f5;            // Form section background (very light gray)
 $text-form-label: #333333;            // Form label text color (dark gray/black)
-$text-form-secondary: #666666;         // Secondary form text (lighter gray)
 $background-light: #f8fafc;          // Very light background
 $background-gray: #f0f0f0;           // Light gray background
 $success-color: #27ab81;             // Success green
@@ -106,7 +85,6 @@ $success-bg: #2fa05e;                // Success background
 $warning-color: #f59e0b;             // Warning orange
 $error-color: #d94646;               // Error red 
 $error-hover: #cb1b1b;               // Error hover
-$error-bg: #c66e6e;                  // Error background
 $info-color: #4a90e2;                // Info blue
 $info-hover: #357abd;                // Info hover
 $info-bg: #f0f8ff;                   // Info background
@@ -116,8 +94,6 @@ $overlay-color: rgba(0, 0, 0, 0.5);  // Overlay color
 $overlay-dark: rgba(0, 0, 0, 0.7);   // Dark overlay
 
 // Additional UI Colors
-$chart-line-color: #455F76;           // Chart line color
-$chart-grid-color: #e5e5e5;           // Chart grid lines
 $chart-text-color: #666;              // Chart axis text
 $chart-tooltip-bg: #FFFFFF;           // Chart tooltip background
 $chart-tooltip-border-radius: 4px;    // Chart tooltip border radius
@@ -125,13 +101,9 @@ $chart-tooltip-font-size: 0.85rem;    // Chart tooltip font size
 $chart-axis-font-size: 0.75rem;       // Chart axis font size
 $positive-change: #10b981;            // Positive change (green)
 $negative-change: #ef4444;            // Negative change (red)
-$link-blue: #0062ff;                  // Link blue color
-$stat-card-bg: #E0F2F7;               // Light blue for stat card headers
-$stat-card-header-bg: #E0F2F7;       // Stat card header background
 $divider-color: #e5e5e5;             // Divider/separator color
 $text-muted: #999;                   // Muted text color
 $cancel-red: #dc3545;                // Cancel/delete red
-$cancel-red-hover: #c82333;          // Cancel hover
 $warning-yellow: #ffc107;            // Warning yellow
 $warning-bg: #fff3cd;                // Warning background
 $warning-text: #856404;              // Warning text
@@ -144,16 +116,8 @@ $danger-text-dark: #721c24;           // Danger text dark
 $secondary-bg-light: #e2e3e5;         // Secondary background light
 $secondary-text-dark: #383d41;        // Secondary text dark
 $highlight-yellow: #ffeaa7;           // Highlight yellow
-$avatar-badge-blue: #4a90e2;          // Avatar badge blue
-$table-hover-bg: rgba($provider-colors-3, 0.02); // Table row hover
 $gradient-orange-start: #f59e0b;      // Gradient orange start
 $gradient-orange-end: #f97316;        // Gradient orange end
-$stat-icon-success: #10b981;          // Success icon color (green)
-$stat-icon-warning: #f59e0b;          // Warning icon color (orange)
-$stat-icon-info: #4a90e2;             // Info icon color (blue)
-$stat-icon-danger: #ef4444;           // Danger icon color (red)
-$link-color: #0062ff;                  // Link color
-$link-hover: #0052d9;                  // Link hover color
 $accent-color-rgba-05: rgba(108, 79, 112, 0.05);  // Accent color rgba 5%
 $accent-color-rgba-10: rgba(108, 79, 112, 0.1);   // Accent color rgba 10%
 $provider-color-3-rgba-02: rgba(69, 95, 118, 0.02); // Provider color 3 rgba 2%
@@ -165,7 +129,16 @@ $overlay-black-90: rgba(0, 0, 0, 0.9);              // Black overlay 90%
 $shadow-light: rgba(0, 0, 0, 0.08);                 // Light shadow
 $shadow-medium: rgba(0, 0, 0, 0.1);                  // Medium shadow
 $shadow-dark: rgba(0, 0, 0, 0.15);                   // Dark shadow
-$shadow-strong: rgba(0, 0, 0, 0.2);                   // Strong shadow
+$white-rgba-10: rgba(255, 255, 255, 0.1);          // White rgba 10%
+$white-rgba-20: rgba(255, 255, 255, 0.2);          // White rgba 20%
+$white-rgba-30: rgba(255, 255, 255, 0.3);          // White rgba 30%
+$client-color-rgba-20: rgba(21, 123, 127, 0.2);     // Client color rgba 20%
+$client-color-rgba-30: rgba(21, 123, 127, 0.3);    // Client color rgba 30%
+$black-rgba-02: rgba(0, 0, 0, 0.02);                // Black rgba 2%
+$black-rgba-05: rgba(0, 0, 0, 0.05);                // Black rgba 5%
+$black-rgba-10: rgba(0, 0, 0, 0.1);                 // Black rgba 10%
+$black-rgba-20: rgba(0, 0, 0, 0.2);                 // Black rgba 20%
+$black-rgba-30: rgba(0, 0, 0, 0.3);                 // Black rgba 30%
 
 // Spacing
 $spacing-xs: 8px;

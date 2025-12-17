@@ -38,7 +38,7 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
       <h1 className={styles.title}>Tell us about yourself</h1>
       <p className={styles.subtitle}>Help us personalize your wellness journey.</p>
       
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form} autoComplete="off">
         <div className={styles.formRow}>
           <div className={styles.inputGroup}>
             <label className={styles.label}>FIRST NAME *</label>
@@ -48,6 +48,9 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
               onChange={(e) => setPersonalInfo({...personalInfo, firstName: e.target.value})}
               className={styles.textInput}
               placeholder="Enter your first name"
+              autoComplete="given-name"
+              data-lpignore="true"
+              data-form-type="other"
               required
             />
           </div>
@@ -75,6 +78,9 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
             }}
             className={styles.textInput}
             placeholder="Enter your phone number"
+            autoComplete="tel"
+            data-lpignore="true"
+            data-form-type="other"
             required
             maxLength={15}
           />
@@ -88,6 +94,9 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
               value={personalInfo.dateOfBirth}
               onChange={(e) => setPersonalInfo({...personalInfo, dateOfBirth: e.target.value})}
               className={styles.textInput}
+              autoComplete="bday"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
           <div className={styles.inputGroup}>
@@ -96,6 +105,9 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
               value={personalInfo.gender}
               onChange={(e) => setPersonalInfo({...personalInfo, gender: e.target.value})}
               className={styles.selectInput}
+              autoComplete="sex"
+              data-lpignore="true"
+              data-form-type="other"
             >
               <option value="">Select gender</option>
               <option value="male">Male</option>
@@ -137,6 +149,9 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
             })}
             className={styles.textInput}
             placeholder="Enter emergency contact name"
+            autoComplete="off"
+            data-lpignore="true"
+            data-form-type="other"
             required
           />
         </div>
@@ -169,6 +184,9 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
                 emergencyContact: {...personalInfo.emergencyContact, relationship: e.target.value}
               })}
               className={styles.selectInput}
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
               required
             >
               <option value="">Select relationship</option>

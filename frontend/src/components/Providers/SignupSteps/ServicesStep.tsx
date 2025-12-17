@@ -71,7 +71,7 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
       <h1 className={styles.title}>What services do you offer?</h1>
       <p className={styles.subtitle}>Add the wellness services you provide to help clients find you.</p>
       
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form} autoComplete="off">
         {/* Current Services List */}
         <div className={styles.servicesList}>
           {services.map((service: any) => (
@@ -120,6 +120,9 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
                   value={newService.type}
                   onChange={(e) => setNewService({...newService, type: e.target.value})}
                   className={styles.selectInput}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                 >
                   <option value="">Select type</option>
                   {serviceTypes.map(type => (
@@ -152,6 +155,9 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
                     onChange={(e) => setNewService({...newService, price: e.target.value})}
                     className={styles.textInput}
                     placeholder="0"
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-form-type="other"
                     min="0"
                     step="0.01"
                   />
@@ -181,6 +187,9 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
                   checked={newService.mobileService}
                   onChange={(e) => setNewService({...newService, mobileService: e.target.checked})}
                   className={styles.dayCheckbox}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
                 Mobile Service (I travel to clients)
               </label>

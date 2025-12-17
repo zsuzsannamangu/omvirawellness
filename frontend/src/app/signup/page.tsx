@@ -151,14 +151,8 @@ export default function SignupPage() {
   return (
     <div className={styles.signupPage}>
       <div className={styles.header}>
-        <Link href="/" className={styles.logo}>
-          <Image
-            src="/Omvira_logo_long.png"
-            alt="Omvira Wellness"
-            width={200}
-            height={50}
-            className={styles.logoImage}
-          />
+        <Link href="/" className={styles.backLink}>
+          <span className={styles.backArrow}>←</span> Back to Homepage
         </Link>
         <div className={styles.headerRight}>
           <Link href="/login" className={styles.loginLink}>
