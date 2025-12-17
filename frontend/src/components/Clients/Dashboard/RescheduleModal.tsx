@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 interface RescheduleModalProps {
@@ -236,7 +237,12 @@ export default function RescheduleModal({
 
   const handleReschedule = async () => {
     if (!selectedDate || !selectedTime) {
-      alert('Please select a date and time');
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Selection Required',
+        text: 'Please select a date and time',
+        confirmButtonColor: '#8B7355'
+      });
       return;
     }
 
@@ -260,7 +266,12 @@ export default function RescheduleModal({
       await onReschedule(selectedDate, time24);
       onClose();
     } catch (error: any) {
-      alert(`Error rescheduling: ${error.message || 'Please try again'}`);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Rescheduling Failed',
+        text: error.message || 'Please try again',
+        confirmButtonColor: '#8B7355'
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -271,18 +282,8 @@ export default function RescheduleModal({
   const calendarDays = getCalendarDays();
   const availableTimes = selectedDate ? getAvailableTimes(selectedDate) : [];
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === overlayRef.current) {
-      onClose();
-    }
-  };
-
   return (
-    <div 
-      ref={overlayRef}
-      className={styles.rescheduleModalOverlay} 
-      onClick={handleOverlayClick}
-    >
+    <div className={styles.rescheduleModalOverlay} onClick={onClose}>
       <div className={styles.rescheduleModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.rescheduleModalHeader}>
           <h2>Reschedule Appointment</h2>

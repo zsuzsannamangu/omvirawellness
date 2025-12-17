@@ -186,6 +186,44 @@ router.get('/client/:clientId', verifyToken, async (req, res) => {
   }
 });
 
+// GET client stats (booking count)
+router.get('/client/:clientId/stats', verifyToken, async (req, res) => {
+  try {
+    const { clientId } = req.params;
+
+    if (req.userType !== 'client' || req.userId !== clientId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Get client profile ID from user ID
+    const profileResult = await pool.query(
+      'SELECT id FROM client_profiles WHERE user_id = $1',
+      [clientId]
+    );
+
+    if (profileResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Client profile not found' });
+    }
+
+    const clientProfileId = profileResult.rows[0].id;
+
+    // Get total booking count (excluding cancelled)
+    const bookingCountResult = await pool.query(
+      `SELECT COUNT(*) as total
+       FROM client_provider_bookings
+       WHERE client_id = $1 AND status != 'cancelled'`,
+      [clientProfileId]
+    );
+
+    const totalBookings = parseInt(bookingCountResult.rows[0]?.total) || 0;
+
+    res.json({ totalBookings });
+  } catch (err) {
+    console.error('Error fetching client stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // GET bookings by status for client
 router.get('/client/:clientId/:status', verifyToken, async (req, res) => {
   try {

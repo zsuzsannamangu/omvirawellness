@@ -11,6 +11,7 @@ const notificationRoutes = require('./routes/notifications');
 const messageRoutes = require('./routes/messages');
 const spaceOwnerRoutes = require('./routes/space_owners');
 const adminTempRoutes = require('./routes/admin_temp');
+const clientRoutes = require('./routes/clients');
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/space-owners', spaceOwnerRoutes);
 app.use('/api/admin-temp', adminTempRoutes);
+app.use('/api/clients', clientRoutes);
 
 app.get('/', (req, res) => {
   res.send('Omvira backend is running!');

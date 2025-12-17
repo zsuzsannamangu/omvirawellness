@@ -76,6 +76,22 @@
   font-weight: 500;
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  background: $client-colors-1;
+  color: $bg-white;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 // Main Content Area
 .mainContent {
   flex: 1;
@@ -140,9 +156,14 @@
 }
 
 .profileLink {
+  background: none;
+  border: none;
   color: $client-colors-1;
   text-decoration: none;
   cursor: pointer;
+  font-family: $font-main;
+  font-size: inherit;
+  padding: 0;
   
   &:hover {
     text-decoration: underline;
@@ -162,7 +183,7 @@
   transition: background-color 0.2s ease;
   
   &:hover {
-    background: darken($client-colors-1, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -265,6 +286,8 @@
   color: $subtext-color;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
 
   &:hover {
     color: $dark-text;
@@ -818,7 +841,7 @@
     max-width: 300px;
     
     &:hover {
-      background: darken($client-colors-1, 10%);
+      background: $button-pink-hover;
     }
   }
 }
@@ -970,7 +993,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: darken($client-colors-1, 10%);
+      background: $button-pink-hover;
     }
   }
 }
@@ -1005,84 +1028,57 @@
 .favoritesContent {
   .favoritesHeader {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: $spacing-lg;
     flex-wrap: wrap;
     gap: $spacing-md;
   }
-
-  .sortContainer {
-    position: relative;
+  
+  .sortControls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
   }
-
+  
+  .sortLabel {
+    font-size: 0.9rem;
+    color: $subtext-color;
+    font-weight: 500;
+    margin: 0;
+  }
+  
   .sortButton {
     display: flex;
     align-items: center;
     gap: $spacing-xs;
     padding: $spacing-xs $spacing-sm;
     background: $bg-white;
+    color: $dark-text;
     border: 1px solid $border-light;
     border-radius: 4px;
-    font-size: 0.875rem;
-    color: $dark-text;
     cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
     transition: all 0.2s ease;
-    font-family: $font-main;
-
+    
     &:hover {
+      background: $background-light;
       border-color: $client-colors-1;
-      background: $section-bg-1;
+    }
+    
+    &.sortButtonActive {
+      background: $client-colors-1;
+      color: $bg-white;
+      border-color: $client-colors-1;
+      
+      &:hover {
+        background: $button-pink-hover;
+      }
     }
   }
-
-  .sortChevron {
-    font-size: 0.75rem;
-    transition: transform 0.2s ease;
-    color: $subtext-color;
-
-    &.sortChevronOpen {
-      transform: rotate(180deg);
-    }
-  }
-
-  .sortDropdown {
-    position: absolute;
-    top: calc(100% + $spacing-xs);
-    right: 0;
-    background: $bg-white;
-    border: 1px solid $border-light;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px $shadow-color;
-    z-index: 100;
-    min-width: 180px;
-    overflow: hidden;
-  }
-
-  .sortOption {
-    display: block;
-    width: 100%;
-    padding: $spacing-sm $spacing-md;
-    background: none;
-    border: none;
-    text-align: left;
-    font-size: 0.875rem;
-    color: $dark-text;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-family: $font-main;
-
-    &:hover {
-      background: $section-bg-1;
-    }
-
-    &.sortOptionActive {
-      background: $section-bg-2;
-      color: $client-colors-1;
-      font-weight: 600;
-    }
-  }
-
+  
   .providersGrid, .servicesGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1212,7 +1208,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: darken($client-colors-1, 10%);
+      background: $button-pink-hover;
     }
   }
   
@@ -1274,7 +1270,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($client-colors-1, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -1325,7 +1321,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($client-colors-1, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -1479,6 +1475,507 @@
     }
   }
   
+  .paymentHistory {
+    margin-top: $spacing-lg;
+    overflow-x: auto;
+  }
+
+  .paymentsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: $bg-white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px $shadow-color;
+
+    thead {
+      background: $section-bg-1;
+      border-bottom: 2px solid $border-light;
+
+      th {
+        padding: $spacing-md;
+        text-align: left;
+        font-family: $font-heading;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: $dark-text;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $border-light;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: $section-bg-2;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      td {
+        padding: $spacing-md;
+        font-size: 0.9rem;
+        color: $dark-text;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .amountCell {
+    font-weight: 600;
+    color: $client-colors-1;
+    font-size: 1rem;
+  }
+
+  .paymentStatus {
+    display: inline-block;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.paid {
+      background: rgba($success-color, 0.1);
+      color: $success-color;
+    }
+
+    &.unpaid {
+      background: rgba($warning-color, 0.1);
+      color: $warning-color;
+    }
+
+    &.pending {
+      background: rgba($info-color, 0.1);
+      color: $info-color;
+    }
+
+    &.refunded {
+      background: rgba($subtext-color, 0.1);
+      color: $subtext-color;
+    }
+  }
+
+  .bookingStatus {
+    display: inline-block;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+
+    &.confirmed {
+      background: rgba($success-color, 0.1);
+      color: $success-color;
+    }
+
+    &.pending {
+      background: rgba($warning-color, 0.1);
+      color: $warning-color;
+    }
+
+    &.completed {
+      background: rgba($info-color, 0.1);
+      color: $info-color;
+    }
+
+    &.cancelled {
+      background: rgba($error-color, 0.1);
+      color: $error-color;
+    }
+  }
+
+  .receiptBtn {
+    background: none;
+    border: none;
+    color: $client-colors-1;
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba($client-colors-1, 0.1);
+    }
+  }
+
+  // Payment Methods Styles
+  .paymentMethodsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+  }
+
+  .addMethodBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: $client-colors-1;
+    color: $bg-white;
+    border: none;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($client-colors-1, 10%);
+    }
+  }
+
+  .emptyPaymentMethods {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxl * 2;
+    text-align: center;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    margin-top: $spacing-lg;
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+    color: $subtext-color;
+    margin-bottom: $spacing-md;
+  }
+
+  .emptyPaymentMethods h3 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .emptyPaymentMethods p {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .addPaymentMethod {
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    margin-top: $spacing-lg;
+  }
+
+  .addMethodHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-light;
+  }
+
+  .addMethodHeader h3 {
+    font-family: $font-heading;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .cancelAddBtn {
+    background: none;
+    border: 1px solid $border-color;
+    color: $dark-text;
+    padding: $spacing-xs $spacing-md;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $section-bg-1;
+      border-color: $client-colors-1;
+    }
+  }
+
+  .paymentMethodOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-md;
+  }
+
+  .methodOptionCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xl;
+    background: $section-bg-1;
+    border: 2px solid $border-light;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+
+    &:hover {
+      border-color: $client-colors-1;
+      background: rgba($client-colors-1, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($client-colors-1, 0.15);
+    }
+  }
+
+  .methodOptionCard .methodIcon {
+    font-size: 2.5rem;
+    color: $client-colors-1;
+    margin-bottom: $spacing-md;
+  }
+
+  .methodOptionCard h4 {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  .methodOptionCard p {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .paymentMethodForm {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .formLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $dark-text;
+  }
+
+  .formInput {
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $client-colors-1;
+    }
+  }
+
+  .formSelect {
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    background: $bg-white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $client-colors-1;
+    }
+  }
+
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-md;
+  }
+
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: 0.875rem;
+    color: $dark-text;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: $client-colors-1;
+    }
+  }
+
+  .formActions {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: $spacing-md;
+  }
+
+  .saveBtn {
+    background: $client-colors-1;
+    color: $bg-white;
+    border: none;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($client-colors-1, 10%);
+    }
+  }
+
+  .cancelBtn {
+    background: $section-bg-1;
+    color: $dark-text;
+    border: 1px solid $border-color;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $border-light;
+    }
+  }
+
+  .paymentMethodsList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+  }
+
+  .paymentMethodCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 8px $shadow-color;
+    }
+  }
+
+  .methodInfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    flex: 1;
+  }
+
+  .methodInfo .methodIcon {
+    font-size: 1.75rem;
+    color: $client-colors-1;
+  }
+
+  .methodDetails {
+    flex: 1;
+  }
+
+  .methodHeader {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-xs;
+  }
+
+  .methodHeader h4 {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .defaultBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: rgba($client-colors-1, 0.1);
+    color: $client-colors-1;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .methodMeta {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .methodActions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .setDefaultBtn {
+    background: none;
+    border: 1px solid $border-color;
+    color: $dark-text;
+    padding: $spacing-xs $spacing-md;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $section-bg-1;
+      border-color: $client-colors-1;
+    }
+  }
+
+  .removeBtn {
+    background: none;
+    border: none;
+    color: $error-color;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba($error-color, 0.1);
+    }
+  }
+
   .paymentsOverview {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1499,6 +1996,19 @@
       font-weight: 600;
       color: $dark-text;
       margin: 0 0 $spacing-sm 0;
+    }
+    
+    .totalAmount,
+    .pendingAmount,
+    .bookingCount {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $client-colors-1;
+      margin: 0 0 $spacing-xs 0;
+    }
+
+    .pendingAmount {
+      color: $warning-color;
     }
     
     .amount {
@@ -1533,7 +2043,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($client-colors-1, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -1584,7 +2094,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($client-colors-1, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -1900,22 +2410,32 @@
   .messagesList, .conversationsList {
     display: flex;
     flex-direction: column;
-    gap: $spacing-md;
+    gap: 0;
     margin-top: $spacing-lg;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    overflow: hidden;
+    background: $bg-white;
   }
   
   .messageItem, .conversationItem {
     display: flex;
-    align-items: flex-start;
-    background: $bg-white;
-    border: 1px solid $border-light;
-    border-radius: 8px;
-    padding: $spacing-lg;
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid $border-light;
+    border-radius: 0;
+    padding: $spacing-sm $spacing-md;
     gap: $spacing-md;
-    transition: box-shadow 0.2s ease;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    
+    &:last-child {
+      border-bottom: none;
+    }
     
     &:hover {
-      box-shadow: 0 2px 8px $shadow-color;
+      background: rgba(0, 0, 0, 0.02);
     }
   }
   
@@ -1976,6 +2496,909 @@
     color: $bg-white;
     font-weight: 600;
     font-size: 1rem;
+  }
+
+  .messagesHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+  }
+
+  .secondaryBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: $bg-light;
+    color: $dark-text;
+    border: 1px solid $border-color;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($bg-light, 5%);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  .composeBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: $client-colors-1;
+    color: $bg-white;
+    border: none;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($client-colors-1, 10%);
+    }
+  }
+
+  .composeBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 998;
+  }
+
+  .composeWindow {
+    position: fixed;
+    bottom: 0;
+    right: $spacing-xl;
+    width: 600px;
+    max-height: 80vh;
+    background: $bg-white;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+  }
+
+  .composeWindowHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-sm $spacing-md;
+    background: $section-bg-1;
+    border-bottom: 1px solid $border-light;
+    cursor: move;
+  }
+
+  .composeWindowTitle {
+    font-family: $font-heading;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .windowControls {
+    display: flex;
+    gap: $spacing-xs;
+  }
+
+  .windowControlBtn {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    font-size: 1rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: $dark-text;
+    }
+
+    &:last-child:hover {
+      background: $error-color;
+      color: $bg-white;
+    }
+  }
+
+  .composeWindowBody {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .composeToRow {
+    display: flex;
+    align-items: center;
+    padding: $spacing-xs $spacing-md;
+    border-bottom: 1px solid $border-light;
+    gap: $spacing-sm;
+  }
+
+  .composeLabel {
+    font-size: 0.875rem;
+    color: $dark-text;
+    font-weight: 500;
+    min-width: 50px;
+  }
+
+  .composeInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    color: $dark-text;
+    padding: $spacing-xs 0;
+
+    &::placeholder {
+      color: $subtext-color;
+    }
+  }
+
+  .composeSelect {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    color: $dark-text;
+    padding: $spacing-xs 0;
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 12px;
+    padding-right: 24px;
+
+    option {
+      background: $bg-white;
+      color: $dark-text;
+      padding: 8px;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .loadingText {
+    font-size: 0.875rem;
+    color: $subtext-color;
+    font-style: italic;
+  }
+
+  .ccBccToggle {
+    background: none;
+    border: none;
+    color: $client-colors-1;
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($client-colors-1, 0.1);
+    }
+  }
+
+  .composeMessageBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-md;
+    min-height: 300px;
+    max-height: 400px;
+  }
+
+  .composeEditable {
+    min-height: 250px;
+    outline: none;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    color: $dark-text;
+    line-height: 1.6;
+
+    &:empty:before {
+      content: attr(data-placeholder);
+      color: $subtext-color;
+      pointer-events: none;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus:empty:before {
+      content: attr(data-placeholder);
+      color: $subtext-color;
+    }
+
+    a {
+      color: $client-colors-1;
+      text-decoration: underline;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .composeToolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-sm $spacing-md;
+    background: $section-bg-1;
+    border-top: 1px solid $border-light;
+  }
+
+  .composeToolbarLeft {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  .sendBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: $client-colors-1;
+    color: $bg-white;
+    border: none;
+    padding: $spacing-xs $spacing-lg;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($client-colors-1, 10%);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .formattingButtons {
+    display: flex;
+    gap: $spacing-xs;
+    align-items: center;
+  }
+
+  .formatBtn {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    font-size: 0.875rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: $dark-text;
+    }
+
+    &:active {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .discardBtn {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($error-color, 0.1);
+      color: $error-color;
+    }
+  }
+
+  .attachedFiles {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: $section-bg-1;
+    border-top: 1px solid $border-light;
+  }
+
+  .attachedFile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-xs $spacing-sm;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+  }
+
+  .attachedFileName {
+    font-size: 0.875rem;
+    color: $dark-text;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .removeFileBtn {
+    background: none;
+    border: none;
+    color: $error-color;
+    font-size: 1.25rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-left: $spacing-xs;
+
+    &:hover {
+      background: rgba($error-color, 0.1);
+    }
+  }
+
+  .composeModal {
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .composeHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $border-light;
+
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0;
+    }
+  }
+
+  .closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $section-bg-1;
+      color: $dark-text;
+    }
+  }
+
+  .formTextarea {
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    resize: vertical;
+    min-height: 150px;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $client-colors-1;
+    }
+  }
+
+  .sendBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: $client-colors-1;
+    color: $bg-white;
+    border: none;
+    padding: $spacing-xs $spacing-lg;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($client-colors-1, 10%);
+    }
+  }
+
+  .emptyMessages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxl * 2;
+    text-align: center;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    margin-top: $spacing-lg;
+
+    .emptyIcon {
+      font-size: 3rem;
+      color: $subtext-color;
+      margin-bottom: $spacing-md;
+    }
+
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0 0 $spacing-xs 0;
+    }
+
+    p {
+      color: $subtext-color;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+  }
+
+  .messageItem {
+    &.unread {
+      background: rgba($client-colors-1, 0.05);
+      
+      .messageSender {
+        font-weight: 700 !important;
+      }
+      
+      .messageSubject {
+        font-weight: 700 !important;
+      }
+      
+      .messageSubjectPreview .messagePreview {
+        font-weight: 700 !important;
+      }
+    }
+  }
+
+  .messageIcons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    flex-shrink: 0;
+  }
+
+  .messageCheckbox {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: $client-colors-1;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .starBtn {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: $warning-yellow;
+    }
+
+    &.starred {
+      color: $warning-yellow;
+    }
+  }
+
+  .archiveBtn {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: $dark-text;
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .messageContent {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    min-width: 0;
+    overflow: hidden;
+    line-height: 1.5;
+    
+    > * {
+      vertical-align: middle;
+    }
+  }
+
+  .messageSender {
+    font-weight: 400;
+    color: $dark-text;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    line-height: 1.5;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+
+    .messageItem.unread & {
+      font-weight: 700;
+    }
+  }
+
+  .messageSubjectPreview {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .messageSubject {
+    font-weight: 400;
+    color: $dark-text;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    line-height: 1.5;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+
+    .messageItem.unread & {
+      font-weight: 700;
+    }
+  }
+
+  .messagePreview {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .messageItem.unread & {
+      font-weight: 700;
+    }
+  }
+
+  .messageDate {
+    font-size: 0.875rem;
+    color: $dark-text;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .restoreBtn {
+    background: none;
+    border: none;
+    color: $success-color;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba($success-color, 0.1);
+    }
+  }
+
+  .deleteBtn {
+    background: $error-color;
+    color: $bg-white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    &:hover {
+      background: darken($error-color, 10%);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  .modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .messageViewModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+  }
+
+  .messageViewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    padding-bottom: $spacing-md;
+    position: relative;
+
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $dark-text;
+      margin: 0;
+    }
+
+    .headerActions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+    }
+
+    .starIconBtn {
+      background: none;
+      border: none;
+      color: $subtext-color;
+      cursor: pointer;
+      padding: $spacing-xs;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      border-radius: 4px;
+
+      &:hover {
+        color: $warning-yellow;
+        background: rgba($warning-yellow, 0.1);
+      }
+
+      &.starred {
+        color: $warning-yellow;
+      }
+    }
+
+    .closeBtn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: $subtext-color;
+      cursor: pointer;
+      padding: $spacing-xs;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: $dark-text;
+      }
+    }
+  }
+
+  .messageViewContent {
+    padding: $spacing-lg;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .messageViewMeta {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-lg;
+    padding-bottom: 0;
+    font-size: 0.875rem;
+    color: $subtext-color;
+
+    strong {
+      color: $dark-text;
+      font-weight: 600;
+    }
+  }
+
+  .messageViewBody {
+    color: $dark-text;
+    line-height: 1.6;
+    word-wrap: break-word;
+    
+    // Style HTML elements in message body
+    :global {
+      b, strong {
+        font-weight: 700;
+      }
+      
+      i, em {
+        font-style: italic;
+      }
+      
+      u {
+        text-decoration: underline;
+      }
+      
+      a {
+        color: $client-colors-1;
+        text-decoration: underline;
+        
+        &:hover {
+          color: darken($client-colors-1, 10%);
+        }
+      }
+      
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: $spacing-sm 0;
+      }
+    }
+  }
+
+  .messageViewActions {
+    display: flex;
+    gap: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+
+    .replyBtn {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      background: $bg-white;
+      color: $dark-text;
+      border: 1px solid $border-light;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $section-bg-1;
+        border-color: $client-colors-1;
+        color: $client-colors-1;
+      }
+
+      svg {
+        margin-right: 0;
+      }
+    }
+
+    .deleteBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: $error-color;
+      color: $bg-white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: darken($error-color, 10%);
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+    }
   }
   
   .conversationContent {
@@ -2070,7 +3493,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($client-colors-1, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -2121,7 +3544,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($client-colors-1, 10%);
+    background: $button-pink-hover;
   }
 }
 
@@ -2234,7 +3657,7 @@
     input[type="checkbox"] {
       width: 18px;
       height: 18px;
-      accent-color: $primary-color;
+      accent-color: $client-colors-1;
     }
   }
   
@@ -2264,7 +3687,7 @@
     transition: background 0.2s ease;
     
     &:hover {
-      background: darken($client-colors-1, 10%);
+      background: $button-pink-hover;
     }
   }
   
@@ -2272,7 +3695,7 @@
     background: $section-bg-1;
     color: $dark-text;
     border: 1px solid $border-color;
-    padding: $spacing-sm $spacing-lg;
+    padding: $spacing-xs $spacing-lg;
     border-radius: 4px;
     font-size: 0.875rem;
     font-weight: 600;
@@ -2375,7 +3798,7 @@
       transition: background 0.2s ease;
       
       &:hover {
-        background: darken($client-colors-1, 10%);
+        background: $button-pink-hover;
       }
     }
   }
@@ -2426,7 +3849,7 @@
   transition: background 0.2s ease;
   
   &:hover {
-    background: darken($client-colors-1, 10%);
+    background: $button-pink-hover;
   }
 }
 

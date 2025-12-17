@@ -344,12 +344,14 @@
   border-bottom: 1px solid $border-light;
   padding: 0 $spacing-lg;
   display: flex;
-  gap: $spacing-lg;
+  flex-wrap: wrap;
+  gap: 0;
   box-shadow: 0 1px 3px $shadow-color;
+  align-items: flex-start;
 }
 
 .submenuItem {
-  padding: $spacing-md 0;
+  padding: $spacing-md $spacing-lg;
   background: none;
   border: none;
   cursor: pointer;
@@ -360,6 +362,8 @@
   transition: all 0.3s ease;
   font-weight: 500;
   position: relative;
+  flex-shrink: 0;
+  align-self: flex-start;
 
   &:hover {
     color: $provider-colors-3;
@@ -376,11 +380,51 @@
       content: '';
       position: absolute;
       bottom: -2px;
-      left: 0;
-      right: 0;
+      left: $spacing-lg;
+      right: $spacing-lg;
       height: 2px;
       background: linear-gradient(90deg, $accent-color 0%, darken($accent-color, 20%) 100%);
     }
+  }
+}
+
+.nestedSubmenu {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-xs $spacing-lg;
+  width: calc(100% + #{$spacing-lg} * 2);
+  flex-basis: 100%;
+  flex: 1 1 100%;
+  order: 999;
+  border-top: 1px solid $border-light;
+  margin-left: -$spacing-lg;
+  margin-right: -$spacing-lg;
+  background: $section-bg-1;
+  margin-top: 0;
+}
+
+.nestedSubmenuItem {
+  padding: $spacing-sm 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: $font-main;
+  font-size: 0.85rem;
+  color: $subtext-color;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  font-weight: 400;
+  position: relative;
+
+  &:hover {
+    color: $provider-colors-3;
+    border-bottom-color: $provider-colors-3;
+  }
+
+  &.active {
+    color: $provider-colors-3;
+    border-bottom-color: $provider-colors-3;
+    font-weight: 600;
   }
 }
 
@@ -1644,6 +1688,7 @@
   gap: 0.5rem;
   cursor: pointer;
   margin-bottom: 1rem;
+  color: $dark-text;
 }
 
 .checkboxLabelContainer {
@@ -1658,7 +1703,7 @@
 
 .checkboxText {
   font-size: 0.9rem;
-  color: $text-muted;
+  color: $dark-text;
 }
 
 // Service card styles
@@ -4586,6 +4631,1187 @@
   font-family: $font-main;
 }
 
+// Messages Styles
+.messagesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.messagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: $spacing-lg;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  overflow: hidden;
+  background: $bg-white;
+}
+
+.messageItem {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-light;
+  border-radius: 0;
+  padding: $spacing-sm $spacing-md;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  min-height: 48px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.unread {
+    background: rgba($provider-colors-3, 0.05);
+    
+    .messageSender,
+    .messageSubject,
+    .messagePreview {
+      font-weight: 700;
+    }
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.messageIcons {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.messageCheckbox {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: $provider-colors-3;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.starBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+
+  &:hover {
+    color: $warning-yellow;
+  }
+
+  &.starred {
+    color: $warning-yellow;
+  }
+}
+
+.archiveBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+
+  &:hover {
+    color: $dark-text;
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.messageContent {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.messageSender {
+  font-weight: 400;
+  color: $dark-text;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+
+  .messageItem.unread & {
+    font-weight: 700;
+  }
+}
+
+.messageSubjectPreview {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  min-width: 0;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+.messageSubject {
+  font-weight: 400;
+  color: $dark-text;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+
+  .messageItem.unread & {
+    font-weight: 700;
+  }
+}
+
+.messagePreview {
+  color: $subtext-color;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.messageDate {
+  font-size: 0.875rem;
+  color: $dark-text;
+  flex-shrink: 0;
+  margin-left: auto;
+  align-self: center;
+}
+
+.messageView {
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.messageViewModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.messageViewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  padding-bottom: $spacing-md;
+  position: relative;
+
+  h3 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .headerActions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .starIconBtn {
+    background: none;
+    border: none;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: $spacing-xs;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+
+    &:hover {
+      color: $warning-yellow;
+      background: rgba($warning-yellow, 0.1);
+    }
+
+    &.starred {
+      color: $warning-yellow;
+    }
+  }
+
+  .closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: $spacing-xs;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: $dark-text;
+    }
+  }
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: $provider-colors-3;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: $spacing-xs $spacing-sm;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: darken($provider-colors-3, 10%);
+  }
+}
+
+.messageActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.replyBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  background: $provider-colors-3;
+  color: $bg-white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($provider-colors-3, 10%);
+  }
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  cursor: pointer;
+  padding: $spacing-xs;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+  font-size: 1rem;
+
+  &:hover {
+    color: $provider-colors-3;
+  }
+
+  .starred {
+    color: $provider-colors-3;
+  }
+}
+
+.messageViewContent {
+  padding: $spacing-lg;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.messageViewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-lg;
+  padding-bottom: 0;
+  font-size: 0.875rem;
+  color: $subtext-color;
+
+  strong {
+    color: $dark-text;
+    font-weight: 600;
+  }
+}
+
+.messageViewBody {
+  color: $dark-text;
+  line-height: 1.6;
+  word-wrap: break-word;
+  
+  // Style HTML elements in message body
+  :global {
+    b, strong {
+      font-weight: 700;
+    }
+    
+    i, em {
+      font-style: italic;
+    }
+    
+    u {
+      text-decoration: underline;
+    }
+    
+    a {
+      color: $provider-colors-3;
+      text-decoration: underline;
+      
+      &:hover {
+        color: darken($provider-colors-3, 10%);
+      }
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin: $spacing-sm 0;
+    }
+  }
+}
+
+.messageViewActions {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+
+  .replyBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    background: $bg-white;
+    color: $dark-text;
+    border: 1px solid $border-light;
+    padding: $spacing-xs $spacing-md;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $section-bg-1;
+      border-color: $provider-colors-3;
+      color: $provider-colors-3;
+    }
+
+    svg {
+      margin-right: 0;
+    }
+  }
+
+  .deleteBtn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    background: $bg-white;
+    border: 1px solid $border-light;
+    color: $error-color;
+    cursor: pointer;
+    padding: $spacing-xs $spacing-md;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($error-color, 0.1);
+      border-color: $error-color;
+    }
+
+    svg {
+      margin-right: 0;
+    }
+  }
+}
+
+.messageViewContent {
+  .messageSubject {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0 0 $spacing-md 0;
+  }
+}
+
+.messageMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: $spacing-md;
+  margin-bottom: $spacing-md;
+  border-bottom: 1px solid $border-light;
+}
+
+.messageFrom {
+  font-weight: 500;
+  color: $dark-text;
+  font-size: 0.95rem;
+}
+
+.messageDate {
+  font-size: 0.85rem;
+  color: $subtext-color;
+}
+
+.messageBody {
+  color: $dark-text;
+  line-height: 1.6;
+  word-wrap: break-word;
+  
+  // Style HTML elements in message body
+  :global {
+    b, strong {
+      font-weight: 700;
+    }
+    
+    i, em {
+      font-style: italic;
+    }
+    
+    u {
+      text-decoration: underline;
+    }
+    
+    a {
+      color: $provider-colors-3;
+      text-decoration: underline;
+      
+      &:hover {
+        color: darken($provider-colors-3, 10%);
+      }
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin: $spacing-sm 0;
+    }
+  }
+}
+
+.composeBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 998;
+}
+
+.composeWindow {
+  position: fixed;
+  bottom: 0;
+  right: $spacing-xl;
+  width: 600px;
+  max-height: 80vh;
+  background: $bg-white;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.composeWindowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $section-bg-1;
+  border-bottom: 1px solid $border-light;
+  cursor: move;
+}
+
+.composeWindowTitle {
+  font-family: $font-heading;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.windowControls {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.windowControlBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  font-size: 1rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: $dark-text;
+  }
+
+  &:last-child:hover {
+    background: $error-color;
+    color: $bg-white;
+  }
+}
+
+.composeWindowBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.composeToRow {
+  display: flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  border-bottom: 1px solid $border-light;
+  gap: $spacing-sm;
+}
+
+.composeLabel {
+  font-size: 0.875rem;
+  color: $dark-text;
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.composeInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  color: $dark-text;
+  padding: $spacing-xs 0;
+
+  &::placeholder {
+    color: $subtext-color;
+  }
+
+  &:disabled {
+    background: transparent;
+  }
+}
+
+.composeSelect {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  color: $dark-text;
+  padding: $spacing-xs 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 12px;
+  padding-right: 24px;
+
+  option {
+    background: $bg-white;
+    color: $dark-text;
+    padding: 8px;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.loadingText {
+  font-size: 0.875rem;
+  color: $subtext-color;
+}
+
+.ccBccToggle {
+  background: none;
+  border: none;
+  color: $provider-colors-1;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($provider-colors-1, 0.1);
+  }
+}
+
+.composeMessageBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  min-height: 300px;
+  max-height: 400px;
+}
+
+.composeEditable {
+  min-height: 250px;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  color: $dark-text;
+  line-height: 1.6;
+
+  &:empty:before {
+    content: attr(data-placeholder);
+    color: $subtext-color;
+    pointer-events: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus:empty:before {
+    content: attr(data-placeholder);
+    color: $subtext-color;
+  }
+
+  a {
+    color: $provider-colors-1;
+    text-decoration: underline;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.composeTextarea {
+  flex: 1;
+  padding: $spacing-md;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  color: $dark-text;
+  resize: none;
+  overflow-y: auto;
+  min-height: 200px;
+
+  &::placeholder {
+    color: $subtext-color;
+  }
+}
+
+.composeActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  border-top: 1px solid $border-light;
+  gap: $spacing-sm;
+}
+
+.sendBtn {
+  background: $provider-colors-1;
+  color: $bg-white;
+  border: none;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($provider-colors-1, 10%);
+  }
+}
+
+.discardBtn {
+  background: none;
+  border: none;
+  color: $error-color;
+  padding: $spacing-xs;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($error-color, 0.1);
+  }
+}
+
+.composeToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $section-bg-1;
+  border-top: 1px solid $border-light;
+}
+
+.composeToolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.formattingButtons {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+}
+
+.formatBtn {
+  background: none;
+  border: none;
+  color: $dark-text;
+  padding: $spacing-xs;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+
+  &:hover {
+    background: rgba($dark-text, 0.1);
+  }
+}
+
+.toolbarButton {
+  background: none;
+  border: none;
+  color: $dark-text;
+  padding: $spacing-xs;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($dark-text, 0.1);
+  }
+}
+
+.composeAttachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  border-top: 1px solid $border-light;
+  background: $section-bg-1;
+}
+
+.attachmentItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: $dark-text;
+}
+
+.attachmentRemove {
+  background: none;
+  border: none;
+  color: $error-color;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+
+  &:hover {
+    color: darken($error-color, 10%);
+  }
+}
+
+.composeBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.composeWindow {
+  position: fixed;
+  bottom: 0;
+  right: $spacing-xl;
+  width: 600px;
+  max-height: 80vh;
+  background: $bg-white;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.composeWindowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $section-bg-1;
+  border-bottom: 1px solid $border-light;
+  cursor: move;
+}
+
+.composeWindowTitle {
+  font-family: $font-heading;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0;
+}
+
+.windowControls {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.windowControlBtn {
+  background: none;
+  border: none;
+  color: $dark-text;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba($dark-text, 0.1);
+  }
+}
+
+.composeWindowBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.composeToRow {
+  display: flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  border-bottom: 1px solid $border-light;
+  gap: $spacing-sm;
+}
+
+.composeLabel {
+  font-size: 0.875rem;
+  color: $dark-text;
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.composeInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  color: $dark-text;
+  padding: $spacing-xs 0;
+
+  &::placeholder {
+    color: $subtext-color;
+  }
+
+  &:disabled {
+    background: transparent;
+    color: $dark-text;
+  }
+}
+
+.composeMessageArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  min-height: 300px;
+  max-height: 400px;
+}
+
+.composeTextarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  color: $dark-text;
+  line-height: 1.6;
+  resize: none;
+  min-height: 250px;
+
+  &::placeholder {
+    color: $subtext-color;
+  }
+}
+
+.composeActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $section-bg-1;
+  border-top: 1px solid $border-light;
+  gap: $spacing-sm;
+}
+
+.discardBtn {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: $error-color;
+  }
+}
+
+.replyModal {
+  background: $bg-white;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: $spacing-lg;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.replyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-light;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $dark-text;
+  }
+
+  .closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: $subtext-color;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: $dark-text;
+    }
+  }
+}
+
+.replyContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.replyField {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-weight: 600;
+    color: $dark-text;
+    font-size: 0.875rem;
+  }
+}
+
+.replyInput {
+  padding: $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: $font-main;
+
+  &:focus {
+    outline: none;
+    border-color: $provider-colors-3;
+  }
+
+  &:disabled {
+    background: $section-bg-1;
+    color: $subtext-color;
+    cursor: not-allowed;
+  }
+}
+
+.replyTextarea {
+  padding: $spacing-sm;
+  border: 1px solid $border-light;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: $font-main;
+  resize: vertical;
+  min-height: 200px;
+
+  &:focus {
+    outline: none;
+    border-color: $provider-colors-3;
+  }
+}
+
+.replyActions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.sendBtn {
+  background: $provider-colors-3;
+  color: $bg-white;
+  border: none;
+  padding: $spacing-xs $spacing-lg;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($provider-colors-3, 10%);
+  }
+}
+
+.cancelBtn {
+  background: $bg-white;
+  color: $dark-text;
+  border: 1px solid $border-light;
+  padding: $spacing-xs $spacing-lg;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $section-bg-1;
+  }
+}
+
 .conversationsList {
   background: $bg-white;
   border: 1px solid $border-light;
@@ -4724,20 +5950,32 @@
 
 .composeActions {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $section-bg-1;
+  border-top: 1px solid $border-light;
   gap: $spacing-sm;
 }
 
-.sendBtn {
+.composeActions .sendBtn {
   background: $provider-colors-3;
   color: $bg-white;
   border: none;
-  padding: $spacing-sm $spacing-md;
-  border-radius: 6px;
-  font-weight: 500;
+  padding: $spacing-xs $spacing-lg;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: $spacing-xs;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: darken($provider-colors-3, 10%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
   &:hover {
     background: darken($provider-colors-3, 10%);

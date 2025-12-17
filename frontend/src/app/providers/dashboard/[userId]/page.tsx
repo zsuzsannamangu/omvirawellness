@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { FaStar, FaReply, FaLink } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
@@ -27,8 +27,10 @@ export default function ProvidersDashboard() {
   const [activeSubmenu, setActiveSubmenu] = useState(
     initialSection === 'profile' ? 'basic' : 
     initialSection === 'stats' ? 'traffic' :
+    initialSection === 'messages' ? 'notifications' :
     'requests'
   );
+  const [activeCommunicationSubmenu, setActiveCommunicationSubmenu] = useState('inbox');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [providerName, setProviderName] = useState('Loading...');
   const [providerRating, setProviderRating] = useState<number | null>(null);
@@ -309,6 +311,13 @@ export default function ProvidersDashboard() {
 
     loadUnreadMessages();
 
+    // Poll for unread messages every 10 seconds
+    const pollInterval = setInterval(() => {
+      if (isMounted) {
+        loadUnreadMessages();
+      }
+    }, 10000); // Check every 10 seconds
+
     // Refresh messages when bookings are updated
     const refresh = () => {
       if (isMounted) {
@@ -316,7 +325,7 @@ export default function ProvidersDashboard() {
       }
     };
     window.addEventListener('refreshBookings', refresh);
-    
+
     // Also listen for message updates
     const refreshMessages = () => {
       if (isMounted) {
@@ -324,9 +333,10 @@ export default function ProvidersDashboard() {
       }
     };
     window.addEventListener('refreshMessages', refreshMessages);
-    
+
     return () => {
       isMounted = false;
+      clearInterval(pollInterval);
       window.removeEventListener('refreshBookings', refresh);
       window.removeEventListener('refreshMessages', refreshMessages);
     };
@@ -357,7 +367,7 @@ export default function ProvidersDashboard() {
             clients: [{ id: 'directory' }],
             payments: [{ id: 'balance' }],
             stats: [{ id: 'traffic' }],
-            messages: [{ id: 'notifications' }, { id: 'communication' }],
+            messages: [{ id: 'notifications' }, { id: 'inbox' }, { id: 'starred' }, { id: 'sent' }, { id: 'trash' }],
             profile: [{ id: 'basic' }],
             settings: [{ id: 'account' }],
           };
@@ -515,7 +525,7 @@ export default function ProvidersDashboard() {
       case 'stats':
         return <Stats activeSubmenu={activeSubmenu} />;
       case 'messages':
-        return <Messages activeSubmenu={activeSubmenu} />;
+        return <Messages activeSubmenu={activeSubmenu === 'communication' ? activeCommunicationSubmenu : activeSubmenu} userId={userId} />;
       case 'profile':
         return <Profile activeSubmenu={activeSubmenu} />;
       case 'settings':
@@ -789,7 +799,13 @@ export default function ProvidersDashboard() {
             <button
               key={item.id}
               className={`${styles.submenuItem} ${activeSubmenu === item.id ? styles.active : ''}`}
-              onClick={() => setActiveSubmenu(item.id)}
+              onClick={() => {
+                setActiveSubmenu(item.id);
+                // If clicking on communication, set default submenu to inbox
+                if (item.id === 'communication') {
+                  setActiveCommunicationSubmenu('inbox');
+                }
+              }}
             >
               {item.label}
               {activeSection === 'bookings' && item.id === 'requests' && pendingRequests > 0 && (
@@ -803,6 +819,28 @@ export default function ProvidersDashboard() {
               )}
             </button>
           ))}
+          {/* Nested submenu for Client Communication - appears below all main menu items */}
+          {activeSection === 'messages' && activeSubmenu === 'communication' && (
+            <div className={styles.nestedSubmenu}>
+              {[
+                { id: 'inbox', label: 'Inbox' },
+                { id: 'starred', label: 'Starred' },
+                { id: 'sent', label: 'Sent' },
+                { id: 'trash', label: 'Trash' },
+              ].map((nestedItem) => (
+                <button
+                  key={nestedItem.id}
+                  className={`${styles.nestedSubmenuItem} ${activeCommunicationSubmenu === nestedItem.id ? styles.active : ''}`}
+                  onClick={() => setActiveCommunicationSubmenu(nestedItem.id)}
+                >
+                  {nestedItem.label}
+                  {nestedItem.id === 'inbox' && unreadMessages > 0 && (
+                    <span className={styles.badge}>{unreadMessages}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Main Content */}

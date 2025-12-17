@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaHeart, FaChevronDown } from 'react-icons/fa';
+import { FaHeart, FaSortAlphaDown, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 import { getClientFavorites, removeFavorite, getClientId } from '@/services/favorites';
 
@@ -30,9 +30,7 @@ const formatBusinessType = (businessType: string | null | undefined): string => 
 export default function Favorites({ activeSubmenu }: FavoritesProps) {
   const [favoriteProviders, setFavoriteProviders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<'name' | 'rating' | 'location' | 'price'>('name');
-  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [sortBy, setSortBy] = useState<'name' | 'rating' | 'location'>('name');
 
   // Load favorites from backend
   useEffect(() => {
@@ -70,74 +68,42 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
     }
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setSortDropdownOpen(false);
-      }
-    };
-
-    if (sortDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [sortDropdownOpen]);
-
   // Sort providers based on selected sort option
   const sortedProviders = useMemo(() => {
-    const providers = [...favoriteProviders];
+    const sorted = [...favoriteProviders];
     
     switch (sortBy) {
       case 'name':
-        return providers.sort((a, b) => {
+        sorted.sort((a, b) => {
           const nameA = (a.contact_name || a.business_name || '').toLowerCase();
           const nameB = (b.contact_name || b.business_name || '').toLowerCase();
           return nameA.localeCompare(nameB);
         });
+        break;
       
       case 'rating':
-        return providers.sort((a, b) => {
-          const ratingA = parseFloat(a.average_rating) || 0;
-          const ratingB = parseFloat(b.average_rating) || 0;
-          return ratingB - ratingA; // Highest first
+        sorted.sort((a, b) => {
+          const ratingA = parseFloat(a.average_rating || '0');
+          const ratingB = parseFloat(b.average_rating || '0');
+          // Sort descending (highest rating first)
+          return ratingB - ratingA;
         });
+        break;
       
       case 'location':
-        return providers.sort((a, b) => {
-          const locationA = `${a.city || ''} ${a.state || ''}`.trim().toLowerCase();
-          const locationB = `${b.city || ''} ${b.state || ''}`.trim().toLowerCase();
+        sorted.sort((a, b) => {
+          const locationA = `${a.city || ''}${a.city && a.state ? ', ' : ''}${a.state || ''}`.toLowerCase();
+          const locationB = `${b.city || ''}${b.city && b.state ? ', ' : ''}${b.state || ''}`.toLowerCase();
           return locationA.localeCompare(locationB);
         });
-      
-      case 'price':
-        return providers.sort((a, b) => {
-          const priceA = a.services && Array.isArray(a.services) && a.services.length > 0
-            ? parseFloat(a.services[0].price) || 999999
-            : 999999;
-          const priceB = b.services && Array.isArray(b.services) && b.services.length > 0
-            ? parseFloat(b.services[0].price) || 999999
-            : 999999;
-          return priceA - priceB; // Lowest first
-        });
+        break;
       
       default:
-        return providers;
+        break;
     }
+    
+    return sorted;
   }, [favoriteProviders, sortBy]);
-
-  const getSortLabel = () => {
-    switch (sortBy) {
-      case 'name': return 'Name (A-Z)';
-      case 'rating': return 'Rating (Highest)';
-      case 'location': return 'Location';
-      case 'price': return 'Price (Lowest)';
-      default: return 'Sort by...';
-    }
-  };
 
   const renderContent = () => {
     switch (activeSubmenu) {
@@ -147,54 +113,29 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
             <div className={styles.favoritesHeader}>
               <h2 className={styles.sectionTitle}>Saved Providers</h2>
               {!loading && favoriteProviders.length > 0 && (
-                <div className={styles.sortContainer} ref={dropdownRef}>
+                <div className={styles.sortControls}>
+                  <label className={styles.sortLabel}>Sort by:</label>
                   <button
-                    className={styles.sortButton}
-                    onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                    type="button"
+                    className={`${styles.sortButton} ${sortBy === 'name' ? styles.sortButtonActive : ''}`}
+                    onClick={() => setSortBy('name')}
                   >
-                    <span>{getSortLabel()}</span>
-                    <FaChevronDown className={`${styles.sortChevron} ${sortDropdownOpen ? styles.sortChevronOpen : ''}`} />
+                    <FaSortAlphaDown /> Name
                   </button>
-                  {sortDropdownOpen && (
-                    <div className={styles.sortDropdown}>
-                      <button
-                        className={`${styles.sortOption} ${sortBy === 'name' ? styles.sortOptionActive : ''}`}
-                        onClick={() => {
-                          setSortBy('name');
-                          setSortDropdownOpen(false);
-                        }}
-                      >
-                        Name (A-Z)
-                      </button>
-                      <button
-                        className={`${styles.sortOption} ${sortBy === 'rating' ? styles.sortOptionActive : ''}`}
-                        onClick={() => {
-                          setSortBy('rating');
-                          setSortDropdownOpen(false);
-                        }}
-                      >
-                        Rating (Highest)
-                      </button>
-                      <button
-                        className={`${styles.sortOption} ${sortBy === 'location' ? styles.sortOptionActive : ''}`}
-                        onClick={() => {
-                          setSortBy('location');
-                          setSortDropdownOpen(false);
-                        }}
-                      >
-                        Location
-                      </button>
-                      <button
-                        className={`${styles.sortOption} ${sortBy === 'price' ? styles.sortOptionActive : ''}`}
-                        onClick={() => {
-                          setSortBy('price');
-                          setSortDropdownOpen(false);
-                        }}
-                      >
-                        Price (Lowest)
-                      </button>
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    className={`${styles.sortButton} ${sortBy === 'rating' ? styles.sortButtonActive : ''}`}
+                    onClick={() => setSortBy('rating')}
+                  >
+                    <FaStar /> Rating
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.sortButton} ${sortBy === 'location' ? styles.sortButtonActive : ''}`}
+                    onClick={() => setSortBy('location')}
+                  >
+                    <FaMapMarkerAlt /> Location
+                  </button>
                 </div>
               )}
             </div>

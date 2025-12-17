@@ -31,6 +31,20 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
     setSaveMessage('');
     
     try {
+      // Collect checked wellness goals
+      const wellnessGoals: string[] = [];
+      document.querySelectorAll('input[data-goal]:checked').forEach((checkbox) => {
+        const goal = (checkbox as HTMLInputElement).getAttribute('data-goal');
+        if (goal) wellnessGoals.push(goal);
+      });
+
+      // Collect checked preferred services
+      const preferredServices: string[] = [];
+      document.querySelectorAll('input[data-service]:checked').forEach((checkbox) => {
+        const service = (checkbox as HTMLInputElement).getAttribute('data-service');
+        if (service) preferredServices.push(service);
+      });
+
       // Collect profile data from inputs
       const profileData = {
         firstName: (document.querySelector('[name="firstName"]') as HTMLInputElement)?.value,
@@ -48,6 +62,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         state: (document.querySelector('[name="state"]') as HTMLInputElement)?.value,
         zipCode: (document.querySelector('[name="zipCode"]') as HTMLInputElement)?.value,
         country: (document.querySelector('[name="country"]') as HTMLInputElement)?.value,
+        wellnessGoals: wellnessGoals,
+        preferredServices: preferredServices,
         sessionLength: (document.querySelector('[name="sessionLength"]') as HTMLSelectElement)?.value,
         frequency: (document.querySelector('[name="frequency"]') as HTMLSelectElement)?.value,
         budget: (document.querySelector('[name="budget"]') as HTMLSelectElement)?.value,
@@ -62,7 +78,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       setSaveMessage('Profile updated successfully!');
       
       // Update local storage with data from server response
-      // Note: updateClientProfile returns data.data, which contains { profile: ... }
       if (userData && result && result.profile) {
         const updatedUser = {
           ...userData,
@@ -70,20 +85,10 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUserData(updatedUser);
-        
-        // Dispatch custom event to notify dashboard of profile update
-        window.dispatchEvent(new Event('profileUpdated'));
-        
-        // Also dispatch event to refresh profile image
-        if (result.profile.profile_photo_url) {
-          window.dispatchEvent(new CustomEvent('profileImageUpdated', { 
-            detail: { profilePhotoUrl: result.profile.profile_photo_url } 
-          }));
-        }
-      } else {
-        // Fallback: just dispatch the update event
-        window.dispatchEvent(new Event('profileUpdated'));
       }
+      
+      // Dispatch custom event to notify dashboard of profile update
+      window.dispatchEvent(new Event('profileUpdated'));
     } catch (error: any) {
       setSaveMessage(`Error: ${error.message}`);
     } finally {
@@ -218,156 +223,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
               </div>
 
-              {saveMessage && (
-                <div style={{ 
-                  padding: '12px 24px', 
-                  margin: '16px 0',
-                  backgroundColor: saveMessage.includes('Error') ? '#fee' : '#efe',
-                  border: `1px solid ${saveMessage.includes('Error') ? '#fcc' : '#cfc'}`,
-                  borderRadius: '8px',
-                  color: saveMessage.includes('Error') ? '#c33' : '#3c3'
-                }}>
-                  {saveMessage}
-                </div>
-              )}
-              
-              <div className={styles.formActions}>
-                <button 
-                  className={styles.saveBtn}
-                  onClick={handleSave}
-                  disabled={isSaving}
-                >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
-                <button className={styles.cancelBtn}>Cancel</button>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'preferences':
-        return (
-          <div className={styles.profileContent}>
-            <h2 className={styles.sectionTitle}>Wellness Preferences</h2>
-            <div className={styles.preferencesForm}>
-              <div className={styles.formSection}>
-                <h3 className={styles.formSectionTitle}>Wellness Goals</h3>
-                <div className={styles.checkboxGroup}>
-                  {['stress-relief', 'pain-management', 'flexibility', 'strength-building', 'mental-health', 'recovery', 'prevention', 'relaxation', 'better-sleep', 'energy-boost'].map((goal) => (
-                    <label key={goal} className={styles.checkboxLabel}>
-                      <input 
-                        type="checkbox" 
-                        defaultChecked={userData?.profile?.wellness_goals?.includes(goal.toLowerCase()) || false}
-                      />
-                      <span className={styles.checkboxText}>
-                        {goal.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-                <div className={styles.formGroup} style={{ marginTop: '24px' }}>
-                  <label className={styles.formLabel}>Other Goals (Optional)</label>
-                  <textarea 
-                    name="otherGoals"
-                    className={styles.formTextarea} 
-                    defaultValue={userData?.profile?.other_goals || ''}
-                    placeholder="Tell us about any other wellness goals..."
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formSection}>
-                <h3 className={styles.formSectionTitle}>Services You Are Interested In</h3>
-                <div className={styles.checkboxGroup}>
-                  {['massage-therapy', 'yoga', 'meditation', 'acupuncture', 'chiropractic', 'physical-therapy', 'nutrition-counseling', 'counseling', 'personal-training', 'reiki'].map((service) => (
-                    <label key={service} className={styles.checkboxLabel}>
-                      <input 
-                        type="checkbox" 
-                        defaultChecked={userData?.profile?.preferred_services?.includes(service.toLowerCase()) || false}
-                      />
-                      <span className={styles.checkboxText}>
-                        {service.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.formSection}>
-                <h3 className={styles.formSectionTitle}>Session Preferences</h3>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Preferred Session Length</label>
-                    <select name="sessionLength" className={styles.formSelect} defaultValue={userData?.profile?.preferred_session_length || ''}>
-                      <option value="">Select length</option>
-                      <option value="30">30 minutes</option>
-                      <option value="60">60 minutes</option>
-                      <option value="90">90 minutes</option>
-                      <option value="120">120 minutes</option>
-                      <option value="flexible">Flexible</option>
-                    </select>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>How Often</label>
-                    <select name="frequency" className={styles.formSelect} defaultValue={userData?.profile?.preferred_frequency || ''}>
-                      <option value="">Select frequency</option>
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="bi-weekly">Bi-weekly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="as-needed">As needed</option>
-                    </select>
-                  </div>
-                </div>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Budget Per Session</label>
-                    <select name="budget" className={styles.formSelect} defaultValue={userData?.profile?.budget_per_session || ''}>
-                      <option value="">Select budget</option>
-                      <option value="under-50">Under $50</option>
-                      <option value="50-100">$50 - $100</option>
-                      <option value="100-150">$100 - $150</option>
-                      <option value="150-200">$150 - $200</option>
-                      <option value="over-150">Over $200</option>
-                      <option value="flexible">Flexible</option>
-                    </select>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Location Preference</label>
-                    <select name="locationPreference" className={styles.formSelect} defaultValue={userData?.profile?.location_preference || ''}>
-                      <option value="">Select location</option>
-                      <option value="at-home">At Home</option>
-                      <option value="online">Online</option>
-                      <option value="provider-location">Provider Location</option>
-                      <option value="both">Both</option>
-                    </select>
-                  </div>
-                </div>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Time Preference</label>
-                    <select name="timePreference" className={styles.formSelect} defaultValue={userData?.profile?.time_preference || ''}>
-                      <option value="">Select time</option>
-                      <option value="morning">Morning (6 AM - 12 PM)</option>
-                      <option value="afternoon">Afternoon (12 PM - 6 PM)</option>
-                      <option value="evening">Evening (6 PM - 10 PM)</option>
-                      <option value="flexible">Flexible</option>
-                    </select>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Special Requirements</label>
-                    <input 
-                      type="text" 
-                      name="specialRequirements"
-                      className={styles.formInput}
-                      defaultValue={userData?.profile?.special_requirements || ''}
-                      placeholder="Any special requirements or accommodations needed..."
-                    />
-                  </div>
-                </div>
-              </div>
-
               <div className={styles.formSection}>
                 <h3 className={styles.formSectionTitle}>Address</h3>
                 <div className={styles.formGroup}>
@@ -440,6 +295,158 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       className={styles.formInput} 
                       defaultValue={userData?.profile?.country || 'United States'} 
                       placeholder="Country" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {saveMessage && (
+                <div style={{ 
+                  padding: '12px 24px', 
+                  margin: '16px 0',
+                  backgroundColor: saveMessage.includes('Error') ? '#fee' : '#efe',
+                  border: `1px solid ${saveMessage.includes('Error') ? '#fcc' : '#cfc'}`,
+                  borderRadius: '8px',
+                  color: saveMessage.includes('Error') ? '#c33' : '#3c3'
+                }}>
+                  {saveMessage}
+                </div>
+              )}
+              
+              <div className={styles.formActions}>
+                <button 
+                  className={styles.saveBtn}
+                  onClick={handleSave}
+                  disabled={isSaving}
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button className={styles.cancelBtn}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        );
+      
+      case 'preferences':
+        return (
+          <div className={styles.profileContent}>
+            <h2 className={styles.sectionTitle}>Wellness Preferences</h2>
+            <div className={styles.preferencesForm}>
+              <div className={styles.formSection}>
+                <h3 className={styles.formSectionTitle}>Wellness Goals</h3>
+                <div className={styles.checkboxGroup}>
+                  {['stress-relief', 'pain-management', 'flexibility', 'strength-building', 'mental-health', 'recovery', 'prevention', 'relaxation', 'better-sleep', 'energy-boost'].map((goal) => (
+                    <label key={goal} className={styles.checkboxLabel}>
+                      <input 
+                        type="checkbox" 
+                        data-goal={goal.toLowerCase()}
+                        defaultChecked={userData?.profile?.wellness_goals?.includes(goal.toLowerCase()) || false}
+                      />
+                      <span className={styles.checkboxText}>
+                        {goal.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <div className={styles.formGroup} style={{ marginTop: '24px' }}>
+                  <label className={styles.formLabel}>Other Goals (Optional)</label>
+                  <textarea 
+                    name="otherGoals"
+                    className={styles.formTextarea} 
+                    defaultValue={userData?.profile?.other_goals || ''}
+                    placeholder="Tell us about any other wellness goals..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formSection}>
+                <h3 className={styles.formSectionTitle}>Services You Are Interested In</h3>
+                <div className={styles.checkboxGroup}>
+                  {['massage-therapy', 'yoga', 'meditation', 'acupuncture', 'chiropractic', 'physical-therapy', 'nutrition-counseling', 'counseling', 'personal-training', 'reiki'].map((service) => (
+                    <label key={service} className={styles.checkboxLabel}>
+                      <input 
+                        type="checkbox" 
+                        data-service={service.toLowerCase()}
+                        defaultChecked={userData?.profile?.preferred_services?.includes(service.toLowerCase()) || false}
+                      />
+                      <span className={styles.checkboxText}>
+                        {service.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.formSection}>
+                <h3 className={styles.formSectionTitle}>Session Preferences</h3>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Preferred Session Length</label>
+                    <select name="sessionLength" className={styles.formSelect} defaultValue={userData?.profile?.preferred_session_length || ''}>
+                      <option value="">Select length</option>
+                      <option value="30">30 minutes</option>
+                      <option value="60">60 minutes</option>
+                      <option value="90">90 minutes</option>
+                      <option value="120">120 minutes</option>
+                      <option value="flexible">Flexible</option>
+                    </select>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>How Often</label>
+                    <select name="frequency" className={styles.formSelect} defaultValue={userData?.profile?.preferred_frequency || ''}>
+                      <option value="">Select frequency</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="bi-weekly">Bi-weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="as-needed">As needed</option>
+                    </select>
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Budget Per Session</label>
+                    <select name="budget" className={styles.formSelect} defaultValue={userData?.profile?.budget_per_session || ''}>
+                      <option value="">Select budget</option>
+                      <option value="under-50">Under $50</option>
+                      <option value="50-100">$50 - $100</option>
+                      <option value="100-150">$100 - $150</option>
+                      <option value="150-200">$150 - $200</option>
+                      <option value="over-200">Over $200</option>
+                      <option value="flexible">Flexible</option>
+                    </select>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Location Preference</label>
+                    <select name="locationPreference" className={styles.formSelect} defaultValue={userData?.profile?.location_preference || ''}>
+                      <option value="">Select location</option>
+                      <option value="at-home">At Home</option>
+                      <option value="online">Online</option>
+                      <option value="provider-location">Provider Location</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Time Preference</label>
+                    <select name="timePreference" className={styles.formSelect} defaultValue={userData?.profile?.time_preference || ''}>
+                      <option value="">Select time</option>
+                      <option value="morning">Morning (6 AM - 12 PM)</option>
+                      <option value="afternoon">Afternoon (12 PM - 6 PM)</option>
+                      <option value="evening">Evening (6 PM - 10 PM)</option>
+                      <option value="flexible">Flexible</option>
+                    </select>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Special Requirements</label>
+                    <input 
+                      type="text" 
+                      name="specialRequirements"
+                      className={styles.formInput}
+                      defaultValue={userData?.profile?.special_requirements || ''}
+                      placeholder="Any special requirements or accommodations needed..."
                     />
                   </div>
                 </div>

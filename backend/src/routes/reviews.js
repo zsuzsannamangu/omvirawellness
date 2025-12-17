@@ -231,39 +231,5 @@ router.get('/provider/:providerId', async (req, res) => {
   }
 });
 
-// GET - Get reviews written by a client
-router.get('/client/:clientId', verifyToken, async (req, res) => {
-  try {
-    const { clientId } = req.params;
-
-    // Verify the client is requesting their own reviews
-    if (req.userType !== 'client' || req.userId !== clientId) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
-    // Get all reviews written by this client
-    const reviewsResult = await pool.query(
-      `SELECT 
-        r.id,
-        r.rating,
-        r.title,
-        r.comment,
-        r.created_at,
-        p.business_name as provider_business_name,
-        p.contact_name as provider_contact_name
-       FROM reviews r
-       JOIN provider_profiles p ON r.provider_id = p.id
-       WHERE r.reviewer_id = $1 AND r.is_published = true
-       ORDER BY r.created_at DESC`,
-      [clientId]
-    );
-
-    res.json(reviewsResult.rows);
-  } catch (err) {
-    console.error('Error fetching client reviews:', err);
-    res.status(500).json({ error: 'Server error', details: err.message });
-  }
-});
-
 module.exports = router;
 

@@ -806,8 +806,7 @@ async function login(req, res) {
           special_requirements,
           travel_willingness,
           max_travel_distance,
-          notes,
-          profile_photo_url
+          notes
         FROM client_profiles WHERE user_id = $1`,
         [user.id]
       );
@@ -961,6 +960,7 @@ async function updateClientProfile(req, res) {
       emergencyContactName,
       emergencyContactPhone,
       emergencyContactRelationship,
+      wellnessGoals,
       otherGoals,
       address,
       city,
@@ -976,14 +976,28 @@ async function updateClientProfile(req, res) {
       specialRequirements,
       travelWillingness,
       maxTravelDistance,
-      notes,
-      profilePhotoUrl
+      notes
     } = req.body;
 
     console.log('Received data:', req.body);
 
     // Helper function to convert empty strings to null
     const toNull = (value) => value === '' || value === null || value === undefined ? null : value;
+    
+    // Helper function to handle array fields (wellnessGoals, preferredServices)
+    const toArray = (value) => {
+      if (!value) return null;
+      if (Array.isArray(value)) return value.length > 0 ? value : null;
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+        } catch {
+          return value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        }
+      }
+      return null;
+    };
 
     // Update client profile
     const result = await pool.query(
@@ -997,23 +1011,23 @@ async function updateClientProfile(req, res) {
         emergency_contact_name = COALESCE($7, emergency_contact_name),
         emergency_contact_phone = COALESCE($8, emergency_contact_phone),
         emergency_contact_relationship = COALESCE($9, emergency_contact_relationship),
-        other_goals = COALESCE($10, other_goals),
-        address_line1 = COALESCE($11, address_line1),
-        city = COALESCE($12, city),
-        state = COALESCE($13, state),
-        zip_code = COALESCE($14, zip_code),
-        country = COALESCE($15, country),
-        preferred_services = COALESCE($16, preferred_services),
-        preferred_session_length = COALESCE($17, preferred_session_length),
-        preferred_frequency = COALESCE($18, preferred_frequency),
-        budget_per_session = COALESCE($19, budget_per_session),
-        location_preference = COALESCE($20, location_preference),
-        time_preference = COALESCE($21, time_preference),
-        special_requirements = COALESCE($22, special_requirements),
-        travel_willingness = COALESCE($23, travel_willingness),
-        max_travel_distance = COALESCE($24, max_travel_distance),
-        notes = COALESCE($25, notes),
-        profile_photo_url = COALESCE($26, profile_photo_url),
+        wellness_goals = COALESCE($10, wellness_goals),
+        other_goals = COALESCE($11, other_goals),
+        address_line1 = COALESCE($12, address_line1),
+        city = COALESCE($13, city),
+        state = COALESCE($14, state),
+        zip_code = COALESCE($15, zip_code),
+        country = COALESCE($16, country),
+        preferred_services = COALESCE($17, preferred_services),
+        preferred_session_length = COALESCE($18, preferred_session_length),
+        preferred_frequency = COALESCE($19, preferred_frequency),
+        budget_per_session = COALESCE($20, budget_per_session),
+        location_preference = COALESCE($21, location_preference),
+        time_preference = COALESCE($22, time_preference),
+        special_requirements = COALESCE($23, special_requirements),
+        travel_willingness = COALESCE($24, travel_willingness),
+        max_travel_distance = COALESCE($25, max_travel_distance),
+        notes = COALESCE($26, notes),
         updated_at = CURRENT_TIMESTAMP
       WHERE user_id = $27
       RETURNING *`,
@@ -1027,13 +1041,14 @@ async function updateClientProfile(req, res) {
         toNull(emergencyContactName),
         toNull(emergencyContactPhone),
         toNull(emergencyContactRelationship),
+        toArray(wellnessGoals),
         toNull(otherGoals),
         toNull(address),
         toNull(city),
         toNull(state),
         toNull(zipCode),
         toNull(country),
-        toNull(preferredServices),
+        toArray(preferredServices),
         toNull(sessionLength),
         toNull(frequency),
         toNull(budget),
@@ -1043,7 +1058,6 @@ async function updateClientProfile(req, res) {
         toNull(travelWillingness),
         toNull(maxTravelDistance),
         toNull(notes),
-        toNull(profilePhotoUrl),
         userId
       ]
     );

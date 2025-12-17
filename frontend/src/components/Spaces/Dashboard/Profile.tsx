@@ -108,9 +108,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       console.log('Space name element:', spaceNameEl, spaceNameEl?.value);
 
       // Send to backend
-      console.log('Making PUT request to:', `http://localhost:4000/api/space-owners/${userId}`);
-      console.log('Request payload:', updateData);
-      
       const response = await fetch(`http://localhost:4000/api/space-owners/${userId}`, {
         method: 'PUT',
         headers: {
@@ -120,35 +117,18 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         body: JSON.stringify(updateData)
       });
 
-      console.log('Response status:', response.status, response.statusText);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-      const responseText = await response.text();
-      console.log('Raw response text:', responseText);
-      console.log('Response text length:', responseText.length);
-      
-      let result = {};
-      if (responseText && responseText.trim()) {
-        try {
-          result = JSON.parse(responseText);
-          console.log('Parsed response:', result);
-        } catch (error) {
-          console.error('Failed to parse JSON response:', error);
-          console.error('Response text that failed to parse:', responseText);
-          throw new Error(`Server error: ${response.status} ${response.statusText}. Response: ${responseText.substring(0, 200)}`);
-        }
-      } else {
-        console.warn('Empty response text received');
-        result = {};
+      let result;
+      try {
+        result = await response.json();
+      } catch (error) {
+        const text = await response.text();
+        console.error('Failed to parse JSON response:', text);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }
 
       if (!response.ok) {
         console.error('Backend error response:', result);
-        console.error('Response status:', response.status);
-        console.error('Response text:', responseText);
-        const errorMessage = result.error || result.message || result.details || `Failed to update profile (${response.status})`;
-        console.error('Error message:', errorMessage);
-        throw new Error(errorMessage);
+        throw new Error(result.error || result.message || 'Failed to update profile');
       }
 
       console.log('Backend response:', result);

@@ -35,7 +35,7 @@ $cta-text-hover: #FFFFFF;        // Optional bright hover text
 
 // Standardized button hover colors
 $button-yellow-hover: darken($secondary-color, 8%);  // Standard yellow button hover
-$button-pink-hover: darken($primary-color, 10%);   // Standard pink button hover
+$button-pink-hover: darken($client-colors-1, 10%);   // Teal button hover (changed from pink)
 
 $logo-yellow: #E6C27A;           // Soft Gold (more cohesive with plum)
 $stars-color: #ffc107;           // Star color for ratings

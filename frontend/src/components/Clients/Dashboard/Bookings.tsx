@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { FaStar } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 import ReviewPopup from './ReviewPopup';
 import RescheduleModal from './RescheduleModal';
@@ -240,7 +241,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Please sign in to submit a review.');
+        await Swal.fire({
+          icon: 'error',
+          title: 'Authentication Required',
+          text: 'Please sign in to submit a review.',
+          confirmButtonColor: '#8B7355'
+        });
         return;
       }
 
@@ -266,7 +272,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       }
 
       const result = await response.json();
-      alert('Thank you for your review!');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Thank You!',
+        text: 'Thank you for your review!',
+        confirmButtonColor: '#8B7355'
+      });
       
       // Refresh bookings to update UI
       loadBookings();
@@ -275,7 +286,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       setSelectedBooking(null);
     } catch (error: any) {
       console.error('Error submitting review:', error);
-      alert(`Error submitting review: ${error.message || 'Please try again'}`);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Review Submission Failed',
+        text: error.message || 'Please try again',
+        confirmButtonColor: '#8B7355'
+      });
     }
   };
 
@@ -310,7 +326,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Please sign in to reschedule appointments.');
+        await Swal.fire({
+          icon: 'error',
+          title: 'Authentication Required',
+          text: 'Please sign in to reschedule appointments.',
+          confirmButtonColor: '#8B7355'
+        });
         return;
       }
 
@@ -331,7 +352,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         throw new Error(errorData.error || 'Failed to reschedule booking');
       }
 
-      alert('Appointment rescheduled successfully!');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Appointment rescheduled successfully!',
+        confirmButtonColor: '#8B7355'
+      });
       setRescheduleModalOpen(false);
       setSelectedRescheduleBooking(null);
       loadBookings();
@@ -342,14 +368,30 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
   };
 
   const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to cancel this appointment?')) {
+    const result = await Swal.fire({
+      title: 'Cancel Appointment?',
+      text: 'Are you sure you want to cancel this appointment?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8B7355',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, cancel it',
+      cancelButtonText: 'No, keep it'
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Please sign in to cancel appointments.');
+        await Swal.fire({
+          icon: 'error',
+          title: 'Authentication Required',
+          text: 'Please sign in to cancel appointments.',
+          confirmButtonColor: '#8B7355'
+        });
         return;
       }
 
@@ -370,13 +412,23 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       }
 
       const result = await response.json();
-      alert('Appointment cancelled successfully.');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Appointment Cancelled',
+        text: 'Appointment cancelled successfully.',
+        confirmButtonColor: '#8B7355'
+      });
       
       // Refresh bookings to update UI
       loadBookings();
     } catch (error: any) {
       console.error('Error cancelling booking:', error);
-      alert(`Error cancelling appointment: ${error.message || 'Please try again'}`);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Cancellation Failed',
+        text: error.message || 'Please try again',
+        confirmButtonColor: '#8B7355'
+      });
     }
   };
   const renderContent = () => {

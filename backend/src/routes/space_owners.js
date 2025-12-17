@@ -6,12 +6,9 @@ const router = Router();
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  console.log('Authorization header:', authHeader ? 'Present' : 'Missing');
-  const token = authHeader?.split(' ')[1];
+  const token = req.headers.authorization?.split(' ')[1];
   
   if (!token) {
-    console.log('❌ No token provided');
     return res.status(401).json({ error: 'No token provided' });
   }
 
@@ -183,34 +180,12 @@ router.get('/:userId', async (req, res) => {
 // PUT - Update space owner profile
 router.put('/:userId', verifyToken, async (req, res) => {
   try {
-    console.log('\n=== PUT /api/space-owners/:userId ===');
-    console.log('Request received');
     const { userId } = req.params;
-    console.log('User ID from params:', userId);
-    console.log('User ID from token:', req.userId);
     
     // Verify the user is updating their own profile
     if (req.userId !== userId) {
-      console.log('❌ Unauthorized: userId mismatch');
       return res.status(403).json({ error: 'Unauthorized' });
     }
-    
-    console.log('✅ Authorization passed');
-
-    // Helper function to check if a field was provided
-    const wasProvided = (key) => req.body.hasOwnProperty(key);
-    
-    // Helper function to process values (convert empty strings to null only if field was provided)
-    const processValue = (value, fieldName) => {
-      if (!wasProvided(fieldName)) {
-        return undefined; // Field not provided, skip update (use undefined, not null)
-      }
-      // Field was provided - convert empty strings to null, but keep other values
-      if (value === '' || value === null || value === undefined) {
-        return null;
-      }
-      return value;
-    };
 
     const {
       businessName,
@@ -258,6 +233,21 @@ router.put('/:userId', verifyToken, async (req, res) => {
     });
     console.log('Full request body:', JSON.stringify(req.body, null, 2));
     console.log('Request body keys:', Object.keys(req.body));
+
+    // Helper function to check if a field was provided
+    const wasProvided = (key) => req.body.hasOwnProperty(key);
+    
+    // Helper function to process values (convert empty strings to null only if field was provided)
+    const processValue = (value, fieldName) => {
+      if (!wasProvided(fieldName)) {
+        return undefined; // Field not provided, skip update (use undefined, not null)
+      }
+      // Field was provided - convert empty strings to null, but keep other values
+      if (value === '' || value === null || value === undefined) {
+        return null;
+      }
+      return value;
+    };
 
     // Build dynamic UPDATE query for space_owner_profiles
     const updateFields = [];
@@ -558,22 +548,8 @@ router.put('/:userId', verifyToken, async (req, res) => {
       space: updatedSpace
     });
   } catch (err) {
-    console.error('\n=== ERROR updating space owner profile ===');
-    console.error('Error message:', err.message);
-    console.error('Error stack:', err.stack);
-    console.error('Error name:', err.name);
-    console.error('Full error:', err);
-    
-    // Ensure we always send a response
-    if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Server error', 
-        details: err.message,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-      });
-    } else {
-      console.error('⚠️ Response already sent, cannot send error response');
-    }
+    console.error('Error updating space owner profile:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
   }
 });
 

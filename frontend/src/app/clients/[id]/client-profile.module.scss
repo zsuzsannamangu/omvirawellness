@@ -1,0 +1,199 @@
+@import '@/styles/_variables.scss';
+
+.container {
+  min-height: 100vh;
+  background: $section-bg-1;
+  padding: $spacing-xl;
+  font-family: $font-main;
+}
+
+.header {
+  margin-bottom: $spacing-lg;
+}
+
+.backLink {
+  color: $client-colors-1;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $button-pink-hover;
+    text-decoration: underline;
+  }
+}
+
+.profileCard {
+  max-width: 800px;
+  margin: 0 auto;
+  background: $bg-white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, $client-colors-1 0%, lighten($client-colors-1, 10%) 100%);
+  color: $bg-white;
+}
+
+.profileImageContainer {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileInitials {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $bg-white;
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.clientName {
+  font-family: $font-heading;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 $spacing-xs 0;
+  color: $bg-white;
+}
+
+.pronoun {
+  font-size: 1.2rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.location {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.profileContent {
+  padding: $spacing-xl;
+}
+
+.section {
+  margin-bottom: $spacing-xl;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.sectionTitle {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-md 0;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid $border-light;
+}
+
+.goalsSubsection {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.subsectionTitle {
+  font-family: $font-heading;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.preferenceItem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-md;
+  align-items: baseline;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.label {
+  font-weight: 600;
+  color: $dark-text;
+  min-width: 150px;
+}
+
+.value {
+  color: $subtext-color;
+  flex: 1;
+}
+
+.text {
+  color: $subtext-color;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: $spacing-xxl;
+  background: $bg-white;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  h2 {
+    font-family: $font-heading;
+    color: $dark-text;
+    margin-bottom: $spacing-md;
+  }
+
+  p {
+    color: $subtext-color;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.error {
+  .backLink {
+    display: inline-block;
+    padding: $spacing-sm $spacing-lg;
+    background: $client-colors-1;
+    color: $bg-white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $button-pink-hover;
+      text-decoration: none;
+    }
+  }
+}

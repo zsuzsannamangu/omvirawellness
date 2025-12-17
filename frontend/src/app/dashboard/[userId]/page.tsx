@@ -20,9 +20,20 @@ export default function ClientDashboard() {
   
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
+  
+  // Set default submenu when switching sections
+  useEffect(() => {
+    if (activeSection === 'messages' && (activeSubmenu === 'upcoming' || activeSubmenu === 'confirmations' || activeSubmenu === 'direct')) {
+      setActiveSubmenu('inbox');
+    }
+    if (activeSection === 'payments' && activeSubmenu === 'methods') {
+      setActiveSubmenu('receipts');
+    }
+  }, [activeSection, activeSubmenu]);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userName, setUserName] = useState('User'); // Will be loaded from user data
-  const [totalBookings, setTotalBookings] = useState<number>(0);
+  const [totalBookings, setTotalBookings] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,27 +65,21 @@ export default function ClientDashboard() {
           setUserName(userData.email.split('@')[0]);
         }
         
-        // Load profile image from database
-        if (userData.profile?.profile_photo_url) {
-          setProfileImage(userData.profile.profile_photo_url);
-        }
-        
-        // Load bookings count
+        // Load booking stats
         try {
-          const bookingsResponse = await fetch(`http://localhost:4000/api/bookings/client/${userId}`, {
+          const statsResponse = await fetch(`http://localhost:4000/api/bookings/client/${userId}/stats`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           });
           
-          if (bookingsResponse.ok) {
-            const bookings = await bookingsResponse.json();
-            if (Array.isArray(bookings)) {
-              setTotalBookings(bookings.length);
-            }
+          if (statsResponse.ok) {
+            const statsData = await statsResponse.json();
+            setTotalBookings(statsData.totalBookings || 0);
           }
-        } catch (error) {
-          console.error('Error loading bookings count:', error);
+        } catch (statsError) {
+          console.error('Error loading booking stats:', statsError);
+          // Don't fail the whole page load if stats fail
         }
         
       } catch (error) {
@@ -88,7 +93,7 @@ export default function ClientDashboard() {
 
     loadUserData();
 
-    // Listen for profile update events to refresh name and image
+    // Listen for profile update events to refresh name
     const handleProfileUpdate = () => {
       const user = localStorage.getItem('user');
       if (user) {
@@ -97,86 +102,80 @@ export default function ClientDashboard() {
           if (userData.profile?.first_name && userData.profile?.last_name) {
             setUserName(`${userData.profile.first_name} ${userData.profile.last_name}`);
           }
-          if (userData.profile?.profile_photo_url) {
-            setProfileImage(userData.profile.profile_photo_url);
-          }
         } catch (error) {
           console.error('Error parsing user data on profile update:', error);
         }
       }
     };
 
-    const handleProfileImageUpdate = (event: any) => {
-      if (event.detail?.profilePhotoUrl) {
-        setProfileImage(event.detail.profilePhotoUrl);
-      }
-    };
-
     window.addEventListener('profileUpdated', handleProfileUpdate);
-    window.addEventListener('profileImageUpdated', handleProfileImageUpdate);
     
     return () => {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
-      window.removeEventListener('profileImageUpdated', handleProfileImageUpdate);
     };
   }, [userId, router]);
 
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Load unread messages count
+  useEffect(() => {
+    let isMounted = true;
+    
+    const loadUnreadMessages = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !userId || !isMounted) return;
+        const resp = await fetch('http://localhost:4000/api/messages/unread-count', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resp.ok && isMounted) {
+          const data = await resp.json();
+          setUnreadMessages(data.count || 0);
+        }
+      } catch (e) {
+        if (isMounted) {
+          setUnreadMessages(0);
+        }
+      }
+    };
+
+    loadUnreadMessages();
+
+    // Poll for unread messages every 10 seconds
+    const pollInterval = setInterval(() => {
+      if (isMounted) {
+        loadUnreadMessages();
+      }
+    }, 10000); // Check every 10 seconds
+
+    // Refresh messages when bookings are updated
+    const refresh = () => {
+      if (isMounted) {
+        loadUnreadMessages();
+      }
+    };
+    window.addEventListener('refreshBookings', refresh);
+    
+    // Also listen for message updates
+    const refreshMessages = () => {
+      if (isMounted) {
+        loadUnreadMessages();
+      }
+    };
+    window.addEventListener('refreshMessages', refreshMessages);
+    
+    return () => {
+      isMounted = false;
+      clearInterval(pollInterval);
+      window.removeEventListener('refreshBookings', refresh);
+      window.removeEventListener('refreshMessages', refreshMessages);
+    };
+  }, [userId]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        const imageDataUrl = e.target?.result as string;
-        setProfileImage(imageDataUrl);
-        
-        // Save to localStorage
-        try {
-          const user = localStorage.getItem('user');
-          if (user) {
-            const userData = JSON.parse(user);
-            if (userData.profile) {
-              userData.profile.profile_photo_url = imageDataUrl;
-              localStorage.setItem('user', JSON.stringify(userData));
-            }
-          }
-        } catch (error) {
-          console.error('Error saving profile image to localStorage:', error);
-        }
-        
-        // Save to database
-        try {
-          const token = localStorage.getItem('token');
-          if (token) {
-            const response = await fetch('http://localhost:4000/api/auth/profile/client', {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify({
-                profilePhotoUrl: imageDataUrl
-              })
-            });
-            
-            if (!response.ok) {
-              console.error('Failed to save profile image to database');
-            } else {
-              console.log('Profile image saved successfully to database');
-              // Update localStorage with server response
-              const result = await response.json();
-              if (result.data?.profile) {
-                const user = localStorage.getItem('user');
-                if (user) {
-                  const userData = JSON.parse(user);
-                  userData.profile = result.data.profile;
-                  localStorage.setItem('user', JSON.stringify(userData));
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error saving profile image to database:', error);
-        }
+      reader.onload = (e) => {
+        setProfileImage(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -215,15 +214,16 @@ export default function ClientDashboard() {
       { id: 'providers', label: 'Saved Providers' },
     ],
     payments: [
-      { id: 'methods', label: 'Payment Methods' },
       { id: 'receipts', label: 'Payment History' },
     ],
     calendar: [
       { id: 'view', label: 'Calendar View' },
     ],
     messages: [
-      { id: 'confirmations', label: 'Confirmations' },
-      { id: 'direct', label: 'Direct Communication' },
+      { id: 'inbox', label: 'Inbox' },
+      { id: 'starred', label: 'Starred' },
+      { id: 'sent', label: 'Sent' },
+      { id: 'trash', label: 'Trash' },
     ],
     profile: [
       { id: 'personal', label: 'Personal Info' },
@@ -287,6 +287,9 @@ export default function ClientDashboard() {
               }}
             >
               <span className={styles.sidebarLabel}>{item.label}</span>
+              {item.id === 'messages' && unreadMessages > 0 && (
+                <span className={styles.badge}>{unreadMessages}</span>
+              )}
             </button>
           ))}
         </nav>
@@ -315,8 +318,14 @@ export default function ClientDashboard() {
                 <h1 className={styles.greeting}>Hello, {userName}</h1>
               </div>
               <div className={styles.statsRow}>
-                <span className={styles.bookings}>{totalBookings} bookings</span>
-                <span className={styles.profileLink}>View your profile on Omvira</span>
+                <span className={styles.bookings}>{totalBookings} {totalBookings === 1 ? 'booking' : 'bookings'}</span>
+                <Link 
+                  href={`/clients/${userId}`}
+                  className={styles.profileLink}
+                  target="_blank"
+                >
+                  View your profile on Omvira
+                </Link>
               </div>
             </div>
           </div>
@@ -344,6 +353,9 @@ export default function ClientDashboard() {
               onClick={() => setActiveSubmenu(item.id)}
             >
               {item.label}
+              {activeSection === 'messages' && item.id === 'inbox' && unreadMessages > 0 && (
+                <span className={styles.badge}>{unreadMessages}</span>
+              )}
             </button>
           ))}
         </div>
