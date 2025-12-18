@@ -561,42 +561,56 @@ router.post('/:id/visit', async (req, res) => {
 router.get('/:id/visits/stats', async (req, res) => {
   try {
     const { id } = req.params;
-    const { period = 'today' } = req.query;
+    let { period = 'today', timezone = 'UTC' } = req.query;
     
-    // Calculate date range based on period
+    // Validate timezone to prevent SQL injection
+    // Check if timezone is valid by trying to use it
+    try {
+      // Test if the timezone is valid
+      const testDate = new Date();
+      testDate.toLocaleString('en-US', { timeZone: timezone });
+    } catch (e) {
+      // Invalid timezone, default to UTC
+      timezone = 'UTC';
+    }
+    
+    // Sanitize timezone string to only allow alphanumeric, underscore, slash, and hyphen
+    timezone = timezone.replace(/[^a-zA-Z0-9_/\-+]/g, '');
+    
+    // Use timezone-aware date truncation
+    // CURRENT_TIMESTAMP is always in UTC, we convert to user's timezone for day boundaries
     let dateCondition = '';
-    const now = new Date();
     
     switch (period) {
       case 'today':
-        dateCondition = `visited_at >= DATE_TRUNC('day', NOW())`;
+        dateCondition = `visited_at >= DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
         break;
       case 'yesterday':
-        dateCondition = `visited_at >= DATE_TRUNC('day', NOW() - INTERVAL '1 day') 
-                         AND visited_at < DATE_TRUNC('day', NOW())`;
+        dateCondition = `visited_at >= (DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') - INTERVAL '1 day') AT TIME ZONE '${timezone}' 
+                         AND visited_at < DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
         break;
       case 'last_7_days':
-        dateCondition = `visited_at >= NOW() - INTERVAL '7 days'`;
+        dateCondition = `visited_at >= (DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') - INTERVAL '7 days') AT TIME ZONE '${timezone}'`;
         break;
       case 'last_30_days':
-        dateCondition = `visited_at >= NOW() - INTERVAL '30 days'`;
+        dateCondition = `visited_at >= (DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') - INTERVAL '30 days') AT TIME ZONE '${timezone}'`;
         break;
       case 'this_month':
-        dateCondition = `visited_at >= DATE_TRUNC('month', NOW())`;
+        dateCondition = `visited_at >= DATE_TRUNC('month', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
         break;
       case 'last_month':
-        dateCondition = `visited_at >= DATE_TRUNC('month', NOW() - INTERVAL '1 month') 
-                         AND visited_at < DATE_TRUNC('month', NOW())`;
+        dateCondition = `visited_at >= (DATE_TRUNC('month', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') - INTERVAL '1 month') AT TIME ZONE '${timezone}' 
+                         AND visited_at < DATE_TRUNC('month', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
         break;
       case 'this_year':
-        dateCondition = `visited_at >= DATE_TRUNC('year', NOW())`;
+        dateCondition = `visited_at >= DATE_TRUNC('year', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
         break;
       case 'last_year':
-        dateCondition = `visited_at >= DATE_TRUNC('year', NOW() - INTERVAL '1 year') 
-                         AND visited_at < DATE_TRUNC('year', NOW())`;
+        dateCondition = `visited_at >= (DATE_TRUNC('year', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') - INTERVAL '1 year') AT TIME ZONE '${timezone}' 
+                         AND visited_at < DATE_TRUNC('year', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
         break;
       default:
-        dateCondition = `visited_at >= DATE_TRUNC('day', NOW())`;
+        dateCondition = `visited_at >= DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}'`;
     }
     
     // Get total count for the period
@@ -622,12 +636,12 @@ router.get('/:id/visits/stats', async (req, res) => {
       // Daily breakdown for other periods
       dailyResult = await pool.query(`
         SELECT 
-          DATE_TRUNC('day', visited_at) as date,
+          DATE_TRUNC('day', visited_at AT TIME ZONE '${timezone}') AT TIME ZONE '${timezone}' as date,
           COUNT(*) as count
         FROM profile_visits
         WHERE provider_id = $1 
-          AND visited_at >= NOW() - INTERVAL '30 days'
-        GROUP BY DATE_TRUNC('day', visited_at)
+          AND visited_at >= (DATE_TRUNC('day', CURRENT_TIMESTAMP AT TIME ZONE '${timezone}') - INTERVAL '30 days') AT TIME ZONE '${timezone}'
+        GROUP BY DATE_TRUNC('day', visited_at AT TIME ZONE '${timezone}')
         ORDER BY date ASC
       `, [id]);
     }

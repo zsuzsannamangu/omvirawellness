@@ -44,7 +44,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
   const [loading, setLoading] = useState(false);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [totalReviews, setTotalReviews] = useState<number>(0);
-  const [trafficPeriod, setTrafficPeriod] = useState<TrafficPeriod>('today');
+  const [trafficPeriod, setTrafficPeriod] = useState<TrafficPeriod>('this_month');
   const [trafficData, setTrafficData] = useState<{ [key: string]: number }>({});
   const [dailyTrafficData, setDailyTrafficData] = useState<{ date: string; count: number }[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -179,10 +179,13 @@ export default function Stats({ activeSubmenu }: StatsProps) {
 
   const loadTrafficData = async () => {
     try {
+      // Get user's timezone
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
       // Fetch real traffic data for all periods
       const periods: TrafficPeriod[] = ['today', 'yesterday', 'last_7_days', 'last_30_days', 'this_month', 'last_month', 'this_year', 'last_year'];
       const trafficPromises = periods.map(period =>
-        fetch(`http://localhost:4000/api/providers/${userId}/visits/stats?period=${period}`)
+        fetch(`http://localhost:4000/api/providers/${userId}/visits/stats?period=${period}&timezone=${encodeURIComponent(userTimezone)}`)
           .then(res => res.json())
           .then(data => ({ 
             period, 
@@ -330,8 +333,12 @@ export default function Stats({ activeSubmenu }: StatsProps) {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
     
-    // Count completed: bookings with past dates (regardless of status except cancelled)
+    // Count completed: past bookings (date before today) that are NOT cancelled
     const completed = filteredBookings.filter(b => {
+      // Skip cancelled bookings
+      if (b.status === 'cancelled') return false;
+      
+      // Check if booking date is in the past
       let bookingDateStr = b.booking_date;
       if (bookingDateStr.includes('T')) {
         bookingDateStr = bookingDateStr.split('T')[0];
@@ -339,7 +346,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
       const [year, month, day] = bookingDateStr.split('-').map(Number);
       const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
       
-      return bookingDate < today && b.status !== 'cancelled';
+      return bookingDate < today;
     }).length;
     
     return { total, completed };
@@ -371,23 +378,51 @@ export default function Stats({ activeSubmenu }: StatsProps) {
         
         if (dataType === 'traffic') {
           if (dailyTrafficData.length > 0) {
-            const monthStr = monthStart.toISOString().substring(0, 7); // YYYY-MM
+            // Format month in local timezone YYYY-MM
+            const year = monthStart.getFullYear();
+            const monthNum = String(monthStart.getMonth() + 1).padStart(2, '0');
+            const monthStr = `${year}-${monthNum}`;
+            
             value = dailyTrafficData.filter(d => {
-              const dateDateStr = d.date.substring(0, 7); // YYYY-MM
+              const dateDateStr = String(d.date).substring(0, 7); // YYYY-MM
               return dateDateStr === monthStr;
             }).reduce((sum, d) => sum + d.count, 0);
           }
         } else if (dataType === 'bookings') {
+          const now = new Date();
+          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+          
           value = bookings.filter(b => {
-            const [year, month_num, day] = b.booking_date.split('-').map(Number);
+            // Exclude cancelled bookings
+            if (b.status === 'cancelled') return false;
+            
+            let bookingDateStr = b.booking_date;
+            if (bookingDateStr.includes('T')) {
+              bookingDateStr = bookingDateStr.split('T')[0];
+            }
+            const [year, month_num, day] = bookingDateStr.split('-').map(Number);
             const bookingDate = new Date(year, month_num - 1, day, 0, 0, 0, 0);
-            return bookingDate >= monthStart && bookingDate < monthEnd;
+            
+            // Only count bookings in this month that are in the past (completed)
+            return bookingDate >= monthStart && bookingDate < monthEnd && bookingDate < today;
           }).length;
         } else if (dataType === 'revenue') {
+          const now = new Date();
+          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+          
           value = bookings.filter(b => {
-            const [year, month_num, day] = b.booking_date.split('-').map(Number);
+            // Exclude cancelled bookings
+            if (b.status === 'cancelled') return false;
+            
+            let bookingDateStr = b.booking_date;
+            if (bookingDateStr.includes('T')) {
+              bookingDateStr = bookingDateStr.split('T')[0];
+            }
+            const [year, month_num, day] = bookingDateStr.split('-').map(Number);
             const bookingDate = new Date(year, month_num - 1, day, 0, 0, 0, 0);
-            return bookingDate >= monthStart && bookingDate < monthEnd;
+            
+            // Only count revenue from past bookings (completed)
+            return bookingDate >= monthStart && bookingDate < monthEnd && bookingDate < today;
           }).reduce((sum, b) => sum + (parseFloat(String(b.total_amount)) || 0), 0);
         }
         
@@ -432,16 +467,22 @@ export default function Stats({ activeSubmenu }: StatsProps) {
         if (dailyTrafficData.length > 0) {
           // For daily/weekly/monthly data, match by date only
           if (period === 'last_7_days' || period === 'last_30_days' || period === 'this_month' || period === 'last_month') {
-            const currentDateStr = current.toISOString().split('T')[0]; // YYYY-MM-DD
+            // Format current date in local timezone YYYY-MM-DD
+            const year = current.getFullYear();
+            const month = String(current.getMonth() + 1).padStart(2, '0');
+            const day = String(current.getDate()).padStart(2, '0');
+            const currentDateStr = `${year}-${month}-${day}`;
+            
             const matchingData = dailyTrafficData.find(d => {
-              const dateDateStr = d.date.split('T')[0]; // YYYY-MM-DD
+              // Extract date from backend data (already in correct timezone from backend)
+              const dateDateStr = String(d.date).split('T')[0]; // YYYY-MM-DD
               return dateDateStr === currentDateStr;
             });
             value = matchingData ? matchingData.count : 0;
           } else if (period === 'today' || period === 'yesterday') {
             // For hourly data (today/yesterday), match by hour in local timezone
             value = dailyTrafficData.filter(d => {
-              // Parse the UTC timestamp from backend
+              // Parse the timestamp from backend (already timezone-aware from backend)
               const dataDate = new Date(d.date);
               
               // Get the hour of this interval in local time
@@ -467,25 +508,41 @@ export default function Stats({ activeSubmenu }: StatsProps) {
           value = 0;
         }
       } else if (dataType === 'bookings') {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+        
         const periodBookings = bookings.filter(b => {
+          // Exclude cancelled bookings
+          if (b.status === 'cancelled') return false;
+          
           let bookingDateStr = b.booking_date;
           if (bookingDateStr.includes('T')) {
             bookingDateStr = bookingDateStr.split('T')[0];
           }
           const [year, month, day] = bookingDateStr.split('-').map(Number);
           const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
-          return bookingDate >= current && bookingDate < intervalEnd;
+          
+          // Only count bookings in this interval that are in the past (completed)
+          return bookingDate >= current && bookingDate < intervalEnd && bookingDate < today;
         });
         value = periodBookings.length;
       } else if (dataType === 'revenue') {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+        
         const periodBookings = bookings.filter(b => {
+          // Exclude cancelled bookings
+          if (b.status === 'cancelled') return false;
+          
           let bookingDateStr = b.booking_date;
           if (bookingDateStr.includes('T')) {
             bookingDateStr = bookingDateStr.split('T')[0];
           }
           const [year, month, day] = bookingDateStr.split('-').map(Number);
           const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
-          return bookingDate >= current && bookingDate < intervalEnd;
+          
+          // Only count revenue from past bookings (completed)
+          return bookingDate >= current && bookingDate < intervalEnd && bookingDate < today;
         });
         value = periodBookings.reduce((sum, b) => sum + (parseFloat(String(b.total_amount)) || 0), 0);
       }
@@ -503,8 +560,9 @@ export default function Stats({ activeSubmenu }: StatsProps) {
       data.push({ time: formatTime(start), value: 0 });
     }
     
-    // Limit to reasonable number of data points for better visualization
-    if (data.length > 30) {
+    // Don't downsample for periods with reasonable data points
+    // Only downsample if we have more than 50 data points
+    if (data.length > 50) {
       const step = Math.ceil(data.length / 30);
       return data.filter((_, index) => index % step === 0);
     }
@@ -704,18 +762,10 @@ export default function Stats({ activeSubmenu }: StatsProps) {
 
             <div className={styles.bookingStatsGrid} key={`bookings-grid-${trafficPeriod}`}>
               <div className={styles.statCardCompact}>
-                <FaCalendarAlt className={styles.statIcon} />
-                <div className={styles.statCardContentCompact}>
-                  <div className={styles.statValueCompact}>{bookingStats.total}</div>
-                  <div className={styles.statLabelCompact}>Total ({getPeriodDisplayLabel(trafficPeriod)})</div>
-                </div>
-              </div>
-
-              <div className={styles.statCardCompact}>
                 <FaClock className={styles.statIcon} />
                 <div className={styles.statCardContentCompact}>
                   <div className={styles.statValueCompact}>{upcomingBookings.length}</div>
-                  <div className={styles.statLabelCompact}>Upcoming</div>
+                  <div className={styles.statLabelCompact}>Upcoming Bookings</div>
                 </div>
               </div>
 
