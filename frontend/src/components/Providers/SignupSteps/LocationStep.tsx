@@ -24,12 +24,6 @@ const locationOptions = [
     icon: FaCar
   },
   {
-    id: 'from-booked-studio',
-    title: 'From a booked studio',
-    description: 'I rent studio space on-demand through Omvira\'s studio booking system.',
-    icon: FaBuilding
-  },
-  {
     id: 'online',
     title: 'Online',
     description: 'I offer services via video call.',

@@ -1226,8 +1226,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Address</label>
-                  <input type="text" data-field="address_line1" className={styles.formInput} defaultValue={profileBasic.address_line1 || ''} placeholder="Street address" autoComplete="off" />
+                  <label className={styles.formLabel}>Service Location Address</label>
+                  <input type="text" data-field="address_line1" className={styles.formInput} defaultValue={profileBasic.address_line1 || ''} placeholder="Where you hold sessions" autoComplete="off" />
               </div>
 
                 <div className={`${styles.formRow} ${styles.formRowThree}`}>
@@ -1505,19 +1505,15 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                   <div className={styles.workLocationGroup}>
                     <label className={styles.workLocationLabel}>
                       <input type="checkbox" data-field="work_location" value="at-my-place" defaultChecked={workLocations.includes('at-my-place')} />
-                      <span>My Place</span>
+                      <span>My Studio/Office (Clients come to me)</span>
                     </label>
                     <label className={styles.workLocationLabel}>
                       <input type="checkbox" data-field="work_location" value="at-client-location" defaultChecked={workLocations.includes('at-client-location')} />
-                      <span>Clients Location</span>
+                      <span>Client's Location (I travel to clients)</span>
                     </label>
                     <label className={styles.workLocationLabel}>
                       <input type="checkbox" data-field="work_location" value="online" defaultChecked={workLocations.includes('online')} />
                       <span>Online</span>
-                    </label>
-                    <label className={styles.workLocationLabel}>
-                      <input type="checkbox" data-field="work_location" value="from-booked-studio" defaultChecked={workLocations.includes('from-booked-studio')} />
-                      <span>Booked Studio</span>
                     </label>
                   </div>
                 </div>

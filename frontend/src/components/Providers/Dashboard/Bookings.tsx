@@ -214,8 +214,6 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         return "Provider's Studio";
       case 'home':
         return 'Come to Me';
-      case 'travel':
-        return 'On Location';
       case 'online':
         return 'Online';
       default:
@@ -551,7 +549,6 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                       <strong>Location:</strong> {
                         serviceInfo.location_type === 'home' ? 'Client Location' :
                         serviceInfo.location_type === 'studio' ? 'Provider Studio' :
-                        serviceInfo.location_type === 'travel' ? 'On Location' :
                         serviceInfo.location_type === 'online' ? 'Online' : 'Provider Studio'
                       }
                     </div>

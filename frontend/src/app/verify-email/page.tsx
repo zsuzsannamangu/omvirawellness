@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { API_URL } from '@/config/api';
 import styles from '@/styles/Login.module.scss';
 
-export default function VerifyEmailPage() {
+function VerifyEmailPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');

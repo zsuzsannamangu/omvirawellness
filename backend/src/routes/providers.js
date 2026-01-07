@@ -60,9 +60,7 @@ router.get('/', async (req, res) => {
       let locationValue;
       if (location === 'Comes to Me') {
         locationValue = 'at-client-location';
-      } else if (location === "Provider's Studio") {
-        locationValue = 'from-booked-studio';
-      } else if (location === "Provider's Home") {
+      } else if (location === "Provider's Studio" || location === "Provider's Home") {
         locationValue = 'at-my-place';
       } else if (location === 'Virtual Session') {
         locationValue = 'online';

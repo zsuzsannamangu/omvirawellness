@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -20,13 +20,12 @@ function BookingConfirmationPageContent() {
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   
-  // Location options
-  const [locationType, setLocationType] = useState<'home' | 'studio' | 'travel' | 'online'>('studio');
+  // Location options - only: studio (provider's place), home (travel to client), online
+  const [locationType, setLocationType] = useState<'home' | 'studio' | 'online'>('studio');
   const [userAddress, setUserAddress] = useState<string>('');
   const [userCity, setUserCity] = useState<string>('');
   const [userState, setUserState] = useState<string>('');
   const [userZipCode, setUserZipCode] = useState<string>('');
-  const [travelRadius, setTravelRadius] = useState<number>(10);
   const [addressValidated, setAddressValidated] = useState<boolean | null>(null);
   
   // Distance checking
@@ -119,7 +118,6 @@ function BookingConfirmationPageContent() {
           const locationOptions = {
             hasHomeStudio: Array.isArray(workLocation) && workLocation.includes('at-my-place'),
             travelsToClient: Array.isArray(workLocation) && workLocation.includes('at-client-location'),
-            hasBookedLocation: Array.isArray(workLocation) && workLocation.includes('from-booked-studio'),
             offersOnline: Array.isArray(workLocation) && workLocation.includes('online'),
             homeStudioFee: 0, // Default, could be added to database later
             travelFee: data.travel_fee || 0,
@@ -367,7 +365,7 @@ function BookingConfirmationPageContent() {
       setAddressValidated(null);
       return;
     }
-    
+  
     if (locationType === 'home') {
       // For "Come to Me" - check distance
       await checkDistance();
@@ -376,9 +374,6 @@ function BookingConfirmationPageContent() {
       } else {
         setAddressValidated(false);
       }
-    } else if (locationType === 'travel') {
-      // For "On Location" - just save the travel preference (always valid)
-      setAddressValidated(true);
     }
   };
 
@@ -507,7 +502,7 @@ function BookingConfirmationPageContent() {
     setDistanceCheck(null);
   };
 
-  const handleLocationChange = (type: 'home' | 'studio' | 'travel' | 'online') => {
+  const handleLocationChange = (type: 'home' | 'studio' | 'online') => {
     setLocationType(type);
     setAddressValidated(null);
     setUserAddress('');
@@ -522,10 +517,8 @@ function BookingConfirmationPageContent() {
       ? selectedService.price 
       : parseFloat(selectedService.price) || 0;
     
-    // Add location fee - "Come to Me" also uses travelFee
+    // Add location fee
     if (locationType === 'home' && provider?.locationOptions?.travelFee) {
-      total += parseFloat(provider.locationOptions.travelFee) || 0;
-    } else if (locationType === 'travel' && provider?.locationOptions?.travelFee) {
       total += parseFloat(provider.locationOptions.travelFee) || 0;
     } else if (locationType === 'online' && provider?.locationOptions?.onlineFee) {
       total += parseFloat(provider.locationOptions.onlineFee) || 0;
@@ -557,8 +550,6 @@ function BookingConfirmationPageContent() {
       if (!userAddress.trim()) newErrors.address = 'Please enter your street address';
       if (!userCity.trim()) newErrors.city = 'Please enter your city';
       if (!userState.trim()) newErrors.state = 'Please enter your state';
-    } else if (locationType === 'travel' && !userAddress.trim()) {
-      newErrors.address = 'Please enter your address for booking';
     }
     
     // Check distance for "Come to Me" option
@@ -566,9 +557,6 @@ function BookingConfirmationPageContent() {
       newErrors.distance = 'Your location is outside the provider\'s travel range';
     }
     
-    if (locationType === 'travel' && travelRadius < 1) {
-      newErrors.radius = 'Please select a travel radius';
-    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -598,13 +586,6 @@ function BookingConfirmationPageContent() {
         }
       }
       // If no maxDistance, just need address entered (provider travels anywhere)
-    }
-
-    // For "travel" location: must have address
-    if (locationType === 'travel') {
-      if (!userAddress.trim()) {
-        return false;
-      }
     }
 
     // For "studio" and "online": no address needed, always ready if location is available
@@ -673,7 +654,7 @@ function BookingConfirmationPageContent() {
         booking_date: selectedDate,
         start_time: time24Hour, // Use converted 24-hour format
         location_type: locationType,
-        location_details: locationType === 'home' || locationType === 'travel' ? userAddress : 
+        location_details: locationType === 'home' ? userAddress : 
                           locationType === 'online' ? 'Online' : 
                           provider.location || 'Provider Studio',
         add_ons: selectedAddOnsList.map((addOn: any) => ({
@@ -712,8 +693,7 @@ function BookingConfirmationPageContent() {
         date: selectedDate,
         time: selectedTime,
         locationType,
-        userAddress: locationType === 'home' ? userAddress : (locationType === 'travel' ? userAddress : ''),
-        travelRadius: locationType === 'travel' ? travelRadius : 0,
+        userAddress: locationType === 'home' ? userAddress : '',
         addOns: selectedAddOnsList,
         total: calculateTotal(),
         deposit: calculateDeposit()
@@ -812,8 +792,8 @@ function BookingConfirmationPageContent() {
               <h3>Location</h3>
               <div className={styles.locationOptions}>
                 <div 
-                  className={`${styles.locationOption} ${locationType === 'studio' ? styles.selected : ''} ${!provider?.locationOptions?.hasBookedLocation ? styles.disabled : ''}`}
-                  onClick={() => provider?.locationOptions?.hasBookedLocation && handleLocationChange('studio')}
+                  className={`${styles.locationOption} ${locationType === 'studio' ? styles.selected : ''} ${!provider?.locationOptions?.hasHomeStudio ? styles.disabled : ''}`}
+                  onClick={() => provider?.locationOptions?.hasHomeStudio && handleLocationChange('studio')}
                 >
                   <FaBuilding className={styles.locationIcon} />
                   <div className={styles.locationInfo}>
@@ -859,20 +839,6 @@ function BookingConfirmationPageContent() {
                 </div>
 
           <div 
-            className={`${styles.locationOption} ${locationType === 'travel' ? styles.selected : ''} ${!provider?.locationOptions?.travelsToClient ? styles.disabled : ''}`}
-            onClick={() => provider?.locationOptions?.travelsToClient && handleLocationChange('travel')}
-          >
-            <FaCar className={styles.locationIcon} />
-            <div className={styles.locationInfo}>
-              <h4>On Location</h4>
-              <p>Provider will book a studio for the session.</p>
-              {provider?.locationOptions?.travelFee > 0 && (
-                <span className={styles.locationFee}>+${provider.locationOptions.travelFee}</span>
-              )}
-            </div>
-          </div>
-
-          <div 
             className={`${styles.locationOption} ${locationType === 'online' ? styles.selected : ''} ${!provider?.locationOptions?.offersOnline ? styles.disabled : ''}`}
             onClick={() => provider?.locationOptions?.offersOnline && handleLocationChange('online')}
           >
@@ -887,8 +853,8 @@ function BookingConfirmationPageContent() {
           </div>
               </div>
 
-              {/* Address Input for home and travel options */}
-              {(locationType === 'home' || locationType === 'travel') && (
+              {/* Address Input for home option */}
+              {locationType === 'home' && (
                 <div className={styles.addressSection} ref={addressSectionRef}>
                   <div className={styles.inputGroup}>
                     <label htmlFor="address">Please enter your address</label>
@@ -975,37 +941,6 @@ function BookingConfirmationPageContent() {
                     {errors.distance && <span className={styles.errorText}>{errors.distance}</span>}
                   </div>
 
-                  {locationType === 'travel' && (
-                    <>
-                      <div className={styles.inputGroup}>
-                        <label htmlFor="radius">What is your travel radius?</label>
-                        <div className={styles.radiusSelector}>
-                          <input
-                            type="range"
-                            min="1"
-                            max="25"
-                            value={travelRadius}
-                            onChange={(e) => setTravelRadius(parseInt(e.target.value))}
-                            className={styles.radiusSlider}
-                          />
-                          <span className={styles.radiusValue}>{travelRadius} miles</span>
-                        </div>
-                        {errors.radius && <span className={styles.errorText}>{errors.radius}</span>}
-                      </div>
-                      
-                      <div className={styles.inputGroup}>
-                        <button
-                          type="button"
-                          onClick={validateAddress}
-                          disabled={!userAddress.trim()}
-                          className={styles.checkAddressButton}
-                        >
-                          Save Travel Preference
-                        </button>
-                      </div>
-                    </>
-                  )}
-
                   {distanceCheck && distanceCheck.checked && locationType === 'home' && (
                     <div className={`${styles.validationMessage} ${distanceCheck.withinRange ? styles.valid : styles.invalid}`}>
                       {distanceCheck.withinRange ? (
@@ -1024,24 +959,6 @@ function BookingConfirmationPageContent() {
                     </div>
                   )}
                   
-                  {addressValidated !== null && userAddress.trim() && locationType === 'travel' && (
-                    <div className={`${styles.validationMessage} ${addressValidated ? styles.valid : styles.invalid}`}>
-                      {addressValidated ? (
-                        <>
-                          <span className={styles.checkmark}>✓</span>
-                          "Great! Your travel preferences have been saved. Your provider will book a studio and email you the details."
-                        </>
-                      ) : (
-                        <>
-                          <span className={styles.xmark}>✗</span>
-                          {locationType === 'home' ? 
-                            "Unfortunately, you are outside of this provider's travel radius. Please select a different location." :
-                            "Unfortunately, you are outside of this provider's travel radius. Please select a different location or change your travel radius."
-                          }
-                        </>
-                      )}
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -1084,7 +1001,6 @@ function BookingConfirmationPageContent() {
               
               {(() => {
                 const hasLocationFee = (locationType === 'home' && provider?.locationOptions?.travelFee > 0) ||
-                  (locationType === 'travel' && provider?.locationOptions?.travelFee > 0) ||
                   (locationType === 'online' && provider?.locationOptions?.onlineFee > 0);
                 const hasAddOns = Object.values(selectedAddOns).some(selected => selected === true);
                 const hasIntermediateItems = hasLocationFee || hasAddOns;
@@ -1099,13 +1015,6 @@ function BookingConfirmationPageContent() {
 
               {/* Location Fee */}
               {locationType === 'home' && provider?.locationOptions?.travelFee > 0 && (
-                <div className={styles.summaryItem}>
-                  <span>Travel Fee</span>
-                  <span>${parseFloat(provider.locationOptions.travelFee || 0).toFixed(2)}</span>
-                </div>
-              )}
-              
-              {locationType === 'travel' && provider?.locationOptions?.travelFee > 0 && (
                 <div className={styles.summaryItem}>
                   <span>Travel Fee</span>
                   <span>${parseFloat(provider.locationOptions.travelFee || 0).toFixed(2)}</span>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -27,6 +27,7 @@ function ClientDashboardContent() {
   
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
+  const [needsProfileCompletion, setNeedsProfileCompletion] = useState(false);
 
   // Handle OAuth token from URL hash or query params (Google sign-in)
   useEffect(() => {
@@ -67,6 +68,7 @@ function ClientDashboardContent() {
       // If profile needs completion, keep the section parameter
       if (completeProfile === 'true') {
         const section = searchParams.get('section') || 'profile';
+        setNeedsProfileCompletion(true);
         router.replace(`/dashboard/${userId}?complete_profile=true&section=${section}`);
         setActiveSection('profile');
       } else {

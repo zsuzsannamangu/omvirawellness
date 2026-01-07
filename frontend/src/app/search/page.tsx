@@ -778,7 +778,7 @@ export default function SearchPage() {
         if (selectedLocation === 'Comes to Me') {
           return provider.work_location.includes('at-client-location');
         } else if (selectedLocation === "Provider's Studio") {
-          return provider.work_location.includes('from-booked-studio');
+          return provider.work_location.includes('at-my-place');
         } else if (selectedLocation === "Provider's Home") {
           return provider.work_location.includes('at-my-place');
         } else if (selectedLocation === 'Virtual Session') {
@@ -980,13 +980,40 @@ export default function SearchPage() {
                 ) : (
                   <div>
                     <p style={{ marginBottom: '16px', fontSize: '18px', fontWeight: '600' }}>
-                      No providers found for "{searchQuery}"
+                      No providers found {searchQuery ? `for "${searchQuery}"` : ''} {selectedService || selectedLocation || selectedPriceRange ? 'with your current filters' : ''}
                     </p>
-                    <p style={{ marginBottom: '12px', color: '#666' }}>
-                      Try searching with different keywords or browse by category:
+                    <p style={{ marginBottom: '12px', color: '#666', fontSize: '16px' }}>
+                      {searchQuery ? (
+                        <>Try searching with different keywords like "yoga", "massage", "coaching", or browse by category below.</>
+                      ) : (
+                        <>Try adjusting your filters or browse by category below.</>
+                      )}
                     </p>
+                    
+                    {(selectedService || selectedLocation || selectedPriceRange) && (
+                      <p style={{ marginBottom: '16px', fontSize: '14px', color: '#999' }}>
+                        <button 
+                          onClick={handleResetFilters}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#4a90e2',
+                            textDecoration: 'underline',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: '600'
+                          }}
+                        >
+                          Reset all filters
+                        </button> to see all providers
+                      </p>
+                    )}
+                    
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
-                      {SERVICE_CATEGORIES.slice(0, 6).map((category) => (
+                      <p style={{ width: '100%', marginBottom: '8px', fontSize: '14px', color: '#666', fontWeight: '600' }}>
+                        Popular categories:
+                      </p>
+                      {SERVICE_CATEGORIES.slice(0, 8).map((category) => (
                         <button
                           key={category.id}
                           onClick={() => {
@@ -1013,21 +1040,6 @@ export default function SearchPage() {
                         </button>
                       ))}
                     </div>
-                    <p style={{ marginTop: '20px', fontSize: '14px', color: '#999' }}>
-                      Or <button 
-                        onClick={handleResetFilters}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#4a90e2',
-                          textDecoration: 'underline',
-                          cursor: 'pointer',
-                          fontSize: '14px'
-                        }}
-                      >
-                        reset all filters
-                      </button> to see all providers
-                    </p>
                   </div>
                 )}
               </div>

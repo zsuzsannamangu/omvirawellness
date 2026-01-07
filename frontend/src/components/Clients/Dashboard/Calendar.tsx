@@ -184,8 +184,6 @@ export default function Calendar({ activeSubmenu }: CalendarProps) {
         return "Provider's Studio";
       case 'home':
         return 'Come to Me';
-      case 'travel':
-        return 'On Location';
       case 'online':
         return 'Online';
       default:

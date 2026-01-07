@@ -451,15 +451,89 @@
 
 // Responsive Design
 @media (max-width: 480px) {
-  .container {
-    padding: 0.5rem;
+  // Reduce outer paddings to maximize usable width
+  .header {
+    padding: 12px 16px;
   }
-  
+
+  .content {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .stepContainer {
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px $shadow-color;
+  }
+
+  .navTab {
+    padding: 0.9rem 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .progressContainer {
+    padding: 12px;
+    gap: 8px;
+  }
+
   .formContent {
-    padding: 2rem;
+    padding: 16px;
   }
-  
+
   .title {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .label {
+    font-size: 0.9rem; // improve readability
+  }
+
+  .emailInput {
+    font-size: 16px; // mobile-friendly font size (prevents zoom)
+    padding: 14px 16px;
+  }
+
+  .continueButton,
+  .socialButton {
+    height: 52px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .dividerText {
+    font-size: 0.95rem;
+  }
+
+  .switchText {
+    font-size: 0.95rem;
+  }
+
+  .legalDisclaimer {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  // Ultra-small devices: tighten spacing a bit more
+  .content {
+    padding: 12px;
+  }
+  .stepContainer {
+    padding: 12px;
+  }
+  .navTab {
+    padding: 0.75rem 0.25rem;
+    font-size: 0.9rem;
+  }
+  .continueButton,
+  .socialButton {
+    height: 50px;
+    font-size: 0.95rem;
   }
 } 
