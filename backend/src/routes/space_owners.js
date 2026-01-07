@@ -1,3 +1,4 @@
+/* SPACES FEATURE - COMMENTED OUT FOR MVP
 const { Router } = require('express');
 const pool = require('../db');
 const jwt = require('jsonwebtoken');
@@ -554,4 +555,5 @@ router.put('/:userId', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
+*/
 

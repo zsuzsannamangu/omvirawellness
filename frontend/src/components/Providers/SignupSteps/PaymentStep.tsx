@@ -15,8 +15,8 @@ const planOptions = [
   {
     id: 'essential',
     name: 'Essential',
-    price: '$29',
-    period: '/month',
+    price: 'Free',
+    period: '',
     description: 'Perfect for solo practitioners',
     features: [
       'Up to 50 clients',
@@ -29,7 +29,7 @@ const planOptions = [
   {
     id: 'professional',
     name: 'Professional',
-    price: '$59',
+    price: '$49',
     period: '/month',
     description: 'Best for growing practices',
     features: [
@@ -69,7 +69,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
         selectedPlan, 
         billingCycle,
         trialPeriod: '14 days',
-        finalPrice: selectedPlan === 'essential' ? '$29' : selectedPlan === 'professional' ? '$59' : '$99'
+        finalPrice: selectedPlan === 'essential' ? 'Free' : selectedPlan === 'professional' ? '$49' : '$99'
       } 
     });
   };
@@ -115,7 +115,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
         <div className={styles.plansContainer}>
                   {planOptions.map((plan) => {
           const isSelected = selectedPlan === plan.id;
-          const yearlyPrice = plan.id === 'essential' ? '$23' : plan.id === 'professional' ? '$47' : '$79';
+          const yearlyPrice = plan.id === 'essential' ? 'Free' : plan.id === 'professional' ? '$47' : '$79';
           const displayPrice = billingCycle === 'yearly' ? yearlyPrice : plan.price;
           const displayPeriod = billingCycle === 'yearly' ? '/month' : plan.period;
           const billingNote = billingCycle === 'yearly' ? 'billed yearly' : '';
@@ -186,8 +186,8 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
             <span className={styles.summaryLabel}>After trial:</span>
             <span className={styles.summaryValue}>
               {billingCycle === 'yearly' 
-                ? (selectedPlan === 'essential' ? '$23/year' : selectedPlan === 'professional' ? '$47/year' : '$79/year')
-                : (selectedPlan === 'essential' ? '$29/month' : selectedPlan === 'professional' ? '$59/month' : '$99/month')
+                ? (selectedPlan === 'essential' ? 'Free' : selectedPlan === 'professional' ? '$47/year' : '$79/year')
+                : (selectedPlan === 'essential' ? 'Free' : selectedPlan === 'professional' ? '$49/month' : '$99/month')
               }
             </span>
           </div>

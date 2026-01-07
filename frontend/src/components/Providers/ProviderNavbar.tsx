@@ -112,9 +112,11 @@ export default function ProviderNavbar() {
         <Link href="/search" className={styles.clientLink}>
           Find a Provider
         </Link>
+        {/* SPACES FEATURE - COMMENTED OUT FOR MVP
         <Link href="/spaces" className={styles.clientLink}>
           For Spaces
         </Link>
+        */}
         <Link href="/providers/login" className={styles.loginLink}>
           Log In
         </Link>
@@ -183,9 +185,11 @@ export default function ProviderNavbar() {
             <Link href="/search" className={styles.mobileNavLink}>
               Find a Provider
             </Link>
+            {/* SPACES FEATURE - COMMENTED OUT FOR MVP
             <Link href="/spaces" className={styles.mobileNavLink}>
               For Spaces
             </Link>
+            */}
             <Link href="/providers/login" className={styles.mobileNavLink}>
               Log In
             </Link>

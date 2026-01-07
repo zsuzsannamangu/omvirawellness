@@ -130,12 +130,28 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Email</label>
-                    <input 
-                      type="email" 
-                      className={styles.formInput} 
-                      defaultValue={userData?.email || ''} 
-                      disabled
-                    />
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <input 
+                        type="email" 
+                        className={styles.formInput} 
+                        value={userData?.email || ''} 
+                        disabled
+                        data-1p-ignore
+                        autoComplete="off"
+                        style={{ flex: 1 }}
+                      />
+                      <button 
+                        type="button"
+                        className={styles.saveBtn}
+                        onClick={() => {
+                          const event = new CustomEvent('openUpdateEmail');
+                          window.dispatchEvent(event);
+                        }}
+                        style={{ minWidth: '140px', width: '140px' }}
+                      >
+                        Update Email
+                      </button>
+                    </div>
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Phone</label>
@@ -182,6 +198,40 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                   </div>
                   <div className={styles.formGroup}>
                     {/* Empty div to maintain grid layout */}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.formSection}>
+                <h3 className={styles.formSectionTitle}>Account Security</h3>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Password</label>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }} data-1p-ignore="true" data-lpignore="true">
+                      <input 
+                        type="text" 
+                        className={styles.formInput} 
+                        defaultValue="••••••••" 
+                        disabled
+                        data-1p-ignore="true"
+                        data-lpignore="true"
+                        data-form-type="other"
+                        autoComplete="off"
+                        readOnly
+                        style={{ flex: 1 }}
+                      />
+                      <button 
+                        type="button"
+                        className={styles.saveBtn}
+                        onClick={() => {
+                          const event = new CustomEvent('openChangePassword');
+                          window.dispatchEvent(event);
+                        }}
+                        style={{ minWidth: '140px', width: '140px' }}
+                      >
+                        Change Password
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -327,7 +377,69 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
           </div>
         );
       
-      case 'preferences':
+      case 'account':
+        return (
+          <div className={styles.profileContent} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off">
+            <h2 className={styles.sectionTitle}>Account Information</h2>
+            <div className={styles.profileForm} data-1p-ignore="true" data-lpignore="true">
+              <div className={styles.formSection}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Email Address</label>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <input 
+                      type="email" 
+                      className={styles.formInput} 
+                      value={userData?.email || ''} 
+                      disabled
+                      data-1p-ignore
+                      autoComplete="off"
+                      style={{ flex: 1 }}
+                    />
+                    <button 
+                      type="button"
+                      className={styles.saveBtn}
+                      onClick={() => {
+                        const event = new CustomEvent('openUpdateEmail');
+                        window.dispatchEvent(event);
+                      }}
+                      style={{ minWidth: '140px', width: '140px' }}
+                    >
+                      Update Email
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Password</label>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <input 
+                      type="text" 
+                      className={styles.formInput} 
+                      defaultValue="••••••••" 
+                      disabled
+                      data-1p-ignore
+                      autoComplete="off"
+                      style={{ flex: 1 }}
+                    />
+                    <button 
+                      type="button"
+                      className={styles.saveBtn}
+                      onClick={() => {
+                        const event = new CustomEvent('openChangePassword');
+                        window.dispatchEvent(event);
+                      }}
+                      style={{ minWidth: '140px', width: '140px' }}
+                    >
+                      Change Password
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'settings':
         return (
           <div className={styles.profileContent}>
             <h2 className={styles.sectionTitle}>Wellness Preferences</h2>
@@ -507,7 +619,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       default:
         return (
           <div className={styles.profileContent}>
-            <h2 className={styles.sectionTitle}>Profile & Preferences</h2>
+            <h2 className={styles.sectionTitle}>Profile & Settings</h2>
             <div className={styles.profileOverview}>
               <div className={styles.overviewCard}>
                 <div className={styles.cardIcon}><FaUser /></div>

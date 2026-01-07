@@ -303,8 +303,8 @@
   gap: 0.75rem;
   
   &:hover {
-    background: rgba($provider-colors-1, 0.2);
-    border-color: $provider-colors-3;
+    background: $background-light;
+    border-color: $border-light;
     transform: translateY(-1px);
   }
 }

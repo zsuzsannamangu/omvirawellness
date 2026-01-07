@@ -46,9 +46,11 @@ export default function ClientPublicProfilePage() {
           setDashboardUrl(`/providers/dashboard/${userData.id}`);
         } else if (userData.user_type === 'client') {
           setDashboardUrl(`/dashboard/${userData.id}`);
-        } else if (userData.user_type === 'space_owner') {
-          setDashboardUrl(`/spaces/dashboard/${userData.id}`);
-        }
+        } 
+        // SPACES FEATURE - COMMENTED OUT FOR MVP
+        // else if (userData.user_type === 'space_owner') {
+        //   setDashboardUrl(`/spaces/dashboard/${userData.id}`);
+        // }
       } catch (e) {
         console.error('Error parsing user data:', e);
       }

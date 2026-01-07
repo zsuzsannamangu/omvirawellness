@@ -342,9 +342,11 @@ export default function SearchPage() {
         setDashboardUrl(`/dashboard/${userId}`);
       } else if (userType === 'provider') {
         setDashboardUrl(`/providers/dashboard/${userId}`);
-      } else if (userType === 'space_owner') {
-        setDashboardUrl(`/spaces/dashboard/${userId}`);
-      }
+      } 
+      // SPACES FEATURE - COMMENTED OUT FOR MVP
+      // else if (userType === 'space_owner') {
+      //   setDashboardUrl(`/spaces/dashboard/${userId}`);
+      // }
     } catch (e) {
       console.error('Error parsing user data:', e);
       setDashboardUrl(null);

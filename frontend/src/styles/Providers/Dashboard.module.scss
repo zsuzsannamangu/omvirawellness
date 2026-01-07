@@ -9,7 +9,6 @@
 
 // Left Sidebar
 .sidebar {
-  width: 200px;
   background: linear-gradient(180deg, $bg-white 0%, $background-light 100%);
   border-right: 1px solid $border-light;
   display: flex;
@@ -20,12 +19,46 @@
   top: 0;
   z-index: 100;
   box-shadow: 2px 0 8px $shadow-color;
+  transition: width 0.3s ease;
+  width: 240px;
+
+  &.collapsed {
+    width: 80px !important;
+  }
+
+  &.expanded {
+    width: 240px !important;
+  }
 }
 
 .sidebarHeader {
   padding: $spacing-md;
   border-bottom: 1px solid $border-light;
   background: $section-bg-2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $provider-colors-3;
+  font-size: 1rem;
+  padding: $spacing-xs;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+
+  &:hover {
+    background: $background-light;
+  }
 }
 
 .logo {
@@ -54,6 +87,11 @@
   font-size: 0.9rem;
   color: $dark-text;
   text-align: left;
+  gap: $spacing-sm;
+  white-space: nowrap;
+  justify-content: flex-start;
+  min-height: 44px;
+  height: 44px;
 
   &:hover {
     background: $section-bg-2;
@@ -78,6 +116,11 @@
       background: linear-gradient(180deg, $provider-colors-3 0%, darken($provider-colors-3, 20%) 100%);
     }
   }
+
+  &.signOutButton {
+    margin-top: auto;
+  }
+
 }
 
 .sidebarLabel {
@@ -87,18 +130,53 @@
 .sidebarIcon {
   font-size: 1.1rem;
   width: 20px;
+  min-width: 20px;
   text-align: center;
-  color: $dark-text;
-  font-weight: bold;
+  color: inherit;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+
+// When sidebar is collapsed, center icons but maintain vertical position
+.sidebar.collapsed {
+  .sidebarItem {
+    justify-content: center;
+    padding-left: $spacing-md;
+    padding-right: $spacing-md;
+  }
+  
+  .sidebarIcon {
+    margin: 0;
+  }
+}
+
+.sidebarFooter {
+  margin-top: auto;
+  padding: $spacing-md;
+  border-top: 1px solid $border-light;
+  flex-shrink: 0;
+  
+  .sidebarItem {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 // Main Content Area
 .mainContent {
   flex: 1;
-  margin-left: 200px;
+  margin-left: 240px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: margin-left 0.3s ease;
+
+  .sidebar.collapsed ~ & {
+    margin-left: 80px;
+  }
 }
 
 // Top Navigation
@@ -461,6 +539,281 @@
   border-radius: 0;
   padding: 0;
   box-shadow: none;
+
+  // Billing Section Styles
+  .billingAddressSection,
+  .paymentMethodSection,
+  .paymentHistorySection {
+    max-width: 900px;
+  }
+
+  .billingAddressSection {
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    margin-bottom: $spacing-lg;
+    overflow: hidden;
+  }
+
+  .billingAddressHeader {
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1px solid $border-light;
+    background: linear-gradient(135deg, rgba($provider-colors-3, 0.03) 0%, rgba($provider-colors-1, 0.03) 100%);
+  }
+
+  .billingAddressTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .billingSectionLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $subtext-color;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: $font-main;
+  }
+
+  .billingAddressContent {
+    padding: $spacing-md $spacing-lg;
+  }
+
+  .editBillingBtn {
+    background: none;
+    border: none;
+    color: $provider-colors-3;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &:hover {
+      background: $section-bg-1;
+      color: darken($provider-colors-3, 10%);
+    }
+  }
+
+  .billingAddressFields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .billingField {
+    display: flex;
+    gap: $spacing-md;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .billingFieldLabel {
+    font-weight: 600;
+    color: $dark-text;
+    min-width: 140px;
+  }
+
+  .billingFieldValue {
+    color: $subtext-color;
+    flex: 1;
+  }
+
+  .paymentMethodSection {
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    margin-bottom: $spacing-lg;
+    overflow: hidden;
+  }
+
+  .paymentMethodHeader {
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1px solid $border-light;
+    background: linear-gradient(135deg, rgba($provider-colors-3, 0.03) 0%, rgba($provider-colors-1, 0.03) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .paymentMethodContent {
+    padding: $spacing-lg;
+  }
+
+  .paymentMethodTitle {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .paymentMethodLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+
+  .paymentMethodDisplay {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: 0.875rem;
+    color: $dark-text;
+    line-height: 1.5;
+  }
+
+  .cardIcon {
+    font-size: 1.25rem;
+    color: $dark-text;
+  }
+
+  .cardType {
+    font-weight: 600;
+    color: $dark-text;
+    text-transform: capitalize;
+  }
+
+  .cardEnding {
+    color: $subtext-color;
+  }
+
+  .cardLast4 {
+    font-weight: 600;
+    color: $dark-text;
+  }
+
+  .cardSeparator {
+    color: $subtext-color;
+    margin: 0 $spacing-xs;
+  }
+
+  .cardExpiry {
+    color: $subtext-color;
+    font-size: 0.875rem;
+  }
+
+  .editPaymentBtn {
+    background: none;
+    border: none;
+    color: $provider-colors-3;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &:hover {
+      background: $section-bg-1;
+      color: darken($provider-colors-3, 10%);
+    }
+  }
+
+  .paymentMethodForm {
+    padding: $spacing-lg;
+    background: $section-bg-1;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+  }
+
+  .paymentHistorySection {
+    background: $bg-white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    margin-bottom: $spacing-xl;
+    overflow: hidden;
+  }
+
+  .paymentHistoryHeader {
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1px solid $border-light;
+    background: linear-gradient(135deg, rgba($provider-colors-3, 0.03) 0%, rgba($provider-colors-1, 0.03) 100%);
+  }
+
+  .paymentHistoryContent {
+    padding: $spacing-lg;
+  }
+
+  .paymentHistoryList {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .paymentHistoryItem {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: $spacing-md;
+    padding: $spacing-md 0;
+    border-bottom: 1px solid $border-light;
+    align-items: center;
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-xs;
+    }
+  }
+
+  .paymentHistoryField {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+
+  .paymentHistoryValue {
+    color: $dark-text;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  .paymentStatusIndicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+
+    &.paymentStatusPaid {
+      background: $success-light;
+    }
+
+    &.paymentStatusPending {
+      background: $warning-yellow;
+    }
+  }
+
+  .noPaymentHistory {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    text-align: center;
+    padding: $spacing-lg;
+  }
+
+  .noPaymentMethod {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    flex: 1;
+  }
 }
 
 .sectionTitle {
@@ -2453,6 +2806,7 @@
   border-radius: 8px;
   padding: $spacing-xl;
   margin-top: $spacing-lg;
+  max-width: 900px;
 
   h3.subsectionTitle {
     font-size: 1.25rem;
@@ -2503,7 +2857,7 @@
   .formGroup {
     display: grid;
     grid-template-columns: 200px 1fr;
-    gap: $spacing-md;
+    gap: $spacing-sm;
     align-items: start;
     margin-bottom: $spacing-lg;
     padding: 0;
@@ -2575,11 +2929,143 @@
 
   // Account info inputs - match bank account info width
   .accountInfoInput {
-    max-width: 400px;
+    max-width: none;
+    flex: 1;
   }
 
   .accountInfoRow {
-    max-width: 400px;
+    max-width: none;
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+    
+    .formInputFlex {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .secondaryBtn {
+      flex: 0 0 auto;
+      min-width: 140px;
+      width: 140px;
+      white-space: nowrap;
+      text-align: center;
+    }
+  }
+
+  // Billing Form Modal Styles
+  .billingForm {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .billingForm .modalBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-xl;
+  }
+
+  .billingForm .formSection {
+    margin-bottom: 0;
+    
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .billingForm .formGroup {
+    margin-bottom: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    flex: 1;
+    min-width: 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    // Ensure expiryRow displays horizontally
+    .expiryRow {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+    }
+  }
+
+  .billingForm .formLabel {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: $dark-text;
+    margin-bottom: $spacing-xs;
+  }
+
+  .billingForm .formInput,
+  .billingForm .formSelect,
+  .billingForm .formTextarea {
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+    font-family: $font-main;
+    font-size: 0.875rem;
+    color: $dark-text;
+    background: $bg-white;
+    transition: border-color 0.2s ease;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: $provider-colors-3;
+    }
+
+    &::placeholder {
+      color: $placeholder-grey;
+    }
+  }
+  
+  // Exception: selects in expiryRow should not be full width
+  .billingForm .expiryRow .formSelect {
+    width: auto !important;
+  }
+
+  .billingForm .formTextarea {
+    resize: vertical;
+    min-height: 60px;
+    font-family: $font-main;
+  }
+
+  .billingForm .formRow {
+    display: flex;
+    gap: $spacing-md;
+    align-items: flex-start;
+  }
+
+  .billingForm .expiryRow {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: $spacing-md;
+    width: 100%;
+    align-items: flex-start;
+    flex-wrap: nowrap !important;
+  }
+
+  .billingForm .expiryRow .formSelect {
+    flex: 0 1 auto !important;
+    min-width: 80px !important;
+    max-width: 120px !important;
+    width: auto !important;
+  }
+
+  .required {
+    color: $error-color;
+    margin-left: 2px;
+  }
+
+  .noPaymentMethod {
+    color: $subtext-color;
+    font-size: 0.875rem;
+    font-style: italic;
   }
 
   .billingHistory {
@@ -2589,6 +3075,77 @@
     border-radius: 4px;
     font-size: 0.9rem;
     color: $subtext-color;
+  }
+
+  .billingTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: $spacing-md;
+
+    thead {
+      background: $section-bg-1;
+      border-bottom: 2px solid $border-light;
+
+      th {
+        padding: $spacing-sm $spacing-md;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: $dark-text;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $border-light;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background: $section-bg-1;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      td {
+        padding: $spacing-md;
+        font-size: 0.9rem;
+        color: $dark-text;
+      }
+    }
+  }
+
+  .statusBadge {
+    &.statusPaid {
+      background: $success-bg-light;
+      color: $success-text-dark;
+    }
+
+    &.statusPending {
+      background: $warning-bg;
+      color: $warning-text;
+    }
+  }
+
+  .invoiceLink {
+    background: none;
+    border: none;
+    color: $provider-colors-3;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $provider-color-3-rgba-05;
+      text-decoration: underline;
+    }
   }
 
   .formSelect {
@@ -3081,6 +3638,34 @@
   display: flex;
   gap: $spacing-sm;
   margin-top: $spacing-sm;
+}
+
+.cancelSubscriptionContainer {
+  margin-top: $spacing-md;
+  text-align: center;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.cancelSubscriptionLink {
+  background: none;
+  border: none;
+  color: $subtext-color;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: $spacing-xs;
+  transition: color 0.2s ease;
+  font-family: $font-main;
+
+  &:hover:not(:disabled) {
+    color: $error-color;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .modalCancelBtn {
@@ -7368,20 +7953,30 @@
   overflow-y: auto;
   position: relative;
   border: 1px solid $border-light;
+
+  // For change plan modal, allow wider width
+  &.changePlanModal {
+    max-width: 1000px;
+  }
+
+  // For billing information modal, allow wider width
+  &.billingModal {
+    max-width: 700px !important;
+  }
 }
 
 .modalHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $spacing-md $spacing-lg;
+  padding: $spacing-lg;
   border-bottom: 1px solid $border-light;
-  background: $section-bg-1;
+  background: $bg-white;
   border-radius: 16px 16px 0 0;
 
-  h3 {
+  h2.modalTitle {
     font-family: $font-heading;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: $dark-text;
     margin: 0;
@@ -7466,9 +8061,11 @@
 
 .modalFooter {
   display: flex;
-  gap: $spacing-sm;
-  padding: $spacing-md $spacing-lg;
+  flex-direction: row;
+  gap: $spacing-md;
+  padding: $spacing-lg;
   border-top: 1px solid $border-light;
+  background: $bg-white;
   justify-content: flex-end;
 
   .cancelBtn, .saveBtn {
@@ -7476,6 +8073,38 @@
     font-size: 0.85rem;
     height: auto;
     min-height: auto;
+  }
+
+  .secondaryBtn {
+    padding: $spacing-md $spacing-lg;
+    background: $bg-white;
+    color: $dark-text;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    font-family: $font-main;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: auto;
+    min-width: 120px;
+    
+    &:hover:not(:disabled) {
+      background: $background-gray;
+      transform: translateY(-1px);
+    }
+    
+    &:disabled {
+      background: $bg-white;
+      color: $disabled-button-grey;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  .submitButton {
+    width: auto;
+    min-width: 120px;
   }
 }
 
@@ -7830,9 +8459,9 @@
   padding: 4px 12px;
   background: $success-color;
   color: $bg-white;
-  border-radius: 12px;
+  border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -7935,13 +8564,13 @@
 
 .subscriptionActions {
   display: flex;
+  justify-content: flex-start;
   gap: $spacing-md;
   padding-top: $spacing-md;
   border-top: 1px solid $border-light;
 }
 
 .changePlanBtn {
-  flex: 1;
   padding: $spacing-sm $spacing-lg;
   background: $provider-colors-3;
   color: $bg-white;
@@ -7951,6 +8580,7 @@
   font-weight: 600;
   font-family: $font-main;
   cursor: pointer;
+  width: auto;
   transition: all 0.2s ease;
 
   &:hover {
@@ -8899,4 +9529,319 @@
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+// Change Plan Modal Styles
+.changePlanModal {
+  max-width: 1000px !important;
+}
+
+.billingToggle {
+  display: flex;
+  background: $section-bg-2;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: $spacing-lg;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.billingOption {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $subtext-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &.active {
+    background: $bg-white;
+    color: $dark-text;
+  }
+}
+
+.savings {
+  background: $provider-colors-3;
+  color: $bg-white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.plansContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: $spacing-lg;
+  margin: 0 auto $spacing-xxl;
+  max-width: 1100px;
+  align-items: stretch;
+}
+
+.planCard {
+  background: $bg-white;
+  border: 2px solid rgba($dark-text, 0.1);
+  border-radius: 16px;
+  padding: $spacing-xl $spacing-lg;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+
+  &:hover {
+    border-color: $provider-colors-3;
+  }
+
+  &.selected {
+    border-color: $provider-colors-3;
+  }
+
+  &.popular {
+    border-color: rgba($secondary-color, 0.4);
+
+    &.selected {
+      border-color: $secondary-color;
+    }
+  }
+}
+
+.popularBadge {
+  position: absolute;
+  top: -10px;
+  right: $spacing-lg;
+  background: $secondary-color;
+  color: $light-text;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 20px;
+  font-family: $font-main;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.planHeader {
+  width: 100%;
+}
+
+.planName {
+  font-family: $font-heading;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.planPrice {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
+}
+
+.price {
+  font-family: $font-heading;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $provider-colors-3;
+}
+
+.period {
+  font-family: $font-main;
+  font-size: 1rem;
+  color: rgba($dark-text, 0.7);
+}
+
+.billingNote {
+  font-family: $font-main;
+  font-size: 0.75rem;
+  color: $provider-colors-3;
+  font-weight: 600;
+  margin: 0;
+  margin-top: 2px;
+}
+
+.planDescription {
+  font-family: $font-main;
+  font-size: 0.95rem;
+  color: rgba($dark-text, 0.75);
+  margin: 0 0 $spacing-md 0;
+}
+
+.planFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  text-align: left;
+  flex: 1;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs 0;
+  font-family: $font-main;
+  font-size: 0.9rem;
+  color: rgba($dark-text, 0.8);
+}
+
+.checkIcon {
+  color: $secondary-color;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.planRadio {
+  margin-top: auto;
+  padding-top: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.radioInput {
+  width: 18px;
+  height: 18px;
+  accent-color: $provider-colors-3;
+  cursor: pointer;
+}
+
+.radioLabel {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $dark-text;
+  cursor: pointer;
+}
+
+.primaryButton {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: 8px;
+  background: $provider-colors-3;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $bg-white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: darken($provider-colors-3, 10%);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: $disabled-button-grey;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.secondaryButton {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: 2px solid $border-light;
+  border-radius: 8px;
+  background: $bg-white;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $subtext-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    border-color: $provider-colors-3;
+    color: $provider-colors-3;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Additional Billing Form Modal Styles
+.submitButton {
+  width: 100%;
+  padding: $spacing-md $spacing-lg;
+  background: $provider-colors-3;
+  color: $bg-white;
+  border: none;
+  border-radius: 8px;
+  font-family: $font-main;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: darken($provider-colors-3, 10%);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: $disabled-button-grey;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.securityMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  font-size: 0.875rem;
+  color: $subtext-color;
+  margin-top: $spacing-sm;
+}
+
+.lockIcon {
+  font-size: 0.875rem;
+  color: $subtext-color;
+}
+
+@media (max-width: 768px) {
+  .plansContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .changePlanModal {
+    max-width: 95% !important;
+  }
+
+  .billingModal {
+    max-width: 95% !important;
+  }
 }

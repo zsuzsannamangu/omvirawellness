@@ -659,4 +659,378 @@ router.get('/:id/visits/stats', async (req, res) => {
   }
 });
 
+// PUT update provider subscription
+router.put('/:id/subscription', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { plan, billingCycle, price, nextPaymentDate } = req.body;
+
+    // Verify the user is updating their own subscription
+    if (req.userId !== id) {
+      return res.status(403).json({ error: 'Forbidden: You can only update your own subscription' });
+    }
+
+    // Verify user is a provider
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Forbidden: Only providers can update subscriptions' });
+    }
+
+    // Validate required fields
+    if (!plan || !billingCycle || price === undefined) {
+      return res.status(400).json({ error: 'Plan, billingCycle, and price are required' });
+    }
+
+    // Check if provider profile exists
+    const profileCheck = await pool.query(
+      'SELECT id FROM provider_profiles WHERE user_id = $1',
+      [id]
+    );
+
+    if (profileCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    // Update or insert subscription data in provider_profiles
+    // We'll store it as JSONB in a subscription_data column
+    // First check if column exists, if not we'll need a migration
+    // For now, let's use a simple approach: store in a JSONB column
+    
+    // Check if subscription_data column exists by trying to update it
+    // If it doesn't exist, we'll need to add it via migration
+    // For MVP, let's use a workaround: store in a text field or create the column if needed
+    
+    // Ensure subscription_data column exists (add if it doesn't)
+    try {
+      await pool.query(`
+        ALTER TABLE provider_profiles 
+        ADD COLUMN IF NOT EXISTS subscription_data JSONB
+      `);
+    } catch (alterErr) {
+      // Column might already exist, that's fine
+      // Only fail if it's a different error
+      if (!alterErr.message || !alterErr.message.includes('already exists')) {
+        console.error('Error ensuring subscription_data column exists:', alterErr);
+        // Continue anyway - might work if column already exists
+      }
+    }
+
+    // Update subscription_data column
+    const subscriptionData = {
+      plan,
+      billingCycle,
+      price,
+      nextPaymentDate: nextPaymentDate || null,
+      updatedAt: new Date().toISOString()
+    };
+
+    const updateResult = await pool.query(`
+      UPDATE provider_profiles 
+      SET subscription_data = $1::JSONB,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $2
+      RETURNING subscription_data
+    `, [
+      JSON.stringify(subscriptionData),
+      id
+    ]);
+
+    if (!updateResult || updateResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Subscription updated successfully',
+      subscription: updateResult.rows[0].subscription_data
+    });
+  } catch (err) {
+    console.error('Error updating subscription:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
+// GET provider subscription data
+router.get('/:id/subscription', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verify the user is accessing their own subscription
+    if (req.userId !== id) {
+      return res.status(403).json({ error: 'Forbidden: You can only access your own subscription' });
+    }
+
+    // Verify user is a provider
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Forbidden: Only providers can access subscriptions' });
+    }
+
+    // Fetch subscription data from database
+    const result = await pool.query(`
+      SELECT subscription_data
+      FROM provider_profiles
+      WHERE user_id = $1
+    `, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    const subscriptionData = result.rows[0].subscription_data;
+
+    if (!subscriptionData) {
+      return res.json({ subscription: null });
+    }
+
+    res.json({ subscription: subscriptionData });
+  } catch (err) {
+    console.error('Error fetching subscription:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
+// DELETE cancel provider subscription
+router.delete('/:id/subscription', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verify the user is cancelling their own subscription
+    if (req.userId !== id) {
+      return res.status(403).json({ error: 'Forbidden: You can only cancel your own subscription' });
+    }
+
+    // Verify user is a provider
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Forbidden: Only providers can cancel subscriptions' });
+    }
+
+    // Check if provider profile exists
+    const profileCheck = await pool.query(
+      'SELECT id FROM provider_profiles WHERE user_id = $1',
+      [id]
+    );
+
+    if (profileCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    // Set subscription to Essential (free) plan
+    const essentialPlanData = {
+      plan: 'essential',
+      billingCycle: 'monthly',
+      price: 0,
+      nextPaymentDate: null,
+      updatedAt: new Date().toISOString()
+    };
+
+    const updateResult = await pool.query(`
+      UPDATE provider_profiles 
+      SET subscription_data = $1::JSONB,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $2
+      RETURNING id
+    `, [JSON.stringify(essentialPlanData), id]);
+
+    if (!updateResult || updateResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Subscription cancelled successfully'
+    });
+  } catch (err) {
+    console.error('Error cancelling subscription:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
+// PUT update provider payment method
+router.put('/:id/payment-method', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { cardNumber, expiryDate, cvv } = req.body;
+
+    // Verify the user is updating their own payment method
+    if (req.userId !== id) {
+      return res.status(403).json({ error: 'Forbidden: You can only update your own payment method' });
+    }
+
+    // Verify user is a provider
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Forbidden: Only providers can update payment methods' });
+    }
+
+    // Validate required fields
+    const { nameOnCard, billingAddress } = req.body;
+    
+    // Check if this is a billing address-only update:
+    // - No card number provided
+    // - Card number is masked (contains asterisks)
+    // - Card number is all zeros
+    // - Card number is too short (less than 13 digits, indicating it's just last 4 digits or dummy)
+    const cardNumberDigits = cardNumber ? cardNumber.replace(/\D/g, '') : '';
+    const isMaskedCard = cardNumber && cardNumber.includes('*');
+    const isBillingAddressOnly = !cardNumber || 
+                                 isMaskedCard || 
+                                 cardNumberDigits === '0000000000000000' || 
+                                 cardNumberDigits.length === 0 ||
+                                 cardNumberDigits.length < 13;
+    
+    if (!isBillingAddressOnly) {
+      // Full payment method update - validate card number and expiry date
+      if (!cardNumber || !expiryDate) {
+        return res.status(400).json({ error: 'Card number and expiry date are required' });
+      }
+
+      // Validate card number (basic validation - should be 13-19 digits)
+      if (cardNumberDigits.length < 13 || cardNumberDigits.length > 19) {
+        return res.status(400).json({ error: 'Invalid card number' });
+      }
+
+      // Validate expiry date format (MM/YY)
+      if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+        return res.status(400).json({ error: 'Invalid expiry date format. Use MM/YY' });
+      }
+    }
+
+    // Check if provider profile exists
+    const profileCheck = await pool.query(
+      'SELECT id FROM provider_profiles WHERE user_id = $1',
+      [id]
+    );
+
+    if (profileCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    // Ensure payment_method column exists
+    try {
+      await pool.query(`
+        ALTER TABLE provider_profiles 
+        ADD COLUMN IF NOT EXISTS payment_method JSONB
+      `);
+    } catch (alterErr) {
+      // Column might already exist, that's fine
+      if (!alterErr.message || !alterErr.message.includes('already exists')) {
+        console.error('Error ensuring payment_method column exists:', alterErr);
+      }
+    }
+
+    // Get existing payment method to preserve card data if only updating billing address
+    let existingPaymentMethod = null;
+    const existingResult = await pool.query(
+      'SELECT payment_method FROM provider_profiles WHERE user_id = $1',
+      [id]
+    );
+    if (existingResult.rows.length > 0 && existingResult.rows[0].payment_method) {
+      existingPaymentMethod = typeof existingResult.rows[0].payment_method === 'string'
+        ? JSON.parse(existingResult.rows[0].payment_method)
+        : existingResult.rows[0].payment_method;
+    }
+
+    let paymentMethodData;
+    
+    if (isBillingAddressOnly) {
+      // Only updating billing address - preserve existing card data
+      paymentMethodData = {
+        ...existingPaymentMethod,
+        nameOnCard: nameOnCard || existingPaymentMethod?.nameOnCard || null,
+        billingAddress: billingAddress || null,
+        updatedAt: new Date().toISOString()
+      };
+    } else {
+      // Full payment method update - process card number
+      const cardNumberDigits = cardNumber.replace(/\D/g, '');
+      
+      // Mask card number (only store last 4 digits)
+      const last4 = cardNumberDigits.slice(-4);
+      const maskedCardNumber = `**** **** **** ${last4}`;
+
+      // Detect card type from first digit
+      const firstDigit = cardNumberDigits[0];
+      let cardType = 'Visa';
+      if (firstDigit === '4') {
+        cardType = 'Visa';
+      } else if (firstDigit === '5') {
+        cardType = 'Mastercard';
+      } else if (firstDigit === '3' && (cardNumberDigits[1] === '4' || cardNumberDigits[1] === '7')) {
+        cardType = 'American Express';
+      } else if (firstDigit === '6') {
+        cardType = 'Discover';
+      }
+
+      // Store payment method data (never store CVV)
+      paymentMethodData = {
+        cardNumber: maskedCardNumber,
+        last4: last4,
+        cardType: cardType,
+        expiryDate: expiryDate,
+        nameOnCard: nameOnCard || null,
+        billingAddress: billingAddress || null,
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    const updateResult = await pool.query(`
+      UPDATE provider_profiles 
+      SET payment_method = $1::JSONB,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $2
+      RETURNING payment_method
+    `, [
+      JSON.stringify(paymentMethodData),
+      id
+    ]);
+
+    if (!updateResult || updateResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Payment method updated successfully',
+      paymentMethod: updateResult.rows[0].payment_method
+    });
+  } catch (err) {
+    console.error('Error updating payment method:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
+// GET provider payment method
+router.get('/:id/payment-method', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verify the user is accessing their own payment method
+    if (req.userId !== id) {
+      return res.status(403).json({ error: 'Forbidden: You can only access your own payment method' });
+    }
+
+    // Verify user is a provider
+    if (req.userType !== 'provider') {
+      return res.status(403).json({ error: 'Forbidden: Only providers can access payment methods' });
+    }
+
+    // Get payment method from provider profile
+    const result = await pool.query(`
+      SELECT payment_method
+      FROM provider_profiles
+      WHERE user_id = $1
+    `, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    res.json({
+      success: true,
+      paymentMethod: result.rows[0].payment_method
+    });
+  } catch (err) {
+    console.error('Error fetching payment method:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
 module.exports = router;

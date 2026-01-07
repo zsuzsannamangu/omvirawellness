@@ -228,7 +228,9 @@ async function registerProvider(req, res) {
         city,
         state,
         zip_code,
-        country
+        country,
+        subscriptionPlan,
+        billingCycle
       } = req.body;
 
     // Validate required fields
@@ -318,8 +320,26 @@ async function registerProvider(req, res) {
         travelPolicy = '', 
         travelFee = 0, 
         maxDistance = 15,
-        teamMembers = []
+        teamMembers = [],
+        subscriptionPlan = 'professional',
+        billingCycle = 'monthly'
       } = req.body;
+      
+      // Calculate subscription price based on plan and billing cycle
+      let subscriptionPrice = 0;
+      if (subscriptionPlan === 'professional') {
+        subscriptionPrice = billingCycle === 'yearly' ? 47 : 49;
+      } else if (subscriptionPlan === 'growth') {
+        subscriptionPrice = billingCycle === 'yearly' ? 79 : 99;
+      }
+      
+      // Calculate next payment date (same day next month for monthly, same day next year for yearly)
+      const nextPaymentDate = new Date();
+      if (billingCycle === 'yearly') {
+        nextPaymentDate.setFullYear(nextPaymentDate.getFullYear() + 1);
+      } else {
+        nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
+      }
       
       const profileResult = await client.query(
         `INSERT INTO provider_profiles (
@@ -369,6 +389,10 @@ async function registerProvider(req, res) {
           teamMembers && teamMembers.length > 0 ? JSON.stringify(teamMembers) : '[]'
         ]
       );
+      
+      // Store subscription information
+      // Note: This requires a metadata column in users table or subscription fields in provider_profiles
+      // For now, we'll include it in the response and can add proper storage via migration later
       
       console.log('Provider profile inserted successfully:', profileResult.rows[0]);
 
@@ -421,6 +445,12 @@ async function registerProvider(req, res) {
             id: user.id,
             email: user.email,
             user_type: user.user_type,
+            subscription: {
+              plan: subscriptionPlan,
+              billingCycle: billingCycle,
+              price: subscriptionPrice,
+              nextPaymentDate: nextPaymentDate.toISOString(),
+            },
             profile: {
               business_name: profile.business_name,
               contact_name: profile.contact_name,
@@ -465,9 +495,8 @@ async function registerProvider(req, res) {
   }
 }
 
-/**
+/* SPACES FEATURE - COMMENTED OUT FOR MVP
  * Register a new space owner
- */
 async function registerSpaceOwner(req, res) {
   try {
     const { 
@@ -709,6 +738,7 @@ async function registerSpaceOwner(req, res) {
     });
   }
 }
+*/
 
 /**
  * Login - works for all user types
@@ -745,6 +775,16 @@ async function login(req, res) {
     const user = userResult.rows[0];
     console.log('User found:', user.email, user.user_type);
 
+    // SPACES FEATURE - COMMENTED OUT FOR MVP
+    // Reject space_owner logins
+    if (user.user_type === 'space_owner') {
+      console.log('Space owner login attempt rejected for MVP');
+      return res.status(403).json({
+        success: false,
+        message: 'Space owner accounts are not available in the MVP. Please contact support.',
+      });
+    }
+
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     console.log('Password valid:', isPasswordValid);
@@ -757,17 +797,79 @@ async function login(req, res) {
       });
     }
 
-    // Check if user is active
+    // Check if user is active and 2FA status
     const isActiveResult = await pool.query(
-      'SELECT is_active FROM users WHERE id = $1',
+      'SELECT COALESCE(is_active, true) as is_active, COALESCE(two_factor_enabled, false) as two_factor_enabled FROM users WHERE id = $1',
       [user.id]
     );
 
-    if (isActiveResult.rows[0] && !isActiveResult.rows[0].is_active) {
+    if (isActiveResult.rows[0] && isActiveResult.rows[0].is_active === false) {
       return res.status(403).json({
         success: false,
         message: 'Account is deactivated',
       });
+    }
+
+    const requires2FA = isActiveResult.rows[0]?.two_factor_enabled || false;
+
+    // If 2FA is enabled, check if token is provided
+    const { twoFactorToken, backupCode } = req.body;
+    
+    if (requires2FA && !twoFactorToken && !backupCode) {
+      // Password is valid, but 2FA is required
+      return res.status(200).json({
+        success: true,
+        requires2FA: true,
+        userId: user.id,
+        message: 'Two-factor authentication required',
+      });
+    }
+
+    // If 2FA token is provided, verify it
+    if (requires2FA && (twoFactorToken || backupCode)) {
+      const twoFactorResult = await pool.query(
+        'SELECT two_factor_secret, backup_codes FROM users WHERE id = $1',
+        [user.id]
+      );
+
+      if (twoFactorResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+
+      let isValid = false;
+
+      if (twoFactorToken) {
+        const { verifyToken } = require('../utils/2fa');
+        isValid = verifyToken(twoFactorToken, twoFactorResult.rows[0].two_factor_secret);
+      } else if (backupCode) {
+        const { verifyBackupCode } = require('../utils/2fa');
+        const backupCodes = twoFactorResult.rows[0].backup_codes 
+          ? JSON.parse(twoFactorResult.rows[0].backup_codes)
+          : [];
+
+        for (const hashedCode of backupCodes) {
+          if (await verifyBackupCode(backupCode, hashedCode)) {
+            isValid = true;
+            // Remove used backup code
+            const updatedCodes = backupCodes.filter(c => c !== hashedCode);
+            await pool.query(
+              'UPDATE users SET backup_codes = $1 WHERE id = $2',
+              [JSON.stringify(updatedCodes), user.id]
+            );
+            break;
+          }
+        }
+      }
+
+      if (!isValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid 2FA code',
+        });
+      }
     }
 
     // Update last login
@@ -840,7 +942,8 @@ async function login(req, res) {
           travel_fee,
           max_distance,
           team_members,
-          profile_photo_url
+          profile_photo_url,
+          subscription_data
         FROM provider_profiles WHERE user_id = $1`,
         [user.id]
       );
@@ -886,6 +989,28 @@ async function login(req, res) {
             profile.team_members = [];
           }
         }
+        // Parse credentials if it's a string or ensure it's an array
+        if (Array.isArray(profile.credentials) && profile.credentials.length > 0) {
+          // credentials is already an array
+        } else if (typeof profile.credentials === 'string') {
+          try {
+            profile.credentials = JSON.parse(profile.credentials);
+          } catch (e) {
+            profile.credentials = [];
+          }
+        } else {
+          profile.credentials = [];
+        }
+        // Parse subscription_data if it exists
+        if (profile.subscription_data) {
+          if (typeof profile.subscription_data === 'string') {
+            try {
+              profile.subscription_data = JSON.parse(profile.subscription_data);
+            } catch (e) {
+              profile.subscription_data = null;
+            }
+          }
+        }
       }
     }
 
@@ -896,25 +1021,40 @@ async function login(req, res) {
       user_type: user.user_type,
     });
 
+    // Include subscription data in response for providers
+    const responseData = {
+      user: {
+        id: user.id,
+        email: user.email,
+        user_type: user.user_type,
+        profile: profile,
+      },
+      token,
+    };
+
+    // Add subscription data if provider has it
+    if (user.user_type === 'provider' && profile && profile.subscription_data) {
+      responseData.user.subscription = profile.subscription_data;
+    }
+
     res.json({
       success: true,
       message: 'Login successful',
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-          user_type: user.user_type,
-          profile: profile,
-        },
-        token,
-      },
+      data: responseData,
     });
   } catch (error) {
     console.error('Login error:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+    });
     res.status(500).json({
       success: false,
       message: 'Internal server error',
       error: error.message,
+      ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
     });
   }
 }
@@ -1463,6 +1603,15 @@ async function updateProviderProfile(req, res) {
  */
 async function verifyToken(req, res) {
   try {
+    // SPACES FEATURE - COMMENTED OUT FOR MVP
+    // Reject space_owner tokens
+    if (req.user && req.user.user_type === 'space_owner') {
+      return res.status(403).json({
+        success: false,
+        message: 'Space owner accounts are not available in the MVP. Please contact support.',
+      });
+    }
+
     // Token is already verified by middleware, just return success
     res.json({
       success: true,
@@ -1484,13 +1633,576 @@ async function verifyToken(req, res) {
   }
 }
 
+/**
+ * Enable 2FA - Generate secret and QR code
+ */
+async function enable2FA(req, res) {
+  try {
+    const userId = req.user.id;
+    const userEmail = req.user.email;
+
+    // Check if 2FA is already enabled
+    const userResult = await pool.query(
+      'SELECT two_factor_enabled, two_factor_secret FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    if (userResult.rows[0].two_factor_enabled) {
+      return res.status(400).json({
+        success: false,
+        message: 'Two-factor authentication is already enabled',
+      });
+    }
+
+    // Generate secret
+    const { generateSecret, generateQRCode } = require('../utils/2fa');
+    const { secret, otpauthUrl } = generateSecret(userEmail);
+
+    // Generate QR code
+    const qrCodeDataUrl = await generateQRCode(otpauthUrl);
+
+    // Store secret (encrypted) in database - for now we'll store it, user needs to verify before enabling
+    await pool.query(
+      'UPDATE users SET two_factor_secret = $1 WHERE id = $2',
+      [secret, userId]
+    );
+
+    res.json({
+      success: true,
+      secret: secret, // Send secret for manual entry option
+      qrCode: qrCodeDataUrl,
+      otpauthUrl: otpauthUrl
+    });
+  } catch (error) {
+    console.error('Enable 2FA error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Verify and activate 2FA
+ */
+async function verifyAndActivate2FA(req, res) {
+  try {
+    const { token } = req.body;
+    const userId = req.user.id;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verification token is required',
+      });
+    }
+
+    // Get user's secret
+    const userResult = await pool.query(
+      'SELECT two_factor_secret, two_factor_enabled FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const secret = userResult.rows[0].two_factor_secret;
+    if (!secret) {
+      return res.status(400).json({
+        success: false,
+        message: '2FA secret not found. Please enable 2FA first.',
+      });
+    }
+
+    if (userResult.rows[0].two_factor_enabled) {
+      return res.status(400).json({
+        success: false,
+        message: 'Two-factor authentication is already enabled',
+      });
+    }
+
+    // Verify token
+    const { verifyToken } = require('../utils/2fa');
+    const isValid = verifyToken(token, secret);
+
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid verification code',
+      });
+    }
+
+    // Generate backup codes
+    const { generateBackupCodes, hashBackupCode } = require('../utils/2fa');
+    const backupCodes = generateBackupCodes(10);
+    const hashedBackupCodes = await Promise.all(
+      backupCodes.map(code => hashBackupCode(code))
+    );
+
+    // Enable 2FA and store backup codes
+    await pool.query(
+      'UPDATE users SET two_factor_enabled = true, backup_codes = $1 WHERE id = $2',
+      [JSON.stringify(hashedBackupCodes), userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Two-factor authentication enabled successfully',
+      backupCodes: backupCodes // Show only once - user must save these
+    });
+  } catch (error) {
+    console.error('Verify 2FA error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Disable 2FA
+ */
+async function disable2FA(req, res) {
+  try {
+    const { password, token } = req.body;
+    const userId = req.user.id;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required to disable 2FA',
+      });
+    }
+
+    // Verify password
+    const userResult = await pool.query(
+      'SELECT password_hash, two_factor_enabled, two_factor_secret FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      userResult.rows[0].password_hash
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid password',
+      });
+    }
+
+    // If 2FA is enabled, require token
+    if (userResult.rows[0].two_factor_enabled) {
+      if (!token) {
+        return res.status(400).json({
+          success: false,
+          message: '2FA token is required to disable 2FA',
+        });
+      }
+
+      const { verifyToken } = require('../utils/2fa');
+      const isValid = verifyToken(token, userResult.rows[0].two_factor_secret);
+
+      if (!isValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid 2FA token',
+        });
+      }
+    }
+
+    // Disable 2FA and clear secret
+    await pool.query(
+      'UPDATE users SET two_factor_enabled = false, two_factor_secret = NULL, backup_codes = NULL WHERE id = $1',
+      [userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Two-factor authentication disabled successfully',
+    });
+  } catch (error) {
+    console.error('Disable 2FA error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Verify 2FA token during login
+ */
+async function verify2FALogin(req, res) {
+  try {
+    const { userId, token, backupCode } = req.body;
+
+    if (!userId || (!token && !backupCode)) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID and either token or backup code is required',
+      });
+    }
+
+    // Get user's 2FA info
+    const userResult = await pool.query(
+      'SELECT two_factor_enabled, two_factor_secret, backup_codes FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    if (!userResult.rows[0].two_factor_enabled) {
+      return res.status(400).json({
+        success: false,
+        message: 'Two-factor authentication is not enabled for this account',
+      });
+    }
+
+    let isValid = false;
+
+    // Verify token or backup code
+    if (token) {
+      const { verifyToken } = require('../utils/2fa');
+      isValid = verifyToken(token, userResult.rows[0].two_factor_secret);
+    } else if (backupCode) {
+      const { verifyBackupCode } = require('../utils/2fa');
+      const backupCodes = userResult.rows[0].backup_codes 
+        ? JSON.parse(userResult.rows[0].backup_codes)
+        : [];
+
+      // Try to match backup code
+      for (const hashedCode of backupCodes) {
+        if (await verifyBackupCode(backupCode, hashedCode)) {
+          isValid = true;
+          // Remove used backup code
+          const updatedCodes = backupCodes.filter(c => c !== hashedCode);
+          await pool.query(
+            'UPDATE users SET backup_codes = $1 WHERE id = $2',
+            [JSON.stringify(updatedCodes), userId]
+          );
+          break;
+        }
+      }
+    }
+
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid verification code',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: '2FA verification successful',
+    });
+  } catch (error) {
+    console.error('Verify 2FA login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Regenerate backup codes
+ */
+async function regenerateBackupCodes(req, res) {
+  try {
+    const { password } = req.body;
+    const userId = req.user.id;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required',
+      });
+    }
+
+    // Verify password
+    const userResult = await pool.query(
+      'SELECT password_hash, two_factor_enabled FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      userResult.rows[0].password_hash
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid password',
+      });
+    }
+
+    if (!userResult.rows[0].two_factor_enabled) {
+      return res.status(400).json({
+        success: false,
+        message: 'Two-factor authentication is not enabled',
+      });
+    }
+
+    // Generate new backup codes
+    const { generateBackupCodes, hashBackupCode } = require('../utils/2fa');
+    const backupCodes = generateBackupCodes(10);
+    const hashedBackupCodes = await Promise.all(
+      backupCodes.map(code => hashBackupCode(code))
+    );
+
+    // Update backup codes
+    await pool.query(
+      'UPDATE users SET backup_codes = $1 WHERE id = $2',
+      [JSON.stringify(hashedBackupCodes), userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Backup codes regenerated successfully',
+      backupCodes: backupCodes // Show only once
+    });
+  } catch (error) {
+    console.error('Regenerate backup codes error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Update user email
+ */
+async function updateEmail(req, res) {
+  try {
+    const { newEmail, password } = req.body;
+    const userId = req.user.id;
+
+    // Validate required fields
+    if (!newEmail || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'New email and password are required',
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format',
+      });
+    }
+
+    // Verify password
+    const userResult = await pool.query(
+      'SELECT password_hash, email FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      userResult.rows[0].password_hash
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid password',
+      });
+    }
+
+    // Check if new email is same as current
+    if (userResult.rows[0].email === newEmail) {
+      return res.status(400).json({
+        success: false,
+        message: 'New email must be different from current email',
+      });
+    }
+
+    // Check if email is already taken
+    const emailCheck = await pool.query(
+      'SELECT id FROM users WHERE email = $1 AND id != $2',
+      [newEmail, userId]
+    );
+
+    if (emailCheck.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Email is already registered',
+      });
+    }
+
+    // Update email
+    await pool.query(
+      'UPDATE users SET email = $1, email_verified = false, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+      [newEmail, userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Email updated successfully. Please verify your new email address.',
+      newEmail: newEmail
+    });
+  } catch (error) {
+    console.error('Update email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Change user password
+ */
+async function changePassword(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    // Validate required fields
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password and new password are required',
+      });
+    }
+
+    // Validate new password strength
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 8 characters long',
+      });
+    }
+
+    // Get current password hash
+    const userResult = await pool.query(
+      'SELECT password_hash FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      userResult.rows[0].password_hash
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect',
+      });
+    }
+
+    // Check if new password is same as current
+    const isSamePassword = await bcrypt.compare(
+      newPassword,
+      userResult.rows[0].password_hash
+    );
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be different from current password',
+      });
+    }
+
+    // Hash new password
+    const saltRounds = 10;
+    const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+
+    // Update password
+    await pool.query(
+      'UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+      [newPasswordHash, userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully',
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   registerClient,
   registerProvider,
-  registerSpaceOwner,
+  // SPACES FEATURE - COMMENTED OUT FOR MVP
+  // registerSpaceOwner,
   login,
   updateClientProfile,
   updateProviderProfile,
   verifyToken,
+  changePassword,
+  updateEmail,
+  enable2FA,
+  verifyAndActivate2FA,
+  disable2FA,
+  verify2FALogin,
+  regenerateBackupCodes,
 };
 

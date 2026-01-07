@@ -607,6 +607,18 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                           <span className={styles.statusCanceled}>Canceled</span>
                         </div>
                       </div>
+                      <div className={styles.sessionRight}>
+                        <div className={styles.sessionActions}>
+                          {b.provider_user_id && (
+                            <Link 
+                              href={`/search/${b.provider_user_id}`}
+                              className={styles.actionBtn}
+                            >
+                              Book Again
+                            </Link>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   );
                 })

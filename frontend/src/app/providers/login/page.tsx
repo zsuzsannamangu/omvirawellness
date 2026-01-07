@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/services/auth';
+import TwoFactorVerifyModal from '@/components/Providers/Login/TwoFactorVerifyModal';
 import styles from '@/styles/Providers/ProviderLogin.module.scss';
 
 export default function ProviderLoginPage() {
@@ -12,6 +13,8 @@ export default function ProviderLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [twoFactorUserId, setTwoFactorUserId] = useState<string | null>(null);
   const router = useRouter();
 
   // Check if user is already authenticated
@@ -40,9 +43,11 @@ export default function ProviderLoginPage() {
               router.push(`/providers/dashboard/${userData.id}`);
             } else if (userData.user_type === 'client') {
               router.push(`/dashboard/${userData.id}`);
-            } else if (userData.user_type === 'space_owner') {
-              router.push(`/spaces/dashboard/${userData.id}`);
-            }
+            } 
+            // SPACES FEATURE - COMMENTED OUT FOR MVP
+            // else if (userData.user_type === 'space_owner') {
+            //   router.push(`/spaces/dashboard/${userData.id}`);
+            // }
           } catch (parseError) {
             // Invalid user data, show login form
           }
@@ -74,10 +79,33 @@ export default function ProviderLoginPage() {
         return;
       }
       
+      // Check if 2FA is required
+      if (data.requires2FA) {
+        setTwoFactorUserId(data.userId);
+        setRequires2FA(true);
+        setLoading(false);
+        return;
+      }
+      
       router.push(`/providers/dashboard/${data.user.id}`);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || 'Login failed. Please check your credentials.');
       setLoading(false);
+    }
+  };
+
+  const handle2FAVerify = async (token: string, backupCode?: string) => {
+    try {
+      const data = await login(email, password, token, backupCode);
+      
+      // Verify it's a provider account
+      if (data.user.user_type !== 'provider') {
+        throw new Error('This account is not a provider account.');
+      }
+      
+      router.push(`/providers/dashboard/${data.user.id}`);
+    } catch (err: any) {
+      throw err;
     }
   };
 
@@ -223,6 +251,17 @@ export default function ProviderLoginPage() {
           </div>
         </div>
       </div>
+
+      {/* 2FA Verification Modal */}
+      <TwoFactorVerifyModal
+        isOpen={requires2FA}
+        userId={twoFactorUserId || ''}
+        onVerify={handle2FAVerify}
+        onCancel={() => {
+          setRequires2FA(false);
+          setTwoFactorUserId(null);
+        }}
+      />
     </div>
   );
 } 

@@ -202,11 +202,12 @@ export default function AvailabilityStep({ onNext, onBack, initialData }: Availa
                               } catch (error) {
                                 // If remove() fails, try removeChild as fallback
                                 try {
-                                  if (tooltip.parentNode) {
-                                    tooltip.parentNode.removeChild(tooltip);
+                                  const parent = tooltip.parentNode;
+                                  if (parent) {
+                                    parent.removeChild(tooltip);
                                   }
                                 } catch (e) {
-                                  // Silently fail if parent is null
+                                  // Silently fail if parent is null or element already removed
                                 }
                               }
                             }

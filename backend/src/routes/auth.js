@@ -4,11 +4,19 @@ const router = express.Router();
 const {
   registerClient,
   registerProvider,
-  registerSpaceOwner,
+  // SPACES FEATURE - COMMENTED OUT FOR MVP
+  // registerSpaceOwner,
   login,
   updateClientProfile,
   updateProviderProfile,
   verifyToken,
+  changePassword,
+  updateEmail,
+  enable2FA,
+  verifyAndActivate2FA,
+  disable2FA,
+  verify2FALogin,
+  regenerateBackupCodes,
 } = require('../controllers/auth');
 const { authenticate } = require('../middleware/auth');
 
@@ -26,12 +34,13 @@ router.post('/register/client', registerClient);
  */
 router.post('/register/provider', registerProvider);
 
+// SPACES FEATURE - COMMENTED OUT FOR MVP
 /**
  * @route   POST /api/auth/register/space-owner
  * @desc    Register a new space owner
  * @access  Public
  */
-router.post('/register/space-owner', registerSpaceOwner);
+// router.post('/register/space-owner', registerSpaceOwner);
 
 /**
  * @route   POST /api/auth/login
@@ -60,6 +69,55 @@ router.put('/profile/provider', updateProviderProfile);
  * @access  Protected
  */
 router.get('/verify', authenticate, verifyToken);
+
+/**
+ * @route   PUT /api/auth/change-password
+ * @desc    Change user password
+ * @access  Protected
+ */
+router.put('/change-password', authenticate, changePassword);
+
+/**
+ * @route   PUT /api/auth/update-email
+ * @desc    Update user email
+ * @access  Protected
+ */
+router.put('/update-email', authenticate, updateEmail);
+
+/**
+ * @route   POST /api/auth/2fa/enable
+ * @desc    Enable 2FA - Generate secret and QR code
+ * @access  Protected
+ */
+router.post('/2fa/enable', authenticate, enable2FA);
+
+/**
+ * @route   POST /api/auth/2fa/verify
+ * @desc    Verify and activate 2FA
+ * @access  Protected
+ */
+router.post('/2fa/verify', authenticate, verifyAndActivate2FA);
+
+/**
+ * @route   POST /api/auth/2fa/disable
+ * @desc    Disable 2FA
+ * @access  Protected
+ */
+router.post('/2fa/disable', authenticate, disable2FA);
+
+/**
+ * @route   POST /api/auth/2fa/verify-login
+ * @desc    Verify 2FA token during login
+ * @access  Public (but requires userId from login flow)
+ */
+router.post('/2fa/verify-login', verify2FALogin);
+
+/**
+ * @route   POST /api/auth/2fa/regenerate-backup-codes
+ * @desc    Regenerate backup codes
+ * @access  Protected
+ */
+router.post('/2fa/regenerate-backup-codes', authenticate, regenerateBackupCodes);
 
 module.exports = router;
 

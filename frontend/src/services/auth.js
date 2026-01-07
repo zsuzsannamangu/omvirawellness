@@ -5,21 +5,40 @@ const AUTH_API_URL = `${API_URL}/auth`;
 
 /**
  * Login - works for all user types
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @param {string} twoFactorToken - Optional 2FA token
+ * @param {string} backupCode - Optional backup code
+ * @returns {Promise<Object>} User data and token, or 2FA requirement
  */
-export async function login(email, password) {
+export async function login(email, password, twoFactorToken = null, backupCode = null) {
   try {
     const response = await fetch(`${AUTH_API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ 
+        email, 
+        password,
+        twoFactorToken,
+        backupCode
+      }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.message || 'Login failed');
+    }
+
+    // Check if 2FA is required
+    if (data.requires2FA) {
+      return {
+        requires2FA: true,
+        userId: data.userId,
+        message: data.message
+      };
     }
 
     // Store token and user info
@@ -96,9 +115,8 @@ export async function registerProvider(formData) {
   }
 }
 
-/**
+/* SPACES FEATURE - COMMENTED OUT FOR MVP
  * Register a new space owner
- */
 export async function registerSpaceOwner(formData) {
   try {
     const response = await fetch(`${AUTH_API_URL}/register/space-owner`, {
@@ -126,6 +144,7 @@ export async function registerSpaceOwner(formData) {
     throw error;
   }
 }
+*/
 
 /**
  * Logout - clear stored credentials

@@ -10,6 +10,20 @@ const pool = new Pool({
   },
 });
 
+// Handle connection errors gracefully
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+  // Don't crash the server, just log the error
+});
+
+// Test connection on startup
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('❌ Database connection failed:', err.message);
+    console.error('Please check your DATABASE_URL in .env file');
+  }
+});
+
 module.exports = pool;
 
 //Supabase enforces SSL in production.

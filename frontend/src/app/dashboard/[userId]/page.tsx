@@ -3,6 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { 
+  FaCalendarAlt, FaCalendar, FaHeart, FaDollarSign, 
+  FaEnvelope, FaUser, FaSignOutAlt, FaChevronLeft, FaChevronRight
+} from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 // Dashboard sections
@@ -12,6 +16,8 @@ import Payments from '@/components/Clients/Dashboard/Payments';
 import Calendar from '@/components/Clients/Dashboard/Calendar';
 import Messages from '@/components/Clients/Dashboard/Messages';
 import Profile from '@/components/Clients/Dashboard/Profile';
+import ChangePasswordModal from '@/components/Clients/Dashboard/ChangePasswordModal';
+import UpdateEmailModal from '@/components/Clients/Dashboard/UpdateEmailModal';
 
 export default function ClientDashboard() {
   const params = useParams();
@@ -35,6 +41,9 @@ export default function ClientDashboard() {
   const [totalBookings, setTotalBookings] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -193,6 +202,46 @@ export default function ClientDashboard() {
     };
   }, [userId]);
 
+  // Listen for change password and update email events from Profile component
+  useEffect(() => {
+    const handleOpenChangePassword = () => {
+      setShowChangePasswordModal(true);
+    };
+
+    const handleOpenUpdateEmail = () => {
+      setShowUpdateEmailModal(true);
+    };
+
+    window.addEventListener('openChangePassword', handleOpenChangePassword);
+    window.addEventListener('openUpdateEmail', handleOpenUpdateEmail);
+    return () => {
+      window.removeEventListener('openChangePassword', handleOpenChangePassword);
+      window.removeEventListener('openUpdateEmail', handleOpenUpdateEmail);
+    };
+  }, []);
+
+  // Prevent password manager detection
+  useEffect(() => {
+    const preventPasswordManager = () => {
+      const sections = document.querySelectorAll('[data-1p-ignore]');
+      sections.forEach(section => {
+        const inputs = section.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          if (!input.hasAttribute('data-1p-ignore')) {
+            input.setAttribute('data-1p-ignore', 'true');
+            input.setAttribute('data-lpignore', 'true');
+            input.setAttribute('data-form-type', 'other');
+            input.setAttribute('autocomplete', 'off');
+          }
+        });
+      });
+    };
+
+    preventPasswordManager();
+    const interval = setInterval(preventPasswordManager, 1000);
+    return () => clearInterval(interval);
+  }, [activeSection, activeSubmenu]);
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -218,14 +267,15 @@ export default function ClientDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'bookings', label: 'Bookings' },
-    { id: 'favorites', label: 'Favorites' },
-    { id: 'payments', label: 'Payments' },
-    { id: 'calendar', label: 'Calendar' },
-    { id: 'messages', label: 'Messages' },
-    { id: 'profile', label: 'Profile & Preferences' },
-    { id: 'signout', label: 'Sign Out' },
+    { id: 'bookings', label: 'Bookings', icon: FaCalendarAlt },
+    { id: 'calendar', label: 'Calendar', icon: FaCalendar },
+    { id: 'favorites', label: 'Favorites', icon: FaHeart },
+    { id: 'payments', label: 'Payments', icon: FaDollarSign },
+    { id: 'messages', label: 'Messages', icon: FaEnvelope },
+    { id: 'profile', label: 'Profile & Settings', icon: FaUser },
   ];
+
+  const signOutItem = { id: 'signout', label: 'Sign Out', icon: FaSignOutAlt };
 
   const submenuItems = {
     bookings: [
@@ -250,7 +300,8 @@ export default function ClientDashboard() {
     ],
     profile: [
       { id: 'personal', label: 'Personal Info' },
-      { id: 'preferences', label: 'Preferences' },
+      { id: 'settings', label: 'Settings' },
+      { id: 'account', label: 'Account Settings' },
     ],
   };
 
@@ -284,42 +335,67 @@ export default function ClientDashboard() {
   return (
     <div className={styles.dashboard}>
       {/* Left Sidebar */}
-      <div className={styles.sidebar}>
+      <div className={`${styles.sidebar} ${sidebarExpanded ? styles.expanded : styles.collapsed}`}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Client Dashboard</h2>
+          <button 
+            className={styles.toggleButton}
+            onClick={() => setSidebarExpanded(!sidebarExpanded)}
+            aria-label="Toggle sidebar"
+          >
+            {sidebarExpanded ? <FaChevronLeft /> : <FaChevronRight />}
+          </button>
         </div>
         
         <nav className={styles.sidebarNav}>
-          {sidebarItems.map((item) => (
-            <button
-              key={item.id}
-              className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
-              onClick={() => {
-                if (item.id === 'signout') {
-                  localStorage.removeItem('token');
-                  localStorage.removeItem('user');
-                  router.push('/');
-                } else {
+          {sidebarItems.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <button
+                key={item.id}
+                className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
+                onClick={() => {
                   setActiveSection(item.id);
                   // Automatically set the first submenu item as active
                   const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
                   if (firstSubmenu) {
                     setActiveSubmenu(firstSubmenu.id);
                   }
-                }
-              }}
-            >
-              <span className={styles.sidebarLabel}>{item.label}</span>
-              {item.id === 'messages' && unreadMessages > 0 && (
-                <span className={styles.badge}>{unreadMessages}</span>
-              )}
-            </button>
-          ))}
+                }}
+                title={sidebarExpanded ? '' : item.label}
+              >
+                <IconComponent className={styles.sidebarIcon} />
+                {sidebarExpanded && (
+                  <>
+                    <span className={styles.sidebarLabel}>{item.label}</span>
+                    {item.id === 'messages' && unreadMessages > 0 && (
+                      <span className={styles.badge}>{unreadMessages}</span>
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
         </nav>
+        
+        {/* Sign Out at Bottom */}
+        <div className={styles.sidebarFooter}>
+          <button
+            className={`${styles.sidebarItem} ${styles.signOutButton}`}
+            onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              router.push('/');
+            }}
+            title={sidebarExpanded ? '' : signOutItem.label}
+          >
+            <signOutItem.icon className={styles.sidebarIcon} />
+            {sidebarExpanded && <span className={styles.sidebarLabel}>{signOutItem.label}</span>}
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: sidebarExpanded ? '240px' : '80px' }}>
         {/* Top Navigation */}
         <div className={styles.topNav}>
           <div className={styles.greetingSection}>
@@ -388,6 +464,31 @@ export default function ClientDashboard() {
           {renderMainContent()}
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+      />
+
+      {/* Update Email Modal */}
+      <UpdateEmailModal
+        isOpen={showUpdateEmailModal}
+        onClose={() => setShowUpdateEmailModal(false)}
+        currentEmail={(() => {
+          const user = localStorage.getItem('user');
+          return user ? JSON.parse(user).email : '';
+        })()}
+        onSuccess={() => {
+          // Reload user data to get updated email
+          const user = localStorage.getItem('user');
+          if (user) {
+            const userData = JSON.parse(user);
+            // Email is already updated in localStorage by the modal
+            // Just trigger a re-render if needed
+          }
+        }}
+      />
     </div>
   );
 }

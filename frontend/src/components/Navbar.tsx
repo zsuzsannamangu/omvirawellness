@@ -93,6 +93,7 @@ export default function Navbar() {
             <FaUserFriends className={styles.linkIcon} />
             For Providers
           </Link>
+          {/* SPACES FEATURE - COMMENTED OUT FOR MVP
           {pathname?.startsWith('/spaces') ? (
             <Link href="/providers" className={styles.spacesLink}>
               <FaUserFriends className={styles.linkIcon} />
@@ -104,6 +105,7 @@ export default function Navbar() {
               For Spaces
             </Link>
           )}
+          */}
         </div>
       </div>
 
@@ -162,6 +164,7 @@ export default function Navbar() {
               <FaUserFriends className={styles.linkIcon} />
               For Providers
             </Link>
+            {/* SPACES FEATURE - COMMENTED OUT FOR MVP
             {pathname?.startsWith('/spaces') ? (
               <Link href="/providers" className={styles.mobileNavLink}>
                 <FaUserFriends className={styles.linkIcon} />
@@ -173,6 +176,7 @@ export default function Navbar() {
                 For Spaces
               </Link>
             )}
+            */}
           </div>
         </div>
       )}

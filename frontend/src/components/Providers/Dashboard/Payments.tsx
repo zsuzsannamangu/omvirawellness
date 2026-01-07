@@ -276,14 +276,14 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
         
         return (
           <div className={styles.paymentsContent}>
-            <h2 className={styles.sectionTitle}>Payment History</h2>
+            <h2 className={styles.sectionTitle}>Payout History</h2>
             {loading ? (
               <div className={styles.placeholderText}>
-                <p>Loading payment history...</p>
+                <p>Loading payout history...</p>
               </div>
             ) : paidBookings.length === 0 ? (
               <div className={styles.placeholderText}>
-                <p>No payment history yet.</p>
+                <p>No payout history yet.</p>
               </div>
             ) : (
               <div className={styles.bookingsTableWrapper}>

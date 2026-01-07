@@ -9,7 +9,6 @@
 
 // Left Sidebar
 .sidebar {
-  width: 200px;
   background: $bg-white;
   border-right: 1px solid $border-light;
   display: flex;
@@ -19,11 +18,42 @@
   left: 0;
   top: 0;
   z-index: 100;
+  transition: width 0.3s ease;
+  width: 240px;
+
+  &.collapsed {
+    width: 80px !important;
+  }
+
+  &.expanded {
+    width: 240px !important;
+  }
 }
 
 .sidebarHeader {
   padding: $spacing-md $spacing-lg;
   border-bottom: 1px solid $border-light;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $client-colors-1;
+  font-size: 1rem;
+  padding: $spacing-xs;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+
+  &:hover {
+    background: $section-bg-2;
+  }
 }
 
 .logo {
@@ -37,6 +67,7 @@
 .sidebarNav {
   flex: 1;
   padding: $spacing-sm 0;
+  overflow-y: auto;
 }
 
 .sidebarItem {
@@ -52,6 +83,11 @@
   font-family: $font-main;
   font-size: 0.9rem;
   color: $dark-text;
+  gap: $spacing-sm;
+  white-space: nowrap;
+  justify-content: flex-start;
+  min-height: 44px;
+  height: 44px;
 
   &:hover {
     background: $section-bg-2;
@@ -62,14 +98,58 @@
     color: $client-colors-1;
     border-right: 3px solid $client-colors-1;
   }
+
+  &.signOutButton {
+    margin-top: auto;
+  }
+
+  // When sidebar is collapsed, center the icon
+  .sidebar.collapsed & {
+    justify-content: center;
+    padding: $spacing-sm;
+  }
 }
 
 .sidebarIcon {
   font-size: 1.1rem;
   width: 20px;
+  min-width: 20px;
   text-align: center;
-  color: $dark-text;
-  font-weight: bold;
+  color: inherit;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+
+// When sidebar is collapsed, center icons and hide labels
+.sidebar.collapsed {
+  .sidebarItem {
+    justify-content: center;
+    padding-left: $spacing-md;
+    padding-right: $spacing-md;
+  }
+  
+  .sidebarLabel {
+    display: none;
+  }
+  
+  .badge {
+    display: none;
+  }
+}
+
+.sidebarFooter {
+  margin-top: auto;
+  padding: $spacing-md;
+  border-top: 1px solid $border-light;
+  flex-shrink: 0;
+  
+  .sidebarItem {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .sidebarLabel {
@@ -95,10 +175,11 @@
 // Main Content Area
 .mainContent {
   flex: 1;
-  margin-left: 200px;
+  margin-left: 240px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: margin-left 0.3s ease;
 }
 
 // Top Navigation
@@ -539,11 +620,15 @@
 // Responsive Design
 @media (max-width: 1024px) {
   .sidebar {
-    width: 180px;
+    width: 220px;
+    
+    &.collapsed {
+      width: 80px !important;
+    }
   }
   
   .mainContent {
-    margin-left: 180px;
+    margin-left: 220px;
   }
 }
 
@@ -557,11 +642,15 @@
 
 @media (max-width: 480px) {
   .sidebar {
-    width: 160px;
+    width: 200px;
+    
+    &.collapsed {
+      width: 80px !important;
+    }
   }
   
   .mainContent {
-    margin-left: 160px;
+    margin-left: 200px;
   }
   
   .topNav {

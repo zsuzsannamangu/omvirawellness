@@ -2,18 +2,32 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { FaStar, FaReply, FaLink } from 'react-icons/fa';
+import { 
+  FaStar, FaReply, FaLink, FaEdit, FaCreditCard, 
+  FaCalendarAlt, FaCalendar, FaUsers, FaDollarSign, 
+  FaChartLine, FaEnvelope, FaUser, FaCog, FaSignOutAlt,
+  FaChevronLeft, FaChevronRight
+} from 'react-icons/fa';
+import Swal from 'sweetalert2';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 // Dashboard sections
 import Bookings from '@/components/Providers/Dashboard/Bookings';
-import Spaces from '@/components/Providers/Dashboard/Spaces';
+// SPACES FEATURE - COMMENTED OUT FOR MVP
+// import Spaces from '@/components/Providers/Dashboard/Spaces';
 import Calendar from '@/components/Providers/Dashboard/Calendar';
 import Clients from '@/components/Providers/Dashboard/Clients';
 import Payments from '@/components/Providers/Dashboard/Payments';
 import Stats from '@/components/Providers/Dashboard/Stats';
 import Messages from '@/components/Providers/Dashboard/Messages';
 import Profile from '@/components/Providers/Dashboard/Profile';
+import ChangePlanModal from '@/components/Providers/Dashboard/ChangePlanModal';
+import UpdatePaymentMethodModal from '@/components/Providers/Dashboard/UpdatePaymentMethodModal';
+import UpdatePaymentMethodModalStripe from '@/components/Providers/Dashboard/UpdatePaymentMethodModalStripe';
+import UpdateBillingAddressModal from '@/components/Providers/Dashboard/UpdateBillingAddressModal';
+import ChangePasswordModal from '@/components/Providers/Dashboard/ChangePasswordModal';
+import UpdateEmailModal from '@/components/Providers/Dashboard/UpdateEmailModal';
+import TwoFactorSettings from '@/components/Providers/Dashboard/TwoFactorSettings';
 
 export default function ProvidersDashboard() {
   const params = useParams();
@@ -28,6 +42,7 @@ export default function ProvidersDashboard() {
     initialSection === 'profile' ? 'basic' : 
     initialSection === 'stats' ? 'traffic' :
     initialSection === 'messages' ? 'notifications' :
+    initialSection === 'settings' ? 'account' :
     'requests'
   );
   const [activeCommunicationSubmenu, setActiveCommunicationSubmenu] = useState('inbox');
@@ -43,7 +58,75 @@ export default function ProvidersDashboard() {
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [unreadNotifications, setUnreadNotifications] = useState<number>(0);
   const [unreadMessages, setUnreadMessages] = useState<number>(0);
+  const [subscriptionData, setSubscriptionData] = useState<{
+    plan: string;
+    billingCycle: string;
+    price: number;
+    nextPaymentDate: string | null;
+  } | null>(null);
+  const [billingHistory, setBillingHistory] = useState<Array<{
+    date: string;
+    amount: number;
+    plan: string;
+    billingCycle: string;
+    status: string;
+  }>>([]);
+  const [showChangePlanModal, setShowChangePlanModal] = useState(false);
+  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
+  const [isCancellingSubscription, setIsCancellingSubscription] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState({
+    cardNumber: '',
+    expiryDate: '',
+    cvv: ''
+  });
+  const [savedPaymentMethod, setSavedPaymentMethod] = useState<{
+    cardNumber: string;
+    expiryDate: string;
+    last4?: string;
+    cardType?: string;
+    nameOnCard?: string;
+    billingAddress?: {
+      nameOnCard?: string;
+      email?: string;
+      address?: string;
+      city?: string;
+      stateProvince?: string;
+      postalCode?: string;
+      country?: string;
+    };
+  } | null>(null);
+  const [isUpdatingPayment, setIsUpdatingPayment] = useState(false);
+  const [showUpdatePaymentModal, setShowUpdatePaymentModal] = useState(false);
+  const [showUpdateBillingAddressModal, setShowUpdateBillingAddressModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Prevent password manager detection
+  useEffect(() => {
+    // Add attributes to prevent password managers from detecting forms
+    const preventPasswordManager = () => {
+      // Add data attributes to all input fields in subscription and billing sections
+      const sections = document.querySelectorAll('[data-1p-ignore]');
+      sections.forEach(section => {
+        const inputs = section.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          if (!input.hasAttribute('data-1p-ignore')) {
+            input.setAttribute('data-1p-ignore', 'true');
+            input.setAttribute('data-lpignore', 'true');
+            input.setAttribute('data-form-type', 'other');
+            input.setAttribute('autocomplete', 'off');
+          }
+        });
+      });
+    };
+
+    preventPasswordManager();
+    // Re-run when section changes
+    const interval = setInterval(preventPasswordManager, 1000);
+    return () => clearInterval(interval);
+  }, [activeSection, activeSubmenu]);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -113,6 +196,220 @@ export default function ProvidersDashboard() {
       
       updateProviderName();
       
+      // Function to generate billing history
+      // Only show today's payment since this function was just implemented
+      const generateBillingHistory = (plan: string, billingCycle: string, price: number, nextPaymentDate: string) => {
+        try {
+          const history: Array<{
+            date: string;
+            amount: number;
+            plan: string;
+            billingCycle: string;
+            status: string;
+          }> = [];
+          
+          // Validate nextPaymentDate
+          if (!nextPaymentDate) {
+            console.warn('No nextPaymentDate provided for billing history');
+            setBillingHistory([]);
+            return;
+          }
+          
+          // Show today's payment (the initial payment when subscription was created)
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Set to start of day
+          
+          // Add today's payment
+          history.push({
+            date: today.toISOString(),
+            amount: price,
+            plan: plan.charAt(0).toUpperCase() + plan.slice(1),
+            billingCycle: billingCycle.charAt(0).toUpperCase() + billingCycle.slice(1),
+            status: 'Paid'
+          });
+          
+          console.log('Generated billing history:', history);
+          
+          setBillingHistory(history);
+        } catch (error) {
+          console.error('Error generating billing history:', error);
+          setBillingHistory([]);
+        }
+      };
+      
+      // Fetch subscription data from backend (always fetch to ensure it's up-to-date)
+      try {
+        const token = localStorage.getItem('token');
+        const subscriptionResponse = await fetch(`http://localhost:4000/api/providers/${userId}/subscription`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (subscriptionResponse.ok) {
+          const subscriptionResult = await subscriptionResponse.json();
+          
+          if (subscriptionResult.subscription) {
+            const subscription = subscriptionResult.subscription;
+            const plan = subscription.plan || 'essential';
+            const billingCycle = subscription.billingCycle || 'monthly';
+            const price = subscription.price !== undefined ? subscription.price : (plan === 'essential' ? 0 : 49);
+            
+            // Always recalculate next payment date from today (same day next month/year)
+            // This ensures the date is always correct and up-to-date
+            const today = new Date();
+            const nextPaymentDateObj = new Date(today);
+            
+            if (billingCycle === 'yearly') {
+              nextPaymentDateObj.setFullYear(nextPaymentDateObj.getFullYear() + 1);
+            } else {
+              nextPaymentDateObj.setMonth(nextPaymentDateObj.getMonth() + 1);
+            }
+            
+            const nextPaymentDate = nextPaymentDateObj.toISOString();
+            
+            // Update localStorage with subscription data from database
+            const updatedUser = {
+              ...userData,
+              subscription: {
+                plan,
+                billingCycle,
+                price,
+                nextPaymentDate: nextPaymentDate
+              }
+            };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            
+            setSubscriptionData({
+              plan,
+              billingCycle,
+              price,
+              nextPaymentDate,
+            });
+            
+            // Generate billing history from subscription data
+            generateBillingHistory(plan, billingCycle, price, nextPaymentDate);
+          } else {
+            // If no subscription data in database, check localStorage as fallback
+            if (userData.subscription) {
+              const plan = userData.subscription.plan || 'essential';
+              const billingCycle = userData.subscription.billingCycle || 'monthly';
+              const price = userData.subscription.price !== undefined ? userData.subscription.price : (plan === 'essential' ? 0 : 49);
+              
+              const today = new Date();
+              const nextPaymentDateObj = new Date(today);
+              
+              if (billingCycle === 'yearly') {
+                nextPaymentDateObj.setFullYear(nextPaymentDateObj.getFullYear() + 1);
+              } else {
+                nextPaymentDateObj.setMonth(nextPaymentDateObj.getMonth() + 1);
+              }
+              
+              const nextPaymentDate = nextPaymentDateObj.toISOString();
+              
+              setSubscriptionData({
+                plan,
+                billingCycle,
+                price,
+                nextPaymentDate,
+              });
+              
+              generateBillingHistory(plan, billingCycle, price, nextPaymentDate);
+            } else {
+              setBillingHistory([]);
+            }
+          }
+        } else {
+          // If API call fails, fall back to localStorage
+          if (userData.subscription) {
+            const plan = userData.subscription.plan || 'professional';
+            const billingCycle = userData.subscription.billingCycle || 'monthly';
+            const price = userData.subscription.price || 49;
+            
+            const today = new Date();
+            const nextPaymentDateObj = new Date(today);
+            
+            if (billingCycle === 'yearly') {
+              nextPaymentDateObj.setFullYear(nextPaymentDateObj.getFullYear() + 1);
+            } else {
+              nextPaymentDateObj.setMonth(nextPaymentDateObj.getMonth() + 1);
+            }
+            
+            const nextPaymentDate = nextPaymentDateObj.toISOString();
+            
+            setSubscriptionData({
+              plan,
+              billingCycle,
+              price,
+              nextPaymentDate,
+            });
+            
+            generateBillingHistory(plan, billingCycle, price, nextPaymentDate);
+          } else {
+            setBillingHistory([]);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching subscription data:', error);
+        // Fall back to localStorage if API call fails
+        if (userData.subscription) {
+          const plan = userData.subscription.plan || 'professional';
+          const billingCycle = userData.subscription.billingCycle || 'monthly';
+          const price = userData.subscription.price || 49;
+          
+          const today = new Date();
+          const nextPaymentDateObj = new Date(today);
+          
+          if (billingCycle === 'yearly') {
+            nextPaymentDateObj.setFullYear(nextPaymentDateObj.getFullYear() + 1);
+          } else {
+            nextPaymentDateObj.setMonth(nextPaymentDateObj.getMonth() + 1);
+          }
+          
+          const nextPaymentDate = nextPaymentDateObj.toISOString();
+          
+          setSubscriptionData({
+            plan,
+            billingCycle,
+            price,
+            nextPaymentDate,
+          });
+          
+          generateBillingHistory(plan, billingCycle, price, nextPaymentDate);
+        } else {
+          setBillingHistory([]);
+        }
+      }
+      
+      // Load payment method if available
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const paymentResponse = await fetch(`http://localhost:4000/api/providers/${userId}/payment-method`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (paymentResponse.ok) {
+            const paymentData = await paymentResponse.json();
+            if (paymentData.paymentMethod) {
+              setSavedPaymentMethod({
+                cardNumber: paymentData.paymentMethod.cardNumber || '',
+                expiryDate: paymentData.paymentMethod.expiryDate || '',
+                last4: paymentData.paymentMethod.last4 || '',
+                cardType: paymentData.paymentMethod.cardType || 'Visa',
+                nameOnCard: paymentData.paymentMethod.nameOnCard || '',
+                billingAddress: paymentData.paymentMethod.billingAddress || {}
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading payment method:', error);
+        // Don't block the page if payment method loading fails
+      }
+      
       // Load profile image if available
       if (userData.profile?.profile_photo_url) {
         setProfileImage(userData.profile.profile_photo_url);
@@ -148,11 +445,15 @@ export default function ProvidersDashboard() {
           window.removeEventListener('profileUpdated', handleProfileUpdate);
         }
       };
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      router.push('/providers/login');
-      return;
-    }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        console.error('User data from localStorage:', user);
+        // Clear potentially corrupted data
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        router.push('/providers/login');
+        return;
+      }
     };
 
     loadUserData();
@@ -391,7 +692,8 @@ export default function ProvidersDashboard() {
           // Get submenu items dynamically
           const submenuItems = {
             bookings: [{ id: 'requests' }],
-            spaces: [{ id: 'upcoming' }],
+            // SPACES FEATURE - COMMENTED OUT FOR MVP
+            // spaces: [{ id: 'upcoming' }],
             calendar: [{ id: 'overview' }],
             clients: [{ id: 'directory' }],
             payments: [{ id: 'balance' }],
@@ -474,17 +776,19 @@ export default function ProvidersDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'bookings', label: 'Bookings' },
-    { id: 'spaces', label: 'Space Rentals' },
-    { id: 'calendar', label: 'Calendar' },
-    { id: 'clients', label: 'Clients' },
-    { id: 'payments', label: 'Payments & Earnings' },
-    { id: 'stats', label: 'Stats' },
-    { id: 'messages', label: 'Messages' },
-    { id: 'profile', label: 'Profile & Services' },
-    { id: 'settings', label: 'Account Settings' },
-    { id: 'signout', label: 'Sign Out' },
+    { id: 'bookings', label: 'Bookings', icon: FaCalendarAlt },
+    // SPACES FEATURE - COMMENTED OUT FOR MVP
+    // { id: 'spaces', label: 'Space Rentals' },
+    { id: 'calendar', label: 'Calendar', icon: FaCalendar },
+    { id: 'clients', label: 'Clients', icon: FaUsers },
+    { id: 'payments', label: 'Payments & Earnings', icon: FaDollarSign },
+    { id: 'stats', label: 'Stats', icon: FaChartLine },
+    { id: 'messages', label: 'Messages', icon: FaEnvelope },
+    { id: 'profile', label: 'Profile & Services', icon: FaUser },
+    { id: 'settings', label: 'Account Settings', icon: FaCog },
   ];
+
+  const signOutItem = { id: 'signout', label: 'Sign Out', icon: FaSignOutAlt };
 
   const submenuItems = {
     bookings: [
@@ -493,13 +797,14 @@ export default function ProvidersDashboard() {
       { id: 'past', label: 'Past' },
       { id: 'canceled', label: 'Canceled' },
     ],
-    spaces: [
-      { id: 'upcoming', label: 'Upcoming Bookings' },
-      { id: 'favorites', label: 'Saved Spaces' },
-      { id: 'past', label: 'Past Bookings' },
-      { id: 'request', label: 'Request a Space' },
-      { id: 'find', label: 'Find a Space' },
-    ],
+    // SPACES FEATURE - COMMENTED OUT FOR MVP
+    // spaces: [
+    //   { id: 'upcoming', label: 'Upcoming Bookings' },
+    //   { id: 'favorites', label: 'Saved Spaces' },
+    //   { id: 'past', label: 'Past Bookings' },
+    //   { id: 'request', label: 'Request a Space' },
+    //   { id: 'find', label: 'Find a Space' },
+    // ],
     calendar: [
       { id: 'overview', label: 'Calendar Overview' },
       { id: 'sync', label: 'Sync with Google/Apple Calendar' },
@@ -537,12 +842,99 @@ export default function ProvidersDashboard() {
     ],
   };
 
+  // Helper function to get plan name - used in both subscription and billing sections
+  const getPlanName = (plan: string) => {
+    switch(plan) {
+      case 'essential': return 'Essential Plan';
+      case 'professional': return 'Professional Plan';
+      case 'growth': return 'Growth+ Plan';
+      default: return 'Professional Plan';
+    }
+  };
+
+  // Handle cancel subscription
+  const handleCancelSubscription = async () => {
+    const result = await Swal.fire({
+      title: 'Cancel Subscription?',
+      text: 'Are you sure you want to cancel your subscription? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, cancel it',
+      cancelButtonText: 'No, keep it'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    setIsCancellingSubscription(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await fetch(`http://localhost:4000/api/providers/${userId}/subscription`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || 'Failed to cancel subscription');
+      }
+
+      // Set subscription to Essential (free) plan
+      const essentialPlanData = {
+        plan: 'essential',
+        billingCycle: 'monthly',
+        price: 0,
+        nextPaymentDate: null
+      };
+      setSubscriptionData(essentialPlanData);
+      
+      // Update localStorage
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = {
+        ...userData,
+        subscription: essentialPlanData
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+
+      await Swal.fire({
+        title: 'Cancelled!',
+        text: 'Your subscription has been cancelled successfully.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
+      });
+      
+      // Close the Change Plan modal
+      setShowChangePlanModal(false);
+    } catch (error: any) {
+      console.error('Error cancelling subscription:', error);
+      await Swal.fire({
+        title: 'Error',
+        text: error.message || 'Failed to cancel subscription',
+        icon: 'error',
+        confirmButtonColor: '#3085d6'
+      });
+    } finally {
+      setIsCancellingSubscription(false);
+    }
+  };
+
   const renderMainContent = () => {
     switch (activeSection) {
       case 'bookings':
         return <Bookings activeSubmenu={activeSubmenu} />;
-      case 'spaces':
-        return <Spaces activeSubmenu={activeSubmenu} />;
+      // SPACES FEATURE - COMMENTED OUT FOR MVP
+      // case 'spaces':
+      //   return <Spaces activeSubmenu={activeSubmenu} />;
       case 'calendar':
         return <Calendar activeSubmenu={activeSubmenu} />;
       case 'clients':
@@ -562,42 +954,118 @@ export default function ProvidersDashboard() {
         const email = userData?.email || '';
         
         // Render different settings submenus
-        switch (activeSubmenu) {
-          case 'account':
-            return (
-              <div className={styles.dashboardSection}>
+        return (() => {
+          switch (activeSubmenu) {
+            case 'account':
+              return (
+              <div className={styles.dashboardSection} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off">
                 <h2 className={styles.sectionTitle}>Account Information</h2>
                 
-                <div className={styles.settingsForm}>
+                <div className={styles.settingsForm} data-1p-ignore="true" data-lpignore="true">
                   <div className={styles.formSection}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Email Address</label>
-                      <input type="email" className={`${styles.formInput} ${styles.accountInfoInput}`} defaultValue={email} disabled />
+                      <div className={`${styles.formRowFlex} ${styles.accountInfoRow}`} data-1p-ignore="true" data-lpignore="true">
+                        <input 
+                          type="text" 
+                          className={`${styles.formInput} ${styles.formInputFlex} ${styles.formInputDisabled} ${styles.accountInfoInput}`} 
+                          value={email} 
+                          disabled
+                          data-1p-ignore="true"
+                          data-lpignore="true"
+                          data-form-type="other"
+                          autoComplete="off"
+                          readOnly
+                        />
+                        <button 
+                          className={styles.secondaryBtn}
+                          onClick={() => setShowUpdateEmailModal(true)}
+                        >
+                          Update Email
+                        </button>
+                      </div>
                     </div>
 
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Password</label>
-                      <div className={`${styles.formRowFlex} ${styles.accountInfoRow}`}>
+                      <div className={`${styles.formRowFlex} ${styles.accountInfoRow}`} data-1p-ignore="true" data-lpignore="true">
                         <input 
-                          type="password" 
+                          type="text" 
                           className={`${styles.formInput} ${styles.formInputFlex} ${styles.formInputDisabled} ${styles.accountInfoInput}`}
                           defaultValue="••••••••" 
-                          disabled 
+                          disabled
+                          data-1p-ignore="true"
+                          data-lpignore="true"
+                          data-form-type="other"
+                          autoComplete="off"
+                          readOnly
                         />
-                        <button className={styles.secondaryBtn}>Change Password</button>
+                        <button 
+                          className={styles.secondaryBtn}
+                          onClick={() => setShowChangePasswordModal(true)}
+                        >
+                          Change Password
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             );
+
+            case 'security':
+              return <TwoFactorSettings userId={userId} />;
             
-          case 'subscription':
-            return (
-              <div className={styles.dashboardSection}>
-                <h2 className={styles.sectionTitle}>Subscription</h2>
+            case 'subscription': {
+              const getPlanFeatures = (plan: string) => {
+              switch(plan) {
+                case 'essential':
+                  return [
+                    'Up to 50 clients',
+                    'Basic scheduling',
+                    'Client management',
+                    'Email support'
+                  ];
+                case 'professional':
+                  return [
+                    'Up to 200 clients',
+                    'Advanced scheduling',
+                    'Staff management',
+                    'Marketing tools',
+                    'Priority support'
+                  ];
+                case 'growth':
+                  return [
+                    'Unlimited clients',
+                    'All features',
+                    'API access',
+                    'Custom integrations',
+                    'Dedicated support'
+                  ];
+                default:
+                  return [];
+              }
+            };
+
+              const formatDate = (dateString: string | null) => {
+              if (!dateString) return '';
+              try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                });
+              } catch {
+                return '';
+              }
+            };
+
+              return (
+                <div className={styles.dashboardSection} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off">
+                  <h2 className={styles.sectionTitle}>Subscription</h2>
                 
-                <div className={styles.subscriptionContainer}>
+                <div className={styles.subscriptionContainer} data-1p-ignore="true" data-lpignore="true">
                   {/* Current Plan Card */}
                   <div className={styles.subscriptionCard}>
                     <div className={styles.subscriptionCardHeader}>
@@ -608,22 +1076,33 @@ export default function ProvidersDashboard() {
                     </div>
                     <div className={styles.subscriptionCardBody}>
                       <div className={styles.planDetails}>
-                        <div className={styles.planNameLarge}>Professional Plan</div>
-                        <div className={styles.planPriceLarge}>$59<span className={styles.planPeriod}>/month</span></div>
+                        <div className={styles.planNameLarge}>
+                          {subscriptionData ? getPlanName(subscriptionData.plan) : 'Essential Plan'}
+                        </div>
+                        <div className={styles.planPriceLarge}>
+                          {subscriptionData ? (
+                            subscriptionData.price === 0 ? (
+                              'Free'
+                            ) : (
+                              <>
+                                ${subscriptionData.price}
+                                <span className={styles.planPeriod}>
+                                  /{subscriptionData.billingCycle === 'yearly' ? 'month' : 'month'}
+                                </span>
+                              </>
+                            )
+                          ) : (
+                            'Free'
+                          )}
+                        </div>
                       </div>
                       <div className={styles.planFeatures}>
-                        <div className={styles.planFeature}>
-                          <span className={styles.featureCheck}>✓</span>
-                          <span>Unlimited bookings</span>
-                        </div>
-                        <div className={styles.planFeature}>
-                          <span className={styles.featureCheck}>✓</span>
-                          <span>Advanced analytics</span>
-                        </div>
-                        <div className={styles.planFeature}>
-                          <span className={styles.featureCheck}>✓</span>
-                          <span>Priority support</span>
-                        </div>
+                        {subscriptionData && getPlanFeatures(subscriptionData.plan).map((feature, index) => (
+                          <div key={index} className={styles.planFeature}>
+                            <span className={styles.featureCheck}>✓</span>
+                            <span>{feature}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -635,8 +1114,16 @@ export default function ProvidersDashboard() {
                     </div>
                     <div className={styles.subscriptionCardBody}>
                       <div className={styles.paymentInfo}>
-                        <div className={styles.paymentDateLarge}>January 15, 2025</div>
-                        <div className={styles.paymentAmountLarge}>$59.00</div>
+                        <div className={styles.paymentDateLarge}>
+                          {subscriptionData && subscriptionData.nextPaymentDate 
+                            ? formatDate(subscriptionData.nextPaymentDate)
+                            : '—'}
+                        </div>
+                        <div className={styles.paymentAmountLarge}>
+                          {subscriptionData && subscriptionData.price > 0
+                            ? `$${subscriptionData.price.toFixed(2)}`
+                            : '—'}
+                        </div>
                       </div>
                       <p className={styles.paymentDescription}>Your subscription will automatically renew on this date</p>
                     </div>
@@ -644,67 +1131,176 @@ export default function ProvidersDashboard() {
 
                   {/* Action Buttons */}
                   <div className={styles.subscriptionActions}>
-                    <button className={styles.changePlanBtn}>
+                    <button 
+                      className={styles.changePlanBtn}
+                      onClick={() => setShowChangePlanModal(true)}
+                    >
                       Change Plan
                     </button>
-                    <button className={styles.cancelSubscriptionBtn}>
-                      Cancel Subscription
+                  </div>
+                </div>
+              </div>
+              );
+            }
+            
+            case 'billing': {
+              const formatBillingDate = (dateString: string | null) => {
+                if (!dateString) return '';
+                try {
+                  const date = new Date(dateString);
+                  return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  });
+                } catch {
+                  return '';
+                }
+              };
+
+              return (
+                <div className={styles.dashboardSection}>
+                  <h2 className={styles.sectionTitle}>Billing</h2>
+                
+                {/* Billing Address Section */}
+                <div className={styles.billingAddressSection}>
+                  <div className={styles.billingAddressHeader}>
+                    <div className={styles.billingAddressTitle}>
+                      <span className={styles.billingSectionLabel}>BILLING ADDRESS</span>
+                      <button 
+                        className={styles.editBillingBtn}
+                        onClick={() => setShowUpdateBillingAddressModal(true)}
+                        aria-label="Edit billing address"
+                      >
+                        <FaEdit />
+                      </button>
+                    </div>
+                  </div>
+                  <div className={styles.billingAddressContent}>
+                    <div className={styles.billingAddressFields}>
+                    <div className={styles.billingField}>
+                      <span className={styles.billingFieldValue}>
+                        {savedPaymentMethod?.nameOnCard || savedPaymentMethod?.billingAddress?.nameOnCard || ''}
+                      </span>
+                    </div>
+                    <div className={styles.billingField}>
+                      <span className={styles.billingFieldValue}>
+                        {savedPaymentMethod?.billingAddress?.address || ''}
+                      </span>
+                    </div>
+                    {savedPaymentMethod?.billingAddress?.addressLine2 && (
+                      <div className={styles.billingField}>
+                        <span className={styles.billingFieldValue}>
+                          {savedPaymentMethod.billingAddress.addressLine2}
+                        </span>
+                      </div>
+                    )}
+                    <div className={styles.billingField}>
+                      <span className={styles.billingFieldValue}>
+                        {[
+                          savedPaymentMethod?.billingAddress?.city || '',
+                          savedPaymentMethod?.billingAddress?.stateProvince || '',
+                          savedPaymentMethod?.billingAddress?.postalCode || ''
+                        ].filter(Boolean).join(', ')}
+                      </span>
+                    </div>
+                    <div className={styles.billingField}>
+                      <span className={styles.billingFieldValue}>
+                        {savedPaymentMethod?.billingAddress?.country || ''}
+                      </span>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Method Section */}
+                <div className={styles.paymentMethodSection}>
+                  <div className={styles.paymentMethodHeader}>
+                    <span className={styles.billingSectionLabel}>PAYMENT</span>
+                    <button 
+                      className={styles.editPaymentBtn}
+                      onClick={() => setShowUpdatePaymentModal(true)}
+                      aria-label="Edit payment method"
+                    >
+                      <FaEdit />
                     </button>
                   </div>
-                </div>
-              </div>
-            );
-            
-          case 'billing':
-            return (
-              <div className={styles.dashboardSection}>
-                <h2 className={styles.sectionTitle}>Billing</h2>
-                
-                <div className={styles.settingsForm}>
-                  <div className={styles.formSection}>
-                    <h3 className={styles.subsectionTitle}>Payment Method</h3>
-                    
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Card Number</label>
-                      <input type="text" className={`${styles.formInput} ${styles.cardNumberInput}`} placeholder="**** **** **** 1234" disabled />
-                    </div>
-
-                    <div className={`${styles.formRow} ${styles.cardDetailsRow}`}>
-                      <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Expiry Date</label>
-                        <input type="text" className={`${styles.formInput} ${styles.expiryInput}`} placeholder="MM/YY" />
+                  <div className={styles.paymentMethodContent}>
+                    {savedPaymentMethod ? (
+                      <div className={styles.paymentMethodDisplay}>
+                        <FaCreditCard className={styles.cardIcon} />
+                        <span className={styles.cardType}>{savedPaymentMethod.cardType || 'Visa'}</span>
+                        <span className={styles.cardEnding}>ending in</span>
+                        <span className={styles.cardLast4}>{savedPaymentMethod.last4 || savedPaymentMethod.cardNumber.replace(/\D/g, '').slice(-4)}</span>
+                        {savedPaymentMethod.expiryDate && (
+                          <>
+                            <span className={styles.cardSeparator}>•</span>
+                            <span className={styles.cardExpiry}>Expires {savedPaymentMethod.expiryDate}</span>
+                          </>
+                        )}
                       </div>
-                      <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>CVV</label>
-                        <input type="text" className={`${styles.formInput} ${styles.cvvInput}`} placeholder="***" />
+                    ) : (
+                      <div className={styles.noPaymentMethod}>
+                        No payment method on file
                       </div>
-                    </div>
+                    )}
                   </div>
+                </div>
 
-                  <div className={styles.formSection}>
-                    <h3 className={styles.subsectionTitle}>Billing History</h3>
-                    <div className={styles.billingHistory}>
-                      <p>No billing history available</p>
-                    </div>
+                {/* Payment History Section */}
+                <div className={styles.paymentHistorySection} data-1p-ignore="true" data-lpignore="true">
+                  <div className={styles.paymentHistoryHeader}>
+                    <span className={styles.billingSectionLabel}>PAYMENT HISTORY</span>
                   </div>
-
-                  <div className={styles.formActions}>
-                    <button className={styles.saveBtn}>Update Payment Method</button>
+                  <div className={styles.paymentHistoryContent}>
+                    <div className={styles.paymentHistoryList}>
+                      {billingHistory.length > 0 ? (
+                        billingHistory.map((payment, index) => (
+                          <div key={index} className={styles.paymentHistoryItem}>
+                            <div className={styles.paymentHistoryField}>
+                              <span className={styles.paymentHistoryValue}>
+                                <span className={`${styles.paymentStatusIndicator} ${payment.status === 'Paid' ? styles.paymentStatusPaid : styles.paymentStatusPending}`}></span>
+                                {payment.status === 'Paid' ? 'Paid' : 'Unpaid'}
+                              </span>
+                            </div>
+                            <div className={styles.paymentHistoryField}>
+                              <span className={styles.paymentHistoryValue}>
+                                {formatBillingDate(payment.date)}
+                              </span>
+                            </div>
+                            <div className={styles.paymentHistoryField}>
+                              <span className={styles.paymentHistoryValue}>
+                                {payment.billingCycle || 'Monthly'}
+                              </span>
+                            </div>
+                            <div className={styles.paymentHistoryField}>
+                              <span className={styles.paymentHistoryValue}>
+                                ${payment.amount.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className={styles.noPaymentHistory}>No payment history available</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            );
+              );
+            }
             
-          default:
-            return (
-              <div className={styles.dashboardSection}>
-                <h2 className={styles.sectionTitle}>Account Settings</h2>
-                <div className={styles.placeholderText}>
-                  <p>Select a settings option from the submenu above.</p>
+            default:
+              return (
+                <div className={styles.dashboardSection}>
+                  <h2 className={styles.sectionTitle}>Account Settings</h2>
+                  <div className={styles.placeholderText}>
+                    <p>Select a settings option from the submenu above.</p>
+                  </div>
                 </div>
-              </div>
-            );
-        }
+              );
+          }
+        })();
       default:
         return <Bookings activeSubmenu={activeSubmenu} />;
     }
@@ -721,42 +1317,67 @@ export default function ProvidersDashboard() {
   return (
     <div className={styles.dashboard}>
       {/* Left Sidebar */}
-      <div className={styles.sidebar}>
+      <div className={`${styles.sidebar} ${sidebarExpanded ? styles.expanded : styles.collapsed}`}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.logo}>Provider Dashboard</h2>
+          <button 
+            className={styles.toggleButton}
+            onClick={() => setSidebarExpanded(!sidebarExpanded)}
+            aria-label="Toggle sidebar"
+          >
+            {sidebarExpanded ? <FaChevronLeft /> : <FaChevronRight />}
+          </button>
         </div>
         
         <nav className={styles.sidebarNav}>
-          {sidebarItems.map((item) => (
-            <button
-              key={item.id}
-              className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
-              onClick={() => {
-                if (item.id === 'signout') {
-                  // Clear authentication
-                  localStorage.removeItem('token');
-                  localStorage.removeItem('user');
-                  // Stop loading state and redirect immediately
-                  setLoading(false);
-                  router.replace('/providers/login');
-                } else {
+          {sidebarItems.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <button
+                key={item.id}
+                className={`${styles.sidebarItem} ${activeSection === item.id ? styles.active : ''}`}
+                onClick={() => {
                   setActiveSection(item.id);
                   const firstSubmenu = submenuItems[item.id as keyof typeof submenuItems]?.[0];
                   setActiveSubmenu(firstSubmenu?.id || item.id);
-                }
-              }}
-            >
-              <span className={styles.sidebarLabel}>{item.label}</span>
-              {item.id === 'messages' && (unreadNotifications + unreadMessages) > 0 && (
-                <span className={styles.badge}>{unreadNotifications + unreadMessages}</span>
-              )}
-            </button>
-          ))}
+                }}
+                title={sidebarExpanded ? '' : item.label}
+              >
+                <IconComponent className={styles.sidebarIcon} />
+                {sidebarExpanded && (
+                  <>
+                    <span className={styles.sidebarLabel}>{item.label}</span>
+                    {item.id === 'messages' && (unreadNotifications + unreadMessages) > 0 && (
+                      <span className={styles.badge}>{unreadNotifications + unreadMessages}</span>
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
         </nav>
+        
+        {/* Sign Out at Bottom */}
+        <div className={styles.sidebarFooter}>
+          <button
+            className={`${styles.sidebarItem} ${styles.signOutButton}`}
+            onClick={() => {
+              // Clear authentication
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              // Stop loading state and redirect immediately
+              setLoading(false);
+              router.replace('/providers/login');
+            }}
+            title={sidebarExpanded ? '' : signOutItem.label}
+          >
+            <signOutItem.icon className={styles.sidebarIcon} />
+            {sidebarExpanded && <span className={styles.sidebarLabel}>{signOutItem.label}</span>}
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: sidebarExpanded ? '240px' : '80px' }}>
         {/* Top Navigation */}
         <div className={styles.topNav}>
           <div className={styles.greetingSection}>
@@ -801,7 +1422,7 @@ export default function ProvidersDashboard() {
                 )}
                 {profileUrl && (
                   <a href={profileUrl} className={styles.profileLink} target="_blank" rel="noopener noreferrer">
-                    {profileUrl.replace(/^https?:\/\//, '').replace(/^www\./, '')}
+                    See your public profile on Omvira
                     <FaLink className={styles.linkIcon} />
                   </a>
                 )}
@@ -875,6 +1496,253 @@ export default function ProvidersDashboard() {
           {renderMainContent()}
         </div>
       </div>
+
+      {/* Update Payment Method Modal - Stripe */}
+      <UpdatePaymentMethodModalStripe
+        isOpen={showUpdatePaymentModal}
+        onClose={() => setShowUpdatePaymentModal(false)}
+        existingPaymentMethod={savedPaymentMethod}
+        userId={userId}
+        userEmail={(() => {
+          const user = localStorage.getItem('user');
+          return user ? JSON.parse(user).email : '';
+        })()}
+        userName={(() => {
+          const user = localStorage.getItem('user');
+          return user ? JSON.parse(user).profile?.contact_name || '' : '';
+        })()}
+        onUpdate={async (paymentMethodId, billingAddress, nameOnCard) => {
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              throw new Error('Not authenticated');
+            }
+
+            // Attach payment method to customer via Stripe API
+            const response = await fetch(`http://localhost:4000/api/stripe/payment-method`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                paymentMethodId: paymentMethodId,
+                billingAddress: billingAddress,
+                nameOnCard: nameOnCard
+              })
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.error || errorData.message || 'Failed to update payment method');
+            }
+
+            const result = await response.json();
+            
+            // Update saved payment method with Stripe data
+            const paymentMethod = result.paymentMethod;
+            setSavedPaymentMethod({
+              cardNumber: `**** **** **** ${paymentMethod.last4}`,
+              expiryDate: `${paymentMethod.expiryMonth}/${paymentMethod.expiryYear}`,
+              last4: paymentMethod.last4,
+              cardType: paymentMethod.cardType,
+              nameOnCard: paymentMethod.nameOnCard,
+              billingAddress: paymentMethod.billingAddress || {}
+            });
+          } catch (error: any) {
+            console.error('Error updating payment method:', error);
+            throw error;
+          }
+        }}
+      />
+
+      {/* Update Billing Address Modal */}
+      <UpdateBillingAddressModal
+        isOpen={showUpdateBillingAddressModal}
+        onClose={() => setShowUpdateBillingAddressModal(false)}
+        existingAddress={savedPaymentMethod}
+        onUpdate={async (addressData) => {
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              throw new Error('Not authenticated');
+            }
+
+            // Update billing address via API (using payment method endpoint but only updating address)
+            // Don't send card number if it's masked or doesn't exist - backend will treat as billing address only update
+            const cardNumberToSend = savedPaymentMethod?.cardNumber && 
+                                     !savedPaymentMethod.cardNumber.includes('*') &&
+                                     savedPaymentMethod.cardNumber.replace(/\D/g, '').length >= 13
+              ? savedPaymentMethod.cardNumber.replace(/\D/g, '')
+              : undefined;
+            
+            const requestBody = {
+              nameOnCard: addressData.nameOnCard,
+              billingAddress: {
+                nameOnCard: addressData.nameOnCard,
+                address: addressData.address,
+                addressLine2: addressData.addressLine2,
+                city: addressData.city,
+                stateProvince: addressData.stateProvince,
+                postalCode: addressData.postalCode,
+                country: addressData.country
+              }
+            };
+            
+            // Only include card fields if we have a valid card number
+            if (cardNumberToSend) {
+              requestBody.cardNumber = cardNumberToSend;
+              requestBody.expiryDate = savedPaymentMethod?.expiryDate || '12/99';
+            }
+            
+            const response = await fetch(`http://localhost:4000/api/providers/${userId}/payment-method`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.error || errorData.message || 'Failed to update billing address');
+            }
+
+            const result = await response.json();
+            
+            // Update saved payment method with new billing address
+            setSavedPaymentMethod({
+              ...savedPaymentMethod,
+              nameOnCard: addressData.nameOnCard,
+              billingAddress: result.paymentMethod?.billingAddress || {
+                nameOnCard: addressData.nameOnCard,
+                address: addressData.address,
+                addressLine2: addressData.addressLine2,
+                city: addressData.city,
+                stateProvince: addressData.stateProvince,
+                postalCode: addressData.postalCode,
+                country: addressData.country
+              }
+            });
+          } catch (error: any) {
+            console.error('Error updating billing address:', error);
+            throw error;
+          }
+        }}
+      />
+
+      {/* Change Plan Modal */}
+        <ChangePlanModal
+          isOpen={showChangePlanModal}
+          onClose={() => setShowChangePlanModal(false)}
+          currentPlan={subscriptionData?.plan || 'essential'}
+          currentBillingCycle={subscriptionData?.billingCycle || 'monthly'}
+          onCancelSubscription={handleCancelSubscription}
+          isCancellingSubscription={isCancellingSubscription}
+          onPlanChange={async (newPlan: string, newBillingCycle: string) => {
+            try {
+              const token = localStorage.getItem('token');
+              if (!token) {
+                throw new Error('Not authenticated');
+              }
+
+              // Calculate new price
+              let newPrice = 0;
+              if (newPlan === 'professional') {
+                newPrice = newBillingCycle === 'yearly' ? 47 : 49;
+              } else if (newPlan === 'growth') {
+                newPrice = newBillingCycle === 'yearly' ? 79 : 99;
+              }
+
+              // Calculate next payment date (same day next month for monthly, same day next year for yearly)
+              const nextPaymentDate = new Date();
+              if (newBillingCycle === 'yearly') {
+                nextPaymentDate.setFullYear(nextPaymentDate.getFullYear() + 1);
+              } else {
+                nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
+              }
+
+              // Update subscription via API
+              const response = await fetch(`http://localhost:4000/api/providers/${userId}/subscription`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                  plan: newPlan,
+                  billingCycle: newBillingCycle,
+                  price: newPrice,
+                  nextPaymentDate: nextPaymentDate.toISOString()
+                })
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Subscription update error:', errorData);
+                const errorMessage = errorData.error || errorData.message || `Failed to update subscription (${response.status})`;
+                throw new Error(errorMessage);
+              }
+
+              // Update local state
+              setSubscriptionData({
+                plan: newPlan,
+                billingCycle: newBillingCycle,
+                price: newPrice,
+                nextPaymentDate: nextPaymentDate.toISOString(),
+              });
+
+              // Update localStorage
+              const userData = JSON.parse(localStorage.getItem('user') || '{}');
+              const updatedUser = {
+                ...userData,
+                subscription: {
+                  plan: newPlan,
+                  billingCycle: newBillingCycle,
+                  price: newPrice,
+                  nextPaymentDate: nextPaymentDate.toISOString(),
+                }
+              };
+              localStorage.setItem('user', JSON.stringify(updatedUser));
+
+              await Swal.fire({
+                title: 'Success!',
+                text: 'Plan changed successfully!',
+                icon: 'success',
+                confirmButtonColor: '#3085d6'
+              });
+            } catch (error: any) {
+              console.error('Error changing plan:', error);
+              throw error;
+            }
+          }}
+        />
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+      />
+
+      {/* Update Email Modal */}
+      <UpdateEmailModal
+        isOpen={showUpdateEmailModal}
+        onClose={() => setShowUpdateEmailModal(false)}
+        currentEmail={(() => {
+          const user = localStorage.getItem('user');
+          return user ? JSON.parse(user).email : '';
+        })()}
+        onSuccess={() => {
+          // Reload user data to get updated email
+          const user = localStorage.getItem('user');
+          if (user) {
+            const userData = JSON.parse(user);
+            // Email is already updated in localStorage by the modal
+            // Just trigger a re-render if needed
+          }
+        }}
+      />
     </div>
   );
 }

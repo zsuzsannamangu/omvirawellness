@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
-import { FaCalendarAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useParams, useRouter } from 'next/navigation';
+import { FaCalendarAlt, FaHeart, FaRegHeart, FaSearch, FaShareAlt } from 'react-icons/fa';
 import styles from '@/styles/ProviderDetail.module.scss';
 import BookingOptions from '@/components/BookingOptions';
 import FavoriteAuthModal from '@/components/FavoriteAuthModal';
@@ -178,8 +178,12 @@ export default function ProviderDetailPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [dashboardUrl, setDashboardUrl] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const visitTrackedRef = useRef(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProvider = async () => {
@@ -353,6 +357,33 @@ export default function ProviderDetailPage() {
     fetchProvider();
   }, [params?.id]);
 
+  // Set dashboard URL on mount
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      if (userData && token) {
+        const user = JSON.parse(userData);
+        if (user.user_type === 'client') {
+          setDashboardUrl(`/dashboard/${user.id}`);
+          setIsClient(true);
+        } else if (user.user_type === 'provider') {
+          setDashboardUrl(`/providers/dashboard/${user.id}`);
+          setIsClient(false);
+        } else {
+          setIsClient(false);
+        }
+      } else {
+        setDashboardUrl(null);
+        setIsClient(false);
+      }
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+      setDashboardUrl(null);
+      setIsClient(false);
+    }
+  }, []);
+
   // Check authentication and load favorite status
   useEffect(() => {
     const checkAuthAndFavorite = async () => {
@@ -476,7 +507,18 @@ export default function ProviderDetailPage() {
 
   const getAvailableDates = () => {
     if (!provider?.availability) return [];
-    return Object.keys(provider.availability).sort();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Filter out past dates
+    return Object.keys(provider.availability)
+      .filter(dateString => {
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        date.setHours(0, 0, 0, 0);
+        return date >= today;
+      })
+      .sort();
   };
 
 
@@ -498,6 +540,15 @@ export default function ProviderDetailPage() {
     setCurrentMonth(prev => {
       const newMonth = new Date(prev);
       if (direction === 'prev') {
+        const today = new Date();
+        today.setDate(1); // Set to first day of month for comparison
+        const prevMonth = new Date(prev);
+        prevMonth.setMonth(prev.getMonth() - 1);
+        prevMonth.setDate(1); // Set to first day of month for comparison
+        // Don't allow navigation to past months
+        if (prevMonth < today) {
+          return prev; // Stay on current month
+        }
         newMonth.setMonth(prev.getMonth() - 1);
       } else {
         newMonth.setMonth(prev.getMonth() + 1);
@@ -538,7 +589,20 @@ export default function ProviderDetailPage() {
     return `${year}-${month}-${day}`;
   };
 
+  // Check if a date is in the past (before today)
+  const isDateInPast = (date: Date): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0); // Reset time to start of day
+    return compareDate < today;
+  };
+
   const isDateAvailable = (date: Date) => {
+    // Don't allow past dates
+    if (isDateInPast(date)) {
+      return false;
+    }
     const dateString = formatDateString(date);
     return provider?.availability && provider.availability[dateString];
   };
@@ -601,20 +665,148 @@ export default function ProviderDetailPage() {
     }
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push('/search');
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit(e);
+    }
+  };
+
+  const handleShare = async () => {
+    const currentUrl = window.location.href;
+    
+    // Try Web Share API first (mobile-friendly)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: provider?.name || 'Provider Profile',
+          text: `Check out ${provider?.name || 'this provider'} on Omvira Wellness`,
+          url: currentUrl,
+        });
+        return;
+      } catch (error: any) {
+        // User cancelled or error occurred, fall back to clipboard
+        if (error.name !== 'AbortError') {
+          console.error('Error sharing:', error);
+        } else {
+          // User cancelled, don't proceed to clipboard
+          return;
+        }
+      }
+    }
+    
+    // Fallback: Copy to clipboard using modern API
+    try {
+      // Check if clipboard API is available and we're in a secure context
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(currentUrl);
+        alert('Link copied to clipboard!');
+        return;
+      }
+    } catch (error: any) {
+      console.error('Failed to copy link with clipboard API:', error);
+      // Fall through to legacy method
+    }
+    
+    // Legacy fallback: Use execCommand for older browsers or when clipboard API fails
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = currentUrl;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      
+      // Safely remove the textarea
+      try {
+        if (textArea) {
+          const parent = textArea.parentNode;
+          if (parent) {
+            parent.removeChild(textArea);
+          } else {
+            // If no parent, try remove() method as fallback
+            textArea.remove();
+          }
+        }
+      } catch (error) {
+        // Silently fail if element was already removed
+        // Try remove() as final fallback
+        try {
+          if (textArea && textArea.remove) {
+            textArea.remove();
+          }
+        } catch (e) {
+          // Element already removed or doesn't exist
+        }
+      }
+      
+      if (successful) {
+        alert('Link copied to clipboard!');
+      } else {
+        throw new Error('execCommand failed');
+      }
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+      // Last resort: show the URL in a prompt
+      prompt('Copy this link:', currentUrl);
+    }
+  };
+
   return (
     <div className={styles.providerDetailPage}>
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <Link href="/search" className={styles.backButton}>
-            ← Back to Search
-          </Link>
           <Link href="/" className={styles.logo}>
             Omvira Wellness
           </Link>
-          <button className={styles.shareButton}>
-            Share
-          </button>
+          
+          <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+            <div className={styles.searchInputContainer}>
+              <FaSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search for a provider"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                className={styles.searchInput}
+              />
+            </div>
+          </form>
+
+          <div className={styles.headerRight}>
+            {dashboardUrl ? (
+              <Link href={dashboardUrl} className={styles.backButton}>
+                ← Back to Dashboard
+              </Link>
+            ) : (
+              <Link href="/search" className={styles.backButton}>
+                ← Back to Search
+              </Link>
+            )}
+            <button 
+              className={styles.shareButton} 
+              onClick={handleShare}
+              aria-label="Share"
+              title="Share"
+            >
+              <FaShareAlt />
+              <span className={styles.shareButtonText}>Share</span>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -841,6 +1033,14 @@ export default function ProviderDetailPage() {
                     <button
                       className={styles.calendarNavButton}
                       onClick={() => navigateMonth('prev')}
+                      disabled={(() => {
+                        const today = new Date();
+                        today.setDate(1); // Set to first day of month for comparison
+                        const prevMonth = new Date(currentMonth);
+                        prevMonth.setMonth(currentMonth.getMonth() - 1);
+                        prevMonth.setDate(1); // Set to first day of month for comparison
+                        return prevMonth < today;
+                      })()}
                     >
                       ‹
                     </button>
@@ -876,19 +1076,32 @@ export default function ProviderDetailPage() {
                       ))}
                     </div>
                     <div className={styles.calendarDays}>
-                      {getCalendarDays().map((date, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleDateSelect(date)}
-                          className={`${styles.calendarDay} ${!isDateInCurrentMonth(date) ? styles.otherMonth : ''
-                            } ${isDateAvailable(date) ? styles.available : styles.unavailable
-                            } ${isDateSelected(date) ? styles.selected : ''
-                            }`}
-                          disabled={!isDateAvailable(date)}
-                        >
-                          {date.getDate()}
-                        </button>
-                      ))}
+                      {getCalendarDays().map((date, index) => {
+                        const isPast = isDateInPast(date);
+                        const isAvailable = isDateAvailable(date);
+                        const isSelected = isDateSelected(date);
+                        const isCurrentMonth = isDateInCurrentMonth(date);
+                        
+                        // Hide past dates from other months, disable past dates in current month
+                        if (!isCurrentMonth && isPast) {
+                          return null;
+                        }
+                        
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => handleDateSelect(date)}
+                            className={`${styles.calendarDay} ${!isCurrentMonth ? styles.otherMonth : ''
+                              } ${isAvailable ? styles.available : styles.unavailable
+                              } ${isSelected ? styles.selected : ''
+                              } ${isPast ? styles.pastDate : ''
+                              }`}
+                            disabled={!isAvailable || isPast}
+                          >
+                            {date.getDate()}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

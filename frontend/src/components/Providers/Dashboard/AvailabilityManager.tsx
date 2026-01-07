@@ -203,6 +203,38 @@ export default function AvailabilityManager() {
     });
   };
 
+  // Check if a date is in the past (before today)
+  const isDateInPast = (dateString: string): boolean => {
+    const normalized = normalizeDateString(dateString);
+    const [year, month, day] = normalized.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    date.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  // Check if a recurring availability slot has ended (endDate is in the past)
+  const isRecurringSlotEnded = (slot: AvailabilitySlot): boolean => {
+    if (!slot.isRecurring || !slot.recurringPattern) return false;
+    
+    // If there's an endDate, check if it's in the past
+    if (slot.recurringPattern.endDate) {
+      const normalizedEndDate = normalizeDateString(slot.recurringPattern.endDate);
+      const [year, month, day] = normalizedEndDate.split('-').map(Number);
+      const endDate = new Date(year, month - 1, day);
+      endDate.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // If endDate is before today, the recurring slot has ended
+      return endDate < today;
+    }
+    
+    // If no endDate, the recurring slot continues indefinitely (not ended)
+    return false;
+  };
+
   const formatTime = (timeString: string) => {
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -289,7 +321,14 @@ export default function AvailabilityManager() {
             </h3>
             <div className={styles.slotsList}>
               {availabilitySlots
-                .filter(slot => !slot.isRecurring && (!(slot as any).type || (slot as any).type === 'available'))
+                .filter(slot => {
+                  // Filter out recurring slots
+                  if (slot.isRecurring) return false;
+                  // Filter out blocked slots
+                  if ((slot as any).type && (slot as any).type !== 'available') return false;
+                  // Filter out past dates
+                  return !isDateInPast(slot.date);
+                })
                 .map(slot => (
                   <div key={slot.id} className={styles.slotCard}>
                     <div className={styles.slotInfo}>
@@ -326,7 +365,14 @@ export default function AvailabilityManager() {
             </h3>
             <div className={styles.slotsList}>
               {availabilitySlots
-                .filter(slot => slot.isRecurring && (!(slot as any).type || (slot as any).type === 'available'))
+                .filter(slot => {
+                  // Filter out non-recurring slots
+                  if (!slot.isRecurring) return false;
+                  // Filter out blocked slots
+                  if ((slot as any).type && (slot as any).type !== 'available') return false;
+                  // Filter out recurring slots that have ended
+                  return !isRecurringSlotEnded(slot);
+                })
                 .map(slot => (
                   <div key={slot.id} className={styles.slotCard}>
                     <div className={styles.slotInfo}>
@@ -398,6 +444,15 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
   const [currentMonth, setCurrentMonth] = useState(new Date(now.getFullYear(), now.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
+  // Check if a date is in the past (before today)
+  const isDateInPast = (date: Date): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+    return compareDate < today;
+  };
+
   // Generate calendar days for the current month
   const getCalendarDays = () => {
     const year = currentMonth.getFullYear();
@@ -429,6 +484,13 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
 
   // Check if a date has availability
   const hasAvailability = (date: Date) => {
+    // Don't show past dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+    if (compareDate < today) return false;
+    
     const dateString = formatDateString(date);
     
     // First, collect all blocked slots for this date
@@ -460,6 +522,9 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
     const hasRecurring = availabilitySlots.some(slot => {
       if (!slot.isRecurring || !slot.recurringPattern) return false;
       if ((slot as any).type && (slot as any).type !== 'available') return false;
+      
+      // Skip recurring slots that have ended
+      if (isRecurringSlotEnded(slot)) return false;
       
       // Normalize and parse slot date as local date (YYYY-MM-DD format)
       const normalizedSlotDateStr = normalizeDateString(slot.date);
@@ -496,9 +561,24 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
-    const newMonth = new Date(currentMonth);
-    newMonth.setMonth(newMonth.getMonth() + (direction === 'next' ? 1 : -1));
-    setCurrentMonth(newMonth);
+    setCurrentMonth(prev => {
+      const newMonth = new Date(prev);
+      if (direction === 'prev') {
+        const today = new Date();
+        today.setDate(1); // Set to first day of month for comparison
+        const prevMonth = new Date(prev);
+        prevMonth.setMonth(prev.getMonth() - 1);
+        prevMonth.setDate(1); // Set to first day of month for comparison
+        // Don't allow navigation to past months
+        if (prevMonth < today) {
+          return prev; // Stay on current month
+        }
+        newMonth.setMonth(prev.getMonth() - 1);
+      } else {
+        newMonth.setMonth(prev.getMonth() + 1);
+      }
+      return newMonth;
+    });
   };
 
   const formatMonthYear = (date: Date) => {
@@ -540,6 +620,10 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
         // Recurring availability - check if date matches pattern
         // Normalize and parse slot date as local date (YYYY-MM-DD format)
         if ((slot as any).type && (slot as any).type !== 'available') return false;
+        
+        // Skip recurring slots that have ended
+        if (isRecurringSlotEnded(slot)) return false;
+        
         const normalizedSlotDateStr = normalizeDateString(slot.date);
         const [slotYear, slotMonth, slotDay] = normalizedSlotDateStr.split('-').map(Number);
         const slotDate = new Date(slotYear, slotMonth - 1, slotDay);
@@ -613,6 +697,14 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
           <button 
             className={styles.calendarNav}
             onClick={() => navigateMonth('prev')}
+            disabled={(() => {
+              const today = new Date();
+              today.setDate(1);
+              const prevMonth = new Date(currentMonth);
+              prevMonth.setMonth(currentMonth.getMonth() - 1);
+              prevMonth.setDate(1);
+              return prevMonth < today;
+            })()}
           >
             ‹
           </button>
@@ -641,7 +733,13 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
           <div className={styles.calendarDays}>
             {calendarDays.map((day, index) => {
               const isCurrentMonth = day.getMonth() === currentMonth.getMonth();
+              const isPast = isDateInPast(day);
               const hasAvailableSlots = hasAvailability(day);
+              
+              // Hide past dates from other months
+              if (!isCurrentMonth && isPast) {
+                return null;
+              }
               
               return (
                 <div 
@@ -652,11 +750,14 @@ function AvailabilityCalendar({ availabilitySlots, onBackToList }: AvailabilityC
                     hasAvailableSlots ? styles.hasAvailability : ''
                   } ${
                     selectedDate === formatDateString(day) ? styles.selected : ''
+                  } ${
+                    isPast ? styles.pastDate : ''
                   }`}
-                  onClick={() => handleDateClick(day)}
+                  onClick={() => !isPast && handleDateClick(day)}
+                  style={isPast ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
                 >
                   {day.getDate()}
-                  {hasAvailableSlots && (
+                  {hasAvailableSlots && !isPast && (
                     <div className={styles.availabilityDot}></div>
                   )}
                 </div>

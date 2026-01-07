@@ -270,9 +270,7 @@ export default function ProvidersPage() {
                                 <div className={styles.tierHeader}>
                                     <h3>Essential</h3>
                                     <div className={styles.price}>
-                                        <span className={styles.currency}>$</span>
-                                        <span className={styles.amount}>29</span>
-                                        <span className={styles.period}>/mo</span>
+                                        <span className={styles.amount}>Free</span>
                                     </div>
                                     <p className={styles.tierDescription}>New providers testing the platform</p>
                                 </div>
@@ -357,7 +355,7 @@ export default function ProvidersPage() {
                                     <h3>Growth+</h3>
                                     <div className={styles.price}>
                                         <span className={styles.currency}>$</span>
-                                        <span className={styles.amount}>89</span>
+                                        <span className={styles.amount}>99</span>
                                         <span className={styles.period}>/mo</span>
                                     </div>
                                     <p className={styles.tierDescription}>Full-time wellness entrepreneurs</p>
@@ -457,9 +455,12 @@ export default function ProvidersPage() {
                                     <h3>Zsuzsanna Mangu</h3>
                                     <p className={styles.founderTitle}>Lead Software Developer and Technical Product Manager</p>
                                     <p className={styles.founderBio}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                        I'm Zsuzsi, a software developer passionate about building technology that makes a real difference in people's lives. 
+                                        As a 1000-hour+ certified yoga teacher and yoga therapist, I've experienced firsthand the challenges of being an independent 
+                                        contractor and business owner, from managing bookings and client relationships to staying organized and finding the right tools 
+                                        to grow. This dual perspective as both a practitioner and a developer drives my commitment to creating intuitive, powerful tools 
+                                        that truly empower wellness providers. I believe technology should remove barriers, not create them, which is why I'm dedicated to 
+                                        making Omvira a platform that serves the independent wellness community from a place of genuine understanding.
                                     </p>
                                 </div>
                             </div>

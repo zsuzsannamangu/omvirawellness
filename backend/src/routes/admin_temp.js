@@ -3,8 +3,9 @@ const pool = require('../db');
 
 const router = Router();
 
+// SPACES FEATURE - COMMENTED OUT FOR MVP
 // TEMPORARY ENDPOINT - List all space owners
-router.get('/list-space-owners', async (req, res) => {
+/* router.get('/list-space-owners', async (req, res) => {
   try {
     console.log('Fetching all space owners...');
 
@@ -26,6 +27,7 @@ router.get('/list-space-owners', async (req, res) => {
     res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
+*/
 
 // TEMPORARY ENDPOINT - Check specific email
 router.get('/check-email/:email', async (req, res) => {
@@ -131,9 +133,11 @@ router.delete('/delete-user/:email', async (req, res) => {
       console.log('Found user:', user.email, 'type:', user.user_type);
 
       // Delete from appropriate profile table based on user type
-      if (user.user_type === 'space_owner') {
-        await client.query('DELETE FROM space_owner_profiles WHERE user_id = $1', [user.id]);
-      } else if (user.user_type === 'provider') {
+      // SPACES FEATURE - COMMENTED OUT FOR MVP
+      // if (user.user_type === 'space_owner') {
+      //   await client.query('DELETE FROM space_owner_profiles WHERE user_id = $1', [user.id]);
+      // } else 
+      if (user.user_type === 'provider') {
         await client.query('DELETE FROM provider_profiles WHERE user_id = $1', [user.id]);
       } else if (user.user_type === 'client') {
         await client.query('DELETE FROM client_profiles WHERE user_id = $1', [user.id]);
@@ -160,8 +164,9 @@ router.delete('/delete-user/:email', async (req, res) => {
   }
 });
 
+// SPACES FEATURE - COMMENTED OUT FOR MVP
 // TEMPORARY ENDPOINT - Remove after use (case-insensitive) - SPACE OWNERS ONLY
-router.delete('/delete-space-owner/:email', async (req, res) => {
+/* router.delete('/delete-space-owner/:email', async (req, res) => {
   try {
     const { email } = req.params;
     const cleanEmail = email.trim().toLowerCase();
@@ -225,6 +230,7 @@ router.delete('/delete-space-owner/:email', async (req, res) => {
     res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
+*/
 
 module.exports = router;
 

@@ -108,6 +108,9 @@ export default function ProviderSignupPage() {
         travelFee: completeData.travelSettings?.feeType === 'free' ? 0 : parseFloat(completeData.travelSettings?.travelFee || '0'),
         maxDistance: parseInt(completeData.travelSettings?.maxDistance || '15'),
         teamMembers: completeData.staffMembers || [],
+        // Include subscription/plan information
+        subscriptionPlan: completeData.payment?.selectedPlan || 'professional',
+        billingCycle: completeData.payment?.billingCycle || 'monthly',
       };
 
       const result = await registerProvider(registrationData);
@@ -115,6 +118,7 @@ export default function ProviderSignupPage() {
       console.log('Registration successful:', result);
       
       // Store token and user data in localStorage
+      // The auth service already stores the user with subscription data included
       if (result.token) {
         localStorage.setItem('token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
