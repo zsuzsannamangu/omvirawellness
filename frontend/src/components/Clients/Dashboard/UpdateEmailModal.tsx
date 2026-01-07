@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { API_URL } from '@/config/api';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 interface UpdateEmailModalProps {
@@ -67,7 +68,7 @@ export default function UpdateEmailModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:4000/api/auth/update-email', {
+      const response = await fetch(`${API_URL}/auth/update-email`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +80,12 @@ export default function UpdateEmailModal({
         })
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error('Failed to parse server response');
+      }
 
       if (!response.ok) {
         // Show error message without throwing (to avoid console error)
@@ -101,23 +107,29 @@ export default function UpdateEmailModal({
         localStorage.setItem('user', JSON.stringify(userData));
       }
 
-      // Success
-      await Swal.fire({
-        icon: 'success',
-        title: 'Email Updated',
-        text: 'Your email has been updated successfully. Please verify your new email address.',
-        confirmButtonColor: '#4a90e2'
-      });
-
-      // Reset form
+      // Reset form first
       setFormData({
         newEmail: '',
         password: ''
       });
       setErrors({});
+      
+      // Reset submitting state before showing alert
+      setIsSubmitting(false);
 
+      // Call onSuccess before closing to update parent component
       onSuccess?.();
+
+      // Close modal first
       onClose();
+
+      // Show success message after modal closes
+      await Swal.fire({
+        icon: 'success',
+        title: 'Email Updated',
+        text: 'Your email has been updated successfully. Please check your inbox to verify your new email address.',
+        confirmButtonColor: '#4a90e2'
+      });
     } catch (error: any) {
       // Only log unexpected errors (network errors, etc.)
       if (error.name !== 'TypeError' && !error.message.includes('Failed to update email')) {

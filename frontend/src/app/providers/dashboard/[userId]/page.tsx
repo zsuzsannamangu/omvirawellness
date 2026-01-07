@@ -34,10 +34,32 @@ export default function ProvidersDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userId = params.userId as string;
+
+  // Handle OAuth token from URL (Google sign-in)
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const userData = searchParams.get('user');
+    const completeProfile = searchParams.get('complete_profile');
+    if (token) {
+      localStorage.setItem('token', decodeURIComponent(token));
+      if (userData) {
+        localStorage.setItem('user', decodeURIComponent(userData));
+      }
+      // If profile needs completion, keep the section parameter
+      if (completeProfile === 'true') {
+        const section = searchParams.get('section') || 'profile';
+        router.replace(`/providers/dashboard/${userId}?complete_profile=true&section=${section}`);
+      } else {
+        // Remove token from URL
+        router.replace(`/providers/dashboard/${userId}`);
+      }
+    }
+  }, [searchParams, userId, router]);
   
   // Check URL parameters for section
   const initialSection = searchParams.get('section') || 'bookings';
-  const [activeSection, setActiveSection] = useState(initialSection);
+  const needsProfileCompletion = searchParams.get('complete_profile') === 'true';
+  const [activeSection, setActiveSection] = useState(needsProfileCompletion ? 'profile' : initialSection);
   const [activeSubmenu, setActiveSubmenu] = useState(
     initialSection === 'profile' ? 'basic' : 
     initialSection === 'stats' ? 'traffic' :
@@ -946,7 +968,33 @@ export default function ProvidersDashboard() {
       case 'messages':
         return <Messages activeSubmenu={activeSubmenu === 'communication' ? activeCommunicationSubmenu : activeSubmenu} userId={userId} />;
       case 'profile':
-        return <Profile activeSubmenu={activeSubmenu} />;
+        return (
+          <>
+            {needsProfileCompletion && (
+              <div style={{
+                backgroundColor: '#fff3cd',
+                border: '1px solid #ffc107',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <span style={{ fontSize: '24px' }}>⚠️</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
+                    Complete Your Profile
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>
+                    Please fill in your phone number, address, and business information to start accepting bookings.
+                  </p>
+                </div>
+              </div>
+            )}
+            <Profile activeSubmenu={activeSubmenu} />
+          </>
+        );
       case 'settings':
         const user = localStorage.getItem('user');
         const userData = user ? JSON.parse(user) : null;
@@ -1009,13 +1057,15 @@ export default function ProvidersDashboard() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Google Authenticator (2FA) Section */}
+                  <div style={{ marginTop: '40px' }}>
+                    <TwoFactorSettings userId={userId} />
+                  </div>
                 </div>
               </div>
             );
 
-            case 'security':
-              return <TwoFactorSettings userId={userId} />;
-            
             case 'subscription': {
               const getPlanFeatures = (plan: string) => {
               switch(plan) {

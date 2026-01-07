@@ -29,7 +29,11 @@ export async function login(email, password, twoFactorToken = null, backupCode =
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Login failed');
+      // Create error without stack trace for expected validation errors
+      const error = new Error(data.message || 'Login failed');
+      // Mark as expected validation error to prevent unnecessary console logging
+      error.name = 'ValidationError';
+      throw error;
     }
 
     // Check if 2FA is required
@@ -41,10 +45,19 @@ export async function login(email, password, twoFactorToken = null, backupCode =
       };
     }
 
+    // Check if response has the expected structure
+    if (!data.success || !data.data) {
+      console.error('Unexpected login response structure:', data);
+      throw new Error('Invalid response from server. Please try again.');
+    }
+
     // Store token and user info
-    if (data.success && data.data.token) {
+    if (data.data.token && data.data.user) {
       localStorage.setItem('token', data.data.token);
       localStorage.setItem('user', JSON.stringify(data.data.user));
+    } else {
+      console.error('Missing token or user in response:', data.data);
+      throw new Error('Invalid response from server. Missing authentication data.');
     }
 
     return data.data;

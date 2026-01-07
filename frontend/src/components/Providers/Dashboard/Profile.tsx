@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaClock, FaDollarSign, FaCheckCircle, FaStar, FaTimes, FaVideo, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
+import { SERVICE_CATEGORIES } from '@/config/categories';
+import { API_URL } from '@/config/api';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 import AvailabilityManager from './AvailabilityManager';
 
@@ -244,9 +246,10 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         if (businessNameEl) profileData.business_name = businessNameEl.value;
         if (contactNameEl) profileData.contact_name = contactNameEl.value;
         if (phoneNumberEl) profileData.phone_number = phoneNumberEl.value;
-        if (selectedPractices && selectedPractices.length > 0) {
-          profileData.business_type = selectedPractices.join(',');
-        }
+        // Always set business_type, even if empty (to clear it if all categories are unchecked)
+        profileData.business_type = selectedPractices && selectedPractices.length > 0 
+          ? selectedPractices.join(',') 
+          : '';
         if (addressLine1El) profileData.address_line1 = addressLine1El.value;
         if (cityEl) profileData.city = cityEl.value;
         if (stateEl) profileData.state = stateEl.value;
@@ -586,14 +589,11 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       onChange={(e) => setNewService({ ...newService, type: e.target.value })}
                     >
                       <option value="">Select type</option>
-                      <option value="Massage Therapy">Massage Therapy</option>
-                      <option value="Yoga Instruction">Yoga Instruction</option>
-                      <option value="Aesthetics & Skincare">Aesthetics & Skincare</option>
-                      <option value="Reiki & Energy Work">Reiki & Energy Work</option>
-                      <option value="Nutrition Counseling">Nutrition Counseling</option>
-                      <option value="Life Coaching">Life Coaching</option>
-                      <option value="Meditation Instruction">Meditation Instruction</option>
-                      <option value="Physical Therapy">Physical Therapy</option>
+                      {SERVICE_CATEGORIES.map((category) => (
+                        <option key={category.id} value={category.displayName}>
+                          {category.displayName}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className={styles.flexRowGapMedium}>
@@ -1112,32 +1112,21 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
           else yearsExp = '16+';
         }
 
-        // Available wellness practices with mapping
-        const wellnessPracticeMap: { [key: string]: string } = {
-          'massage': 'Massage Therapy',
-          'yoga': 'Yoga Instruction',
-          'aesthetics': 'Aesthetics & Skincare',
-          'reiki': 'Reiki & Energy Work',
-          'doulas': 'Doula Services',
-          'nutrition': 'Nutrition Counseling'
-        };
+        // Use unified categories
+        const wellnessPractices = SERVICE_CATEGORIES.map(cat => cat.displayName);
         
-        const wellnessPractices = [
-          'Massage Therapy',
-          'Yoga Instruction',
-          'Aesthetics & Skincare',
-          'Reiki & Energy Work',
-          'Doula Services',
-          'Nutrition Counseling',
-          'Physical Therapy',
-          'Mental Health Counseling',
-          'Life Coaching',
-          'Fitness Training',
-          'Meditation Instruction',
-          'Sound Healing',
-          'Craniosacral Therapy',
-          'Reflexology'
-        ];
+        // Create mapping from category IDs to display names for backward compatibility
+        const categoryIdToDisplayName: { [key: string]: string } = {};
+        SERVICE_CATEGORIES.forEach(cat => {
+          categoryIdToDisplayName[cat.id] = cat.displayName;
+          // Also map old IDs for backward compatibility
+          if (cat.id === 'massage-therapy') categoryIdToDisplayName['massage'] = cat.displayName;
+          if (cat.id === 'yoga-instruction' || cat.id === 'private-yoga') categoryIdToDisplayName['yoga'] = cat.displayName;
+          if (cat.id === 'skincare-esthetics') categoryIdToDisplayName['aesthetics'] = cat.displayName;
+          if (cat.id === 'reiki-energy-work') categoryIdToDisplayName['reiki'] = cat.displayName;
+          if (cat.id === 'doula-care') categoryIdToDisplayName['doulas'] = cat.displayName;
+          if (cat.id === 'nutrition-counseling') categoryIdToDisplayName['nutrition'] = cat.displayName;
+        });
 
         const commonLanguages = [
           'English',
@@ -1183,16 +1172,9 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                   <label className={styles.formLabel}>Wellness Practice (Select all that apply)</label>
                   <div className={styles.practiceOptions}>
                     {wellnessPractices.map((practice) => {
-                      // Map practice name to ID for comparison
-                      const practiceMap: { [key: string]: string } = {
-                        'Massage Therapy': 'massage',
-                        'Yoga Instruction': 'yoga',
-                        'Aesthetics & Skincare': 'aesthetics',
-                        'Reiki & Energy Work': 'reiki',
-                        'Doula Services': 'doulas',
-                        'Nutrition Counseling': 'nutrition'
-                      };
-                      const practiceId = practiceMap[practice] || practice.toLowerCase();
+                      // Find category by display name to get the ID
+                      const category = SERVICE_CATEGORIES.find(cat => cat.displayName === practice);
+                      const practiceId = category ? category.id : practice.toLowerCase().replace(/\s+/g, '-');
                       // Determine initial selection from state; fallback to profile's stored string
                       const stored = (profileBasic.business_type || '')
                         .split(',')

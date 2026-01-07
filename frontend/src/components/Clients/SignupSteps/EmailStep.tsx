@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FaLock, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
+import { API_BASE_URL } from '@/config/api';
 import styles from '@/styles/Clients/SignupSteps.module.scss';
 
 interface EmailStepProps {
@@ -21,8 +22,18 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
   };
 
   const handleSocialSignup = (method: string) => {
-    if (email) {
-      onNext({ email, signupMethod: method });
+    // For OAuth, redirect directly to OAuth endpoint (no email needed)
+    const baseUrl = API_BASE_URL || 'http://localhost:4000';
+    
+    if (method === 'google') {
+      window.location.href = `${baseUrl}/api/oauth/google?user_type=client`;
+    } else if (method === 'facebook') {
+      window.location.href = `${baseUrl}/api/oauth/facebook?user_type=client`;
+    } else {
+      // For other methods, use the old flow if email is provided
+      if (email) {
+        onNext({ email, signupMethod: method });
+      }
     }
   };
 
@@ -69,7 +80,11 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
         
         <button 
           type="button"
-          onClick={() => handleSocialSignup('facebook')}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSocialSignup('facebook');
+          }}
           className={`${styles.socialButton} ${styles.facebookButton}`}
         >
           <svg className={styles.facebookIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

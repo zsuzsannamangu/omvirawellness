@@ -22,6 +22,24 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// OAuth routes (only load if packages are installed)
+let oauthRoutes;
+try {
+  const passport = require('passport');
+  
+  // Initialize Passport WITHOUT sessions to avoid HTTP 431 errors
+  // OAuth will be completely stateless
+  app.use(passport.initialize());
+  // Note: We're NOT using passport.session() to avoid cookie size issues
+  
+  oauthRoutes = require('./routes/oauth');
+  app.use('/api/oauth', oauthRoutes);
+  console.log('✅ OAuth routes enabled (stateless mode)');
+} catch (error) {
+  console.log('⚠️  OAuth packages not installed. Google/Facebook login will not work until packages are installed.');
+  console.log('   Run: cd backend && npm install passport passport-google-oauth20');
+}
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/providers', providerRoutes);

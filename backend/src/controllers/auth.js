@@ -760,7 +760,7 @@ async function login(req, res) {
 
     // Find user by email
     const userResult = await pool.query(
-      'SELECT id, email, password_hash, user_type FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, user_type, COALESCE(email_verified, false) as email_verified FROM users WHERE email = $1',
       [email]
     );
 
@@ -1027,6 +1027,7 @@ async function login(req, res) {
         id: user.id,
         email: user.email,
         user_type: user.user_type,
+        email_verified: user.email_verified || false,
         profile: profile,
       },
       token,
@@ -2080,15 +2081,30 @@ async function updateEmail(req, res) {
       });
     }
 
-    // Update email
+    // Generate verification token
+    const { generateVerificationToken, sendVerificationEmail } = require('../utils/email');
+    const verificationToken = generateVerificationToken();
+    const tokenExpires = new Date();
+    tokenExpires.setHours(tokenExpires.getHours() + 24); // Token expires in 24 hours
+
+    // Update email and set verification token
     await pool.query(
-      'UPDATE users SET email = $1, email_verified = false, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
-      [newEmail, userId]
+      'UPDATE users SET email = $1, email_verified = false, verification_token = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3',
+      [newEmail, verificationToken, userId]
     );
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(newEmail, verificationToken, userId);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Don't fail the request if email fails, but log it
+      // The user can request a resend later
+    }
 
     res.json({
       success: true,
-      message: 'Email updated successfully. Please verify your new email address.',
+      message: 'Email updated successfully. Please check your inbox to verify your new email address.',
       newEmail: newEmail
     });
   } catch (error) {
@@ -2188,6 +2204,129 @@ async function changePassword(req, res) {
   }
 }
 
+/**
+ * Verify email address using token
+ */
+async function verifyEmail(req, res) {
+  try {
+    const { token, userId } = req.query;
+
+    if (!token || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Token and user ID are required',
+      });
+    }
+
+    // Find user with matching token
+    const userResult = await pool.query(
+      'SELECT id, email, email_verified, verification_token FROM users WHERE id = $1 AND verification_token = $2',
+      [userId, token]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification token',
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({
+        success: true,
+        message: 'Email is already verified',
+        alreadyVerified: true,
+      });
+    }
+
+    // Verify email
+    await pool.query(
+      'UPDATE users SET email_verified = true, verification_token = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+      [userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Email verified successfully',
+    });
+  } catch (error) {
+    console.error('Verify email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
+/**
+ * Resend verification email
+ */
+async function resendVerificationEmail(req, res) {
+  try {
+    const userId = req.user.id;
+
+    // Get user email
+    const userResult = await pool.query(
+      'SELECT id, email, email_verified FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already verified',
+      });
+    }
+
+    // Generate new verification token
+    const { generateVerificationToken, sendVerificationEmail } = require('../utils/email');
+    const verificationToken = generateVerificationToken();
+
+    // Update verification token
+    await pool.query(
+      'UPDATE users SET verification_token = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+      [verificationToken, userId]
+    );
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(user.email, verificationToken, userId);
+      
+      res.json({
+        success: true,
+        message: 'Verification email sent successfully. Please check your inbox.',
+      });
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send verification email. Please try again later.',
+      });
+    }
+  } catch (error) {
+    console.error('Resend verification email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   registerClient,
   registerProvider,
@@ -2199,6 +2338,8 @@ module.exports = {
   verifyToken,
   changePassword,
   updateEmail,
+  verifyEmail,
+  resendVerificationEmail,
   enable2FA,
   verifyAndActivate2FA,
   disable2FA,

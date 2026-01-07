@@ -9,22 +9,33 @@ import styles from '@/styles/ProviderDetail.module.scss';
 import BookingOptions from '@/components/BookingOptions';
 import FavoriteAuthModal from '@/components/FavoriteAuthModal';
 import { isClientAuthenticated, getClientId, getFavoriteStatus, addFavorite, removeFavorite } from '@/services/favorites';
+import { SERVICE_CATEGORIES } from '@/config/categories';
 
-// Format business type string: capitalize and add proper spacing
+// Format business type string: map category IDs to display names
+// Only show categories that are in the unified SERVICE_CATEGORIES list
 const formatBusinessType = (businessType: string | null | undefined): string => {
   if (!businessType) return '';
   
-  return businessType
+  const validCategories = businessType
     .split(',')
     .map(item => {
-      const trimmed = item.trim();
-      // Capitalize first letter of each word
-      return trimmed
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+      const trimmed = item.trim().toLowerCase();
+      // Find category by ID (handle both old format and new format)
+      const category = SERVICE_CATEGORIES.find(cat => 
+        cat.id === trimmed || 
+        cat.id === trimmed.replace(/\s+/g, '-') ||
+        cat.name.toLowerCase() === trimmed ||
+        cat.displayName.toLowerCase() === trimmed
+      );
+      
+      // Only return display name if category is found in unified list
+      return category ? category.displayName : null;
     })
-    .join(', ');
+    .filter(Boolean) // Remove null values (categories not in unified list)
+    .filter((cat): cat is string => cat !== null); // Type guard
+    
+  // If no valid categories found, return empty string
+  return validCategories.length > 0 ? validCategories.join(', ') : '';
 };
 
 
@@ -172,7 +183,11 @@ export default function ProviderDetailPage() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [currentReviewPage, setCurrentReviewPage] = useState(1);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false); // Closed by default, opens when clicked
-  const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
+  // Initialize currentMonth to first day of current month to avoid timezone issues
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const [isFavorited, setIsFavorited] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -541,17 +556,21 @@ export default function ProviderDetailPage() {
       const newMonth = new Date(prev);
       if (direction === 'prev') {
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         today.setDate(1); // Set to first day of month for comparison
-        const prevMonth = new Date(prev);
-        prevMonth.setMonth(prev.getMonth() - 1);
-        prevMonth.setDate(1); // Set to first day of month for comparison
-        // Don't allow navigation to past months
+        
+        const prevMonth = new Date(prev.getFullYear(), prev.getMonth() - 1, 1);
+        prevMonth.setHours(0, 0, 0, 0);
+        
+        // Don't allow navigation to past months (months before current month)
         if (prevMonth < today) {
           return prev; // Stay on current month
         }
         newMonth.setMonth(prev.getMonth() - 1);
+        newMonth.setDate(1); // Ensure we're on the first day
       } else {
         newMonth.setMonth(prev.getMonth() + 1);
+        newMonth.setDate(1); // Ensure we're on the first day
       }
       return newMonth;
     });
@@ -561,24 +580,36 @@ export default function ProviderDetailPage() {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
+    // Create first day of month using local date constructor (year, month, day)
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    // Get day of week (0 = Sunday, 1 = Monday, etc.)
+    const dayOfWeek = firstDay.getDay();
+    
+    // Calculate how many days to go back to get to Sunday
+    // If first day is Thursday (day 4), we go back 4 days to get to Sunday
+    const daysToGoBack = dayOfWeek;
+    
+    // Start from the first day and go back to Sunday
+    const startDate = new Date(year, month, 1);
+    startDate.setDate(1 - daysToGoBack);
 
     const days = [];
-    const currentDate = new Date(startDate);
 
+    // Generate 42 days (6 weeks) starting from the calculated start date
     for (let i = 0; i < 42; i++) {
-      days.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
+      // Create a new date for each day, incrementing from start date
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      days.push(date);
     }
 
     return days;
   };
 
   const isDateInCurrentMonth = (date: Date) => {
-    return date.getMonth() === currentMonth.getMonth();
+    return date.getMonth() === currentMonth.getMonth() && 
+           date.getFullYear() === currentMonth.getFullYear();
   };
 
   // Helper to format date as YYYY-MM-DD in local timezone
@@ -1035,10 +1066,13 @@ export default function ProviderDetailPage() {
                       onClick={() => navigateMonth('prev')}
                       disabled={(() => {
                         const today = new Date();
+                        today.setHours(0, 0, 0, 0);
                         today.setDate(1); // Set to first day of month for comparison
-                        const prevMonth = new Date(currentMonth);
-                        prevMonth.setMonth(currentMonth.getMonth() - 1);
-                        prevMonth.setDate(1); // Set to first day of month for comparison
+                        
+                        const prevMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+                        prevMonth.setHours(0, 0, 0, 0);
+                        
+                        // Disable if previous month is before current month
                         return prevMonth < today;
                       })()}
                     >
@@ -1082,14 +1116,14 @@ export default function ProviderDetailPage() {
                         const isSelected = isDateSelected(date);
                         const isCurrentMonth = isDateInCurrentMonth(date);
                         
-                        // Hide past dates from other months, disable past dates in current month
+                        // For past dates from other months, render empty div to maintain grid alignment
                         if (!isCurrentMonth && isPast) {
-                          return null;
+                          return <div key={`empty-${index}`} className={styles.calendarDay} style={{ visibility: 'hidden' }}></div>;
                         }
                         
                         return (
                           <button
-                            key={index}
+                            key={`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`}
                             onClick={() => handleDateSelect(date)}
                             className={`${styles.calendarDay} ${!isCurrentMonth ? styles.otherMonth : ''
                               } ${isAvailable ? styles.available : styles.unavailable

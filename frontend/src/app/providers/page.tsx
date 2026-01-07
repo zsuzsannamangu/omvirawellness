@@ -48,7 +48,7 @@ export default function ProvidersPage() {
                                     </p>
                                     <div className={styles.listContainer}>
                                         <div className={styles.listItem}>
-                                            <strong>Yoga Teachers & Yoga Therapists</strong>
+                                            <strong>Private Yoga Instructors</strong>
                                             <p>Bring personalized yoga sessions to clients' homes, hotels, or studios</p>
                                         </div>
                                         <div className={styles.listItem}>
@@ -56,11 +56,11 @@ export default function ProvidersPage() {
                                             <p>Offer therapeutic bodywork in the comfort of clients' preferred locations</p>
                                         </div>
                                         <div className={styles.listItem}>
-                                            <strong>Estheticians</strong>
+                                            <strong>Skincare & Esthetics Professionals</strong>
                                             <p>Provide skincare and facial treatments at home or in rented studio spaces</p>
                                         </div>
                                         <div className={styles.listItem}>
-                                            <strong>Reiki Practitioners</strong>
+                                            <strong>Reiki & Energy Work Practitioners</strong>
                                             <p>Share healing energy work in peaceful, client-chosen environments</p>
                                         </div>
                                         <div className={styles.listItem}>
@@ -68,8 +68,8 @@ export default function ProvidersPage() {
                                             <p>Support families through birth and postpartum journeys wherever they need you</p>
                                         </div>
                                         <div className={styles.listItem}>
-                                            <strong>Other Wellness Pros</strong>
-                                            <p>Acupuncturists, personal trainers, and holistic healers ready to go mobile</p>
+                                            <strong>Other Wellness Professionals</strong>
+                                            <p>Meditation instructors, sound healers, life coaches, nutrition counselors, and more ready to go mobile</p>
                                         </div>
                                     </div>
                                 </div>

@@ -1033,4 +1033,118 @@ router.get('/:id/payment-method', verifyToken, async (req, res) => {
   }
 });
 
+// POST calculate distance between provider and client addresses
+router.post('/:id/check-distance', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { clientAddress, clientCity, clientState, clientZipCode } = req.body;
+
+    if (!clientAddress || !clientCity || !clientState) {
+      return res.status(400).json({ 
+        error: 'Client address, city, and state are required' 
+      });
+    }
+
+    // Get provider address
+    const providerResult = await pool.query(`
+      SELECT address_line1, city, state, zip_code, max_distance
+      FROM provider_profiles
+      WHERE user_id = $1
+    `, [id]);
+
+    if (providerResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Provider profile not found' });
+    }
+
+    const provider = providerResult.rows[0];
+    
+    if (!provider.address_line1 || !provider.city || !provider.state) {
+      return res.status(400).json({ 
+        error: 'Provider address not set' 
+      });
+    }
+
+    // Import distance utilities
+    const { validateAndGeocodeAddress, calculateDrivingDistance } = require('../utils/distance');
+
+    // First, validate addresses using Address Validation API (if available) or geocoding
+    const providerCoords = await validateAndGeocodeAddress(
+      provider.address_line1,
+      provider.city,
+      provider.state,
+      provider.zip_code
+    );
+
+    const clientCoords = await validateAndGeocodeAddress(
+      clientAddress,
+      clientCity,
+      clientState,
+      clientZipCode
+    );
+
+    // Check if geocoding was successful
+    if (!providerCoords) {
+      return res.status(400).json({ 
+        error: 'Could not validate provider address. Please contact the provider.',
+        addressValid: false
+      });
+    }
+
+    if (!clientCoords) {
+      return res.status(400).json({ 
+        error: 'Could not validate the address you entered. Please check that it is a valid address.',
+        addressValid: false
+      });
+    }
+
+    // Calculate driving distance (will use Google Maps Distance Matrix if API key is set)
+    const distance = await calculateDrivingDistance(
+      {
+        address: provider.address_line1,
+        city: provider.city,
+        state: provider.state,
+        zipCode: provider.zip_code
+      },
+      {
+        address: clientAddress,
+        city: clientCity,
+        state: clientState,
+        zipCode: clientZipCode
+      }
+    );
+
+    if (distance === null) {
+      return res.status(400).json({ 
+        error: 'Could not calculate distance. Please try again or contact the provider.',
+        addressValid: false
+      });
+    }
+    const maxDistance = provider.max_distance || 0;
+    const withinRange = maxDistance > 0 ? distance <= maxDistance : true; // If no max_distance set, assume provider travels anywhere
+
+    const providerZipCode = provider.zip_code || '';
+    const locationText = providerZipCode ? `their location at ${providerZipCode}` : 'their location';
+    
+    res.json({
+      distance: distance,
+      maxDistance: maxDistance,
+      withinRange: withinRange,
+      providerCity: provider.city,
+      providerState: provider.state,
+      providerZipCode: providerZipCode,
+      addressValid: true,
+      message: withinRange 
+        ? `Provider is willing to travel up to ${maxDistance} miles from ${locationText}. Your location is approximately ${distance} miles away.`
+        : `Provider is willing to travel up to ${maxDistance} miles from ${locationText}. Your location is approximately ${distance} miles away, which is outside this range.`
+    });
+  } catch (err) {
+    console.error('Error checking distance:', err);
+    res.status(500).json({ 
+      error: 'Server error while checking distance', 
+      details: err.message,
+      addressValid: false
+    });
+  }
+});
+
 module.exports = router;

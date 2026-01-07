@@ -6,6 +6,14 @@
 - PostgreSQL database (Supabase recommended)
 - `.env` file with database credentials
 
+## 📚 Additional Setup Guides
+
+For specific features, see these detailed guides:
+- **Google Maps Setup**: `GOOGLE_MAPS_SETUP.md` - Address validation, distance calculation, autocomplete
+- **OAuth & 2FA Setup**: `OAUTH_2FA_SETUP.md` - Google/Facebook login and TOTP 2FA
+- **Complete Checklist**: `COMPLETE_SETUP_CHECKLIST.md` - Full setup verification
+- **Check Enabled APIs**: `HOW_TO_CHECK_ENABLED_APIS.md` - Verify API status
+
 ## Quick Start
 
 ### 1. Install Dependencies
@@ -34,6 +42,24 @@ EMAIL_PASSWORD=your_app_password
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+
+# Google Maps APIs (for address validation and distance calculations)
+# See GOOGLE_MAPS_SETUP.md for detailed setup instructions
+GOOGLE_MAPS_API_KEY=your_backend_google_maps_api_key
+
+# Google OAuth (for "Sign in with Google")
+# See OAUTH_2FA_SETUP.md for detailed setup instructions
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+BACKEND_URL=http://localhost:4000
+
+# Facebook OAuth (for "Sign in with Facebook")
+# See OAUTH_2FA_SETUP.md for detailed setup instructions
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
+
+# Session (required for OAuth)
+SESSION_SECRET=your_random_secure_session_secret_here
 ```
 
 ### 3. Run Database Migration

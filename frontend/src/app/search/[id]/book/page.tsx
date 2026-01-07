@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams, useSearchParams } from 'next/navigation';
 import { FaMapMarkerAlt, FaHome, FaBuilding, FaCar, FaVideo } from 'react-icons/fa';
+import { API_URL } from '@/config/api';
+import { getGoogleMapsApiKey, isGoogleMapsLoaded } from '@/config/googleMaps';
+import Swal from 'sweetalert2';
 import styles from '@/styles/BookingConfirmation.module.scss';
 
 
@@ -20,8 +23,20 @@ export default function BookingConfirmationPage() {
   // Location options
   const [locationType, setLocationType] = useState<'home' | 'studio' | 'travel' | 'online'>('studio');
   const [userAddress, setUserAddress] = useState<string>('');
+  const [userCity, setUserCity] = useState<string>('');
+  const [userState, setUserState] = useState<string>('');
+  const [userZipCode, setUserZipCode] = useState<string>('');
   const [travelRadius, setTravelRadius] = useState<number>(10);
   const [addressValidated, setAddressValidated] = useState<boolean | null>(null);
+  
+  // Distance checking
+  const [distanceCheck, setDistanceCheck] = useState<{
+    distance: number | null;
+    withinRange: boolean;
+    message: string;
+    checked: boolean;
+  } | null>(null);
+  const [isCheckingDistance, setIsCheckingDistance] = useState(false);
   
   // Add-ons
   const [selectedAddOns, setSelectedAddOns] = useState<{[key: number]: boolean}>({});
@@ -32,6 +47,12 @@ export default function BookingConfirmationPage() {
   
   // Provider modal
   const [showProviderModal, setShowProviderModal] = useState(false);
+
+  // Ref for address section to enable scrolling
+  const addressSectionRef = useRef<HTMLDivElement>(null);
+  // Ref for address input to enable Google Places Autocomplete
+  const addressInputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<any>(null);
 
   // Normalize date string (YYYY-MM-DD) into local Date for display only
   const formatLocalDateLong = (dateString: string) => {
@@ -85,7 +106,7 @@ export default function BookingConfirmationPage() {
       const time = searchParams.get('time');
 
       try {
-        const resp = await fetch(`http://localhost:4000/api/providers/${params.id}`);
+        const resp = await fetch(`${API_URL}/providers/${params.id}`);
         if (resp.ok) {
           const data = await resp.json();
           const mainPhoto = data.profile_photo_url || '/images/screenshots/Jenn.png';
@@ -116,6 +137,10 @@ export default function BookingConfirmationPage() {
             bio: data.bio || '',
             locationOptions: locationOptions,
             studioAddress: data.address_line1 ? `${data.address_line1}, ${data.city}, ${data.state} ${data.zip_code || ''}`.trim() : undefined,
+            maxDistance: data.max_distance || null,
+            providerCity: data.city,
+            providerState: data.state,
+            providerZipCode: data.zip_code || null,
             requiresDeposit: false, // Default, could be added to database later
             depositAmount: 0, // Default
             addOns: typeof data.add_ons === 'string' ? JSON.parse(data.add_ons) : (data.add_ons || [])
@@ -146,6 +171,190 @@ export default function BookingConfirmationPage() {
     load();
   }, [params?.id, searchParams]);
 
+  // Load client address from profile if logged in
+  useEffect(() => {
+    const loadClientAddress = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        
+        if (!token || !user) return;
+        
+        const userData = JSON.parse(user);
+        if (userData.user_type !== 'client') return;
+        
+        // Fetch client profile to get address
+        const response = await fetch(`${API_URL}/auth/profile/client`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const profile = await response.json();
+          if (profile.profile) {
+            if (profile.profile.address_line1) {
+              setUserAddress(profile.profile.address_line1);
+            }
+            if (profile.profile.city) {
+              setUserCity(profile.profile.city);
+            }
+            if (profile.profile.state) {
+              setUserState(profile.profile.state);
+            }
+            if (profile.profile.zip_code) {
+              setUserZipCode(profile.profile.zip_code);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading client address:', error);
+      }
+    };
+    
+    loadClientAddress();
+  }, []);
+
+  // Load Google Maps Places API script
+  useEffect(() => {
+    const apiKey = getGoogleMapsApiKey();
+    if (!apiKey) {
+      // No API key configured - autocomplete won't work
+      return;
+    }
+
+    // Check if script is already loaded
+    if (isGoogleMapsLoaded()) {
+      return;
+    }
+
+    // Check if script is already in the DOM
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+      // Script exists, wait for it to load
+      const checkLoaded = setInterval(() => {
+        if (isGoogleMapsLoaded()) {
+          clearInterval(checkLoaded);
+        }
+      }, 100);
+      return () => clearInterval(checkLoaded);
+    }
+
+    // Load the script
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => {
+      console.error('Failed to load Google Maps Places API');
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup: don't remove script as it might be used elsewhere
+    };
+  }, []);
+
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    // Check if Google Maps is loaded
+    const checkAndInit = () => {
+      if (!isGoogleMapsLoaded() || !addressInputRef.current || locationType !== 'home') {
+        // Clean up existing autocomplete
+        if (autocompleteRef.current) {
+          (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
+          autocompleteRef.current = null;
+        }
+        return;
+      }
+
+      // Initialize autocomplete
+      const autocomplete = new (window as any).google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          types: ['address'],
+          componentRestrictions: { country: 'us' } // Restrict to US addresses
+        }
+      );
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        
+        if (!place.address_components) {
+          return;
+        }
+
+        // Parse address components
+        let streetNumber = '';
+        let route = '';
+        let city = '';
+        let state = '';
+        let zipCode = '';
+
+        for (const component of place.address_components) {
+          const types = component.types;
+          
+          if (types.includes('street_number')) {
+            streetNumber = component.long_name;
+          }
+          if (types.includes('route')) {
+            route = component.long_name;
+          }
+          if (types.includes('locality')) {
+            city = component.long_name;
+          }
+          if (types.includes('administrative_area_level_1')) {
+            state = component.short_name; // Use short name for state (e.g., "CA" instead of "California")
+          }
+          if (types.includes('postal_code')) {
+            zipCode = component.long_name;
+          }
+        }
+
+        // Set address fields
+        const fullAddress = [streetNumber, route].filter(Boolean).join(' ');
+        setUserAddress(fullAddress || place.formatted_address || '');
+        if (city) setUserCity(city);
+        if (state) setUserState(state);
+        if (zipCode) setUserZipCode(zipCode);
+
+        // Clear distance check when address changes
+        setDistanceCheck(null);
+        setAddressValidated(null);
+      });
+
+      autocompleteRef.current = autocomplete;
+    };
+
+    // Try to initialize
+    checkAndInit();
+
+    // If Google Maps isn't loaded yet, check periodically
+    if (!isGoogleMapsLoaded()) {
+      const interval = setInterval(() => {
+        if (isGoogleMapsLoaded()) {
+          clearInterval(interval);
+          checkAndInit();
+        }
+      }, 500);
+
+      return () => {
+        clearInterval(interval);
+        if (autocompleteRef.current) {
+          (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
+          autocompleteRef.current = null;
+        }
+      };
+    }
+
+    return () => {
+      if (autocompleteRef.current) {
+        (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
+        autocompleteRef.current = null;
+      }
+    };
+  }, [locationType]);
+
   const handleAddOnChange = (addOnId: number) => {
     setSelectedAddOns(prev => ({
       ...prev,
@@ -153,19 +362,140 @@ export default function BookingConfirmationPage() {
     }));
   };
 
-  const validateAddress = () => {
+  const validateAddress = async () => {
     if (!userAddress.trim()) {
       setAddressValidated(null);
       return;
     }
     
     if (locationType === 'home') {
-      // For "Come to Me" - check if user is within provider's travel radius
-      const isValid = Math.random() > 0.3; // 70% chance of being valid
-      setAddressValidated(isValid);
+      // For "Come to Me" - check distance
+      await checkDistance();
+      if (distanceCheck && distanceCheck.withinRange) {
+        setAddressValidated(true);
+      } else {
+        setAddressValidated(false);
+      }
     } else if (locationType === 'travel') {
       // For "On Location" - just save the travel preference (always valid)
       setAddressValidated(true);
+    }
+  };
+
+  // Check distance when address is entered and provider offers travel
+  const checkDistance = async () => {
+    if (!provider || !provider.locationOptions?.travelsToClient) return;
+    if (!userAddress.trim() || !userCity.trim() || !userState.trim()) {
+      setDistanceCheck({
+        distance: null,
+        withinRange: false,
+        message: 'Please enter a complete address (street, city, and state) to check distance',
+        checked: false
+      });
+      return;
+    }
+    
+    // If provider doesn't have max_distance set, allow booking (assume they travel anywhere)
+    if (!provider.maxDistance) {
+      setDistanceCheck({
+        distance: null,
+        withinRange: true,
+        message: 'Provider will travel to your location',
+        checked: true
+      });
+      setAddressValidated(true);
+      return;
+    }
+
+    setIsCheckingDistance(true);
+    try {
+      const response = await fetch(`${API_URL}/providers/${params?.id}/check-distance`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          clientAddress: userAddress,
+          clientCity: userCity,
+          clientState: userState,
+          clientZipCode: userZipCode
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setDistanceCheck({
+          distance: data.distance,
+          withinRange: data.withinRange,
+          message: data.message,
+          checked: true
+        });
+        
+        // Show SweetAlert based on result
+        if (data.withinRange) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Location Confirmed',
+            text: data.distance !== null 
+              ? `You are ${data.distance} miles away. The provider will travel to your location.`
+              : "You are within the provider's travel range. The provider will travel to your location.",
+            confirmButtonColor: '#4a90e2',
+            confirmButtonText: 'Continue Booking'
+          });
+        } else {
+          // Outside range - show warning
+          Swal.fire({
+            icon: 'warning',
+            title: 'Outside Travel Range',
+            html: `<p>${data.message}</p><p style="margin-top: 12px;">Please select a different location option or contact the provider to discuss travel arrangements.</p>`,
+            confirmButtonColor: '#4a90e2',
+            confirmButtonText: 'OK'
+          });
+          
+          // If outside range, switch to a different location option
+          if (locationType === 'home') {
+            setLocationType('studio');
+          }
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || 'Unable to check distance. Please contact the provider directly.';
+        const isAddressInvalid = errorData.addressValid === false;
+        
+        setDistanceCheck({
+          distance: null,
+          withinRange: false,
+          message: errorMessage,
+          checked: true
+        });
+        
+        Swal.fire({
+          icon: isAddressInvalid ? 'warning' : 'error',
+          title: isAddressInvalid ? 'Invalid Address' : 'Distance Check Failed',
+          text: errorMessage,
+          confirmButtonColor: '#4a90e2',
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      console.error('Error checking distance:', error);
+      const errorMessage = 'Unable to check distance. Please contact the provider directly.';
+      setDistanceCheck({
+        distance: null,
+        withinRange: false,
+        message: errorMessage,
+        checked: true
+      });
+      
+      Swal.fire({
+        icon: 'error',
+        title: 'Distance Check Failed',
+        text: errorMessage,
+        confirmButtonColor: '#4a90e2',
+        confirmButtonText: 'OK'
+      });
+    } finally {
+      setIsCheckingDistance(false);
     }
   };
 
@@ -173,12 +503,15 @@ export default function BookingConfirmationPage() {
     setUserAddress(e.target.value);
     // Clear validation when user starts typing again
     setAddressValidated(null);
+    // Clear distance check when address changes
+    setDistanceCheck(null);
   };
 
   const handleLocationChange = (type: 'home' | 'studio' | 'travel' | 'online') => {
     setLocationType(type);
     setAddressValidated(null);
     setUserAddress('');
+    setDistanceCheck(null);
   };
 
   const calculateTotal = () => {
@@ -220,9 +553,18 @@ export default function BookingConfirmationPage() {
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
     
-      if ((locationType === 'travel' || locationType === 'home') && !userAddress.trim()) {
-        newErrors.address = 'Please enter your address for booking';
-      }
+    if (locationType === 'home' && (!userAddress.trim() || !userCity.trim() || !userState.trim())) {
+      if (!userAddress.trim()) newErrors.address = 'Please enter your street address';
+      if (!userCity.trim()) newErrors.city = 'Please enter your city';
+      if (!userState.trim()) newErrors.state = 'Please enter your state';
+    } else if (locationType === 'travel' && !userAddress.trim()) {
+      newErrors.address = 'Please enter your address for booking';
+    }
+    
+    // Check distance for "Come to Me" option
+    if (locationType === 'home' && provider?.maxDistance && (!distanceCheck || !distanceCheck.checked || !distanceCheck.withinRange)) {
+      newErrors.distance = 'Your location is outside the provider\'s travel range';
+    }
     
     if (locationType === 'travel' && travelRadius < 1) {
       newErrors.radius = 'Please select a travel radius';
@@ -230,6 +572,45 @@ export default function BookingConfirmationPage() {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Check if booking is ready to submit
+  const isBookingReady = () => {
+    // Must have date and time selected
+    if (!selectedDate || !selectedTime) {
+      return false;
+    }
+
+    // Must have a location type selected
+    if (!locationType) {
+      return false;
+    }
+
+    // For "home" location: must have complete address and be within travel range
+    if (locationType === 'home') {
+      if (!userAddress.trim() || !userCity.trim() || !userState.trim()) {
+        return false;
+      }
+      // If provider has maxDistance, must check distance and be within range
+      if (provider?.maxDistance) {
+        if (!distanceCheck || !distanceCheck.checked || !distanceCheck.withinRange) {
+          return false;
+        }
+      }
+      // If no maxDistance, just need address entered (provider travels anywhere)
+    }
+
+    // For "travel" location: must have address
+    if (locationType === 'travel') {
+      if (!userAddress.trim()) {
+        return false;
+      }
+    }
+
+    // For "studio" and "online": no address needed, always ready if location is available
+    // (availability is already checked by the disabled state of location options)
+
+    return true;
   };
 
   const handleBooking = async () => {
@@ -305,7 +686,7 @@ export default function BookingConfirmationPage() {
       };
       
       // Submit booking to API
-      const response = await fetch('http://localhost:4000/api/bookings', {
+      const response = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -445,13 +826,32 @@ export default function BookingConfirmationPage() {
                 </div>
 
                 <div 
-                  className={`${styles.locationOption} ${locationType === 'home' ? styles.selected : ''} ${!provider?.locationOptions?.travelsToClient ? styles.disabled : ''}`}
-                  onClick={() => provider?.locationOptions?.travelsToClient && handleLocationChange('home')}
+                  className={`${styles.locationOption} ${locationType === 'home' ? styles.selected : ''} ${!provider?.locationOptions?.travelsToClient || (distanceCheck && distanceCheck.checked && !distanceCheck.withinRange) ? styles.disabled : ''}`}
+                  onClick={() => {
+                    if (provider?.locationOptions?.travelsToClient) {
+                      // If distance hasn't been checked yet, allow selection (will check when address is entered)
+                      if (!distanceCheck || distanceCheck.withinRange || !distanceCheck.checked) {
+                        handleLocationChange('home');
+                      }
+                    }
+                  }}
                 >
                   <FaHome className={styles.locationIcon} />
                   <div className={styles.locationInfo}>
                     <h4>Come to Me</h4>
-                    <p>Provider will travel to your location</p>
+                    {distanceCheck && distanceCheck.checked && !distanceCheck.withinRange ? (
+                      <p style={{ color: '#d32f2f', fontSize: '0.875rem', marginTop: '4px' }}>
+                        {provider.maxDistance 
+                          ? `Provider is willing to travel up to ${provider.maxDistance} miles from their location${provider.providerZipCode ? ` at ${provider.providerZipCode}` : ''}. Your location is outside this range.`
+                          : 'Your location is outside the provider\'s travel range'}
+                      </p>
+                    ) : provider?.maxDistance ? (
+                      <p style={{ fontSize: '0.875rem', color: '#666' }}>
+                        Provider will travel up to {provider.maxDistance} miles from their location{provider.providerZipCode ? ` at ${provider.providerZipCode}` : ''}
+                      </p>
+                    ) : (
+                      <p>Provider will travel to your location</p>
+                    )}
                     {provider?.locationOptions?.travelFee > 0 && (
                       <span className={styles.locationFee}>+${provider.locationOptions.travelFee}</span>
                     )}
@@ -489,30 +889,74 @@ export default function BookingConfirmationPage() {
 
               {/* Address Input for home and travel options */}
               {(locationType === 'home' || locationType === 'travel') && (
-                <div className={styles.addressSection}>
+                <div className={styles.addressSection} ref={addressSectionRef}>
                   <div className={styles.inputGroup}>
                     <label htmlFor="address">Please enter your address</label>
                     {locationType === 'home' ? (
-                      <div className={styles.addressInputGroup}>
-                        <input
-                          type="text"
-                          id="address"
-                          value={userAddress}
-                          onChange={handleAddressChange}
-                          placeholder="Enter your full address"
-                          className={`${styles.addressInput} ${errors.address ? styles.error : ''}`}
-                          autoComplete="off"
-                          data-1p-ignore
-                        />
+                      <>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          {/* Street address on top line */}
+                          <input
+                            ref={addressInputRef}
+                            type="text"
+                            id="address"
+                            value={userAddress}
+                            onChange={handleAddressChange}
+                            placeholder="Start typing your address..."
+                            className={`${styles.addressInput} ${errors.address ? styles.error : ''}`}
+                            autoComplete="off"
+                            data-1p-ignore
+                            style={{ width: '100%' }}
+                          />
+                          {/* City, State, ZIP on second line */}
+                          <div className={styles.addressInputGroup} style={{ display: 'flex', gap: '12px' }}>
+                            <input
+                              type="text"
+                              id="city"
+                              value={userCity}
+                              onChange={(e) => setUserCity(e.target.value)}
+                              placeholder="City"
+                              className={`${styles.addressInput} ${styles.addressInputSmall} ${errors.city ? styles.error : ''}`}
+                              autoComplete="off"
+                              data-1p-ignore
+                              style={{ flex: 1 }}
+                            />
+                            <input
+                              type="text"
+                              id="state"
+                              value={userState}
+                              onChange={(e) => setUserState(e.target.value)}
+                              placeholder="State"
+                              className={`${styles.addressInput} ${styles.addressInputSmall} ${errors.state ? styles.error : ''}`}
+                              autoComplete="off"
+                              data-1p-ignore
+                              maxLength={2}
+                              style={{ width: '80px' }}
+                            />
+                            <input
+                              type="text"
+                              id="zipCode"
+                              value={userZipCode}
+                              onChange={(e) => setUserZipCode(e.target.value.replace(/\D/g, ''))}
+                              placeholder="Zip"
+                              className={`${styles.addressInput} ${styles.addressInputSmall} ${errors.zipCode ? styles.error : ''}`}
+                              autoComplete="off"
+                              data-1p-ignore
+                              maxLength={5}
+                              style={{ width: '80px' }}
+                            />
+                          </div>
+                        </div>
                         <button
                           type="button"
                           onClick={validateAddress}
-                          disabled={!userAddress.trim()}
+                          disabled={!userAddress.trim() || !userCity.trim() || !userState.trim() || isCheckingDistance}
                           className={styles.checkAddressButton}
+                          style={{ marginTop: '12px', color: 'white' }}
                         >
-                          Check Address
+                          {isCheckingDistance ? 'Checking...' : 'Check Distance'}
                         </button>
-                      </div>
+                      </>
                     ) : (
                       <input
                         type="text"
@@ -526,6 +970,9 @@ export default function BookingConfirmationPage() {
                       />
                     )}
                     {errors.address && <span className={styles.errorText}>{errors.address}</span>}
+                    {errors.city && <span className={styles.errorText}>{errors.city}</span>}
+                    {errors.state && <span className={styles.errorText}>{errors.state}</span>}
+                    {errors.distance && <span className={styles.errorText}>{errors.distance}</span>}
                   </div>
 
                   {locationType === 'travel' && (
@@ -559,15 +1006,30 @@ export default function BookingConfirmationPage() {
                     </>
                   )}
 
-                  {addressValidated !== null && userAddress.trim() && (
+                  {distanceCheck && distanceCheck.checked && locationType === 'home' && (
+                    <div className={`${styles.validationMessage} ${distanceCheck.withinRange ? styles.valid : styles.invalid}`}>
+                      {distanceCheck.withinRange ? (
+                        <>
+                          <span className={styles.checkmark}>✓</span>
+                          {distanceCheck.distance !== null 
+                            ? `You are ${distanceCheck.distance} miles away. Provider will travel to your location.`
+                            : "You are within the provider's travel range. Provider will travel to your location."}
+                        </>
+                      ) : (
+                        <>
+                          <span className={styles.errorIcon}>✗</span>
+                          {distanceCheck.message}
+                        </>
+                      )}
+                    </div>
+                  )}
+                  
+                  {addressValidated !== null && userAddress.trim() && locationType === 'travel' && (
                     <div className={`${styles.validationMessage} ${addressValidated ? styles.valid : styles.invalid}`}>
                       {addressValidated ? (
                         <>
                           <span className={styles.checkmark}>✓</span>
-                          {locationType === 'home' ? 
-                            "Yay! You are in the provider's travel zone. Provider will travel to your location." :
-                            "Great! Your travel preferences have been saved. Your provider will book a studio and email you the details."
-                          }
+                          "Great! Your travel preferences have been saved. Your provider will book a studio and email you the details."
                         </>
                       ) : (
                         <>
@@ -690,10 +1152,14 @@ export default function BookingConfirmationPage() {
                 </div>
               )}
 
-              <button 
+              <button
                 className={styles.bookButton}
                 onClick={handleBooking}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isBookingReady()}
+                style={{
+                  opacity: (!isBookingReady() || isSubmitting) ? 0.6 : 1,
+                  cursor: (!isBookingReady() || isSubmitting) ? 'not-allowed' : 'pointer'
+                }}
               >
                 {isSubmitting 
                   ? 'Processing...' 

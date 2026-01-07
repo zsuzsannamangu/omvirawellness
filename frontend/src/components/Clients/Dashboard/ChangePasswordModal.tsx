@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { API_URL } from '@/config/api';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 
 interface ChangePasswordModalProps {
@@ -89,7 +90,7 @@ export default function ChangePasswordModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:4000/api/auth/change-password', {
+      const response = await fetch(`${API_URL}/auth/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -115,24 +116,30 @@ export default function ChangePasswordModal({
         return;
       }
 
-      // Success
-      await Swal.fire({
-        icon: 'success',
-        title: 'Password Changed',
-        text: 'Your password has been changed successfully.',
-        confirmButtonColor: '#4a90e2'
-      });
-
-      // Reset form
+      // Reset form first
       setFormData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
       setErrors({});
+      
+      // Reset submitting state before showing alert
+      setIsSubmitting(false);
 
+      // Call onSuccess before closing to update parent component
       onSuccess?.();
+
+      // Close modal first
       onClose();
+
+      // Show success message after modal closes
+      await Swal.fire({
+        icon: 'success',
+        title: 'Password Changed',
+        text: 'Your password has been changed successfully.',
+        confirmButtonColor: '#4a90e2'
+      });
     } catch (error: any) {
       // Only log unexpected errors (network errors, etc.)
       if (error.name !== 'TypeError' && !error.message.includes('Failed to change password')) {

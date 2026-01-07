@@ -148,3 +148,4 @@ FACEBOOK_APP_SECRET=your_facebook_app_secret
 - **Social Login** requires OAuth 2.0 implementation with redirect flows
 - Consider using a library like `passport.js` for OAuth to simplify implementation
 - Social login will need database schema updates to store OAuth provider IDs
+

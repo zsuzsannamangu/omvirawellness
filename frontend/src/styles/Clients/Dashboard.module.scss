@@ -1870,6 +1870,8 @@
     border-radius: 6px;
     font-size: 0.875rem;
     font-family: $font-main;
+    background: $bg-white;
+    color: $dark-text;
     transition: border-color 0.2s ease;
 
     &:focus {
@@ -3696,6 +3698,7 @@
     border: 1px solid $border-color;
     border-radius: 4px;
     font-size: 0.875rem;
+    background: $bg-white;
     color: $dark-text;
     transition: border-color 0.2s ease;
     
@@ -4008,6 +4011,37 @@
 
 .rescheduleModalBody {
   padding: $spacing-lg;
+
+  .formGroup {
+    margin-bottom: $spacing-lg;
+    
+    .formLabel {
+      margin-bottom: 4px;
+      display: block;
+    }
+  }
+
+  .formInput {
+    background: $bg-white !important;
+    color: $dark-text !important;
+    border: 1px solid $border-color !important;
+    padding: $spacing-sm;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: $font-main;
+    width: 100%;
+    margin-top: 0;
+    
+    &:focus {
+      outline: none;
+      border-color: $client-colors-1 !important;
+      box-shadow: 0 0 0 3px rgba($client-colors-1, 0.1);
+    }
+    
+    &::placeholder {
+      color: rgba($subtext-color, 0.5);
+    }
+  }
 }
 
 .rescheduleInfo {

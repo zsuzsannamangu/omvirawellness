@@ -3,79 +3,45 @@
 import React, { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { SERVICE_CATEGORIES } from '@/config/categories';
 import styles from '@/styles/Home/ServiceCategories.module.scss';
 import {
     FaChevronLeft,
     FaChevronRight,
 } from 'react-icons/fa';
 
-const categories = [
-    {
-        label: 'Private Yoga',
-        icon: '/images/icons/yoga.png',
-        description: 'Personalized one-on-one yoga sessions tailored to your unique needs, goals, and schedule in the comfort of your own space'
-    },
-    {
-        label: 'Yoga Therapy',
-        icon: '/images/icons/yogatherapy.png',
-        description: 'Empowering individuals to progress toward improved health through the application of the teachings and practices of Yoga'
-    },
-    {
-        label: 'Massage',
-        icon: '/images/icons/massage.png',
-        description: 'Therapeutic bodywork designed to relieve tension, reduce stress, and promote healing through various massage techniques and pressure points'
-    },
-    {
-        label: 'Skincare',
-        icon: '/images/icons/skincare.png',
-        description: 'Professional facial treatments and skincare services to cleanse, nourish, and rejuvenate your skin with personalized care plans'
-    },
-    {
-        label: 'Reiki',
-        icon: '/images/icons/aromatherapy.png',
-        description: 'Japanese energy healing technique that promotes relaxation, reduces stress, and encourages emotional and physical healing through gentle touch'
-    },
-    {
-        label: 'Energy Work',
-        icon: '/images/icons/power.png',
-        description: 'Holistic healing practices that work with your body\'s energy systems to restore balance, clear blockages, and enhance overall well-being'
-    },
-    {
-        label: 'Ayurveda',
-        icon: '/images/icons/hot-stones.png',
-        description: 'Ancient Indian system of medicine focusing on natural healing through personalized diet, lifestyle, herbal remedies, and therapeutic treatments'
-    },
-    {
-        label: 'Acupuncture',
-        icon: '/images/icons/medicine.png',
-        description: 'Traditional Chinese medicine practice using fine needles to stimulate specific points on the body to promote healing and pain relief'
-    },
-    {
-        label: 'Personal Training',
-        icon: '/images/icons/training.png',
-        description: 'One-on-one fitness coaching with customized workout plans, proper form instruction, and motivation to help you achieve your health goals'
-    },
-    {
-        label: 'Doula Care',
-        icon: '/images/icons/baby.png',
-        description: 'Compassionate birth and postpartum support providing emotional, physical, and informational assistance during pregnancy, labor, and beyond'
-    },
-    {
-        label: 'Hair Styling',
-        icon: '/images/icons/hairdresser.png',
-        description: 'Professional hair services including cuts, styling, coloring, and treatments performed by skilled stylists in your preferred location'
-    },
-    {
-        label: 'Nail Care',
-        icon: '/images/icons/cosmetic.png',
-        description: 'Expert nail care services including manicures, pedicures, nail art, and treatments to keep your nails healthy and beautifully styled'
-    },
-    {
-        label: 'Makeup',
-        icon: '/images/icons/mascara.png',
-        description: 'A professional applying makeup for various occasions, ranging from everyday looks to special events.'
-    },
-];
+// Map category IDs to icon paths (for homepage display)
+const categoryIcons: { [key: string]: string } = {
+  'private-yoga': '/images/icons/yoga.png',
+  'yoga-therapy': '/images/icons/yoga.png',
+  'somatic-practices': '/images/icons/yoga.png',
+  'massage-therapy': '/images/icons/massage.png',
+  'meditation': '/images/icons/yoga.png',
+  'reiki-energy-work': '/images/icons/aromatherapy.png',
+  'sound-healing': '/images/icons/aromatherapy.png',
+  'craniosacral-therapy': '/images/icons/massage.png',
+  'reflexology': '/images/icons/massage.png',
+  'life-coaching': '/images/icons/training.png',
+  'health-coaching': '/images/icons/training.png',
+  'breathwork': '/images/icons/yoga.png',
+  'nutrition-counseling': '/images/icons/training.png',
+  'ayurveda': '/images/icons/hot-stones.png',
+  'herbalist': '/images/icons/medicine.png',
+  'personal-training': '/images/icons/training.png',
+  'doula-care': '/images/icons/baby.png',
+  'skincare-esthetics': '/images/icons/skincare.png',
+  'hair-styling': '/images/icons/hairdresser.png',
+  'nail-care': '/images/icons/cosmetic.png',
+  'makeup': '/images/icons/mascara.png',
+  'cacao-facilitation': '/images/icons/aromatherapy.png'
+};
+
+// Transform unified categories for homepage display
+const categories = SERVICE_CATEGORIES.map(cat => ({
+    label: cat.displayName,
+    icon: categoryIcons[cat.id] || '/images/icons/yoga.png',
+    description: cat.description || ''
+}));
 
 const ServiceCategories: React.FC = () => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);

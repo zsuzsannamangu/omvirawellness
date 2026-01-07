@@ -6,25 +6,37 @@ import Image from 'next/image';
 import { FaHeart, FaSortAlphaDown, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 import { getClientFavorites, removeFavorite, getClientId } from '@/services/favorites';
+import { SERVICE_CATEGORIES } from '@/config/categories';
 
 interface FavoritesProps {
   activeSubmenu: string;
 }
 
-// Format business type string: capitalize and add proper spacing
+// Format business type string: map category IDs to display names
+// Only show categories that are in the unified SERVICE_CATEGORIES list
 const formatBusinessType = (businessType: string | null | undefined): string => {
   if (!businessType) return 'Wellness Services';
   
-  return businessType
+  const validCategories = businessType
     .split(',')
     .map(item => {
-      const trimmed = item.trim();
-      return trimmed
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+      const trimmed = item.trim().toLowerCase();
+      // Find category by ID (handle both old format and new format)
+      const category = SERVICE_CATEGORIES.find(cat => 
+        cat.id === trimmed || 
+        cat.id === trimmed.replace(/\s+/g, '-') ||
+        cat.name.toLowerCase() === trimmed ||
+        cat.displayName.toLowerCase() === trimmed
+      );
+      
+      // Only return display name if category is found in unified list
+      return category ? category.displayName : null;
     })
-    .join(', ');
+    .filter(Boolean) // Remove null values (categories not in unified list)
+    .filter((cat): cat is string => cat !== null); // Type guard
+    
+  // If no valid categories found, return default
+  return validCategories.length > 0 ? validCategories.join(', ') : 'Wellness Services';
 };
 
 export default function Favorites({ activeSubmenu }: FavoritesProps) {
@@ -157,7 +169,7 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
                 {sortedProviders.map((provider) => {
                   const services = provider.services && Array.isArray(provider.services) && provider.services.length > 0
                     ? provider.services.map((s: any) => s.name || s).join(' • ')
-                    : formatBusinessType(provider.specialties);
+                    : formatBusinessType(provider.business_type || provider.specialties);
                   const startingPrice = provider.services && Array.isArray(provider.services) && provider.services.length > 0
                     ? provider.services[0].price
                     : null;
@@ -175,7 +187,7 @@ export default function Favorites({ activeSubmenu }: FavoritesProps) {
                       </div>
                       <div className={styles.providerInfo}>
                         <h4 className={styles.providerName}>{provider.contact_name || provider.business_name}</h4>
-                        <p className={styles.providerSpecialty}>{services || formatBusinessType(provider.specialties)}</p>
+                        <p className={styles.providerSpecialty}>{services || formatBusinessType(provider.business_type || provider.specialties)}</p>
                         <div className={styles.providerRating}>
                           <span className={styles.stars}>★★★★★</span>
                           <span className={styles.ratingText}>

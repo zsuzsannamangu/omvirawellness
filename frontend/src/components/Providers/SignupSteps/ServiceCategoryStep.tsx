@@ -10,6 +10,7 @@ import {
   FaAppleAlt,
   FaChevronRight 
 } from 'react-icons/fa';
+import { SERVICE_CATEGORIES } from '@/config/categories';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface ServiceCategoryStepProps {
@@ -18,25 +19,41 @@ interface ServiceCategoryStepProps {
   initialData: any;
 }
 
-const serviceCategories = [
-  { id: 'massage', name: 'Massage Therapy', icon: FaSpa },
-  { id: 'yoga', name: 'Yoga Instruction', icon: FaLeaf },
-  { id: 'aesthetics', name: 'Aesthetics & Skincare', icon: FaMagic },
-  { id: 'reiki', name: 'Reiki & Energy Work', icon: FaGem },
-  { id: 'doulas', name: 'Doula Services', icon: FaBaby },
-  { id: 'nutrition', name: 'Nutrition Counseling', icon: FaAppleAlt }
-];
+// Map category IDs to icons for main categories
+const categoryIcons: { [key: string]: any } = {
+  'private-yoga': FaLeaf,
+  'yoga-therapy': FaLeaf,
+  'somatic-practices': FaLeaf,
+  'massage-therapy': FaSpa,
+  'meditation': FaLeaf,
+  'reiki-energy-work': FaGem,
+  'sound-healing': FaGem,
+  'craniosacral-therapy': FaSpa,
+  'reflexology': FaSpa,
+  'life-coaching': FaAppleAlt,
+  'health-coaching': FaAppleAlt,
+  'breathwork': FaLeaf,
+  'nutrition-counseling': FaAppleAlt,
+  'ayurveda': FaMagic,
+  'herbalist': FaMagic,
+  'personal-training': FaAppleAlt,
+  'doula-care': FaBaby,
+  'skincare-esthetics': FaMagic,
+  'hair-styling': FaMagic,
+  'nail-care': FaMagic,
+  'makeup': FaMagic,
+  'cacao-facilitation': FaGem
+};
 
-const otherCategories = [
-  'Physical Therapy',
-  'Mental Health Counseling',
-  'Life Coaching',
-  'Fitness Training',
-  'Meditation Instruction',
-  'Sound Healing',
-  'Craniosacral Therapy',
-  'Reflexology'
-];
+// Main featured categories (first 6)
+const serviceCategories = SERVICE_CATEGORIES.slice(0, 6).map(cat => ({
+  id: cat.id,
+  name: cat.displayName,
+  icon: categoryIcons[cat.id] || FaSpa
+}));
+
+// Other categories (remaining)
+const otherCategories = SERVICE_CATEGORIES.slice(6).map(cat => cat.displayName);
 
 export default function ServiceCategoryStep({ onNext, onBack, initialData }: ServiceCategoryStepProps) {
   const [selectedCategory, setSelectedCategory] = useState(initialData.serviceCategory || '');
@@ -63,7 +80,7 @@ export default function ServiceCategoryStep({ onNext, onBack, initialData }: Ser
             <button
               key={category.id}
               type="button"
-              className={`${styles.categoryCard} ${selectedCategory === category.id ? styles.selected : ''}`}
+              className={`${styles.categoryCard} ${selectedCategory === category.id || selectedCategory === category.name ? styles.selected : ''}`}
               onClick={() => handleCategorySelect(category.id)}
             >
               <div className={styles.categoryIcon}>

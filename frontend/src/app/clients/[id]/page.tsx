@@ -244,15 +244,6 @@ export default function ClientPublicProfilePage() {
               </div>
             )}
 
-            {profile.travelWillingness && (
-              <div className={styles.preferenceItem}>
-                <span className={styles.label}>Willing to Travel:</span>
-                <span className={styles.value}>Yes</span>
-                {profile.maxTravelDistance && (
-                  <span className={styles.value}> (up to {profile.maxTravelDistance} miles)</span>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Goals Section */}
@@ -288,13 +279,20 @@ export default function ClientPublicProfilePage() {
             </div>
           )}
 
-          {/* Notes */}
-          {profile.notes && (
-            <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>Additional Notes</h2>
-              <p className={styles.text}>{profile.notes}</p>
+          {/* Travel Preferences */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Travel Preferences</h2>
+            <div className={styles.preferenceItem}>
+              <span className={styles.label}>Willing to travel to location?</span>
+              <span className={styles.value}>{profile.travelWillingness ? 'Yes' : 'No'}</span>
             </div>
-          )}
+            {profile.travelWillingness && profile.maxTravelDistance && (
+              <div className={styles.preferenceItem}>
+                <span className={styles.label}>Max distance:</span>
+                <span className={styles.value}>{profile.maxTravelDistance} miles</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

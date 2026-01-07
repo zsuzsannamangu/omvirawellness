@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaUser, FaCog } from 'react-icons/fa';
+import { FaUser, FaCog, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { updateClientProfile } from '@/services/auth';
+import { API_URL } from '@/config/api';
+import { SERVICE_CATEGORIES } from '@/config/categories';
+import Swal from 'sweetalert2';
 import styles from '@/styles/Clients/Dashboard.module.scss';
+import TwoFactorSettings from './TwoFactorSettings';
 
 interface ProfileProps {
   activeSubmenu: string;
@@ -13,12 +17,28 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
   const [userData, setUserData] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [travelWillingness, setTravelWillingness] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setUserData(JSON.parse(user));
-    }
+    const loadUserData = () => {
+      const user = localStorage.getItem('user');
+      if (user) {
+        const parsedUser = JSON.parse(user);
+        setUserData(parsedUser);
+        // Set initial travel willingness state
+        setTravelWillingness(parsedUser?.profile?.travel_willingness || false);
+      }
+    };
+
+    loadUserData();
+
+    // Listen for profile update events
+    window.addEventListener('profileUpdated', loadUserData);
+    
+    return () => {
+      window.removeEventListener('profileUpdated', loadUserData);
+    };
   }, []);
 
   // Show loading state until userData is loaded
@@ -85,6 +105,8 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUserData(updatedUser);
+        // Update travel willingness state
+        setTravelWillingness(result.profile.travel_willingness || false);
       }
       
       // Dispatch custom event to notify dashboard of profile update
@@ -129,31 +151,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                 </div>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Email</label>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <input 
-                        type="email" 
-                        className={styles.formInput} 
-                        value={userData?.email || ''} 
-                        disabled
-                        data-1p-ignore
-                        autoComplete="off"
-                        style={{ flex: 1 }}
-                      />
-                      <button 
-                        type="button"
-                        className={styles.saveBtn}
-                        onClick={() => {
-                          const event = new CustomEvent('openUpdateEmail');
-                          window.dispatchEvent(event);
-                        }}
-                        style={{ minWidth: '140px', width: '140px' }}
-                      >
-                        Update Email
-                      </button>
-                    </div>
-                  </div>
-                  <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Phone</label>
                     <input 
                       type="tel" 
@@ -161,7 +158,33 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       className={styles.formInput} 
                       defaultValue={userData?.profile?.phone_number || ''} 
                       placeholder="(555) 123-4567"
+                      onKeyDown={(e) => {
+                        // Allow: backspace, delete, tab, escape, enter, and numbers
+                        if (
+                          [46, 8, 9, 27, 13, 110, 190].indexOf(e.keyCode) !== -1 ||
+                          // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                          (e.keyCode === 65 && e.ctrlKey === true) ||
+                          (e.keyCode === 67 && e.ctrlKey === true) ||
+                          (e.keyCode === 86 && e.ctrlKey === true) ||
+                          (e.keyCode === 88 && e.ctrlKey === true) ||
+                          // Allow: home, end, left, right, down, up
+                          (e.keyCode >= 35 && e.keyCode <= 40)
+                        ) {
+                          return;
+                        }
+                        // Ensure that it is a number and stop the keypress
+                        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onChange={(e) => {
+                        // Remove any non-numeric characters that might be pasted
+                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                      }}
                     />
+                  </div>
+                  <div className={styles.formGroup}>
+                    {/* Empty div to maintain grid layout */}
                   </div>
                 </div>
                 <div className={styles.formRow}>
@@ -203,40 +226,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
               </div>
 
               <div className={styles.formSection}>
-                <h3 className={styles.formSectionTitle}>Account Security</h3>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Password</label>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }} data-1p-ignore="true" data-lpignore="true">
-                      <input 
-                        type="text" 
-                        className={styles.formInput} 
-                        defaultValue="••••••••" 
-                        disabled
-                        data-1p-ignore="true"
-                        data-lpignore="true"
-                        data-form-type="other"
-                        autoComplete="off"
-                        readOnly
-                        style={{ flex: 1 }}
-                      />
-                      <button 
-                        type="button"
-                        className={styles.saveBtn}
-                        onClick={() => {
-                          const event = new CustomEvent('openChangePassword');
-                          window.dispatchEvent(event);
-                        }}
-                        style={{ minWidth: '140px', width: '140px' }}
-                      >
-                        Change Password
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.formSection}>
                 <h3 className={styles.formSectionTitle}>Emergency Contact</h3>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
@@ -257,6 +246,29 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       className={styles.formInput} 
                       defaultValue={userData?.profile?.emergency_contact_phone || ''}
                       placeholder="Enter phone number"
+                      onKeyDown={(e) => {
+                        // Allow: backspace, delete, tab, escape, enter, and numbers
+                        if (
+                          [46, 8, 9, 27, 13, 110, 190].indexOf(e.keyCode) !== -1 ||
+                          // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                          (e.keyCode === 65 && e.ctrlKey === true) ||
+                          (e.keyCode === 67 && e.ctrlKey === true) ||
+                          (e.keyCode === 86 && e.ctrlKey === true) ||
+                          (e.keyCode === 88 && e.ctrlKey === true) ||
+                          // Allow: home, end, left, right, down, up
+                          (e.keyCode >= 35 && e.keyCode <= 40)
+                        ) {
+                          return;
+                        }
+                        // Ensure that it is a number and stop the keypress
+                        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onChange={(e) => {
+                        // Remove any non-numeric characters that might be pasted
+                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                      }}
                     />
                   </div>
                 </div>
@@ -378,36 +390,113 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         );
       
       case 'account':
+        const handleResendVerification = async () => {
+          setIsResendingVerification(true);
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              throw new Error('Not authenticated');
+            }
+
+            const response = await fetch(`${API_URL}/auth/resend-verification`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+              await Swal.fire({
+                icon: 'success',
+                title: 'Email Sent',
+                text: 'A new verification email has been sent to your inbox.',
+                confirmButtonColor: '#4a90e2'
+              });
+            } else {
+              await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to resend verification email.',
+                confirmButtonColor: '#e74c3c'
+              });
+            }
+          } catch (error: any) {
+            await Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to resend verification email. Please try again later.',
+              confirmButtonColor: '#e74c3c'
+            });
+          } finally {
+            setIsResendingVerification(false);
+          }
+        };
+
         return (
           <div className={styles.profileContent} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off">
             <h2 className={styles.sectionTitle}>Account Information</h2>
             <div className={styles.profileForm} data-1p-ignore="true" data-lpignore="true">
               <div className={styles.formSection}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Email Address</label>
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <input 
-                      type="email" 
-                      className={styles.formInput} 
-                      value={userData?.email || ''} 
-                      disabled
-                      data-1p-ignore
-                      autoComplete="off"
-                      style={{ flex: 1 }}
-                    />
-                    <button 
-                      type="button"
-                      className={styles.saveBtn}
-                      onClick={() => {
-                        const event = new CustomEvent('openUpdateEmail');
-                        window.dispatchEvent(event);
-                      }}
-                      style={{ minWidth: '140px', width: '140px' }}
-                    >
-                      Update Email
-                    </button>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Email Address</label>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <input 
+                        type="email" 
+                        className={styles.formInput} 
+                        value={userData?.email || ''} 
+                        disabled
+                        data-1p-ignore
+                        autoComplete="off"
+                        style={{ width: '320px', maxWidth: '320px' }}
+                      />
+                      <button 
+                        type="button"
+                        className={styles.saveBtn}
+                        onClick={() => {
+                          const event = new CustomEvent('openUpdateEmail');
+                          window.dispatchEvent(event);
+                        }}
+                        style={{ width: '180px', minWidth: '180px', whiteSpace: 'nowrap' }}
+                      >
+                        Update Email
+                      </button>
+                    </div>
+                    {userData?.email && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px', fontSize: '0.875rem' }}>
+                        {userData.email_verified ? (
+                          <>
+                            <FaCheckCircle style={{ color: '#4a90e2' }} />
+                            <span style={{ color: '#4a90e2' }}>Email verified</span>
+                          </>
+                        ) : (
+                          <>
+                            <FaTimesCircle style={{ color: '#e74c3c' }} />
+                            <span style={{ color: '#e74c3c' }}>Email not verified</span>
+                            <button
+                              type="button"
+                              onClick={handleResendVerification}
+                              disabled={isResendingVerification}
+                              style={{
+                                marginLeft: '12px',
+                                background: 'none',
+                                border: 'none',
+                                color: '#4a90e2',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                fontSize: '0.875rem',
+                                padding: 0
+                              }}
+                            >
+                              {isResendingVerification ? 'Sending...' : 'Resend verification email'}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
 
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Password</label>
@@ -419,7 +508,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       disabled
                       data-1p-ignore
                       autoComplete="off"
-                      style={{ flex: 1 }}
+                      style={{ width: '320px', maxWidth: '320px' }}
                     />
                     <button 
                       type="button"
@@ -428,18 +517,23 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                         const event = new CustomEvent('openChangePassword');
                         window.dispatchEvent(event);
                       }}
-                      style={{ minWidth: '140px', width: '140px' }}
+                      style={{ width: '180px', minWidth: '180px', whiteSpace: 'nowrap' }}
                     >
                       Change Password
                     </button>
                   </div>
                 </div>
               </div>
+
+              {/* Google Authenticator (2FA) Section */}
+              <div style={{ marginTop: '40px' }}>
+                <TwoFactorSettings userId={userData?.id || ''} />
+              </div>
             </div>
           </div>
         );
 
-      case 'settings':
+      case 'preferences':
         return (
           <div className={styles.profileContent}>
             <h2 className={styles.sectionTitle}>Wellness Preferences</h2>
@@ -475,15 +569,15 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
               <div className={styles.formSection}>
                 <h3 className={styles.formSectionTitle}>Services You Are Interested In</h3>
                 <div className={styles.checkboxGroup}>
-                  {['massage-therapy', 'yoga', 'meditation', 'acupuncture', 'chiropractic', 'physical-therapy', 'nutrition-counseling', 'counseling', 'personal-training', 'reiki'].map((service) => (
-                    <label key={service} className={styles.checkboxLabel}>
+                  {SERVICE_CATEGORIES.map((category) => (
+                    <label key={category.id} className={styles.checkboxLabel}>
                       <input 
                         type="checkbox" 
-                        data-service={service.toLowerCase()}
-                        defaultChecked={userData?.profile?.preferred_services?.includes(service.toLowerCase()) || false}
+                        data-service={category.id}
+                        defaultChecked={userData?.profile?.preferred_services?.includes(category.id) || false}
                       />
                       <span className={styles.checkboxText}>
-                        {service.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                        {category.displayName}
                       </span>
                     </label>
                   ))}
@@ -571,23 +665,26 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                     <input 
                       type="checkbox" 
                       name="travelWillingness"
-                      defaultChecked={userData?.profile?.travel_willingness || false}
+                      checked={travelWillingness}
+                      onChange={(e) => setTravelWillingness(e.target.checked)}
                     />
                     <span className={styles.checkboxText}>I'm willing to travel for appointments</span>
                   </label>
                 </div>
-                <div className={styles.formGroup} style={{ marginTop: '24px' }}>
-                  <label className={styles.formLabel}>Maximum Travel Distance</label>
-                  <select name="maxTravelDistance" className={styles.formSelect} defaultValue={userData?.profile?.max_travel_distance || ''}>
-                    <option value="">Select distance</option>
-                    <option value="5">1-2 miles</option>
-                    <option value="10">up to 5 miles</option>
-                    <option value="15">up to 10 miles</option>
-                    <option value="25">up to 25 miles</option>
-                    <option value="50">up to 50 miles</option>
-                    <option value="100">I'm flexible</option>
-                  </select>
-                </div>
+                {travelWillingness && (
+                  <div className={styles.formGroup} style={{ marginTop: '24px' }}>
+                    <label className={styles.formLabel}>Maximum Travel Distance</label>
+                    <select name="maxTravelDistance" className={styles.formSelect} defaultValue={userData?.profile?.max_travel_distance || ''}>
+                      <option value="">Select distance</option>
+                      <option value="5">1-2 miles</option>
+                      <option value="10">up to 5 miles</option>
+                      <option value="15">up to 10 miles</option>
+                      <option value="25">up to 25 miles</option>
+                      <option value="50">up to 50 miles</option>
+                      <option value="100">I'm flexible</option>
+                    </select>
+                  </div>
+                )}
               </div>
 
               {saveMessage && (

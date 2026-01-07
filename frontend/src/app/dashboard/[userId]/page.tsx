@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
   FaCalendarAlt, FaCalendar, FaHeart, FaDollarSign, 
@@ -22,10 +22,33 @@ import UpdateEmailModal from '@/components/Clients/Dashboard/UpdateEmailModal';
 export default function ClientDashboard() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const userId = params.userId as string;
   
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
+
+  // Handle OAuth token from URL (Google sign-in)
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const userData = searchParams.get('user');
+    const completeProfile = searchParams.get('complete_profile');
+    if (token) {
+      localStorage.setItem('token', decodeURIComponent(token));
+      if (userData) {
+        localStorage.setItem('user', decodeURIComponent(userData));
+      }
+      // If profile needs completion, keep the section parameter
+      if (completeProfile === 'true') {
+        const section = searchParams.get('section') || 'profile';
+        router.replace(`/dashboard/${userId}?complete_profile=true&section=${section}`);
+        setActiveSection('profile');
+      } else {
+        // Remove token from URL
+        router.replace(`/dashboard/${userId}`);
+      }
+    }
+  }, [searchParams, userId, router]);
   
   // Set default submenu when switching sections
   useEffect(() => {
@@ -44,6 +67,7 @@ export default function ClientDashboard() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -97,6 +121,11 @@ export default function ClientDashboard() {
           setUserName(userData.email.split('@')[0]);
         }
         
+        // Set user email
+        if (userData.email) {
+          setUserEmail(userData.email);
+        }
+        
         // Load booking stats
         try {
           const statsResponse = await fetch(`http://localhost:4000/api/bookings/client/${userId}/stats`, {
@@ -125,7 +154,7 @@ export default function ClientDashboard() {
 
     loadUserData();
 
-    // Listen for profile update events to refresh name
+    // Listen for profile update events to refresh name and email
     const handleProfileUpdate = () => {
       const user = localStorage.getItem('user');
       if (user) {
@@ -133,6 +162,9 @@ export default function ClientDashboard() {
           const userData = JSON.parse(user);
           if (userData.profile?.first_name && userData.profile?.last_name) {
             setUserName(`${userData.profile.first_name} ${userData.profile.last_name}`);
+          }
+          if (userData.email) {
+            setUserEmail(userData.email);
           }
         } catch (error) {
           console.error('Error parsing user data on profile update:', error);
@@ -300,7 +332,7 @@ export default function ClientDashboard() {
     ],
     profile: [
       { id: 'personal', label: 'Personal Info' },
-      { id: 'settings', label: 'Settings' },
+      { id: 'preferences', label: 'Preferences' },
       { id: 'account', label: 'Account Settings' },
     ],
   };
@@ -318,7 +350,33 @@ export default function ClientDashboard() {
       case 'messages':
         return <Messages activeSubmenu={activeSubmenu} />;
       case 'profile':
-        return <Profile activeSubmenu={activeSubmenu} />;
+        return (
+          <>
+            {needsProfileCompletion && (
+              <div style={{
+                backgroundColor: '#fff3cd',
+                border: '1px solid #ffc107',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <span style={{ fontSize: '24px' }}>⚠️</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
+                    Complete Your Profile
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>
+                    Please fill in your phone number and address to start booking services.
+                  </p>
+                </div>
+              </div>
+            )}
+            <Profile activeSubmenu={activeSubmenu} />
+          </>
+        );
       default:
         return <Bookings activeSubmenu={activeSubmenu} />;
     }
@@ -469,24 +527,20 @@ export default function ClientDashboard() {
       <ChangePasswordModal
         isOpen={showChangePasswordModal}
         onClose={() => setShowChangePasswordModal(false)}
+        onSuccess={() => {
+          // Dispatch event to refresh profile data if needed
+          window.dispatchEvent(new Event('profileUpdated'));
+        }}
       />
 
       {/* Update Email Modal */}
       <UpdateEmailModal
         isOpen={showUpdateEmailModal}
         onClose={() => setShowUpdateEmailModal(false)}
-        currentEmail={(() => {
-          const user = localStorage.getItem('user');
-          return user ? JSON.parse(user).email : '';
-        })()}
+        currentEmail={userEmail}
         onSuccess={() => {
-          // Reload user data to get updated email
-          const user = localStorage.getItem('user');
-          if (user) {
-            const userData = JSON.parse(user);
-            // Email is already updated in localStorage by the modal
-            // Just trigger a re-render if needed
-          }
+          // Dispatch event to refresh profile data
+          window.dispatchEvent(new Event('profileUpdated'));
         }}
       />
     </div>

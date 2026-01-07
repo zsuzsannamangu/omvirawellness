@@ -1,11 +1,10 @@
 'use client';
 
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { FaTimes, FaCopy, FaCheck } from 'react-icons/fa';
 import { QRCodeSVG } from 'qrcode.react';
 import Swal from 'sweetalert2';
+import { API_URL } from '@/config/api';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 interface TwoFactorSetupModalProps {
@@ -43,7 +42,7 @@ export default function TwoFactorSetupModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:4000/api/auth/2fa/enable', {
+      const response = await fetch(`${API_URL}/auth/2fa/enable`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +94,7 @@ export default function TwoFactorSetupModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:4000/api/auth/2fa/verify', {
+      const response = await fetch(`${API_URL}/auth/2fa/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,6 +113,14 @@ export default function TwoFactorSetupModal({
 
       // Show backup codes
       setBackupCodes(data.backupCodes);
+      
+      // Update localStorage
+      const user = localStorage.getItem('user');
+      if (user) {
+        const userData = JSON.parse(user);
+        userData.two_factor_enabled = true;
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
       
       await Swal.fire({
         icon: 'success',

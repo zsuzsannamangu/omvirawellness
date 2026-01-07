@@ -1,5 +1,6 @@
 'use client';
 
+import { SERVICE_CATEGORIES } from '@/config/categories';
 import styles from '@/styles/Providers/Dashboard.module.scss';
 
 interface SettingsProps {
@@ -25,10 +26,12 @@ export default function Settings({ activeSubmenu }: SettingsProps) {
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Specialty</label>
                     <select className={styles.formSelect}>
-                      <option value="massage">Massage Therapist</option>
-                      <option value="yoga">Yoga Instructor</option>
-                      <option value="meditation">Meditation Guide</option>
-                      <option value="training">Personal Trainer</option>
+                      <option value="">Select specialty</option>
+                      {SERVICE_CATEGORIES.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.displayName}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -74,30 +77,12 @@ export default function Settings({ activeSubmenu }: SettingsProps) {
               <div className={styles.formSection}>
                 <h3 className={styles.subsectionTitle}>Available Services</h3>
                 <div className={styles.servicesGrid}>
-                  <label className={styles.serviceItem}>
-                    <input type="checkbox" defaultChecked />
-                    <span className={styles.serviceLabel}>Massage Therapy</span>
-                  </label>
-                  <label className={styles.serviceItem}>
-                    <input type="checkbox" defaultChecked />
-                    <span className={styles.serviceLabel}>Yoga Classes</span>
-                  </label>
-                  <label className={styles.serviceItem}>
-                    <input type="checkbox" defaultChecked />
-                    <span className={styles.serviceLabel}>Meditation Sessions</span>
-                  </label>
-                  <label className={styles.serviceItem}>
-                    <input type="checkbox" />
-                    <span className={styles.serviceLabel}>Personal Training</span>
-                  </label>
-                  <label className={styles.serviceItem}>
-                    <input type="checkbox" />
-                    <span className={styles.serviceLabel}>Energy Healing</span>
-                  </label>
-                  <label className={styles.serviceItem}>
-                    <input type="checkbox" />
-                    <span className={styles.serviceLabel}>Aromatherapy</span>
-                  </label>
+                  {SERVICE_CATEGORIES.map((category) => (
+                    <label key={category.id} className={styles.serviceItem}>
+                      <input type="checkbox" />
+                      <span className={styles.serviceLabel}>{category.displayName}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 

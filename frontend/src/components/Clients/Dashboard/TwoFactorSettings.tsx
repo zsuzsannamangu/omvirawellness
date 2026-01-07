@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { FaShieldAlt, FaKey, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { API_URL } from '@/config/api';
-import styles from '@/styles/Providers/Dashboard.module.scss';
-import TwoFactorSetupModal from './TwoFactorSetupModal';
+import styles from '@/styles/Clients/Dashboard.module.scss';
+import TwoFactorSetupModal from '@/components/Providers/Dashboard/TwoFactorSetupModal';
 
 interface TwoFactorSettingsProps {
   userId: string;
@@ -29,7 +29,6 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      // Get user data which should include 2FA status
       const user = localStorage.getItem('user');
       if (user) {
         const userData = JSON.parse(user);
@@ -106,7 +105,7 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
         icon: 'success',
         title: 'Google Authenticator Disabled',
         text: 'Google Authenticator has been disabled successfully.',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: '#4a90e2'
       });
 
       setTwoFactorEnabled(false);
@@ -137,14 +136,14 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
   };
 
   if (isLoading) {
-    return <div style={{ padding: '20px' }}>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <>
       <div>
         <div className={styles.formGroup} style={{ marginTop: '0' }}>
-          <label className={styles.formLabel}>Two-Factor Authentication (Recommended)</label>
+          <label className={styles.formLabel}>TWO-FACTOR AUTHENTICATION (RECOMMENDED)</label>
         </div>
         
         <div>
@@ -176,17 +175,17 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
               <div>
                 {twoFactorEnabled ? (
                   <button
-                    className={styles.secondaryBtn}
+                    className={styles.saveBtn}
                     onClick={() => setShowDisableModal(true)}
                   >
                     Disable Google Authenticator
                   </button>
                 ) : (
                   <button
-                    className={styles.submitButton}
+                    className={styles.saveBtn}
                     onClick={() => setShowSetupModal(true)}
                   >
-                    Enable 2FA
+                    Enable Google Authenticator
                   </button>
                 )}
               </div>
@@ -195,7 +194,7 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
             {twoFactorEnabled && (
               <div style={{ marginTop: '20px' }}>
                 <button
-                  className={styles.secondaryBtn}
+                  className={styles.saveBtn}
                   onClick={async () => {
                     const { value: password } = await Swal.fire({
                       title: 'Regenerate Backup Codes',
@@ -204,7 +203,7 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
                       inputPlaceholder: 'Password',
                       showCancelButton: true,
                       confirmButtonText: 'Regenerate',
-                      confirmButtonColor: '#3085d6',
+                      confirmButtonColor: '#4a90e2',
                       inputValidator: (value) => {
                         if (!value) {
                           return 'Password is required';
@@ -247,7 +246,7 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
                             </div>
                           `,
                           confirmButtonText: 'I\'ve Saved These',
-                          confirmButtonColor: '#3085d6',
+                          confirmButtonColor: '#4a90e2',
                           width: '600px'
                         });
                       } catch (error: any) {
@@ -275,66 +274,71 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
         onClose={() => setShowSetupModal(false)}
         onSuccess={() => {
           setTwoFactorEnabled(true);
+          // Update localStorage
+          const user = localStorage.getItem('user');
+          if (user) {
+            const userData = JSON.parse(user);
+            userData.two_factor_enabled = true;
+            localStorage.setItem('user', JSON.stringify(userData));
+          }
           load2FAStatus();
         }}
       />
 
       {/* Disable Modal */}
       {showDisableModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowDisableModal(false)}>
-          <div className={`${styles.modalContent} ${styles.billingModal}`} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>Disable Two-Factor Authentication</h2>
+        <div className={styles.rescheduleModalOverlay} onClick={() => setShowDisableModal(false)}>
+          <div className={styles.rescheduleModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.rescheduleModalHeader}>
+              <h2>Disable Google Authenticator</h2>
               <button className={styles.closeButton} onClick={() => setShowDisableModal(false)}>
                 <FaTimes />
               </button>
             </div>
 
-            <form onSubmit={handleDisable2FA} className={styles.billingForm}>
-              <div className={styles.modalBody}>
-                <div className={styles.formSection}>
-                  <p style={{ marginBottom: '20px', color: '#666' }}>
-                    To disable two-factor authentication, please enter your password and a 2FA code from Google Authenticator.
-                  </p>
+            <form onSubmit={handleDisable2FA} className={styles.rescheduleModalBody}>
+              <div className={styles.formGroup}>
+                <p style={{ marginBottom: '20px', color: '#666' }}>
+                  To disable two-factor authentication, please enter your password and a 2FA code from Google Authenticator.
+                </p>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>
-                      Password <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="password"
-                      className={styles.formInput}
-                      value={disablePassword}
-                      onChange={(e) => setDisablePassword(e.target.value)}
-                      required
-                      autoComplete="current-password"
-                    />
-                  </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    Password <span style={{ color: '#e74c3c' }}>*</span>
+                  </label>
+                  <input
+                    type="password"
+                    className={styles.formInput}
+                    value={disablePassword}
+                    onChange={(e) => setDisablePassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                  />
+                </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>
-                      Google Authenticator Code <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className={styles.formInput}
-                      value={disableToken}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        setDisableToken(value);
-                      }}
-                      placeholder="000000"
-                      maxLength={6}
-                      required
-                    />
-                  </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    Google Authenticator Code <span style={{ color: '#e74c3c' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    value={disableToken}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setDisableToken(value);
+                    }}
+                    placeholder="000000"
+                    maxLength={6}
+                    required
+                  />
                 </div>
               </div>
 
-              <div className={styles.modalFooter}>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px', flexDirection: 'row' }}>
                 <button
                   type="button"
-                  className={styles.secondaryBtn}
+                  className={styles.cancelButton}
                   onClick={() => setShowDisableModal(false)}
                   disabled={isDisabling}
                 >
@@ -342,10 +346,10 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
                 </button>
                 <button
                   type="submit"
-                  className={styles.submitButton}
+                  className={styles.rescheduleButton}
                   disabled={isDisabling}
                 >
-                  {isDisabling ? 'Disabling...' : 'Disable 2FA'}
+                  {isDisabling ? 'Disabling...' : 'Disable Google Authenticator'}
                 </button>
               </div>
             </form>
@@ -355,4 +359,3 @@ export default function TwoFactorSettings({ userId }: TwoFactorSettingsProps) {
     </>
   );
 }
-

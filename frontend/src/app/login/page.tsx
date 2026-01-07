@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/services/auth';
 import TwoFactorVerifyModal from '@/components/Providers/Login/TwoFactorVerifyModal';
+import { API_BASE_URL } from '@/config/api';
 import styles from '@/styles/Login.module.scss';
 
 export default function LoginPage() {
@@ -16,6 +17,40 @@ export default function LoginPage() {
   const [requires2FA, setRequires2FA] = useState(false);
   const [twoFactorUserId, setTwoFactorUserId] = useState<string | null>(null);
   const router = useRouter();
+
+  // Prevent password manager detection on login form
+  useEffect(() => {
+    const preventPasswordManager = () => {
+      const form = document.querySelector(`.${styles.loginForm}`);
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      
+      if (form) {
+        form.setAttribute('data-1p-ignore', 'true');
+        form.setAttribute('data-lpignore', 'true');
+        form.setAttribute('data-form-type', 'other');
+        form.setAttribute('autoComplete', 'off');
+      }
+      
+      if (emailInput) {
+        emailInput.setAttribute('data-1p-ignore', 'true');
+        emailInput.setAttribute('data-lpignore', 'true');
+        emailInput.setAttribute('data-form-type', 'other');
+        emailInput.setAttribute('autoComplete', 'off');
+      }
+      
+      if (passwordInput) {
+        passwordInput.setAttribute('data-1p-ignore', 'true');
+        passwordInput.setAttribute('data-lpignore', 'true');
+        passwordInput.setAttribute('data-form-type', 'other');
+        passwordInput.setAttribute('autoComplete', 'off');
+      }
+    };
+
+    preventPasswordManager();
+    const interval = setInterval(preventPasswordManager, 500);
+    return () => clearInterval(interval);
+  }, []);
 
   // Check if user is already authenticated
   useEffect(() => {
@@ -145,7 +180,7 @@ export default function LoginPage() {
             </div>
           )}
           
-          <form onSubmit={handleLoginSubmit} className={styles.loginForm}>
+          <form onSubmit={handleLoginSubmit} className={styles.loginForm} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off">
             <div className={styles.inputGroup}>
               <label htmlFor="email" className={styles.label}>
                 E-MAIL ADDRESS
@@ -159,6 +194,10 @@ export default function LoginPage() {
                   className={styles.emailInput}
                   placeholder="Enter your email"
                   required
+                  data-1p-ignore="true"
+                  data-lpignore="true"
+                  data-form-type="other"
+                  autoComplete="off"
                 />
                 <div className={styles.inputIcons}>
                   <span className={styles.lockIcon}>🔒</span>
@@ -183,6 +222,10 @@ export default function LoginPage() {
                   className={styles.passwordInput}
                   placeholder="Enter your password"
                   required
+                  data-1p-ignore="true"
+                  data-lpignore="true"
+                  data-form-type="other"
+                  autoComplete="off"
                 />
                 <button
                   type="button"
@@ -215,14 +258,26 @@ export default function LoginPage() {
           {/* Social Login Buttons */}
           <div className={styles.socialButtons}>
             
-            <button className={`${styles.socialButton} ${styles.facebookButton}`}>
+            <button 
+              type="button"
+              className={`${styles.socialButton} ${styles.facebookButton}`}
+              onClick={() => {
+                window.location.href = `${API_BASE_URL || 'http://localhost:4000'}/api/oauth/facebook?user_type=client`;
+              }}
+            >
               <svg className={styles.facebookIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
               Continue with Facebook
             </button>
             
-            <button className={`${styles.socialButton} ${styles.googleButton}`}>
+            <button 
+              type="button"
+              className={`${styles.socialButton} ${styles.googleButton}`}
+              onClick={() => {
+                window.location.href = `${API_BASE_URL || 'http://localhost:4000'}/api/oauth/google?user_type=client`;
+              }}
+            >
               <svg className={styles.googleIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

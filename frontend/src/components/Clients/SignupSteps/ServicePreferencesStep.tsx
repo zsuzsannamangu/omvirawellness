@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SERVICE_CATEGORIES } from '@/config/categories';
 import styles from '@/styles/Clients/SignupSteps.module.scss';
 
 interface ServicePreferencesStepProps {
@@ -9,18 +10,13 @@ interface ServicePreferencesStepProps {
   initialData: any;
 }
 
-const serviceTypes = [
-  { id: 'massage', name: 'Massage Therapy', description: 'Swedish, deep tissue, sports massage' },
-  { id: 'yoga', name: 'Yoga', description: 'Hatha, Vinyasa, restorative yoga' },
-  { id: 'meditation', name: 'Meditation', description: 'Mindfulness, guided meditation' },
-  { id: 'acupuncture', name: 'Acupuncture', description: 'Traditional Chinese medicine' },
-  { id: 'chiropractic', name: 'Chiropractic', description: 'Spinal adjustments and alignment' },
-  { id: 'physical-therapy', name: 'Physical Therapy', description: 'Rehabilitation and recovery' },
-  { id: 'nutrition', name: 'Nutrition Counseling', description: 'Diet and nutrition guidance' },
-  { id: 'counseling', name: 'Counseling', description: 'Mental health and therapy' },
-  { id: 'fitness', name: 'Personal Training', description: 'Fitness and strength training' },
-  { id: 'reiki', name: 'Reiki', description: 'Energy healing and relaxation' }
-];
+// Map categories to service types for client signup
+// Use the unified categories, mapping IDs to match the expected format
+const serviceTypes = SERVICE_CATEGORIES.map(cat => ({
+  id: cat.id,
+  name: cat.displayName,
+  description: cat.description || ''
+}));
 
 export default function ServicePreferencesStep({ onNext, onBack, initialData }: ServicePreferencesStepProps) {
   const [servicePreferences, setServicePreferences] = useState(initialData.servicePreferences || {

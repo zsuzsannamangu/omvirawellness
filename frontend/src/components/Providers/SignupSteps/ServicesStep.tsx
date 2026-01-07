@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SERVICE_CATEGORIES } from '@/config/categories';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface ServicesStepProps {
@@ -9,16 +10,7 @@ interface ServicesStepProps {
   initialData: any;
 }
 
-const serviceTypes = [
-  'Massage Therapy',
-  'Yoga Instruction',
-  'Aesthetics & Skincare',
-  'Reiki & Energy Work',
-  'Nutrition Counseling',
-  'Life Coaching',
-  'Meditation Instruction',
-  'Physical Therapy'
-];
+const serviceTypes = SERVICE_CATEGORIES.map(cat => cat.displayName);
 
 const durationOptions = [
   { value: '30', label: '30 min' },

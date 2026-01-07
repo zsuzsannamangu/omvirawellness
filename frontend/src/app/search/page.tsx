@@ -172,37 +172,35 @@ const formatNextAvailability = (dateString: string | null): string => {
 };
 
 
-const categories = [
-  'Private Yoga',
-  'Yoga Therapy', 
-  'Massage',
-  'Skincare',
-  'Reiki',
-  'Energy Work',
-  'Ayurveda',
-  'Acupuncture',
-  'Personal Training',
-  'Doula Care',
-  'Hair Styling',
-  'Nail Care',
-  'Makeup'
-];
+import { SERVICE_CATEGORIES, getCategoryNames } from '@/config/categories';
 
-// Format business type string: capitalize and add proper spacing
+const categories = getCategoryNames();
+
+// Format business type string: map category IDs to display names
+// Only show categories that are in the unified SERVICE_CATEGORIES list
 const formatBusinessType = (businessType: string | null | undefined): string => {
   if (!businessType) return 'Wellness Services';
   
-  return businessType
+  const validCategories = businessType
     .split(',')
     .map(item => {
-      const trimmed = item.trim();
-      // Capitalize first letter of each word
-      return trimmed
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+      const trimmed = item.trim().toLowerCase();
+      // Find category by ID (handle both old format and new format)
+      const category = SERVICE_CATEGORIES.find(cat => 
+        cat.id === trimmed || 
+        cat.id === trimmed.replace(/\s+/g, '-') ||
+        cat.name.toLowerCase() === trimmed ||
+        cat.displayName.toLowerCase() === trimmed
+      );
+      
+      // Only return display name if category is found in unified list
+      return category ? category.displayName : null;
     })
-    .join(', ');
+    .filter(Boolean) // Remove null values (categories not in unified list)
+    .filter((cat): cat is string => cat !== null); // Type guard
+    
+  // If no valid categories found, return default
+  return validCategories.length > 0 ? validCategories.join(', ') : 'Wellness Services';
 };
 
 export default function SearchPage() {
@@ -431,10 +429,42 @@ export default function SearchPage() {
 
     // Service filter
     if (selectedService && selectedService !== 'Service') {
+      // Find the category by display name to get its ID
+      const selectedCategory = SERVICE_CATEGORIES.find(cat => cat.displayName === selectedService);
+      const categoryId = selectedCategory ? selectedCategory.id : selectedService.toLowerCase().replace(/\s+/g, '-');
+      const categoryName = selectedCategory ? selectedCategory.name.toLowerCase() : selectedService.toLowerCase();
+      const categoryDisplayName = selectedService.toLowerCase();
+      
       filtered = filtered.filter(provider => {
         if (!provider.business_type) return false;
         const businessTypes = provider.business_type.toLowerCase().split(',').map((t: string) => t.trim());
-        return businessTypes.some((type: string) => type.includes(selectedService.toLowerCase()));
+        
+        // Check if any stored category matches the selected one
+        return businessTypes.some((type: string) => {
+          // Match by ID
+          if (type === categoryId) return true;
+          
+          // Match by name
+          if (type === categoryName) return true;
+          
+          // Match by display name
+          if (type === categoryDisplayName) return true;
+          
+          // Find stored category and check if it matches
+          const storedCategory = SERVICE_CATEGORIES.find(cat => 
+            cat.id === type || 
+            cat.id === type.replace(/\s+/g, '-') ||
+            cat.name.toLowerCase() === type ||
+            cat.displayName.toLowerCase() === type
+          );
+          
+          if (storedCategory && selectedCategory) {
+            return storedCategory.id === selectedCategory.id;
+          }
+          
+          // Fallback: partial match for backward compatibility
+          return type.includes(categoryId) || type.includes(categoryName) || type.includes(categoryDisplayName);
+        });
       });
     }
 
@@ -575,19 +605,11 @@ export default function SearchPage() {
               onChange={(e) => setSelectedService(e.target.value)}
             >
               <option value="">Service</option>
-              <option value="Private Yoga">Private Yoga</option>
-              <option value="Yoga Therapy">Yoga Therapy</option>
-              <option value="Massage">Massage</option>
-              <option value="Skincare">Skincare</option>
-              <option value="Reiki">Reiki</option>
-              <option value="Energy Work">Energy Work</option>
-              <option value="Ayurveda">Ayurveda</option>
-              <option value="Acupuncture">Acupuncture</option>
-              <option value="Personal Training">Personal Training</option>
-              <option value="Doula Care">Doula Care</option>
-              <option value="Hair Styling">Hair Styling</option>
-              <option value="Nail Care">Nail Care</option>
-              <option value="Makeup">Makeup</option>
+              {SERVICE_CATEGORIES.map((category) => (
+                <option key={category.id} value={category.displayName}>
+                  {category.displayName}
+                </option>
+              ))}
             </select>
             
             <select 
