@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { registerClient } from '@/services/auth';
 import styles from '@/styles/Signup.module.scss';
@@ -15,7 +15,7 @@ import WellnessGoalsStep from '@/components/Clients/SignupSteps/WellnessGoalsSte
 import ServicePreferencesStep from '@/components/Clients/SignupSteps/ServicePreferencesStep';
 import LocationStep from '@/components/Clients/SignupSteps/LocationStep';
 
-export default function SignupPage() {
+function SignupPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
@@ -234,5 +234,29 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.signupPage}>
+        <div className={styles.header}>
+          <Link href="/" className={styles.backLink}>
+            <span className={styles.backArrow}>←</span> Back to Homepage
+          </Link>
+          <div className={styles.headerRight}>
+            <Link href="/login" className={styles.loginLink}>
+              Log In
+            </Link>
+          </div>
+        </div>
+        <div className={styles.content}>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        </div>
+      </div>
+    }>
+      <SignupPageContent />
+    </Suspense>
   );
 } 

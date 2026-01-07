@@ -411,11 +411,64 @@ export default function SearchPage() {
     setSortBy('Most Relevant');
   };
 
+  // Helper function to extract word stems (simple stemming)
+  const getWordStem = (word: string): string => {
+    const lower = word.toLowerCase();
+    // Remove common suffixes
+    if (lower.endsWith('ist') || lower.endsWith('ists')) {
+      return lower.replace(/ists?$/, '');
+    }
+    if (lower.endsWith('er') || lower.endsWith('ers')) {
+      return lower.replace(/ers?$/, '');
+    }
+    if (lower.endsWith('ing')) {
+      return lower.replace(/ing$/, '');
+    }
+    if (lower.endsWith('ed')) {
+      return lower.replace(/ed$/, '');
+    }
+    if (lower.endsWith('s') && lower.length > 3) {
+      return lower.slice(0, -1);
+    }
+    return lower;
+  };
+
+  // Helper function to check if two words match (handles variations)
+  const wordsMatch = (word1: string, word2: string): boolean => {
+    const w1 = word1.toLowerCase();
+    const w2 = word2.toLowerCase();
+    
+    // Exact match
+    if (w1 === w2) return true;
+    
+    // One contains the other
+    if (w1.includes(w2) || w2.includes(w1)) return true;
+    
+    // Stem matching
+    const stem1 = getWordStem(w1);
+    const stem2 = getWordStem(w2);
+    if (stem1 === stem2) return true;
+    if (stem1.includes(stem2) || stem2.includes(stem1)) return true;
+    
+    // Check if stems share a common root (at least 4 characters)
+    const minLength = Math.min(stem1.length, stem2.length);
+    if (minLength >= 4) {
+      for (let i = 4; i <= minLength; i++) {
+        if (stem1.substring(0, i) === stem2.substring(0, i)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  };
+
   // Helper function to check if search query matches a category
   const matchesCategory = (query: string, businessType: string | null | undefined): boolean => {
     if (!businessType) return false;
     
     const queryLower = query.toLowerCase().trim();
+    const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
     const businessTypes = businessType.toLowerCase().split(',').map((t: string) => t.trim());
     
     // Check each category in the provider's business_type
@@ -429,35 +482,41 @@ export default function SearchPage() {
       );
       
       if (category) {
-        // Check if query matches category name, display name, or ID
+        // Get all possible keywords from the category
         const categoryName = category.name.toLowerCase();
         const categoryDisplay = category.displayName.toLowerCase();
         const categoryId = category.id.toLowerCase();
         
-        // Direct matches
+        // Split category into words
+        const categoryWords = [
+          ...categoryName.split(/\s+/),
+          ...categoryDisplay.split(/\s+/),
+          ...categoryId.replace(/-/g, ' ').split(/\s+/)
+        ].filter(w => w.length > 2);
+        
+        // Check if any query word matches any category word (with variations)
+        for (const queryWord of queryWords) {
+          for (const categoryWord of categoryWords) {
+            if (wordsMatch(queryWord, categoryWord)) {
+              return true;
+            }
+          }
+          
+          // Also check if query word is contained in full category strings
+          if (categoryName.includes(queryWord) || 
+              categoryDisplay.includes(queryWord) ||
+              queryWord.includes(categoryName) ||
+              queryWord.includes(categoryDisplay)) {
+            return true;
+          }
+        }
+        
+        // Check full string matches (backward compatibility)
         if (categoryName.includes(queryLower) || 
             categoryDisplay.includes(queryLower) ||
             queryLower.includes(categoryName) ||
             queryLower.includes(categoryDisplay)) {
           return true;
-        }
-        
-        // Keyword matching - check if query contains keywords related to this category
-        const categoryKeywords = [
-          categoryName,
-          categoryDisplay,
-          ...categoryName.split(' '),
-          ...categoryDisplay.split(' '),
-          categoryId.replace(/-/g, ' ')
-        ];
-        
-        // Check if any keyword from the category matches the query
-        for (const keyword of categoryKeywords) {
-          if (keyword && keyword.length > 2) {
-            if (queryLower.includes(keyword) || keyword.includes(queryLower)) {
-              return true;
-            }
-          }
         }
       }
     }
@@ -481,31 +540,60 @@ export default function SearchPage() {
       if (businessNameMatch.includes(word)) score += 18;
     }
     
-    // Category matches (high priority)
+    // Category matches (high priority) - uses flexible word matching
     if (matchesCategory(query, provider.business_type)) {
       score += 80;
       // Boost if exact category match
       const formattedType = formatBusinessType(provider.business_type).toLowerCase();
       if (formattedType.includes(queryLower)) score += 30;
+      
+      // Additional boost for word-level matches in category
+      const categoryWords = formattedType.split(/\s+/);
+      for (const queryWord of queryWords) {
+        for (const catWord of categoryWords) {
+          if (wordsMatch(queryWord, catWord)) {
+            score += 15; // Boost for word variation matches
+          }
+        }
+      }
     }
     
-    // Bio and specialties matches (medium priority)
+    // Bio and specialties matches (medium priority) - with word variation support
     const bio = (provider.bio || '').toLowerCase();
     const specialties = (provider.specialties || '').toLowerCase();
     if (bio.includes(queryLower)) score += 40;
     if (specialties.includes(queryLower)) score += 35;
+    
+    const bioWords = bio.split(/\s+/);
+    const specialtiesWords = specialties.split(/\s+/);
     for (const word of queryWords) {
+      // Exact matches
       if (bio.includes(word)) score += 5;
       if (specialties.includes(word)) score += 4;
+      
+      // Word variation matches
+      for (const bioWord of bioWords) {
+        if (wordsMatch(word, bioWord)) score += 3;
+      }
+      for (const specWord of specialtiesWords) {
+        if (wordsMatch(word, specWord)) score += 3;
+      }
     }
     
-    // Service name matches (medium priority)
+    // Service name matches (medium priority) - with word variation support
     if (provider.services && Array.isArray(provider.services)) {
       for (const service of provider.services) {
         const serviceName = (service.name || '').toLowerCase();
         if (serviceName.includes(queryLower)) score += 30;
+        
+        const serviceWords = serviceName.split(/\s+/);
         for (const word of queryWords) {
+          // Exact matches
           if (serviceName.includes(word)) score += 3;
+          // Word variation matches
+          for (const serviceWord of serviceWords) {
+            if (wordsMatch(word, serviceWord)) score += 2;
+          }
         }
       }
     }
@@ -523,82 +611,8 @@ export default function SearchPage() {
   const filteredAndSortedProviders = React.useMemo(() => {
     let filtered = [...providers];
 
-    // Enhanced keyword-based search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      const queryWords = query.split(/\s+/).filter(w => w.length > 0);
-      
-      filtered = filtered.filter(provider => {
-        // Check name matches
-        const nameMatch = (provider.contact_name || '').toLowerCase();
-        const businessNameMatch = (provider.business_name || '').toLowerCase();
-        if (nameMatch.includes(query) || businessNameMatch.includes(query)) {
-          return true;
-        }
-        
-        // Check category matches (keyword-based)
-        if (matchesCategory(query, provider.business_type)) {
-          return true;
-        }
-        
-        // Check bio and specialties
-        const bio = (provider.bio || '').toLowerCase();
-        const specialties = (provider.specialties || '').toLowerCase();
-        if (bio.includes(query) || specialties.includes(query)) {
-          return true;
-        }
-        
-        // Check service names
-        if (provider.services && Array.isArray(provider.services)) {
-          for (const service of provider.services) {
-            const serviceName = (service.name || '').toLowerCase();
-            if (serviceName.includes(query)) {
-              return true;
-            }
-          }
-        }
-        
-        // Check location
-        const city = (provider.city || '').toLowerCase();
-        const state = (provider.state || '').toLowerCase();
-        if (city.includes(query) || state.includes(query)) {
-          return true;
-        }
-        
-        // Word-by-word matching for multi-word queries
-        if (queryWords.length > 1) {
-          let matchesAllWords = true;
-          for (const word of queryWords) {
-            if (word.length < 2) continue; // Skip very short words
-            const wordMatches = 
-              nameMatch.includes(word) ||
-              businessNameMatch.includes(word) ||
-              bio.includes(word) ||
-              specialties.includes(word) ||
-              city.includes(word) ||
-              state.includes(word) ||
-              matchesCategory(word, provider.business_type);
-            
-            if (!wordMatches) {
-              matchesAllWords = false;
-              break;
-            }
-          }
-          if (matchesAllWords) return true;
-        }
-        
-        return false;
-      });
-      
-      // Sort by relevance score if there's a search query
-      filtered.sort((a, b) => {
-        const scoreA = calculateRelevanceScore(a, searchQuery);
-        const scoreB = calculateRelevanceScore(b, searchQuery);
-        return scoreB - scoreA; // Higher score first
-      });
-    }
-
-    // Service filter
+    // Apply service filter FIRST (if selected)
+    // This way, when user filters by category and then searches, we search within that category
     if (selectedService && selectedService !== 'Service') {
       // Find the category by display name to get its ID
       const selectedCategory = SERVICE_CATEGORIES.find(cat => cat.displayName === selectedService);
@@ -638,6 +652,123 @@ export default function SearchPage() {
         });
       });
     }
+
+    // THEN apply search query filter (searches within the already-filtered results)
+    // Enhanced keyword-based search filter with word variation support
+    // When a service filter is selected, search is used for sorting/prioritizing, not filtering
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      const queryWords = query.split(/\s+/).filter(w => w.length > 0);
+      const hasServiceFilter = selectedService && selectedService !== 'Service';
+      
+      // If a service filter is active, don't filter by search - just use it for sorting
+      // This way, filtering by "Reflexology" and searching "therapist" shows all Reflexology providers
+      // but prioritizes those that mention "therapist" or "therapy" in their bio/specialties
+      if (!hasServiceFilter) {
+        // No filter - apply strict search matching
+        filtered = filtered.filter(provider => {
+        const nameMatch = (provider.contact_name || '').toLowerCase();
+        const businessNameMatch = (provider.business_name || '').toLowerCase();
+        const bio = (provider.bio || '').toLowerCase();
+        const specialties = (provider.specialties || '').toLowerCase();
+        const city = (provider.city || '').toLowerCase();
+        const state = (provider.state || '').toLowerCase();
+        
+        // Check name matches (exact or partial)
+        if (nameMatch.includes(query) || businessNameMatch.includes(query)) {
+          return true;
+        }
+        
+        // Check category matches (keyword-based with variations)
+        if (matchesCategory(query, provider.business_type)) {
+          return true;
+        }
+        
+        // Check bio and specialties with word matching
+        for (const queryWord of queryWords) {
+          if (queryWord.length < 2) continue;
+          const bioWords = bio.split(/\s+/);
+          const specialtiesWords = specialties.split(/\s+/);
+          
+          for (const bioWord of bioWords) {
+            if (wordsMatch(queryWord, bioWord)) return true;
+          }
+          for (const specWord of specialtiesWords) {
+            if (wordsMatch(queryWord, specWord)) return true;
+          }
+        }
+        
+        // Also check full string matches in bio/specialties
+        if (bio.includes(query) || specialties.includes(query)) {
+          return true;
+        }
+        
+        // Check service names with word matching
+        if (provider.services && Array.isArray(provider.services)) {
+          for (const service of provider.services) {
+            const serviceName = (service.name || '').toLowerCase();
+            if (serviceName.includes(query)) {
+              return true;
+            }
+            
+            // Word-by-word matching for service names
+            const serviceWords = serviceName.split(/\s+/);
+            for (const queryWord of queryWords) {
+              if (queryWord.length < 2) continue;
+              for (const serviceWord of serviceWords) {
+                if (wordsMatch(queryWord, serviceWord)) return true;
+              }
+            }
+          }
+        }
+        
+        // Check location
+        if (city.includes(query) || state.includes(query)) {
+          return true;
+        }
+        
+        // Word-by-word matching for multi-word queries (more flexible)
+        if (queryWords.length > 1) {
+          let matchingWords = 0;
+          for (const word of queryWords) {
+            if (word.length < 2) continue; // Skip very short words
+            
+            const wordMatches = 
+              nameMatch.includes(word) ||
+              businessNameMatch.includes(word) ||
+              bio.includes(word) ||
+              specialties.includes(word) ||
+              city.includes(word) ||
+              state.includes(word) ||
+              matchesCategory(word, provider.business_type) ||
+              // Check word variations in bio/specialties
+              bio.split(/\s+/).some(bw => wordsMatch(word, bw)) ||
+              specialties.split(/\s+/).some(sw => wordsMatch(word, sw));
+            
+            if (wordMatches) {
+              matchingWords++;
+            }
+          }
+          // Match if at least half the words match (more forgiving)
+          if (matchingWords >= Math.ceil(queryWords.length / 2)) {
+            return true;
+          }
+        }
+        
+        return false;
+        });
+      }
+      
+      // Always sort by relevance score when there's a search query
+      // This ensures best matches appear first
+      // When a filter is active, all filtered providers are shown but sorted by search relevance
+      filtered.sort((a, b) => {
+        const scoreA = calculateRelevanceScore(a, searchQuery);
+        const scoreB = calculateRelevanceScore(b, searchQuery);
+        return scoreB - scoreA; // Higher score first
+      });
+    }
+
 
     // Location filter
     if (selectedLocation && selectedLocation !== 'Location') {
@@ -693,8 +824,20 @@ export default function SearchPage() {
       } else if (sortBy === 'Most Experienced') {
         return (b.total_reviews || 0) - (a.total_reviews || 0);
       }
-      // Most Relevant (default) - could be based on rating + reviews
-      return ((b.average_rating || 0) * (b.total_reviews || 0)) - ((a.average_rating || 0) * (a.total_reviews || 0));
+      // Most Relevant (default)
+      if (searchQuery.trim()) {
+        // Use relevance score when there's a search query
+        const scoreA = calculateRelevanceScore(a, searchQuery);
+        const scoreB = calculateRelevanceScore(b, searchQuery);
+        if (scoreB !== scoreA) {
+          return scoreB - scoreA; // Higher score first
+        }
+        // If scores are equal, fall back to rating * reviews
+        return ((b.average_rating || 0) * (b.total_reviews || 0)) - ((a.average_rating || 0) * (a.total_reviews || 0));
+      } else {
+        // No search query - use rating + reviews
+        return ((b.average_rating || 0) * (b.total_reviews || 0)) - ((a.average_rating || 0) * (a.total_reviews || 0));
+      }
     });
 
     return sorted;
@@ -832,7 +975,61 @@ export default function SearchPage() {
           <div className={styles.providersGrid}>
             {filteredAndSortedProviders.length === 0 ? (
               <div className={styles.noResults}>
-                {providers.length === 0 ? 'No providers found' : 'No providers match your filters. Try adjusting your search criteria.'}
+                {providers.length === 0 ? (
+                  'No providers found'
+                ) : (
+                  <div>
+                    <p style={{ marginBottom: '16px', fontSize: '18px', fontWeight: '600' }}>
+                      No providers found for "{searchQuery}"
+                    </p>
+                    <p style={{ marginBottom: '12px', color: '#666' }}>
+                      Try searching with different keywords or browse by category:
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
+                      {SERVICE_CATEGORIES.slice(0, 6).map((category) => (
+                        <button
+                          key={category.id}
+                          onClick={() => {
+                            setSearchQuery('');
+                            setSelectedService(category.displayName);
+                          }}
+                          style={{
+                            padding: '8px 16px',
+                            background: '#f0f0f0',
+                            border: '1px solid #ddd',
+                            borderRadius: '20px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#e0e0e0';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#f0f0f0';
+                          }}
+                        >
+                          {category.displayName}
+                        </button>
+                      ))}
+                    </div>
+                    <p style={{ marginTop: '20px', fontSize: '14px', color: '#999' }}>
+                      Or <button 
+                        onClick={handleResetFilters}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#4a90e2',
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          fontSize: '14px'
+                        }}
+                      >
+                        reset all filters
+                      </button> to see all providers
+                    </p>
+                  </div>
+                )}
               </div>
             ) : (
               filteredAndSortedProviders.map((provider: any) => (

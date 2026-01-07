@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 import styles from '@/styles/BookingConfirmation.module.scss';
 
 
-export default function BookingConfirmationPage() {
+function BookingConfirmationPageContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const [provider, setProvider] = useState<any>(null);
@@ -1233,5 +1233,23 @@ export default function BookingConfirmationPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function BookingConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontFamily: 'Inter, sans-serif'
+      }}>
+        <div>Loading...</div>
+      </div>
+    }>
+      <BookingConfirmationPageContent />
+    </Suspense>
   );
 }

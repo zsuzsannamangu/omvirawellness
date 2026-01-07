@@ -29,7 +29,7 @@ import ChangePasswordModal from '@/components/Providers/Dashboard/ChangePassword
 import UpdateEmailModal from '@/components/Providers/Dashboard/UpdateEmailModal';
 import TwoFactorSettings from '@/components/Providers/Dashboard/TwoFactorSettings';
 
-export default function ProvidersDashboard() {
+function ProvidersDashboardContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1819,6 +1819,24 @@ export default function ProvidersDashboard() {
         }}
       />
     </div>
+  );
+}
+
+export default function ProvidersDashboard() {
+  return (
+    <Suspense fallback={
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontFamily: 'Inter, sans-serif'
+      }}>
+        <div>Loading...</div>
+      </div>
+    }>
+      <ProvidersDashboardContent />
+    </Suspense>
   );
 }
 

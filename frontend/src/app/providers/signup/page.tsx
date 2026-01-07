@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import styles from '@/styles/Providers/ProviderSignup.module.scss';
 import { registerProvider } from '@/services/auth';
 
@@ -18,7 +18,7 @@ import StaffMembersStep from '@/components/Providers/SignupSteps/StaffMembersSte
 import ProfileSetupStep from '@/components/Providers/SignupSteps/ProfileSetupStep';
 import PaymentStep from '@/components/Providers/SignupSteps/PaymentStep';
 
-export default function ProviderSignupPage() {
+function ProviderSignupPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
@@ -234,5 +234,29 @@ export default function ProviderSignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProviderSignupPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.signupPage}>
+        <div className={styles.header}>
+          <Link href="/" className={styles.backLink}>
+            <span className={styles.backArrow}>←</span> Back to Homepage
+          </Link>
+          <div className={styles.headerRight}>
+            <Link href="/providers/login" className={styles.loginLink}>
+              Log In
+            </Link>
+          </div>
+        </div>
+        <div className={styles.content}>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        </div>
+      </div>
+    }>
+      <ProviderSignupPageContent />
+    </Suspense>
   );
 } 
