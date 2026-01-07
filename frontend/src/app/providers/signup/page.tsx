@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import styles from '@/styles/Providers/ProviderSignup.module.scss';
 import { registerProvider } from '@/services/auth';
 
@@ -20,8 +20,10 @@ import PaymentStep from '@/components/Providers/SignupSteps/PaymentStep';
 
 export default function ProviderSignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [oauthError, setOauthError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     businessName: '',
@@ -68,6 +70,31 @@ export default function ProviderSignupPage() {
   });
 
   const totalSteps = 10;
+
+  // Check for OAuth errors in URL
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const existingType = searchParams.get('existing_type');
+    
+    if (error === 'account_type_mismatch') {
+      const typeName = existingType === 'provider' ? 'provider' : 'client';
+      setOauthError(
+        `This email is already registered as a ${typeName}. Please use a different email address or log in to your existing ${typeName} account.`
+      );
+      // Clear the error from URL
+      router.replace('/providers/signup', { scroll: false });
+    } else if (error) {
+      const errorMessages: { [key: string]: string } = {
+        oauth_error: 'OAuth authentication failed. Please try again.',
+        oauth_no_user: 'No user data received from OAuth provider.',
+        no_email: 'No email address found in your Google account. Please use email signup instead.',
+        oauth_failed: 'OAuth signup failed. Please try again or use email signup.',
+        oauth_not_configured: 'OAuth is not configured. Please use email signup instead.'
+      };
+      setOauthError(errorMessages[error] || 'An error occurred during signup. Please try again.');
+      router.replace('/providers/signup', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const handleNext = (stepData: any) => {
     setFormData(prev => ({ ...prev, ...stepData }));
@@ -187,6 +214,20 @@ export default function ProviderSignupPage() {
             Step {currentStep} of {totalSteps}
           </span>
         </div>
+
+        {oauthError && (
+          <div style={{ 
+            padding: '12px 24px', 
+            margin: '16px auto', 
+            maxWidth: '600px', 
+            backgroundColor: '#fee', 
+            border: '1px solid #fcc', 
+            borderRadius: '8px',
+            color: '#c33'
+          }}>
+            {oauthError}
+          </div>
+        )}
 
         <div className={styles.stepContainer}>
           {renderStep()}

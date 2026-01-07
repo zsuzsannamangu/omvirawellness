@@ -55,9 +55,19 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       const token = localStorage.getItem('token');
       const user = localStorage.getItem('user');
       
-      if (!token || !user) return;
+      if (!token || !user) {
+        console.log('No token or user in localStorage');
+        // Still set empty userData so form can render
+        setUserData({ id: null, profile: {} });
+        return;
+      }
       
       let parsed = JSON.parse(user);
+      
+      // Set initial userData from localStorage immediately so form can render
+      if (!userData) {
+        setUserData(parsed);
+      }
       
       // Fetch fresh data from backend to ensure we have latest
       const response = await fetch(`http://localhost:4000/api/providers/${parsed.id}`);
@@ -180,33 +190,46 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       }
     } catch (error) {
       console.error('Error loading user data:', error);
-      // Fallback to localStorage
+      // Fallback to localStorage - ensure we always have userData set
       const user = localStorage.getItem('user');
       if (user) {
-        const parsed = JSON.parse(user);
-        setUserData(parsed);
-        
-        // Initialize state from localStorage
-        if (parsed.profile?.credentials && Array.isArray(parsed.profile.credentials)) {
-          setSelectedLanguages(parsed.profile.credentials);
+        try {
+          const parsed = JSON.parse(user);
+          // Ensure profile object exists even if empty
+          if (!parsed.profile) {
+            parsed.profile = {};
+          }
+          setUserData(parsed);
+          
+          // Initialize state from localStorage
+          if (parsed.profile?.credentials && Array.isArray(parsed.profile.credentials)) {
+            setSelectedLanguages(parsed.profile.credentials);
+          }
+          if (parsed.profile?.services && Array.isArray(parsed.profile.services)) {
+            setServices(parsed.profile.services);
+          }
+          if (parsed.profile?.team_members && Array.isArray(parsed.profile.team_members)) {
+            setTeamMembers(parsed.profile.team_members);
+          }
+          if (parsed.profile?.travel_fee !== undefined && parsed.profile.travel_fee !== null && parseFloat(parsed.profile.travel_fee) > 0) {
+            setTravelFeeType('fee');
+            setTravelFee(parsed.profile.travel_fee.toString());
+          }
+          if (parsed.profile?.business_type) {
+            const arr = String(parsed.profile.business_type)
+              .split(',')
+              .map((s: string) => s.trim().toLowerCase())
+              .filter(Boolean);
+            setSelectedPractices(arr);
+          }
+        } catch (parseError) {
+          console.error('Error parsing user data from localStorage:', parseError);
+          // Set minimal userData so form can still render
+          setUserData({ id: null, profile: {} });
         }
-        if (parsed.profile?.services && Array.isArray(parsed.profile.services)) {
-          setServices(parsed.profile.services);
-        }
-        if (parsed.profile?.team_members && Array.isArray(parsed.profile.team_members)) {
-          setTeamMembers(parsed.profile.team_members);
-        }
-        if (parsed.profile?.travel_fee !== undefined && parsed.profile.travel_fee !== null && parseFloat(parsed.profile.travel_fee) > 0) {
-          setTravelFeeType('fee');
-          setTravelFee(parsed.profile.travel_fee.toString());
-        }
-        if (parsed.profile?.business_type) {
-          const arr = String(parsed.profile.business_type)
-            .split(',')
-            .map((s: string) => s.trim().toLowerCase())
-            .filter(Boolean);
-          setSelectedPractices(arr);
-        }
+      } else {
+        // No user data at all - set empty object so form can render
+        setUserData({ id: null, profile: {} });
       }
     }
   };
@@ -1091,11 +1114,9 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
         return <AvailabilityManager />;
 
       case 'basic':
-        if (!userData) {
-          return <div className={styles.dashboardSection}>Loading...</div>;
-        }
-
-        const profileBasic = userData.profile || {};
+        // Always show the form, even if userData is still loading or empty
+        // This ensures new OAuth users can fill out their profile
+        const profileBasic = userData?.profile || {};
         const credentialsBasic = profileBasic.credentials || [];
         
         // Create a key based on profile data to force remount when data changes

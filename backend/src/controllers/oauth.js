@@ -8,14 +8,31 @@ const bcrypt = require('bcrypt');
  */
 async function handleGoogleCallback(req, res) {
   try {
+    console.log('Google OAuth callback received');
+    console.log('req.user:', req.user ? 'exists' : 'missing');
+    
+    if (!req.user) {
+      console.error('No user object in request');
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=oauth_no_user`);
+    }
+
     const { id, displayName, emails, photos } = req.user;
+    console.log('Profile data:', { id, displayName, hasEmails: !!emails, hasPhotos: !!photos });
+    
+    if (!emails || !emails[0] || !emails[0].value) {
+      console.error('No email in Google profile');
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=no_email`);
+    }
+    
     const email = emails[0].value;
     const profilePhoto = photos && photos[0] ? photos[0].value : null;
     const name = displayName || '';
 
-    if (!email) {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_email`);
-    }
+    console.log('Processing OAuth for:', email);
+
+    // Get requested user type from state parameter
+    const requestedUserType = req.query.state || 'client';
+    console.log('Requested user type:', requestedUserType);
 
     // Check if user exists with this Google ID
     let userResult = await pool.query(
@@ -26,8 +43,17 @@ async function handleGoogleCallback(req, res) {
     let user;
 
     if (userResult.rows.length > 0) {
-      // User exists with Google ID - log them in
+      // User exists with Google ID - check if user type matches
       user = userResult.rows[0];
+      if (user.user_type !== requestedUserType) {
+        console.error(`User type mismatch: existing=${user.user_type}, requested=${requestedUserType}`);
+        const signupPath = requestedUserType === 'provider' 
+          ? '/providers/signup' 
+          : '/signup';
+        return res.redirect(
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}${signupPath}?error=account_type_mismatch&existing_type=${user.user_type}`
+        );
+      }
     } else {
       // Check if user exists with this email
       const emailResult = await pool.query(
@@ -36,15 +62,25 @@ async function handleGoogleCallback(req, res) {
       );
 
       if (emailResult.rows.length > 0) {
-        // User exists with email but no Google ID - link accounts
+        // User exists with email but no Google ID - check user type match
         user = emailResult.rows[0];
+        if (user.user_type !== requestedUserType) {
+          console.error(`User type mismatch: existing=${user.user_type}, requested=${requestedUserType}`);
+          const signupPath = requestedUserType === 'provider' 
+            ? '/providers/signup' 
+            : '/join';
+          return res.redirect(
+            `${process.env.FRONTEND_URL || 'http://localhost:3000'}${signupPath}?error=account_type_mismatch&existing_type=${user.user_type}`
+          );
+        }
+        // Link Google ID to existing account
         await pool.query(
           'UPDATE users SET google_id = $1, last_login = CURRENT_TIMESTAMP WHERE id = $2',
           [id, user.id]
         );
       } else {
-        // New user - need to determine user type from state parameter
-        const userType = req.query.state || 'client'; // Default to client if not specified
+        // New user - use requested user type
+        const userType = requestedUserType;
         
         // Create new user
         const newUserResult = await pool.query(
@@ -117,33 +153,49 @@ async function handleGoogleCallback(req, res) {
       user_type: user.user_type,
     });
 
-    // Store token and user in localStorage via redirect with hash
-    const userData = {
+    // Store minimal user data in localStorage via redirect - avoid HTTP 431 by not passing large profile data
+    // The frontend will fetch the full profile data after login
+    const minimalUserData = {
       id: user.id,
       email: user.email,
       user_type: user.user_type,
       email_verified: true,
-      profile: profile,
     };
 
     // Redirect to profile completion if new OAuth user, otherwise to dashboard
+    // Use hash fragment instead of query params to avoid URL length limits
     let redirectUrl;
+    console.log('Determining redirect - isNewUser:', isNewUser, 'user_type:', user.user_type);
     if (isNewUser) {
       // New OAuth user - redirect to dashboard Profile page to complete profile
+      // Store token and user data in hash fragment to avoid HTTP 431
+      const hashData = {
+        token: token,
+        user: minimalUserData,
+        complete_profile: true,
+        section: 'profile'
+      };
       redirectUrl = user.user_type === 'provider' 
-        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}&complete_profile=true&section=profile`
-        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}&complete_profile=true&section=profile`;
+        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
+        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
+      console.log('Redirecting NEW USER to profile completion (using hash)');
     } else {
       // Existing user or complete profile - go to dashboard
+      const hashData = {
+        token: token,
+        user: minimalUserData
+      };
       redirectUrl = user.user_type === 'provider' 
-        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`
-        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`;
+        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
+        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
+      console.log('Redirecting EXISTING USER to dashboard (using hash)');
     }
 
     res.redirect(redirectUrl);
   } catch (error) {
     console.error('Google OAuth error:', error);
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_failed`);
+    console.error('Error stack:', error.stack);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=oauth_failed&details=${encodeURIComponent(error.message)}`);
   }
 }
 
@@ -163,6 +215,9 @@ async function handleFacebookCallback(req, res) {
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_email`);
     }
 
+    // Get requested user type from state parameter
+    const requestedUserType = req.query.state || 'client';
+
     // Check if user exists with this Facebook ID
     let userResult = await pool.query(
       'SELECT id, email, user_type, facebook_id FROM users WHERE facebook_id = $1',
@@ -172,8 +227,16 @@ async function handleFacebookCallback(req, res) {
     let user;
 
     if (userResult.rows.length > 0) {
-      // User exists with Facebook ID - log them in
+      // User exists with Facebook ID - check if user type matches
       user = userResult.rows[0];
+      if (user.user_type !== requestedUserType) {
+        const signupPath = requestedUserType === 'provider' 
+          ? '/providers/signup' 
+          : '/signup';
+        return res.redirect(
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}${signupPath}?error=account_type_mismatch&existing_type=${user.user_type}`
+        );
+      }
     } else {
       // Check if user exists with this email
       const emailResult = await pool.query(
@@ -182,15 +245,24 @@ async function handleFacebookCallback(req, res) {
       );
 
       if (emailResult.rows.length > 0) {
-        // User exists with email but no Facebook ID - link accounts
+        // User exists with email but no Facebook ID - check user type match
         user = emailResult.rows[0];
+        if (user.user_type !== requestedUserType) {
+          const signupPath = requestedUserType === 'provider' 
+            ? '/providers/signup' 
+            : '/join';
+          return res.redirect(
+            `${process.env.FRONTEND_URL || 'http://localhost:3000'}${signupPath}?error=account_type_mismatch&existing_type=${user.user_type}`
+          );
+        }
+        // Link Facebook ID to existing account
         await pool.query(
           'UPDATE users SET facebook_id = $1, last_login = CURRENT_TIMESTAMP WHERE id = $2',
           [id, user.id]
         );
       } else {
-        // New user - need to determine user type from state parameter
-        const userType = req.query.state || 'client'; // Default to client if not specified
+        // New user - use requested user type
+        const userType = requestedUserType;
         
         // Create new user
         const newUserResult = await pool.query(
@@ -263,27 +335,38 @@ async function handleFacebookCallback(req, res) {
       user_type: user.user_type,
     });
 
-    // Store token and user in localStorage via redirect with hash
-    const userData = {
+    // Store minimal user data - avoid HTTP 431 by not passing large profile data
+    // The frontend will fetch the full profile data after login
+    const minimalUserData = {
       id: user.id,
       email: user.email,
       user_type: user.user_type,
       email_verified: true,
-      profile: profile,
     };
 
     // Redirect to profile completion if new OAuth user, otherwise to dashboard
+    // Use hash fragment instead of query params to avoid URL length limits
     let redirectUrl;
     if (isNewUser) {
       // New OAuth user - redirect to dashboard Profile page to complete profile
+      const hashData = {
+        token: token,
+        user: minimalUserData,
+        complete_profile: true,
+        section: 'profile'
+      };
       redirectUrl = user.user_type === 'provider' 
-        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}&complete_profile=true&section=profile`
-        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}&complete_profile=true&section=profile`;
+        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
+        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
     } else {
       // Existing user or complete profile - go to dashboard
+      const hashData = {
+        token: token,
+        user: minimalUserData
+      };
       redirectUrl = user.user_type === 'provider' 
-        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`
-        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`;
+        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
+        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
     }
 
     res.redirect(redirectUrl);

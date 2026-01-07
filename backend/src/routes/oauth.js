@@ -9,6 +9,8 @@ const router = express.Router();
 
 // Configure Google OAuth Strategy
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  console.log('✅ Google OAuth configured');
+  console.log('Callback URL:', `${process.env.BACKEND_URL || 'http://localhost:4000'}/api/oauth/google/callback`);
   passport.use(
     new GoogleStrategy(
       {
@@ -76,6 +78,11 @@ router.get(
   (req, res, next) => {
     // Store user_type in session/state for callback
     const state = req.query.user_type || 'client';
+    console.log('Initiating Google OAuth with user_type:', state);
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      console.error('❌ Google OAuth credentials not configured!');
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=oauth_not_configured`);
+    }
     passport.authenticate('google', {
       scope: ['profile', 'email'],
       state: state, // Pass user_type through state parameter
@@ -91,14 +98,21 @@ router.get(
 router.get(
   '/google/callback',
   (req, res, next) => {
+    console.log('Google OAuth callback route hit');
+    console.log('Query params:', req.query);
     // Use stateless authentication to avoid session size issues
     passport.authenticate('google', { session: false }, (err, user, info) => {
       if (err) {
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_error`);
+        console.error('Passport authentication error:', err);
+        console.error('Error details:', err.message, err.stack);
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=oauth_error&details=${encodeURIComponent(err.message)}`);
       }
       if (!user) {
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_user`);
+        console.error('No user returned from Passport');
+        console.log('Info object:', info);
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=no_user`);
       }
+      console.log('Passport authentication successful, user:', user.id);
       // Attach user to request and continue
       req.user = user;
       next();

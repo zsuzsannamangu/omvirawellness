@@ -28,8 +28,34 @@ export default function ClientDashboard() {
   const [activeSection, setActiveSection] = useState('bookings');
   const [activeSubmenu, setActiveSubmenu] = useState('upcoming');
 
-  // Handle OAuth token from URL (Google sign-in)
+  // Handle OAuth token from URL hash or query params (Google sign-in)
   useEffect(() => {
+    // Check hash fragment first (new method to avoid HTTP 431)
+    if (typeof window !== 'undefined' && window.location.hash) {
+      try {
+        const hashData = JSON.parse(decodeURIComponent(window.location.hash.substring(1)));
+        if (hashData.token) {
+          localStorage.setItem('token', hashData.token);
+          if (hashData.user) {
+            localStorage.setItem('user', JSON.stringify(hashData.user));
+          }
+          // If profile needs completion, set URL params
+          if (hashData.complete_profile) {
+            const section = hashData.section || 'profile';
+            router.replace(`/dashboard/${userId}?complete_profile=true&section=${section}`);
+            setActiveSection('profile');
+          } else {
+            // Remove hash from URL
+            router.replace(`/dashboard/${userId}`);
+          }
+          return;
+        }
+      } catch (error) {
+        console.error('Error parsing hash data:', error);
+      }
+    }
+    
+    // Fallback to query params (old method)
     const token = searchParams.get('token');
     const userData = searchParams.get('user');
     const completeProfile = searchParams.get('complete_profile');

@@ -102,6 +102,34 @@ export default function ProviderLoginPage() {
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    // Check browser validation first - catch HTML5 validation errors
+    const emailInput = document.getElementById('email') as HTMLInputElement;
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    
+    if (emailInput && !emailInput.validity.valid) {
+      if (emailInput.validity.valueMissing) {
+        setError('Please enter your email address.');
+        return;
+      }
+      if (emailInput.validity.typeMismatch || emailInput.validity.patternMismatch) {
+        setError('Please enter a valid email address.');
+        return;
+      }
+      // Generic browser validation error
+      setError('Please check your email address and try again.');
+      return;
+    }
+    
+    if (passwordInput && !passwordInput.validity.valid) {
+      if (passwordInput.validity.valueMissing) {
+        setError('Please enter your password.');
+        return;
+      }
+      setError('Please check your password and try again.');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -117,24 +145,40 @@ export default function ProviderLoginPage() {
       
       // Verify data and user exist
       if (!data || !data.user) {
-        setError('Invalid response from server. Please try again.');
+        setError('Unable to complete login. Please try again.');
         setLoading(false);
         return;
       }
       
       // Verify it's a provider account
       if (!data.user.user_type || data.user.user_type !== 'provider') {
-        setError('This account is not a provider account. Please use the client login.');
+        setError('This account is not a provider account. Please use the client login page.');
         setLoading(false);
         return;
       }
       
       router.push(`/providers/dashboard/${data.user.id}`);
     } catch (err: any) {
-      const errorMessage = err.message || 'Login failed. Please check your credentials.';
-      setError(errorMessage.includes('Cannot read properties') || errorMessage.includes('undefined')
-        ? 'An error occurred during login. Please try again.'
-        : errorMessage);
+      // Convert all technical errors to user-friendly messages
+      let errorMessage = err.message || 'Login failed. Please check your credentials.';
+      
+      // Handle specific error types
+      if (errorMessage.includes('Cannot read properties') || errorMessage.includes('undefined')) {
+        errorMessage = 'An error occurred during login. Please try again.';
+      } else if (errorMessage.includes('pattern') || errorMessage.includes('match')) {
+        errorMessage = 'Please check your email address and password, then try again.';
+      } else if (errorMessage.includes('Invalid') && errorMessage.includes('credentials')) {
+        errorMessage = 'The email or password you entered is incorrect. Please try again.';
+      } else if (errorMessage.includes('Network') || errorMessage.includes('fetch')) {
+        errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+      } else if (errorMessage.includes('timeout')) {
+        errorMessage = 'The request took too long. Please try again.';
+      } else if (!errorMessage.includes('Please') && !errorMessage.includes('try')) {
+        // Generic fallback for any other technical errors
+        errorMessage = 'Unable to complete login. Please check your credentials and try again.';
+      }
+      
+      setError(errorMessage);
       setLoading(false);
     }
   };
@@ -194,10 +238,8 @@ export default function ProviderLoginPage() {
           <p className={styles.subtitle}>Access your wellness practice dashboard</p>
           
           {error && (
-            <div className={styles.errorMessage}>
-              {error.includes('Cannot read properties') || error.includes('undefined') 
-                ? 'An error occurred during login. Please try again.' 
-                : error}
+            <div className={styles.errorMessage} role="alert">
+              {error}
             </div>
           )}
           
@@ -207,19 +249,35 @@ export default function ProviderLoginPage() {
                 E-MAIL ADDRESS
               </label>
               <div className={styles.inputContainer}>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={styles.emailInput}
-                  placeholder="Enter your email"
-                  required
-                  data-1p-ignore="true"
-                  data-lpignore="true"
-                  data-form-type="other"
-                  autoComplete="off"
-                />
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  // Clear error when user starts typing
+                  if (error) setError('');
+                }}
+                className={styles.emailInput}
+                placeholder="Enter your email"
+                required
+                data-1p-ignore="true"
+                data-lpignore="true"
+                data-form-type="other"
+                autoComplete="off"
+                onInvalid={(e) => {
+                  // Prevent browser's default validation message
+                  e.preventDefault();
+                  const target = e.target as HTMLInputElement;
+                  if (target.validity.valueMissing) {
+                    setError('Please enter your email address.');
+                  } else if (target.validity.typeMismatch) {
+                    setError('Please enter a valid email address.');
+                  } else {
+                    setError('Please check your email address and try again.');
+                  }
+                }}
+              />
                 <div className={styles.inputIcons}>
                   <span className={styles.lockIcon}>🔒</span>
                   <span className={styles.infoIcon}>ℹ️</span>

@@ -411,20 +411,191 @@ export default function SearchPage() {
     setSortBy('Most Relevant');
   };
 
+  // Helper function to check if search query matches a category
+  const matchesCategory = (query: string, businessType: string | null | undefined): boolean => {
+    if (!businessType) return false;
+    
+    const queryLower = query.toLowerCase().trim();
+    const businessTypes = businessType.toLowerCase().split(',').map((t: string) => t.trim());
+    
+    // Check each category in the provider's business_type
+    for (const type of businessTypes) {
+      // Find the category
+      const category = SERVICE_CATEGORIES.find(cat => 
+        cat.id === type || 
+        cat.id === type.replace(/\s+/g, '-') ||
+        cat.name.toLowerCase() === type ||
+        cat.displayName.toLowerCase() === type
+      );
+      
+      if (category) {
+        // Check if query matches category name, display name, or ID
+        const categoryName = category.name.toLowerCase();
+        const categoryDisplay = category.displayName.toLowerCase();
+        const categoryId = category.id.toLowerCase();
+        
+        // Direct matches
+        if (categoryName.includes(queryLower) || 
+            categoryDisplay.includes(queryLower) ||
+            queryLower.includes(categoryName) ||
+            queryLower.includes(categoryDisplay)) {
+          return true;
+        }
+        
+        // Keyword matching - check if query contains keywords related to this category
+        const categoryKeywords = [
+          categoryName,
+          categoryDisplay,
+          ...categoryName.split(' '),
+          ...categoryDisplay.split(' '),
+          categoryId.replace(/-/g, ' ')
+        ];
+        
+        // Check if any keyword from the category matches the query
+        for (const keyword of categoryKeywords) {
+          if (keyword && keyword.length > 2) {
+            if (queryLower.includes(keyword) || keyword.includes(queryLower)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    
+    return false;
+  };
+
+  // Helper function to calculate search relevance score
+  const calculateRelevanceScore = (provider: any, query: string): number => {
+    const queryLower = query.toLowerCase().trim();
+    const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+    let score = 0;
+    
+    // Name matches (highest priority)
+    const nameMatch = (provider.contact_name || '').toLowerCase();
+    const businessNameMatch = (provider.business_name || '').toLowerCase();
+    if (nameMatch.includes(queryLower)) score += 100;
+    if (businessNameMatch.includes(queryLower)) score += 90;
+    for (const word of queryWords) {
+      if (nameMatch.includes(word)) score += 20;
+      if (businessNameMatch.includes(word)) score += 18;
+    }
+    
+    // Category matches (high priority)
+    if (matchesCategory(query, provider.business_type)) {
+      score += 80;
+      // Boost if exact category match
+      const formattedType = formatBusinessType(provider.business_type).toLowerCase();
+      if (formattedType.includes(queryLower)) score += 30;
+    }
+    
+    // Bio and specialties matches (medium priority)
+    const bio = (provider.bio || '').toLowerCase();
+    const specialties = (provider.specialties || '').toLowerCase();
+    if (bio.includes(queryLower)) score += 40;
+    if (specialties.includes(queryLower)) score += 35;
+    for (const word of queryWords) {
+      if (bio.includes(word)) score += 5;
+      if (specialties.includes(word)) score += 4;
+    }
+    
+    // Service name matches (medium priority)
+    if (provider.services && Array.isArray(provider.services)) {
+      for (const service of provider.services) {
+        const serviceName = (service.name || '').toLowerCase();
+        if (serviceName.includes(queryLower)) score += 30;
+        for (const word of queryWords) {
+          if (serviceName.includes(word)) score += 3;
+        }
+      }
+    }
+    
+    // Location matches (lower priority)
+    const city = (provider.city || '').toLowerCase();
+    const state = (provider.state || '').toLowerCase();
+    if (city.includes(queryLower)) score += 10;
+    if (state.includes(queryLower)) score += 10;
+    
+    return score;
+  };
+
   // Filter and sort providers
   const filteredAndSortedProviders = React.useMemo(() => {
     let filtered = [...providers];
 
-    // Search filter (name, business name, city, state, business type)
+    // Enhanced keyword-based search filter
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(provider => 
-        (provider.contact_name && provider.contact_name.toLowerCase().includes(query)) ||
-        (provider.business_name && provider.business_name.toLowerCase().includes(query)) ||
-        (provider.city && provider.city.toLowerCase().includes(query)) ||
-        (provider.state && provider.state.toLowerCase().includes(query)) ||
-        (provider.business_type && provider.business_type.toLowerCase().includes(query))
-      );
+      const query = searchQuery.toLowerCase().trim();
+      const queryWords = query.split(/\s+/).filter(w => w.length > 0);
+      
+      filtered = filtered.filter(provider => {
+        // Check name matches
+        const nameMatch = (provider.contact_name || '').toLowerCase();
+        const businessNameMatch = (provider.business_name || '').toLowerCase();
+        if (nameMatch.includes(query) || businessNameMatch.includes(query)) {
+          return true;
+        }
+        
+        // Check category matches (keyword-based)
+        if (matchesCategory(query, provider.business_type)) {
+          return true;
+        }
+        
+        // Check bio and specialties
+        const bio = (provider.bio || '').toLowerCase();
+        const specialties = (provider.specialties || '').toLowerCase();
+        if (bio.includes(query) || specialties.includes(query)) {
+          return true;
+        }
+        
+        // Check service names
+        if (provider.services && Array.isArray(provider.services)) {
+          for (const service of provider.services) {
+            const serviceName = (service.name || '').toLowerCase();
+            if (serviceName.includes(query)) {
+              return true;
+            }
+          }
+        }
+        
+        // Check location
+        const city = (provider.city || '').toLowerCase();
+        const state = (provider.state || '').toLowerCase();
+        if (city.includes(query) || state.includes(query)) {
+          return true;
+        }
+        
+        // Word-by-word matching for multi-word queries
+        if (queryWords.length > 1) {
+          let matchesAllWords = true;
+          for (const word of queryWords) {
+            if (word.length < 2) continue; // Skip very short words
+            const wordMatches = 
+              nameMatch.includes(word) ||
+              businessNameMatch.includes(word) ||
+              bio.includes(word) ||
+              specialties.includes(word) ||
+              city.includes(word) ||
+              state.includes(word) ||
+              matchesCategory(word, provider.business_type);
+            
+            if (!wordMatches) {
+              matchesAllWords = false;
+              break;
+            }
+          }
+          if (matchesAllWords) return true;
+        }
+        
+        return false;
+      });
+      
+      // Sort by relevance score if there's a search query
+      filtered.sort((a, b) => {
+        const scoreA = calculateRelevanceScore(a, searchQuery);
+        const scoreB = calculateRelevanceScore(b, searchQuery);
+        return scoreB - scoreA; // Higher score first
+      });
     }
 
     // Service filter

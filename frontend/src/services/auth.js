@@ -29,9 +29,23 @@ export async function login(email, password, twoFactorToken = null, backupCode =
     const data = await response.json();
 
     if (!response.ok) {
-      // Create error without stack trace for expected validation errors
-      const error = new Error(data.message || 'Login failed');
-      // Mark as expected validation error to prevent unnecessary console logging
+      // Convert backend error messages to user-friendly ones
+      let errorMessage = data.message || 'Login failed. Please check your credentials.';
+      
+      if (errorMessage.includes('Invalid') && errorMessage.includes('credentials')) {
+        errorMessage = 'The email or password you entered is incorrect. Please try again.';
+      } else if (errorMessage.includes('not found') || errorMessage.includes('does not exist')) {
+        errorMessage = 'No account found with this email address. Please check your email or sign up.';
+      } else if (errorMessage.includes('password') && errorMessage.includes('incorrect')) {
+        errorMessage = 'The password you entered is incorrect. Please try again.';
+      } else if (errorMessage.includes('pattern') || errorMessage.includes('match')) {
+        errorMessage = 'Please check your email address and password, then try again.';
+      } else if (!errorMessage.includes('Please') && !errorMessage.includes('try')) {
+        // Generic fallback for technical errors
+        errorMessage = 'Unable to complete login. Please check your credentials and try again.';
+      }
+      
+      const error = new Error(errorMessage);
       error.name = 'ValidationError';
       throw error;
     }

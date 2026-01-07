@@ -55,11 +55,27 @@ export default function TwoFactorVerifyModal({
     try {
       await onVerify(token, useBackupCode ? backupCode : undefined);
     } catch (error: any) {
-      // Error is already handled and displayed to user, prevent console error
-      const errorMessage = error.message || 'Invalid verification code';
+      // Convert technical errors to user-friendly messages
+      let errorMessage = error.message || 'Invalid verification code';
+      
+      if (errorMessage.includes('Invalid') || errorMessage.includes('incorrect')) {
+        errorMessage = useBackupCode 
+          ? 'The backup code you entered is incorrect. Please try again.'
+          : 'The verification code you entered is incorrect. Please try again.';
+      } else if (errorMessage.includes('expired') || errorMessage.includes('timeout')) {
+        errorMessage = 'The verification code has expired. Please request a new code.';
+      } else if (errorMessage.includes('Network') || errorMessage.includes('fetch')) {
+        errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+      } else if (errorMessage.includes('pattern') || errorMessage.includes('match')) {
+        errorMessage = 'Please enter a valid verification code.';
+      } else if (!errorMessage.includes('Please') && !errorMessage.includes('try')) {
+        // Generic fallback for any other technical errors
+        errorMessage = 'Unable to verify code. Please try again.';
+      }
+      
       await Swal.fire({
         icon: 'error',
-        title: 'Error',
+        title: 'Verification Failed',
         text: errorMessage,
         confirmButtonColor: '#e74c3c'
       });
@@ -70,8 +86,37 @@ export default function TwoFactorVerifyModal({
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={onCancel}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()} style={{ padding: '24px' }}>
+    <div 
+      className={styles.modalOverlay} 
+      onClick={onCancel}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.6)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10000,
+        padding: '20px'
+      }}
+    >
+      <div 
+        className={styles.modalContent} 
+        onClick={(e) => e.stopPropagation()} 
+        style={{ 
+          padding: '24px',
+          background: 'white',
+          borderRadius: '16px',
+          maxWidth: '500px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          position: 'relative'
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
           <button 
             className={styles.closeButton} 
@@ -93,6 +138,8 @@ export default function TwoFactorVerifyModal({
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.875rem', fontWeight: '600', color: '#333' }}>Verification Code</label>
                 <input
                   type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={token}
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, '').slice(0, 6);
@@ -113,6 +160,9 @@ export default function TwoFactorVerifyModal({
                   }}
                   required
                   autoFocus
+                  onInvalid={(e) => {
+                    e.preventDefault();
+                  }}
                 />
               </div>
             ) : (
@@ -120,6 +170,7 @@ export default function TwoFactorVerifyModal({
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.875rem', fontWeight: '600', color: '#333' }}>Backup Code</label>
                 <input
                   type="text"
+                  inputMode="text"
                   value={backupCode}
                   onChange={(e) => {
                     const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
@@ -140,6 +191,9 @@ export default function TwoFactorVerifyModal({
                   }}
                   required
                   autoFocus
+                  onInvalid={(e) => {
+                    e.preventDefault();
+                  }}
                 />
               </div>
             )}
