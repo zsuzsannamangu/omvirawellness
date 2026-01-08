@@ -798,10 +798,28 @@ async function login(req, res) {
     }
 
     // Check if user is active and 2FA status
-    const isActiveResult = await pool.query(
-      'SELECT COALESCE(is_active, true) as is_active, COALESCE(two_factor_enabled, false) as two_factor_enabled FROM users WHERE id = $1',
-      [user.id]
-    );
+    // Note: two_factor_enabled column may not exist in all databases, so we check for it first
+    let isActiveResult;
+    try {
+      isActiveResult = await pool.query(
+        'SELECT COALESCE(is_active, true) as is_active, COALESCE(two_factor_enabled, false) as two_factor_enabled FROM users WHERE id = $1',
+        [user.id]
+      );
+    } catch (error) {
+      // If two_factor_enabled column doesn't exist, query without it
+      if (error.code === '42703' && error.message.includes('two_factor_enabled')) {
+        isActiveResult = await pool.query(
+          'SELECT COALESCE(is_active, true) as is_active FROM users WHERE id = $1',
+          [user.id]
+        );
+        // Add two_factor_enabled as false if column doesn't exist
+        if (isActiveResult.rows[0]) {
+          isActiveResult.rows[0].two_factor_enabled = false;
+        }
+      } else {
+        throw error;
+      }
+    }
 
     if (isActiveResult.rows[0] && isActiveResult.rows[0].is_active === false) {
       return res.status(403).json({

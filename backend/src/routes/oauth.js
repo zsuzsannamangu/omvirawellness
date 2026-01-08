@@ -130,6 +130,11 @@ router.get(
 router.get(
   '/facebook',
   (req, res, next) => {
+    // Check if Facebook OAuth is configured
+    if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) {
+      console.error('❌ Facebook OAuth credentials not configured!');
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_not_configured`);
+    }
     // Store user_type in session/state for callback
     const state = req.query.user_type || 'client';
     passport.authenticate('facebook', {
@@ -147,12 +152,19 @@ router.get(
 router.get(
   '/facebook/callback',
   (req, res, next) => {
+    // Check if Facebook OAuth is configured
+    if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) {
+      console.error('❌ Facebook OAuth credentials not configured!');
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_not_configured`);
+    }
     // Use stateless authentication to avoid session size issues
     passport.authenticate('facebook', { session: false }, (err, user, info) => {
       if (err) {
+        console.error('Facebook OAuth error:', err);
         return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_error`);
       }
       if (!user) {
+        console.error('No user returned from Facebook OAuth');
         return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_user`);
       }
       // Attach user to request and continue
