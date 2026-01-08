@@ -116,33 +116,132 @@ router.get('/', async (req, res) => {
       ORDER BY ${orderBy}
     `;
     
+    console.log('Providers query:', query);
+    console.log('Query params:', params);
     const result = await pool.query(query, params);
+    console.log('Providers query result count:', result.rows.length);
+    
+    // Debug: Check if any providers exist at all (without filters)
+    const debugResult = await pool.query(
+      'SELECT u.id, u.email, u.user_type, u.is_active, pp.id as profile_id FROM users u LEFT JOIN provider_profiles pp ON u.id = pp.user_id WHERE u.user_type = $1',
+      ['provider']
+    );
+    console.log('All provider users (debug):', debugResult.rows.length);
+    debugResult.rows.forEach(row => {
+      console.log(`  - User ID: ${row.id}, Email: ${row.email}, is_active: ${row.is_active}, has_profile: ${!!row.profile_id}`);
+    });
     
     // Parse JSONB fields
-    let providers = result.rows.map(row => {
-      // Parse availability
-      let availability = [];
-      if (row.availability) {
-        if (typeof row.availability === 'string') {
-          try {
-            availability = JSON.parse(row.availability);
-          } catch (e) {
-            availability = [];
+    let providers = result.rows.map((row, index) => {
+      try {
+        // Parse availability
+        let availability = [];
+        if (row.availability) {
+          if (typeof row.availability === 'string') {
+            try {
+              availability = JSON.parse(row.availability);
+            } catch (e) {
+              console.warn(`Failed to parse availability for provider ${row.id}:`, e);
+              availability = [];
+            }
+          } else if (Array.isArray(row.availability)) {
+            availability = row.availability;
           }
-        } else if (Array.isArray(row.availability)) {
-          availability = row.availability;
         }
-      }
 
-      return {
-        ...row,
-        work_location: typeof row.work_location === 'string' ? JSON.parse(row.work_location) : row.work_location,
-        services: typeof row.services === 'string' ? JSON.parse(row.services) : row.services,
-        add_ons: typeof row.add_ons === 'string' ? JSON.parse(row.add_ons) : (row.add_ons || []),
-        certifications: typeof row.certifications === 'string' ? JSON.parse(row.certifications) : (row.certifications || []),
-        availability: availability,
-      };
+        // Parse work_location
+        let work_location = row.work_location;
+        if (work_location) {
+          if (typeof work_location === 'string') {
+            try {
+              work_location = JSON.parse(work_location);
+            } catch (e) {
+              console.warn(`Failed to parse work_location for provider ${row.id}:`, e);
+              work_location = [];
+            }
+          }
+        } else {
+          work_location = [];
+        }
+
+        // Parse services
+        let services = row.services;
+        if (services) {
+          if (typeof services === 'string') {
+            try {
+              services = JSON.parse(services);
+            } catch (e) {
+              console.warn(`Failed to parse services for provider ${row.id}:`, e);
+              services = [];
+            }
+          }
+        } else {
+          services = [];
+        }
+
+        // Parse add_ons
+        let add_ons = row.add_ons;
+        if (add_ons) {
+          if (typeof add_ons === 'string') {
+            try {
+              add_ons = JSON.parse(add_ons);
+            } catch (e) {
+              console.warn(`Failed to parse add_ons for provider ${row.id}:`, e);
+              add_ons = [];
+            }
+          }
+        } else {
+          add_ons = [];
+        }
+
+        // Parse certifications
+        let certifications = row.certifications;
+        if (certifications) {
+          if (typeof certifications === 'string') {
+            try {
+              certifications = JSON.parse(certifications);
+            } catch (e) {
+              console.warn(`Failed to parse certifications for provider ${row.id}:`, e);
+              certifications = [];
+            }
+          }
+        } else {
+          certifications = [];
+        }
+
+        return {
+          ...row,
+          work_location: work_location,
+          services: services,
+          add_ons: add_ons,
+          certifications: certifications,
+          availability: availability,
+        };
+      } catch (error) {
+        console.error(`Error processing provider row ${index} (ID: ${row.id}):`, error);
+        // Return a minimal valid provider object
+        return {
+          ...row,
+          work_location: [],
+          services: [],
+          add_ons: [],
+          certifications: [],
+          availability: [],
+        };
+      }
     });
+    
+    console.log('Processed providers count:', providers.length);
+    if (providers.length > 0) {
+      console.log('First provider sample:', {
+        id: providers[0].id,
+        email: providers[0].email,
+        business_name: providers[0].business_name,
+        contact_name: providers[0].contact_name,
+        business_type: providers[0].business_type,
+        services_count: providers[0].services?.length || 0
+      });
+    }
     
     // Client-side price filtering (since services is JSONB)
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -157,6 +256,7 @@ router.get('/', async (req, res) => {
       });
     }
     
+    console.log('Final providers count to send:', providers.length);
     res.json(providers);
   } catch (err) {
     console.error('Error fetching providers:', err);

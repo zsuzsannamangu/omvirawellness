@@ -265,9 +265,9 @@ async function registerProvider(req, res) {
 
       // Insert user
       const userResult = await client.query(
-        `INSERT INTO users (email, password_hash, user_type) 
-         VALUES ($1, $2, 'provider') 
-         RETURNING id, email, user_type`,
+        `INSERT INTO users (email, password_hash, user_type, is_active) 
+         VALUES ($1, $2, 'provider', true) 
+         RETURNING id, email, user_type, is_active`,
         [email, passwordHash]
       );
 
