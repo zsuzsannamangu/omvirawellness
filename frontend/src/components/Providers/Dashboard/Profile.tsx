@@ -33,10 +33,10 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [travelFeeType, setTravelFeeType] = useState<'free' | 'fee'>('free');
   const [travelFee, setTravelFee] = useState('');
-  const [services, setServices] = useState<Array<{ name: string; type: string; duration: string; price: string; description?: string; mobileService?: boolean; id?: string }>>([]);
+  const [services, setServices] = useState<Array<{ name: string; type: string; duration: string; price: string; description?: string; id?: string }>>([]);
   const [showAddService, setShowAddService] = useState(false);
   const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(null);
-  const [newService, setNewService] = useState({ name: '', type: '', duration: '60', price: '', description: '', mobileService: false });
+  const [newService, setNewService] = useState({ name: '', type: '', duration: '60', price: '', description: '' });
   const [addOns, setAddOns] = useState<Array<{ id?: string; name: string; description: string; price: string }>>([]);
   const [showAddOnModal, setShowAddOnModal] = useState(false);
   const [editingAddOnIndex, setEditingAddOnIndex] = useState<number | null>(null);
@@ -492,8 +492,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             type: service.type || '',
                             duration: service.duration || '60',
                             price: service.price || '',
-                            description: service.description || '',
-                            mobileService: service.mobileService || false
+                            description: service.description || ''
                           });
                           setShowAddService(true);
                         }}
@@ -665,18 +664,6 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                     />
                     <span className={styles.charCount}>{newService.description.length}/200</span>
                   </div>
-                  <div className={`${styles.modalFormGroup} ${styles.modalFormGroupRow}`}>
-                    <input
-                      type="checkbox"
-                      id="mobileService"
-                      checked={newService.mobileService}
-                      onChange={(e) => setNewService({ ...newService, mobileService: e.target.checked })}
-                      className={styles.modalCheckbox}
-                    />
-                    <label htmlFor="mobileService" className={`${styles.modalLabel} ${styles.modalLabelNormal}`}>
-                      Mobile Service (I travel to clients)
-                    </label>
-                  </div>
                   <div className={styles.modalActions}>
                     <button 
                       type="button"
@@ -684,7 +671,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                       onClick={() => {
                         setShowAddService(false);
                         setEditingServiceIndex(null);
-                        setNewService({ name: '', type: '', duration: '60', price: '', description: '', mobileService: false });
+                        setNewService({ name: '', type: '', duration: '60', price: '', description: '' });
                       }}
                     >
                       Cancel
@@ -783,7 +770,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             // Close modal and reset form
                             setShowAddService(false);
                             setEditingServiceIndex(null);
-                            setNewService({ name: '', type: '', duration: '60', price: '', description: '', mobileService: false });
+                            setNewService({ name: '', type: '', duration: '60', price: '', description: '' });
                           } catch (error: any) {
                             console.error('Error saving service:', error);
                             setSaveMessage(`Error: ${error.message || 'Failed to save service'}`);
