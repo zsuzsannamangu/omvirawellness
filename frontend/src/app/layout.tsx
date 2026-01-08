@@ -1,7 +1,23 @@
 import type { Metadata } from 'next';
+import { Forum, Playfair_Display } from 'next/font/google';
 import '../styles/tailwind.css';
 import '../styles/globals.scss';
 import '../styles/accessibility.scss';
+
+// Optimize font loading with Next.js font system for available fonts
+const forum = Forum({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-forum',
+});
+
+const playfair = Playfair_Display({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-playfair',
+});
 
 export const metadata: Metadata = {
   title: 'Omvira Wellness - Wellness, Delivered.',
@@ -23,14 +39,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${forum.variable} ${playfair.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Forum&family=Avenir:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" 
-          rel="stylesheet" 
-        />
+        {/* Avenir is loaded via globals.scss since it's not available via next/font/google */}
+        {/* The preload warning may also be from Next.js route chunk preloading, which is normal */}
       </head>
       <body className="antialiased">
         {children}

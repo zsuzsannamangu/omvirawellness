@@ -14,6 +14,7 @@ const {
   updateEmail,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
   enable2FA,
   verifyAndActivate2FA,
   disable2FA,
@@ -99,6 +100,13 @@ router.get('/verify-email', verifyEmail);
  * @access  Protected
  */
 router.post('/resend-verification', authenticate, resendVerificationEmail);
+
+/**
+ * @route   POST /api/auth/forgot-password
+ * @desc    Send password reset email
+ * @access  Public
+ */
+router.post('/forgot-password', forgotPassword);
 
 /**
  * @route   POST /api/auth/2fa/enable

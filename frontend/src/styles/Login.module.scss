@@ -212,6 +212,29 @@
   font-size: 1rem;
 }
 
+// Error and Success Messages
+.errorMessage {
+  background: rgba(#dc2626, 0.1);
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(#dc2626, 0.2);
+}
+
+.successMessage {
+  background: rgba($client-colors-1, 0.1);
+  color: $client-colors-1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba($client-colors-1, 0.2);
+}
+
 // Forgot Password
 .forgotPassword {
   text-align: center;
@@ -228,6 +251,11 @@
   &:hover {
     text-decoration: underline;
   }
+}
+
+.backToLogin {
+  text-align: center;
+  margin-top: 1rem;
 }
 
 // Divider

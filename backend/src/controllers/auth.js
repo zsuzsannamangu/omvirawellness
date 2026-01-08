@@ -2327,6 +2327,73 @@ async function resendVerificationEmail(req, res) {
   }
 }
 
+/**
+ * Forgot password - Send password reset email
+ */
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required',
+      });
+    }
+
+    // Find user by email
+    const userResult = await pool.query(
+      'SELECT id, email FROM users WHERE email = $1',
+      [email]
+    );
+
+    // Always return success to prevent email enumeration
+    // If user exists, send reset email; if not, still return success
+    if (userResult.rows.length > 0) {
+      const user = userResult.rows[0];
+      
+      // Generate reset token
+      const crypto = require('crypto');
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenExpires = new Date();
+      resetTokenExpires.setHours(resetTokenExpires.getHours() + 1); // Expires in 1 hour
+
+      // Store reset token in database
+      await pool.query(
+        'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3',
+        [resetToken, resetTokenExpires, user.id]
+      );
+
+      // Send reset email if SendGrid is configured
+      try {
+        const { sendPasswordResetEmail } = require('../utils/email');
+        await sendPasswordResetEmail(user.email, resetToken);
+      } catch (emailError) {
+        // If SendGrid is not configured, log but don't fail
+        console.warn('Password reset email not sent (SendGrid not configured):', emailError.message);
+        // In development, log the reset link
+        if (process.env.NODE_ENV === 'development') {
+          const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+          console.log(`Password reset link for ${user.email}: ${baseUrl}/reset-password?token=${resetToken}`);
+        }
+      }
+    }
+
+    // Always return success to prevent email enumeration
+    res.json({
+      success: true,
+      message: 'If an account with that email exists, we\'ve sent you a password reset link.',
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   registerClient,
   registerProvider,
@@ -2340,6 +2407,7 @@ module.exports = {
   updateEmail,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
   enable2FA,
   verifyAndActivate2FA,
   disable2FA,
