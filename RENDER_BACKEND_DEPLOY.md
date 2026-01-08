@@ -19,16 +19,37 @@
    - **User**: (auto-generated)
    - **Region**: Choose closest to you
    - **PostgreSQL Version**: 16 (latest)
-   - **Plan**: **Free** tier is fine for testing
+   - **Plan**: 
+     - **Free** tier (1GB, 90-day limit) - good for testing
+     - **Starter + 5GB storage** ($6 base + $1.50 storage = $7.50/month) - good for production
+     - **Starter + 10GB** ($7/month) - also good option
 
 3. **Create Database**
    - Click **"Create Database"**
    - Wait for it to provision (1-2 minutes)
 
 4. **Get Connection String**
-   - Once created, scroll down to **"Connections"**
-   - Copy the **"Internal Database URL"** (starts with `postgres://`)
-   - Save this - you'll need it later!
+   - Once created, scroll down to **"Connections"** section
+   - Look for connection details. You might see:
+     - **Internal Database URL** (if shown, copy this - it starts with `postgres://`)
+     - OR individual fields:
+       - **Hostname**: Internal hostname (e.g., `dpg-xxxxx-a.oregon-postgres.render.com`)
+       - **Port**: Usually `5432`
+       - **Database**: Your database name (e.g., `omvira_wellness`)
+       - **User**: Database username
+       - **Password**: Database password (click "Show" if hidden)
+   
+   - **If you only see hostname and other fields**, construct the connection string:
+     ```
+     postgres://USERNAME:PASSWORD@HOSTNAME:PORT/DATABASE
+     ```
+     Example:
+     ```
+     postgres://omvira_user:your_password@dpg-xxxxx-a.oregon-postgres.render.com:5432/omvira_wellness
+     ```
+   
+   - **Important**: Use the **Internal** hostname (not External) for services on Render
+   - **Save this connection string** - you'll use it as `DATABASE_URL` environment variable!
 
 ---
 
@@ -63,7 +84,7 @@
 
 Click **"Add Environment Variable"** and add each of these:
 
-### Required Variables
+### Required Variables (Must Have)
 
 ```bash
 # Database
@@ -77,30 +98,36 @@ NODE_ENV=production
 JWT_SECRET=<generate-a-random-secret-key>
 JWT_EXPIRES_IN=7d
 
-# Google OAuth (if you have it set up)
+# Frontend URL (for CORS)
+FRONTEND_URL=https://omvirawellness.vercel.app
+```
+
+### Optional Variables (Only if you have them set up)
+
+```bash
+# Google OAuth (only if you have Google OAuth configured)
 GOOGLE_CLIENT_ID=<your-google-client-id>
 GOOGLE_CLIENT_SECRET=<your-google-client-secret>
 GOOGLE_CALLBACK_URL=https://omvira-backend.onrender.com/api/auth/google/callback
 
-# Facebook OAuth (if you have it set up)
+# Facebook OAuth (only if you have Facebook OAuth configured)
 FACEBOOK_APP_ID=<your-facebook-app-id>
 FACEBOOK_APP_SECRET=<your-facebook-app-secret>
 FACEBOOK_CALLBACK_URL=https://omvira-backend.onrender.com/api/auth/facebook/callback
 
-# Frontend URL (for CORS)
-FRONTEND_URL=https://omvirawellness.vercel.app
-
-# Google Maps API (if using distance features)
+# Google Maps API (only if you're using distance/address features)
 GOOGLE_MAPS_API_KEY=<your-google-maps-api-key>
 
-# SendGrid (for emails - optional)
+# SendGrid (only if you have email sending configured)
 SENDGRID_API_KEY=<your-sendgrid-api-key>
 SENDGRID_FROM_EMAIL=noreply@omvirawellness.com
 
-# Stripe (for payments - optional)
+# Stripe (only if you have payments configured)
 STRIPE_SECRET_KEY=<your-stripe-secret-key>
 STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
 ```
+
+**Note:** You only need to add the variables you're actually using. The backend will work without the optional ones - those features just won't be available.
 
 ### How to Generate JWT_SECRET
 Run this in your terminal:
@@ -303,7 +330,12 @@ psql <your-external-database-url>
 
 **Paid (Production Ready):**
 - Backend: $7/month (always-on)
-- Database: $7/month (persistent + backups)
+- Database: $7.50/month (Starter + 5GB storage, persistent + backups)
+- Total: $14.50/month
+
+**Alternative:**
+- Backend: $7/month (always-on)
+- Database: $7/month (Starter + 10GB storage)
 - Total: $14/month
 
 ---
