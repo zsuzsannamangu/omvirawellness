@@ -17,36 +17,42 @@ const Hero: React.FC = () => {
 
   return (
     <>
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-label="Hero section">
         <div className={styles.overlay}>
           <h1 className={styles.title}>Hello, Wellness Has Arrived.</h1>
           <p className={styles.subtitle}>
           A platform that connects you to independent wellness, beauty, and fitness professionals - anytime, anywhere.  
           </p>
-          <form onSubmit={handleSearch} className={styles.searchForm}>
+          <form onSubmit={handleSearch} className={styles.searchForm} role="search" aria-label="Search for services or providers">
+            <label htmlFor="hero-search-desktop" className="visually-hidden">Search services or providers</label>
             <input
+              id="hero-search-desktop"
               type="text"
               placeholder="Search services or providers"
               className={styles.searchInput}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search services or providers"
             />
-            <button type="submit" className={styles.searchButton}>
+            <button type="submit" className={styles.searchButton} aria-label="Submit search">
               Search
             </button>
           </form>
         </div>
       </section>
       <div className={styles.searchSection}>
-        <form onSubmit={handleSearch} className={styles.searchFormMobile}>
+        <form onSubmit={handleSearch} className={styles.searchFormMobile} role="search" aria-label="Search for services or providers">
+          <label htmlFor="hero-search-mobile" className="visually-hidden">Search services or providers</label>
           <input
+            id="hero-search-mobile"
             type="text"
             placeholder="Search services or providers"
             className={styles.searchInput}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search services or providers"
           />
-          <button type="submit" className={styles.searchButton}>
+          <button type="submit" className={styles.searchButton} aria-label="Submit search">
             Search
           </button>
         </form>

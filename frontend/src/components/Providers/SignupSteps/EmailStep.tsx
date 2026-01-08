@@ -77,7 +77,7 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
         
         <button type="submit" className={styles.continueButton}>
           <FaEnvelope className={styles.envelopeIcon} />
-          START YOUR PROVIDER JOURNEY
+          JOIN
         </button>
       </form>
 

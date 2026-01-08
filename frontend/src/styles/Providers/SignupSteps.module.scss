@@ -98,6 +98,8 @@
 .phoneContainer {
   display: flex;
   gap: $spacing-xs;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .phonePrefix {
@@ -352,8 +354,13 @@
 
 .locationCheckbox {
   font-size: 1.25rem;
-  color: $success-light;
+  color: $border-medium; // Default gray color for unselected
   margin-left: $spacing-sm;
+  transition: color 0.2s ease;
+}
+
+.locationCard.selected .locationCheckbox {
+  color: $success-light; // Green color only when selected
 }
 
 .scheduleOptions {
@@ -1730,8 +1737,44 @@
     flex: 1;
   }
 
+  .addServiceForm {
+    padding: $spacing-md;
+    margin-bottom: $spacing-md;
+    max-width: 100%;
+  }
+  
+  .addServiceTitle {
+    font-size: 1.1rem;
+    margin-bottom: $spacing-sm;
+  }
+  
   .formRow {
     flex-direction: column;
+  }
+  
+  .formGroup {
+    width: 100%;
+  }
+  
+  .label {
+    font-size: 0.85rem;
+  }
+  
+  .textInput,
+  .selectInput {
+    font-size: 16px !important; // Prevents iOS zoom
+    padding: 14px 16px;
+  }
+  
+  .addServiceButtons {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .cancelButton,
+  .addButton {
+    max-width: 100%;
+    width: 100%;
   }
 
   .timeSelectors {
@@ -1798,5 +1841,72 @@
   .popularBadge {
     right: 50%;
     transform: translateX(50%);
+  }
+}
+
+// Mobile styles for smaller screens
+@media (max-width: 480px) {
+  .addServiceForm {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  
+  .addServiceTitle {
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+  }
+  
+  .label {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  
+  .textInput,
+  .selectInput {
+    font-size: 16px !important;
+    padding: 14px 16px;
+    border-radius: 8px;
+  }
+  
+  .selectInput {
+    padding-right: 45px;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+  
+  .priceInput .textInput {
+    padding-left: 32px; // Space for dollar sign
+  }
+  
+  .dollarSign {
+    left: 12px;
+    font-size: 1rem;
+  }
+  
+  .charCount {
+    font-size: 0.75rem;
+    margin-top: 6px;
+  }
+  
+  .formRow {
+    margin-bottom: 16px;
+  }
+  
+  .checkboxLabel {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  
+  .addServiceButtons {
+    margin-top: 20px;
+    gap: 12px;
+  }
+  
+  .cancelButton,
+  .addButton {
+    height: 50px;
+    font-size: 0.95rem;
+    border-radius: 8px;
   }
 }

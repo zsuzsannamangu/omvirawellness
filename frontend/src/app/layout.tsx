@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '../styles/tailwind.css';
 import '../styles/globals.scss';
+import '../styles/accessibility.scss';
 
 export const metadata: Metadata = {
   title: 'Omvira Wellness - Wellness, Delivered.',

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/Search.module.scss';
 import FavoriteAuthModal from '@/components/FavoriteAuthModal';
+import SkipLink from '@/components/Accessibility/SkipLink';
 import { isClientAuthenticated, getClientId, getFavoriteStatus, addFavorite, removeFavorite } from '@/services/favorites';
 
 // Helper function to find next available date from availability slots
@@ -844,50 +845,67 @@ export default function SearchPage() {
   }, [providers, searchQuery, selectedService, selectedLocation, selectedPriceRange, sortBy]);
 
   return (
-    <div className={styles.searchPage}>
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <Link href="/" className={styles.logo}>
-            Omvira Wellness
-          </Link>
-          
-          <div className={styles.searchBar}>
-            <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search for a provider"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-            />
-          </div>
-
-          <div className={styles.headerActions}>
-            {dashboardUrl && (
-              <Link href={dashboardUrl} className={styles.dashboardLink}>
-                <span className={styles.dashboardArrow}>←</span>
-                Back to Dashboard
-              </Link>
-            )}
-            <button 
-              ref={buttonRef}
-              className={styles.menuButton}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    <>
+      <SkipLink href="#search-results">Skip to search results</SkipLink>
+      <div className={styles.searchPage}>
+        {/* Header */}
+        <header className={styles.header}>
+          <div className={styles.headerContent}>
+            <Link href="/" className={styles.logo} aria-label="Omvira Wellness Home">
+              Omvira Wellness
+            </Link>
+            
+            <div className={styles.searchBar} role="search" aria-label="Search for providers">
+              <label htmlFor="provider-search" className="visually-hidden">
+                Search for a provider
+              </label>
+              <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
               </svg>
-            </button>
+              <input
+                id="provider-search"
+                type="search"
+                placeholder="Search for a provider"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+                aria-label="Search for a provider"
+                role="searchbox"
+              />
+            </div>
+
+            <div className={styles.headerActions}>
+              {dashboardUrl && (
+                <Link href={dashboardUrl} className={styles.dashboardLink} aria-label="Back to Dashboard">
+                  <span className={styles.dashboardArrow} aria-hidden="true">←</span>
+                  Back to Dashboard
+                </Link>
+              )}
+              <button 
+                ref={buttonRef}
+                className={styles.menuButton}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMenuOpen}
+                aria-controls="side-menu"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       {/* Side Menu */}
       {isMenuOpen && (
-        <div ref={menuRef} className={styles.sideMenu}>
+        <nav 
+          id="side-menu"
+          ref={menuRef} 
+          className={styles.sideMenu}
+          role="navigation"
+          aria-label="Main navigation"
+        >
           <div className={styles.menuContent}>
             <Link href="/login" className={styles.menuItem}>
               Login
@@ -899,24 +917,30 @@ export default function SearchPage() {
               For Providers
             </Link>
           </div>
-        </div>
+        </nav>
       )}
 
-      <div className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         {/* Filter Bar */}
-        <div className={styles.filterBar}>
+        <aside className={styles.filterBar} role="complementary" aria-label="Search filters">
           <button 
             className={styles.resetButton}
             onClick={handleResetFilters}
+            aria-label="Reset all search filters"
           >
             RESET FILTERS
           </button>
           
-          <div className={styles.filterDropdowns}>
+          <div className={styles.filterDropdowns} role="group" aria-label="Filter options">
+            <label htmlFor="service-filter" className="visually-hidden">
+              Filter by service
+            </label>
             <select 
+              id="service-filter"
               className={styles.filterDropdown}
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
+              aria-label="Filter by service"
             >
               <option value="">Service</option>
               {SERVICE_CATEGORIES.map((category) => (
@@ -926,7 +950,11 @@ export default function SearchPage() {
               ))}
             </select>
             
+            <label htmlFor="location-filter" className="visually-hidden">
+              Filter by location
+            </label>
             <select 
+              id="location-filter"
               className={styles.filterDropdown}
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
@@ -951,7 +979,7 @@ export default function SearchPage() {
               <option value="$200+">$200+</option>
             </select>
           </div>
-        </div>
+        </aside>
 
         {/* Sort Section */}
         <div className={styles.sortSection}>
@@ -972,12 +1000,18 @@ export default function SearchPage() {
         {loading ? (
           <div className={styles.loading}>Loading providers...</div>
         ) : (
-          <div className={styles.providersGrid}>
-            {filteredAndSortedProviders.length === 0 ? (
-              <div className={styles.noResults}>
-                {providers.length === 0 ? (
-                  'No providers found'
-                ) : (
+          <section id="search-results" aria-label="Search results" role="region">
+            <h2 className="visually-hidden">Provider Search Results</h2>
+            <div 
+              className={styles.providersGrid}
+              role="list"
+              aria-label={`${filteredAndSortedProviders.length} provider${filteredAndSortedProviders.length !== 1 ? 's' : ''} found`}
+            >
+              {filteredAndSortedProviders.length === 0 ? (
+                <div className={styles.noResults} role="status" aria-live="polite">
+                  {providers.length === 0 ? (
+                    'No providers found'
+                  ) : (
                   <div>
                     <p style={{ marginBottom: '16px', fontSize: '18px', fontWeight: '600' }}>
                       No providers found {searchQuery ? `for "${searchQuery}"` : ''} {selectedService || selectedLocation || selectedPriceRange ? 'with your current filters' : ''}
@@ -1045,16 +1079,17 @@ export default function SearchPage() {
               </div>
             ) : (
               filteredAndSortedProviders.map((provider: any) => (
-                <Link key={provider.id} href={`/search/${provider.id}`} className={styles.providerCardLink}>
-                  <div className={styles.providerCard}>
-                    <div className={styles.providerImage}>
-                      <Image
-                        src={provider.profile_photo_url || '/images/screenshots/Jenn.png'}
-                        alt={provider.contact_name || provider.business_name || 'Provider'}
-                        width={300}
-                        height={200}
-                        className={styles.image}
-                      />
+                <article key={provider.id} role="listitem">
+                  <Link href={`/search/${provider.id}`} className={styles.providerCardLink} aria-label={`View ${provider.contact_name || provider.business_name}'s profile`}>
+                    <div className={styles.providerCard}>
+                      <div className={styles.providerImage}>
+                        <Image
+                          src={provider.profile_photo_url || '/images/screenshots/Jenn.png'}
+                          alt={`${provider.contact_name || provider.business_name} profile photo`}
+                          width={300}
+                          height={200}
+                          className={styles.image}
+                        />
                       {(() => {
                         // Parse availability if it's a string
                         let availability = [];
@@ -1108,16 +1143,19 @@ export default function SearchPage() {
                     </div>
                   </div>
                 </Link>
+                </article>
               ))
             )}
           </div>
+          </section>
         )}
+
+        <FavoriteAuthModal 
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
+      </main>
       </div>
-      
-      <FavoriteAuthModal 
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-      />
-    </div>
+    </>
   );
 } 

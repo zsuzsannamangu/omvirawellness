@@ -678,10 +678,35 @@
   }
 }
 
+// Error message styles
+.errorMessage {
+  padding: 12px 16px;
+  margin: 16px 0 16px 0; // Spacing from label above and input below
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  color: #c33;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
 // Responsive design
+// Mobile styles
 @media (max-width: 768px) {
   .stepContainer {
     max-width: 100%;
+    padding: 0;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
   }
   
   .formRow {
@@ -695,6 +720,7 @@
   .goalsGrid,
   .servicesGrid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   
   .buttonContainer {
@@ -705,5 +731,141 @@
   .backButton,
   .continueButton {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.35rem;
+    line-height: 1.3;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .label {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .textInput {
+    font-size: 16px !important; // Prevents iOS zoom
+    padding: 14px 16px !important;
+    border-radius: 8px;
+  }
+  
+  .emailInput {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    border-radius: 8px;
+  }
+  
+  .passwordInput {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    border-radius: 8px;
+  }
+  
+  .selectInput {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    border-radius: 8px;
+  }
+  
+  .textArea {
+    font-size: 16px !important;
+    min-height: 120px;
+    padding: 14px 16px !important;
+    border-radius: 8px;
+  }
+  
+  .continueButton,
+  .backButton,
+  .socialButton {
+    height: 52px;
+    font-size: 1rem;
+    border-radius: 10px;
+    padding: 0 20px;
+  }
+  
+  .goalCard,
+  .serviceCard {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  
+  .goalLabel,
+  .serviceLabel {
+    font-size: 0.95rem;
+  }
+  
+  .goalDescription,
+  .serviceDescription {
+    font-size: 0.85rem;
+  }
+  
+  .locationButtons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .locationButton {
+    height: auto;
+    min-height: 52px;
+    padding: 14px 16px;
+  }
+  
+  .divider {
+    margin: 1.25rem 0;
+  }
+  
+  .dividerText {
+    font-size: 0.9rem;
+  }
+  
+  .socialButtons {
+    gap: 12px;
+  }
+  
+  .inputGroup {
+    margin-bottom: 1rem;
+  }
+  
+  .form {
+    gap: 1.5rem;
+  }
+  
+  .errorMessage {
+    font-size: 0.85rem;
+    padding: 12px 14px;
+    margin: 14px 0 14px 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .continueButton,
+  .backButton,
+  .socialButton {
+    height: 50px;
+    font-size: 0.95rem;
+  }
+  
+  .label {
+    font-size: 0.8rem;
+  }
+  
+  .goalCard,
+  .serviceCard {
+    padding: 12px;
   }
 }

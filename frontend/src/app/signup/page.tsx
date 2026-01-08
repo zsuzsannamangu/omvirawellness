@@ -202,29 +202,13 @@ function SignupPageContent() {
         </div>
 
         {error && (
-          <div style={{ 
-            padding: '12px 24px', 
-            margin: '16px auto', 
-            maxWidth: '600px', 
-            backgroundColor: '#fee', 
-            border: '1px solid #fcc', 
-            borderRadius: '8px',
-            color: '#c33'
-          }}>
+          <div className={styles.errorMessage}>
             {error}
           </div>
         )}
 
         {oauthError && (
-          <div style={{ 
-            padding: '12px 24px', 
-            margin: '16px auto', 
-            maxWidth: '600px', 
-            backgroundColor: '#fee', 
-            border: '1px solid #fcc', 
-            borderRadius: '8px',
-            color: '#c33'
-          }}>
+          <div className={styles.errorMessage}>
             {oauthError}
           </div>
         )}

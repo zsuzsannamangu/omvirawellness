@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { login } from '@/services/auth';
 import TwoFactorVerifyModal from '@/components/Providers/Login/TwoFactorVerifyModal';
 import { API_BASE_URL } from '@/config/api';
+import SkipLink from '@/components/Accessibility/SkipLink';
 import styles from '@/styles/Providers/ProviderLogin.module.scss';
 
 export default function ProviderLoginPage() {
@@ -175,7 +176,7 @@ export default function ProviderLoginPage() {
         errorMessage = 'The request took too long. Please try again.';
       } else if (!errorMessage.includes('Please') && !errorMessage.includes('try')) {
         // Generic fallback for any other technical errors
-        errorMessage = 'Unable to complete login. Please check your credentials and try again.';
+        errorMessage = 'Email or password is incorrect. Please try again.';
       }
       
       setError(errorMessage);
@@ -213,37 +214,42 @@ export default function ProviderLoginPage() {
   };
 
   return (
-    <div className={styles.container}>
-      {/* Top Bar */}
-      <div className={styles.topBar}>
-        <Link href="/" className={styles.backLink}>
-          ← Back to Homepage
-        </Link>
-      </div>
-      
-      <div className={styles.formContainer}>
-        {/* Navigation Tabs */}
-        <div className={styles.navTabs}>
-          <Link href="/providers/login" className={`${styles.navTab} ${styles.active}`}>
-            Provider Login
+    <>
+      <SkipLink href="#provider-login-form">Skip to login form</SkipLink>
+      <div className={styles.container}>
+        {/* Top Bar */}
+        <header className={styles.topBar}>
+          <Link href="/" className={styles.backLink}>
+            ← Back to Homepage
           </Link>
-          <Link href="/providers/signup" className={styles.navTab}>
-            Join as Provider
-          </Link>
-        </div>
+        </header>
+        
+        <main id="main-content" className={styles.formContainer}>
+          {/* Navigation Tabs */}
+          <nav className={styles.navTabs} aria-label="Provider authentication navigation">
+            <Link href="/providers/login" className={`${styles.navTab} ${styles.active}`} aria-current="page">
+              Provider Login
+            </Link>
+            <Link href="/providers/signup" className={styles.navTab}>
+              Join as Provider
+            </Link>
+          </nav>
 
-        {/* Main Form */}
-        <div className={styles.formContent}>
-          <h1 className={styles.title}>Welcome back, Provider</h1>
-          <p className={styles.subtitle}>Access your wellness practice dashboard</p>
-          
-          {error && (
-            <div className={styles.errorMessage} role="alert">
-              {error}
+          {/* Main Form */}
+          <div className={styles.formContent}>
+            <h1 className={styles.title}>Welcome back, Provider</h1>
+            <p className={styles.subtitle}>Access your wellness practice dashboard</p>
+            
+            {/* Live region for error announcements */}
+            <div role="alert" aria-live="assertive" aria-atomic="true">
+              {error && (
+                <div className={styles.errorMessage}>
+                  {error}
+                </div>
+              )}
             </div>
-          )}
           
-          <form onSubmit={handleLoginSubmit} className={styles.loginForm} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off">
+          <form id="provider-login-form" onSubmit={handleLoginSubmit} className={styles.loginForm} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off" aria-label="Provider login form">
             <div className={styles.inputGroup}>
               <label htmlFor="email" className={styles.label}>
                 E-MAIL ADDRESS
@@ -252,6 +258,7 @@ export default function ProviderLoginPage() {
               <input
                 type="email"
                 id="email"
+                name="email"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -261,6 +268,9 @@ export default function ProviderLoginPage() {
                 className={styles.emailInput}
                 placeholder="Enter your email"
                 required
+                aria-required="true"
+                aria-invalid={error ? 'true' : 'false'}
+                aria-describedby={error ? 'provider-login-error' : undefined}
                 data-1p-ignore="true"
                 data-lpignore="true"
                 data-form-type="other"
@@ -279,8 +289,8 @@ export default function ProviderLoginPage() {
                 }}
               />
                 <div className={styles.inputIcons}>
-                  <span className={styles.lockIcon}>🔒</span>
-                  <span className={styles.infoIcon}>ℹ️</span>
+                  <span className={styles.lockIcon} aria-hidden="true">🔒</span>
+                  <span className={styles.infoIcon} aria-hidden="true">ℹ️</span>
                 </div>
                 <div className={styles.passwordManager}>
                   Unlock 1Password
@@ -296,11 +306,15 @@ export default function ProviderLoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
+                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className={styles.passwordInput}
                   placeholder="Enter your password"
                   required
+                  aria-required="true"
+                  aria-invalid={error ? 'true' : 'false'}
+                  aria-describedby={error ? 'provider-login-error' : undefined}
                   data-1p-ignore="true"
                   data-lpignore="true"
                   data-form-type="other"
@@ -310,14 +324,16 @@ export default function ProviderLoginPage() {
                   type="button"
                   className={styles.showPasswordButton}
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
                 >
                   {showPassword ? "HIDE" : "SHOW"}
                 </button>
               </div>
             </div>
             
-            <button type="submit" className={styles.loginButton} disabled={loading}>
-              <span className={styles.envelopeIcon}>✉️</span>
+            <button type="submit" className={styles.loginButton} disabled={loading} aria-busy={loading}>
+              <span className={styles.envelopeIcon} aria-hidden="true">✉️</span>
               {loading ? 'LOGGING IN...' : 'ACCESS PROVIDER DASHBOARD'}
             </button>
           </form>
@@ -335,7 +351,7 @@ export default function ProviderLoginPage() {
           </div>
 
           {/* Social Login Buttons */}
-          <div className={styles.socialButtons}>
+          <div className={styles.socialButtons} role="group" aria-label="Provider social login options">
             
             <button 
               type="button"
@@ -343,8 +359,9 @@ export default function ProviderLoginPage() {
               onClick={() => {
                 window.location.href = `${API_BASE_URL || 'http://localhost:4000'}/api/oauth/facebook?user_type=provider`;
               }}
+              aria-label="Continue with Facebook as provider"
             >
-              <svg className={styles.facebookIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg className={styles.facebookIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
               Continue with Facebook
@@ -356,8 +373,9 @@ export default function ProviderLoginPage() {
               onClick={() => {
                 window.location.href = `${API_BASE_URL || 'http://localhost:4000'}/api/oauth/google?user_type=provider`;
               }}
+              aria-label="Continue with Google as provider"
             >
-              <svg className={styles.googleIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg className={styles.googleIcon} width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -378,7 +396,7 @@ export default function ProviderLoginPage() {
           </div>
 
           {/* Legal Disclaimer */}
-          <div className={styles.legalDisclaimer}>
+          <footer className={styles.legalDisclaimer}>
             By logging in I agree to the{' '}
             <Link href="/terms" className={styles.legalLink}>
               Terms & Conditions
@@ -387,8 +405,9 @@ export default function ProviderLoginPage() {
             <Link href="/privacy" className={styles.legalLink}>
               Privacy Policy
             </Link>
-          </div>
+          </footer>
         </div>
+        </main>
       </div>
 
       {/* 2FA Verification Modal */}
@@ -401,6 +420,6 @@ export default function ProviderLoginPage() {
           setTwoFactorUserId(null);
         }}
       />
-    </div>
+    </>
   );
 } 

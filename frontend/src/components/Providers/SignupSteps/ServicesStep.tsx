@@ -28,8 +28,7 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
     type: '',
     duration: '60',
     price: '',
-    priceType: 'fixed',
-    mobileService: false
+    priceType: 'fixed'
   });
 
   const handleAddService = () => {
@@ -40,8 +39,7 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
         type: '',
         duration: '60',
         price: '',
-        priceType: 'fixed',
-        mobileService: false
+        priceType: 'fixed'
       });
       setShowAddForm(false);
     }
@@ -170,21 +168,6 @@ export default function ServicesStep({ onNext, onBack, initialData }: ServicesSt
                   <option value="session">Per Session</option>
                 </select>
               </div>
-            </div>
-
-            <div className={styles.mobileServiceToggle}>
-              <label className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  checked={newService.mobileService}
-                  onChange={(e) => setNewService({...newService, mobileService: e.target.checked})}
-                  className={styles.dayCheckbox}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  data-form-type="other"
-                />
-                Mobile Service (I travel to clients)
-              </label>
             </div>
 
             <div className={styles.addServiceButtons}>

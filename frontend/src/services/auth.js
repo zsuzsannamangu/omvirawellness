@@ -42,7 +42,7 @@ export async function login(email, password, twoFactorToken = null, backupCode =
         errorMessage = 'Please check your email address and password, then try again.';
       } else if (!errorMessage.includes('Please') && !errorMessage.includes('try')) {
         // Generic fallback for technical errors
-        errorMessage = 'Unable to complete login. Please check your credentials and try again.';
+        errorMessage = 'Email or password is incorrect. Please try again.';
       }
       
       const error = new Error(errorMessage);

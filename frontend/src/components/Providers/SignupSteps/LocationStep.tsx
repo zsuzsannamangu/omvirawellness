@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { FaHome, FaCar, FaBuilding, FaVideo, FaCheckCircle, FaCircle } from 'react-icons/fa';
+import { FaHome, FaCar, FaBuilding, FaVideo, FaCheckCircle } from 'react-icons/fa';
+import { FaRegCircle } from 'react-icons/fa';
 import styles from '@/styles/Providers/SignupSteps.module.scss';
 
 interface LocationStepProps {
@@ -73,7 +74,7 @@ export default function LocationStep({ onNext, onBack, initialData }: LocationSt
                 <p className={styles.locationDescription}>{option.description}</p>
               </div>
               <div className={styles.locationCheckbox}>
-                {workLocations.includes(option.id) ? <FaCheckCircle /> : <FaCircle />}
+                {workLocations.includes(option.id) ? <FaCheckCircle /> : <FaRegCircle />}
               </div>
             </button>
           ))}

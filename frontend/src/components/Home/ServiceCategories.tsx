@@ -88,10 +88,11 @@ const ServiceCategories: React.FC = () => {
                                     <div className={styles.imageContainer}>
                                         <Image
                                             src={category.icon}
-                                            alt={category.label}
+                                            alt={`${category.label} icon`}
                                             width={28}
                                             height={28}
                                             className={styles.serviceIcon}
+                                            aria-hidden="true"
                                         />
                                     </div>
                                     <h3 className={styles.categoryTitle}>{category.label}</h3>
