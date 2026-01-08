@@ -163,8 +163,10 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
             : minutesA - minutesB;  // Soonest first for upcoming
         });
         setBookings(sorted);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error loading bookings:', error);
+        // Don't show error to user on every poll, only log it
+        // The loading state will be cleared so UI doesn't hang
       } finally {
         setLoading(false);
       }
@@ -175,7 +177,19 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
     loadBookings();
     const refresh = () => loadBookings();
     window.addEventListener('refreshBookings', refresh);
-    return () => window.removeEventListener('refreshBookings', refresh);
+    
+    // Poll for updates every 10 seconds (especially important for requests)
+    // Only poll if component is still mounted and we're on a relevant submenu
+    const pollInterval = setInterval(() => {
+      if (isMountedRef.current && ['requests', 'upcoming', 'past'].includes(activeSubmenu)) {
+        loadBookings();
+      }
+    }, 10000); // Check every 10 seconds
+    
+    return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener('refreshBookings', refresh);
+    };
   }, [userId, activeSubmenu]);
 
   const formatDate = (dateString: string, includeWeekday: boolean = true) => {
@@ -479,6 +493,24 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
             
             const showActions = activeSubmenu === 'requests' && booking.status === 'pending';
             const handleStatus = async (newStatus: 'confirmed' | 'cancelled') => {
+              const action = newStatus === 'confirmed' ? 'accept' : 'decline';
+              const actionText = newStatus === 'confirmed' ? 'accept' : 'decline';
+              
+              const result = await Swal.fire({
+                title: `Are you sure?`,
+                text: `Do you want to ${actionText} this appointment request?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: newStatus === 'confirmed' ? '#27ab81' : '#e74c3c',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: `Yes, ${actionText} it`,
+                cancelButtonText: 'Cancel'
+              });
+
+              if (!result.isConfirmed) {
+                return;
+              }
+
               try {
                 const token = localStorage.getItem('token');
                 if (!token) return;
@@ -489,7 +521,12 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                 });
                 if (!resp.ok) {
                   const errText = await resp.text().catch(() => '');
-                  alert(`Failed to update booking: ${resp.status} ${errText}`);
+                  await Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to update booking',
+                    text: `Error: ${resp.status} ${errText}`,
+                    confirmButtonColor: '#8B7355'
+                  });
                   return;
                 }
                 // reload
@@ -501,7 +538,14 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                   const evt = new CustomEvent('switchSubmenu', { detail: { submenu: 'upcoming' } });
                   window.dispatchEvent(evt);
                 }
-              } catch (e) {}
+              } catch (e) {
+                await Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'An error occurred while updating the booking.',
+                  confirmButtonColor: '#8B7355'
+                });
+              }
             };
 
             return (

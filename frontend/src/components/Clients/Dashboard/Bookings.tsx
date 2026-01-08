@@ -352,14 +352,18 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         throw new Error(errorData.error || 'Failed to reschedule booking');
       }
 
+      // Close modal first so success message is visible
+      setRescheduleModalOpen(false);
+      setSelectedRescheduleBooking(null);
+      
+      // Show success message after modal is closed
       await Swal.fire({
         icon: 'success',
         title: 'Success!',
         text: 'Appointment rescheduled successfully!',
         confirmButtonColor: '#8B7355'
       });
-      setRescheduleModalOpen(false);
-      setSelectedRescheduleBooking(null);
+      
       loadBookings();
     } catch (error: any) {
       console.error('Error rescheduling booking:', error);
@@ -487,12 +491,14 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
                       </div>
                       <div className={styles.sessionRight}>
                         <div className={styles.sessionActions}>
-                          <button 
-                            className={styles.actionBtn}
-                            onClick={() => handleReschedule(b)}
-                          >
-                            Reschedule
-                          </button>
+                          {b.status === 'confirmed' && (
+                            <button 
+                              className={styles.actionBtn}
+                              onClick={() => handleReschedule(b)}
+                            >
+                              Reschedule
+                            </button>
+                          )}
                           <button 
                             className={styles.actionBtn}
                             onClick={() => handleCancelBooking(b.id)}

@@ -956,7 +956,15 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
                       <strong>{activeSubmenu === 'sent' ? 'To:' : 'From:'}</strong> {activeSubmenu === 'sent' ? (selectedMessage.recipientName || 'Unknown') : selectedMessage.senderName}
                     </div>
                     <div>
-                      <strong>Date:</strong> {new Date(selectedMessage.timestamp).toLocaleString()}
+                      <strong>Date:</strong> {new Date(selectedMessage.timestamp).toLocaleString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                      })}
                     </div>
                   </div>
                   <div 

@@ -3,22 +3,35 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { FaCheckCircle, FaCalendarAlt, FaMapMarkerAlt, FaCreditCard, FaClipboardList } from 'react-icons/fa';
 import styles from '@/styles/BookingSuccess.module.scss';
 
 export default function BookingSuccessPage() {
   const params = useParams();
+  const router = useRouter();
   const [bookingData, setBookingData] = useState<any>(null);
   const [dashboardUrl, setDashboardUrl] = useState<string>('/login');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Get booking data from localStorage
     const storedData = localStorage.getItem('bookingData');
     if (storedData) {
-      setBookingData(JSON.parse(storedData));
-      // Clear the stored data after displaying
-      localStorage.removeItem('bookingData');
+      try {
+        setBookingData(JSON.parse(storedData));
+        setIsLoading(false);
+        // Clear the stored data after displaying (with a delay to ensure page renders)
+        setTimeout(() => {
+          localStorage.removeItem('bookingData');
+        }, 1000);
+      } catch (error) {
+        console.error('Error parsing booking data:', error);
+        setIsLoading(false);
+      }
+    } else {
+      // If no data found, redirect to dashboard after a short delay
+      setIsLoading(false);
     }
 
     // Get user ID for dashboard URL
@@ -35,10 +48,28 @@ export default function BookingSuccessPage() {
     }
   }, []);
 
-  if (!bookingData) {
+  // If no booking data after loading, redirect to dashboard
+  useEffect(() => {
+    if (!isLoading && !bookingData) {
+      const timer = setTimeout(() => {
+        router.push(dashboardUrl);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, bookingData, dashboardUrl, router]);
+
+  if (isLoading) {
     return (
       <div className={styles.loading}>
         <div>Loading booking confirmation...</div>
+      </div>
+    );
+  }
+
+  if (!bookingData) {
+    return (
+      <div className={styles.loading}>
+        <div>Taking you to your bookings...</div>
       </div>
     );
   }
@@ -109,21 +140,6 @@ export default function BookingSuccessPage() {
 
   return (
     <div className={styles.bookingSuccessPage}>
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <Link href="/" className={styles.logo}>
-            <Image
-              src="/Omvira_logo_long.png"
-              alt="Omvira Wellness"
-              width={600}
-              height={200}
-              className={styles.logoImage}
-            />
-          </Link>
-        </div>
-      </header>
-
       <div className={styles.mainContent}>
         <div className={styles.successContainer}>
           {/* Success Icon and Title */}
@@ -131,7 +147,7 @@ export default function BookingSuccessPage() {
             {/* <FaCheckCircle className={styles.successIcon} /> */}
             <h1 className={styles.successTitle}>You're All Set!</h1>
             <p className={styles.successSubtitle}>
-              Your appointment has been successfully booked.
+              Your appointment request has been successfully sent to the provider.
             </p>
             <p className={styles.successSubtitle}>
               You'll receive a confirmation email shortly.
@@ -179,21 +195,15 @@ export default function BookingSuccessPage() {
                 <FaClipboardList className={styles.infoIcon} />
                 <div className={styles.infoContent}>
                   <h3>Service Booked</h3>
-                  <div className={styles.serviceItemCompact}>
-                    <span className={styles.serviceNameCompact}>{bookingData.service}</span>
-                    <span className={styles.servicePriceCompact}>${bookingData.total}</span>
-                  </div>
+                  <p className={styles.locationText}>{bookingData.service} - ${bookingData.total}</p>
                   {getSelectedAddOns().length > 0 && (
-                    <div className={styles.addOnsSectionCompact}>
-                      <ul className={styles.addOnsListCompact}>
-                        {getSelectedAddOns().map((addOn: any, index: number) => (
-                          <li key={index} className={styles.addOnItemCompact}>
-                            <span>{addOn.name}</span>
-                            <span className={styles.addOnPriceCompact}>+${addOn.price}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <>
+                      {getSelectedAddOns().map((addOn: any, index: number) => (
+                        <p key={index} className={styles.addressNote}>
+                          {addOn.name} - +${addOn.price}
+                        </p>
+                      ))}
+                    </>
                   )}
                 </div>
               </div>
@@ -232,11 +242,12 @@ export default function BookingSuccessPage() {
             <div className={styles.nextSteps}>
               <h3>What's Next?</h3>
               <ul className={styles.stepsList}>
-                <li>You'll receive a confirmation email with all the details</li>
-                <li>The provider will contact you 24 hours before your appointment</li>
-                <li>If you need to reschedule or cancel, please do so at least 24 hours in advance</li>
+                <li>The provider will review your appointment request</li>
+                <li>You'll receive a message once the provider confirms or declines your request</li>
+                <li>Once confirmed, you'll receive all the appointment details</li>
+                <li>You can cancel this request at any time from your bookings dashboard</li>
                 {bookingData.deposit > 0 && (
-                  <li>Please bring payment for the remaining balance to your appointment</li>
+                  <li>Payment will be processed after the provider confirms your appointment</li>
                 )}
               </ul>
             </div>

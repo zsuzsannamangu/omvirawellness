@@ -3,7 +3,7 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { FaMapMarkerAlt, FaHome, FaBuilding, FaCar, FaVideo } from 'react-icons/fa';
 import { API_URL } from '@/config/api';
 import { getGoogleMapsApiKey, isGoogleMapsLoaded } from '@/config/googleMaps';
@@ -14,6 +14,7 @@ import styles from '@/styles/BookingConfirmation.module.scss';
 function BookingConfirmationPageContent() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [provider, setProvider] = useState<any>(null);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -685,9 +686,14 @@ function BookingConfirmationPageContent() {
       
       const result = await response.json();
       
-      // Navigate to success page
+      // Validate response structure
+      if (!result || !result.booking) {
+        throw new Error('Invalid response from server. Please try again.');
+      }
+      
+      // Prepare success data
       const successData = {
-        bookingId: result.booking.id,
+        bookingId: result.booking.id || result.booking.booking_id || null,
         providerId: provider.id,
         service: selectedService.name,
         date: selectedDate,
@@ -699,12 +705,54 @@ function BookingConfirmationPageContent() {
         deposit: calculateDeposit()
       };
       
-      localStorage.setItem('bookingData', JSON.stringify(successData));
-      window.location.href = `/search/${params?.id}/book/success`;
+      // Store booking data before redirecting
+      try {
+        localStorage.setItem('bookingData', JSON.stringify(successData));
+        console.log('Booking successful, stored data:', successData);
+      } catch (storageError) {
+        console.error('Error storing booking data:', storageError);
+        // Continue with redirect even if storage fails
+      }
+      
+      // Reset submitting state
+      setIsSubmitting(false);
+      
+      // Show success message and redirect
+      const successUrl = `/search/${params?.id}/book/success`;
+      
+      // Show success message first
+      Swal.fire({
+        icon: 'success',
+        title: 'Booking Submitted!',
+        text: 'Your appointment request has been sent. Redirecting...',
+        confirmButtonColor: '#8B7355',
+        timer: 2000,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      }).then(() => {
+        // Navigate using Next.js router
+        router.push(successUrl);
+      }).catch(() => {
+        // Fallback: use window.location if router fails
+        window.location.href = successUrl;
+      });
+      
+      // Additional fallback: ensure redirect happens even if Swal fails
+      setTimeout(() => {
+        if (window.location.pathname !== successUrl) {
+          router.push(successUrl);
+        }
+      }, 2500);
     } catch (error: any) {
       console.error('Error creating booking:', error);
-      alert(`Error creating booking: ${error.message || 'Please try again'}`);
       setIsSubmitting(false);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Booking Failed',
+        text: error.message || 'Failed to create booking. Please try again.',
+        confirmButtonColor: '#8B7355'
+      });
     }
   };
 
@@ -726,15 +774,6 @@ function BookingConfirmationPageContent() {
         <div className={styles.headerContent}>
           <Link href={`/search/${params?.id}`} className={styles.backButton}>
             ← Back to Provider
-          </Link>
-          <Link href="/" className={styles.logo}>
-            <Image
-              src="/Omvira_logo_long.png"
-              alt="Omvira Wellness"
-              width={600}
-              height={200}
-              className={styles.logoImage}
-            />
           </Link>
         </div>
       </header>

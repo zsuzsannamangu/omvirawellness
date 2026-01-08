@@ -441,8 +441,11 @@ router.post('/:bookingId/reschedule', verifyToken, async (req, res) => {
 
     const oldBooking = bookingResult.rows[0];
 
-    if (oldBooking.status === 'cancelled' || oldBooking.status === 'completed') {
-      return res.status(400).json({ error: `Cannot reschedule a booking with status: ${oldBooking.status}` });
+    // Only allow rescheduling for confirmed bookings
+    if (oldBooking.status !== 'confirmed') {
+      return res.status(400).json({ 
+        error: `Cannot reschedule a booking with status: ${oldBooking.status}. Only confirmed bookings can be rescheduled.` 
+      });
     }
 
     // Calculate new end time
@@ -827,10 +830,12 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
 
     // 2) verify booking belongs to provider and get booking details
     const bookingResult = await pool.query(
-      `SELECT b.*, c.user_id as client_user_id, c.first_name, c.last_name, u.email as client_email
+      `SELECT b.*, c.user_id as client_user_id, c.first_name, c.last_name, u.email as client_email,
+              pp.business_name, pp.contact_name
        FROM client_provider_bookings b
        JOIN client_profiles c ON b.client_id = c.id
        JOIN users u ON c.user_id = u.id
+       JOIN provider_profiles pp ON b.provider_id = pp.id
        WHERE b.id = $1 AND b.provider_id = $2`,
       [bookingId, providerProfileId]
     );
@@ -839,6 +844,7 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
     }
 
     const booking = bookingResult.rows[0];
+    const providerName = booking.contact_name || booking.business_name || 'Provider';
 
     // 3) update status
     const updateFields = status === 'cancelled' 
@@ -850,7 +856,108 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
       [status, bookingId]
     );
 
-    // 4) If cancelling, restore availability and create notification
+    // Helper functions for date/time formatting
+    const formatDate = (dateInput) => {
+      if (!dateInput) return 'Unknown date';
+      try {
+        // Handle different date formats
+        let dateStr;
+        if (dateInput instanceof Date) {
+          dateStr = dateInput.toISOString().slice(0, 10);
+        } else {
+          dateStr = String(dateInput).slice(0, 10);
+        }
+        
+        // Validate date string format (YYYY-MM-DD)
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          console.error('Invalid date format:', dateInput);
+          return 'Unknown date';
+        }
+        
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        
+        // Validate the date is valid
+        if (isNaN(date.getTime())) {
+          console.error('Invalid date:', dateInput);
+          return 'Unknown date';
+        }
+        
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch (error) {
+        console.error('Error formatting date:', error, dateInput);
+        return 'Unknown date';
+      }
+    };
+
+    const formatTime = (timeInput) => {
+      if (!timeInput) return 'Unknown time';
+      try {
+        const timeStr = String(timeInput).slice(0, 5);
+        if (!/^\d{2}:\d{2}$/.test(timeStr)) {
+          console.error('Invalid time format:', timeInput);
+          return 'Unknown time';
+        }
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+      } catch (error) {
+        console.error('Error formatting time:', error, timeInput);
+        return 'Unknown time';
+      }
+    };
+
+    // 4) Send message to client when status is confirmed or cancelled
+    try {
+      let messageSubject, messageBody;
+      
+      if (status === 'confirmed') {
+        messageSubject = 'Appointment Confirmed';
+        const appointmentDate = formatDate(booking.booking_date);
+        const appointmentTime = formatTime(booking.start_time);
+        messageBody = `Your appointment request for ${appointmentDate} at ${appointmentTime} has been confirmed. ${providerName} looks forward to seeing you!`;
+      } else if (status === 'cancelled') {
+        messageSubject = 'Appointment Declined';
+        const appointmentDate = formatDate(booking.booking_date);
+        const appointmentTime = formatTime(booking.start_time);
+        messageBody = `We're sorry, but ${providerName} is unable to accommodate your appointment request for ${appointmentDate} at ${appointmentTime}. Please feel free to request another time that works for you.`;
+      }
+
+      if (messageSubject && messageBody) {
+        // Insert message
+        const messageResult = await pool.query(
+          `INSERT INTO messages (sender_id, recipient_id, subject, body)
+           VALUES ($1, $2, $3, $4)
+           RETURNING *`,
+          [req.userId, booking.client_user_id, messageSubject, messageBody]
+        );
+
+        const messageId = messageResult.rows[0].id;
+
+        // Create metadata records for both sender and recipient
+        // Sender (provider): message is in "sent" folder, read, not starred, not deleted
+        await pool.query(
+          `INSERT INTO message_user_metadata (message_id, user_id, is_read, is_starred, is_deleted)
+           VALUES ($1, $2, true, false, false)
+           ON CONFLICT (message_id, user_id) DO NOTHING`,
+          [messageId, req.userId]
+        );
+
+        // Recipient (client): message is in "inbox", not read, not starred, not deleted
+        await pool.query(
+          `INSERT INTO message_user_metadata (message_id, user_id, is_read, is_starred, is_deleted)
+           VALUES ($1, $2, false, false, false)
+           ON CONFLICT (message_id, user_id) DO NOTHING`,
+          [messageId, booking.client_user_id]
+        );
+      }
+    } catch (messageError) {
+      console.error('Error creating message:', messageError);
+      // Don't fail the status update if message creation fails
+    }
+
+    // 5) If cancelling, restore availability and create notification
     if (status === 'cancelled') {
       // Restore availability
       try {
@@ -892,23 +999,6 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
 
       // Create notification for client
       try {
-        const formatDate = (dateInput) => {
-          if (!dateInput) return 'Unknown date';
-          let dateStr = String(dateInput).slice(0, 10);
-          const [year, month, day] = dateStr.split('-').map(Number);
-          const date = new Date(year, month - 1, day);
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        };
-
-        const formatTime = (timeInput) => {
-          if (!timeInput) return 'Unknown time';
-          const timeStr = String(timeInput).slice(0, 5);
-          const [hours, minutes] = timeStr.split(':').map(Number);
-          const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
-          const ampm = hours >= 12 ? 'PM' : 'AM';
-          return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
-        };
-
         const notificationMessage = `Your appointment scheduled for ${formatDate(booking.booking_date)} at ${formatTime(booking.start_time)} has been cancelled by the provider.`;
 
         await pool.query(
@@ -928,6 +1018,29 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
       } catch (notificationError) {
         console.error('Error creating notification:', notificationError);
         // Don't fail the cancellation if notification fails
+      }
+    } else if (status === 'confirmed') {
+      // Create notification for client when booking is confirmed
+      try {
+        const notificationMessage = `Your appointment request for ${formatDate(booking.booking_date)} at ${formatTime(booking.start_time)} has been confirmed!`;
+
+        await pool.query(
+          `INSERT INTO notifications (user_id, notification_type, title, message, booking_id, is_read, created_at)
+           VALUES ($1, $2, $3, $4, $5, false, CURRENT_TIMESTAMP)`,
+          [
+            booking.client_user_id,
+            'booking_confirmed',
+            'Appointment Confirmed',
+            notificationMessage,
+            bookingId
+          ]
+        );
+
+        // TODO: Send email to client when email service is implemented
+        console.log(`Email notification should be sent to: ${booking.client_email}`);
+      } catch (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        // Don't fail the confirmation if notification fails
       }
     }
 

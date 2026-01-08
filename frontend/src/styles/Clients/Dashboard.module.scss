@@ -995,8 +995,8 @@
   }
 
   .confirmed {
-    background: $section-bg-2;
-    color: $subtext-color;
+    background: rgba($success-color, 0.1);
+    color: $success-color;
   }
 
   .cancelled {
@@ -1104,8 +1104,8 @@
 }
 
 .confirmed {
-  background: $section-bg-2;
-  color: $subtext-color;
+  background: rgba($success-color, 0.1);
+  color: $success-color;
 }
 
 .cancelled {

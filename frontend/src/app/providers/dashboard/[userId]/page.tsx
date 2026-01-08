@@ -530,6 +530,13 @@ function ProvidersDashboardContent() {
 
     loadPending();
 
+    // Poll for pending requests every 10 seconds (similar to messages)
+    const pollInterval = setInterval(() => {
+      if (isMounted) {
+        loadPending();
+      }
+    }, 10000); // Check every 10 seconds
+
     const refresh = () => {
       if (isMounted) {
         loadPending();
@@ -538,6 +545,7 @@ function ProvidersDashboardContent() {
     window.addEventListener('refreshBookings', refresh);
     return () => {
       isMounted = false;
+      clearInterval(pollInterval);
       window.removeEventListener('refreshBookings', refresh);
     };
   }, [userId]);
@@ -1423,6 +1431,9 @@ function ProvidersDashboardContent() {
                     <span className={styles.sidebarLabel}>{item.label}</span>
                     {item.id === 'messages' && (unreadNotifications + unreadMessages) > 0 && (
                       <span className={styles.badge}>{unreadNotifications + unreadMessages}</span>
+                    )}
+                    {item.id === 'bookings' && pendingRequests > 0 && (
+                      <span className={styles.badge}>{pendingRequests}</span>
                     )}
                   </>
                 )}

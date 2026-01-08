@@ -134,6 +134,7 @@ router.get('/', verifyToken, async (req, res) => {
       query = `
         SELECT 
           m.*,
+          m.created_at,
           COALESCE(mum.is_read, false) as is_read,
           COALESCE(mum.is_starred, false) as is_starred,
           COALESCE(mum.is_deleted, false) as is_deleted,
@@ -156,6 +157,7 @@ router.get('/', verifyToken, async (req, res) => {
       query = `
         SELECT 
           m.*,
+          m.created_at,
           COALESCE(mum.is_read, false) as is_read,
           COALESCE(mum.is_starred, false) as is_starred,
           COALESCE(mum.is_deleted, false) as is_deleted,
@@ -178,6 +180,7 @@ router.get('/', verifyToken, async (req, res) => {
       query = `
         SELECT 
           m.*,
+          m.created_at,
           COALESCE(mum.is_read, false) as is_read,
           COALESCE(mum.is_starred, false) as is_starred,
           COALESCE(mum.is_deleted, false) as is_deleted,
@@ -209,6 +212,7 @@ router.get('/', verifyToken, async (req, res) => {
       query = `
         SELECT 
           m.*,
+          m.created_at,
           COALESCE(mum.is_read, false) as is_read,
           COALESCE(mum.is_starred, false) as is_starred,
           COALESCE(mum.is_deleted, false) as is_deleted,
@@ -269,6 +273,42 @@ router.get('/', verifyToken, async (req, res) => {
           }
         }
 
+        // Format timestamp to ISO string to ensure proper timezone handling
+        // Supabase stores TIMESTAMP in UTC, but pg library might interpret it in local timezone
+        // Solution: Get the Date object and use its UTC components to create a proper UTC timestamp
+        let timestamp;
+        
+        if (row.created_at) {
+          if (row.created_at instanceof Date) {
+            // The Date object from pg - get UTC components to ensure correct conversion
+            // Even if pg interpreted it wrong, getUTC* methods give us the correct UTC time
+            const year = row.created_at.getUTCFullYear();
+            const month = row.created_at.getUTCMonth();
+            const day = row.created_at.getUTCDate();
+            const hours = row.created_at.getUTCHours();
+            const minutes = row.created_at.getUTCMinutes();
+            const seconds = row.created_at.getUTCSeconds();
+            const ms = row.created_at.getUTCMilliseconds();
+            
+            // Create a new Date explicitly in UTC using UTC components
+            const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds, ms));
+            timestamp = utcDate.toISOString();
+          } else {
+            // It's a string - parse and ensure UTC
+            const timestampStr = String(row.created_at).trim();
+            if (timestampStr.includes('T')) {
+              timestamp = timestampStr.endsWith('Z') || timestampStr.match(/[+-]\d{2}:\d{2}$/) 
+                ? timestampStr 
+                : timestampStr + 'Z';
+            } else {
+              // Format: 'YYYY-MM-DD HH:MM:SS' - treat as UTC
+              timestamp = timestampStr.replace(' ', 'T') + 'Z';
+            }
+          }
+        } else {
+          timestamp = new Date().toISOString();
+        }
+
         const message = {
           id: row.id,
           subject: row.subject || '',
@@ -277,7 +317,7 @@ router.get('/', verifyToken, async (req, res) => {
           recipientId: row.recipient_id ? String(row.recipient_id) : null,
           senderName: isSent ? 'You' : otherUserName,
           recipientName: isSent ? otherUserName : 'You',
-          timestamp: row.created_at,
+          timestamp: timestamp,
           isRead: row.is_read !== undefined ? row.is_read : false,
           isStarred: row.is_starred !== undefined ? row.is_starred : false,
           isDeleted: row.is_deleted !== undefined ? row.is_deleted : false,
