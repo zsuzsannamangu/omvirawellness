@@ -540,25 +540,29 @@
 }
 
 .backButton {
-  padding: $spacing-md $spacing-lg;
-  background: $bg-white;
-  color: $subtext-color;
-  border: 2px solid $section-bg-3;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: $section-bg-5; // Grey background
+  color: $dark-text;
+  border: none;
   border-radius: 8px;
   font-family: $font-main;
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  flex: 1;
-  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  height: 48px;
   
   &:hover {
-    border-color: $client-colors-1;
-    color: $client-colors-1;
+    background: darken($section-bg-5, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($dark-text, 0.2);
   }
 }
 

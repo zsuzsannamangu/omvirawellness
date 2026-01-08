@@ -8,9 +8,10 @@ interface LocationStepProps {
   onBack: () => void;
   initialData: any;
   isSubmitting?: boolean;
+  error?: string;
 }
 
-export default function LocationStep({ onSubmit, onBack, initialData, isSubmitting }: LocationStepProps) {
+export default function LocationStep({ onSubmit, onBack, initialData, isSubmitting, error }: LocationStepProps) {
   const [location, setLocation] = useState(initialData.location || {
     address: '',
     city: '',
@@ -144,7 +145,7 @@ export default function LocationStep({ onSubmit, onBack, initialData, isSubmitti
         
         <div className={styles.buttonContainer}>
           <button type="button" onClick={onBack} className={styles.backButton}>
-            Back
+            BACK
           </button>
           <button 
             type="submit" 
@@ -154,6 +155,12 @@ export default function LocationStep({ onSubmit, onBack, initialData, isSubmitti
             {isSubmitting ? 'Creating Account...' : 'Complete Setup'}
           </button>
         </div>
+
+        {error && (
+          <div className={styles.errorMessage} style={{ marginTop: '1rem' }}>
+            {error}
+          </div>
+        )}
       </form>
     </div>
   );

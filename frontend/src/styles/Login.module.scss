@@ -213,6 +213,11 @@
 }
 
 // Error and Success Messages
+.errorContainer {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
 .errorMessage {
   background: rgba(#dc2626, 0.1);
   color: #dc2626;
@@ -220,8 +225,11 @@
   border-radius: 8px;
   font-family: $font-main;
   font-size: 0.875rem;
-  margin-bottom: 1rem;
+  margin: 0;
   border: 1px solid rgba(#dc2626, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.5;
 }
 
 .successMessage {

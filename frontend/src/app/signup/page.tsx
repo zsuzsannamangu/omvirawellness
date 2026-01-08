@@ -169,7 +169,7 @@ function SignupPageContent() {
       case 5:
         return <ServicePreferencesStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 6:
-        return <LocationStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} isSubmitting={isSubmitting} />;
+        return <LocationStep onSubmit={handleSubmit} onBack={handleBack} initialData={formData} isSubmitting={isSubmitting} error={error} />;
       default:
         return <EmailStep onNext={handleNext} initialData={formData} />;
     }
@@ -200,12 +200,6 @@ function SignupPageContent() {
             Step {currentStep} of {totalSteps}
           </span>
         </div>
-
-        {error && (
-          <div className={styles.errorMessage}>
-            {error}
-          </div>
-        )}
 
         {oauthError && (
           <div className={styles.errorMessage}>

@@ -176,13 +176,13 @@ export default function LoginPage() {
             <h1 className={styles.title}>Welcome back</h1>
             
             {/* Live region for error announcements */}
-            <div role="alert" aria-live="assertive" aria-atomic="true">
-              {error && (
+            {error && (
+              <div role="alert" aria-live="assertive" aria-atomic="true" className={styles.errorContainer}>
                 <div className={styles.errorMessage}>
                   {error}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           
           <form id="login-form" onSubmit={handleLoginSubmit} className={styles.loginForm} data-1p-ignore="true" data-lpignore="true" data-form-type="other" autoComplete="off" aria-label="Login form">
             <div className={styles.inputGroup}>
