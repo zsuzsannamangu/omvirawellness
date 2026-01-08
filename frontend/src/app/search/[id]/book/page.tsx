@@ -218,7 +218,8 @@ function BookingConfirmationPageContent() {
   useEffect(() => {
     const apiKey = getGoogleMapsApiKey();
     if (!apiKey) {
-      // No API key configured - autocomplete won't work
+      // No API key configured - autocomplete won't work, but manual input will still work
+      console.warn('Google Maps API key not configured. Address autocomplete is disabled. Users can still manually enter addresses.');
       return;
     }
 
@@ -244,8 +245,12 @@ function BookingConfirmationPageContent() {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
-    script.onerror = () => {
-      console.error('Failed to load Google Maps Places API');
+    script.onerror = (error) => {
+      console.error('Failed to load Google Maps Places API. Address autocomplete will not be available. Error:', error);
+      // Don't show alert to user - manual input still works
+    };
+    script.onload = () => {
+      console.log('Google Maps Places API loaded successfully');
     };
     document.head.appendChild(script);
 
@@ -907,12 +912,17 @@ function BookingConfirmationPageContent() {
                             id="address"
                             value={userAddress}
                             onChange={handleAddressChange}
-                            placeholder="Start typing your address..."
+                            placeholder={getGoogleMapsApiKey() ? "Start typing your address..." : "Enter your street address"}
                             className={`${styles.addressInput} ${errors.address ? styles.error : ''}`}
                             autoComplete="off"
                             data-1p-ignore
                             style={{ width: '100%' }}
                           />
+                          {!getGoogleMapsApiKey() && (
+                            <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '4px' }}>
+                              Please enter your full address manually
+                            </p>
+                          )}
                           {/* City, State, ZIP on second line */}
                           <div className={styles.addressInputGroup} style={{ display: 'flex', gap: '12px' }}>
                             <input

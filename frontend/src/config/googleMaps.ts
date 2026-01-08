@@ -2,6 +2,8 @@
 // For frontend use, you need a separate API key restricted to:
 // - Places API (for autocomplete)
 // - Your domain (HTTP referrer restrictions)
+//
+// Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in Vercel environment variables
 
 export const getGoogleMapsApiKey = (): string | null => {
   // Check for frontend-specific Google Maps API key
@@ -10,8 +12,12 @@ export const getGoogleMapsApiKey = (): string | null => {
     return process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   }
   
-  // Fallback: try to get from backend (not recommended for production)
-  // The backend key should NOT be exposed to frontend for security
+  // No API key configured - autocomplete will be disabled
+  // Users can still manually enter addresses
+  if (typeof window !== 'undefined') {
+    console.warn('Google Maps API key not configured. Address autocomplete will be disabled. Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in Vercel environment variables.');
+  }
+  
   return null;
 };
 
