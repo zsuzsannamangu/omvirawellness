@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/Search.module.scss';
 import FavoriteAuthModal from '@/components/FavoriteAuthModal';
-import SkipLink from '@/components/Accessibility/SkipLink';
 import { isClientAuthenticated, getClientId, getFavoriteStatus, addFavorite, removeFavorite } from '@/services/favorites';
 
 // Helper function to find next available date from availability slots
@@ -846,7 +845,6 @@ export default function SearchPage() {
 
   return (
     <>
-      <SkipLink href="#search-results">Skip to search results</SkipLink>
       <div className={styles.searchPage}>
         {/* Header */}
         <header className={styles.header}>

@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import SkipLink from '@/components/Accessibility/SkipLink';
 
 // Refactored homepage sections
 import Hero from '@/components/Home/Hero';
@@ -17,7 +16,6 @@ import ServiceCategories from '@/components/Home/ServiceCategories';
 const Home: React.FC = () => {
   return (
     <>
-      <SkipLink href="#main-content">Skip to main content</SkipLink>
       <Navbar />
       <main id="main-content" role="main">
         <Hero />

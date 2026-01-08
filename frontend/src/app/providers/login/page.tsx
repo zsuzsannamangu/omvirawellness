@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { login } from '@/services/auth';
 import TwoFactorVerifyModal from '@/components/Providers/Login/TwoFactorVerifyModal';
 import { API_BASE_URL } from '@/config/api';
-import SkipLink from '@/components/Accessibility/SkipLink';
 import styles from '@/styles/Providers/ProviderLogin.module.scss';
 
 export default function ProviderLoginPage() {
@@ -215,7 +214,6 @@ export default function ProviderLoginPage() {
 
   return (
     <>
-      <SkipLink href="#provider-login-form">Skip to login form</SkipLink>
       <div className={styles.container}>
         {/* Top Bar */}
         <header className={styles.topBar}>
