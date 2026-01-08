@@ -68,7 +68,7 @@ export default function UpdateEmailModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch(`${API_URL}/auth/update-email', {
+      const response = await fetch(`${API_URL}/auth/update-email`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

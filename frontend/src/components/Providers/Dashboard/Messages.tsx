@@ -126,10 +126,10 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
       }
 
       const [notificationsRes, countRes] = await Promise.all([
-        fetch(`${API_URL}/notifications', {
+        fetch(`${API_URL}/notifications`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch(`${API_URL}/notifications/unread-count', {
+        fetch(`${API_URL}/notifications/unread-count`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);
@@ -182,7 +182,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch(`${API_URL}/notifications/read-all', {
+      const response = await fetch(`${API_URL}/notifications/read-all`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -220,7 +220,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch(`${API_URL}/notifications/bulk-delete', {
+      const response = await fetch(`${API_URL}/notifications/bulk-delete`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -695,7 +695,7 @@ export default function Messages({ activeSubmenu, userId }: MessagesProps) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/messages', {
+      const response = await fetch(`${API_URL}/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

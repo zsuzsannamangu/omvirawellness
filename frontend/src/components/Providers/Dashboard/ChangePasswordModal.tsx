@@ -90,7 +90,7 @@ export default function ChangePasswordModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch(`${API_URL}/auth/change-password', {
+      const response = await fetch(`${API_URL}/auth/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

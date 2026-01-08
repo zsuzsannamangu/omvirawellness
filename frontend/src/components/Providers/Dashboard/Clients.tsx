@@ -415,7 +415,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
       console.log('Creating booking with data:', bookingData);
 
       // Create booking
-      const response = await fetch(`${API_URL}/bookings', {
+      const response = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

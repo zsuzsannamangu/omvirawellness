@@ -6,14 +6,16 @@ A wellness booking platform connecting clients with wellness providers.
 
 | Area         | Tool / Tech                          |
 |--------------|--------------------------------------|
-| Frontend     | Next.js, TailwindCSS                 |
+| Frontend     | Next.js 15, React 19, TypeScript, SCSS, TailwindCSS |
 | Backend      | Node.js + Express                    |
-| Database     | PostgreSQL via Supabase              |
-| Authentication| NextAuth.js                          |
-| File Storage | Cloudinary                           |
-| Calendar UI  | FullCalendar.js                      |
-| Payments     | Stripe                               |
+| Database     | PostgreSQL (Render)                 |
+| Authentication| JWT (jsonwebtoken), bcrypt          |
+| OAuth        | Google OAuth, Facebook OAuth (optional) |
+| File Storage | Cloudinary (optional)              |
+| Calendar UI  | Custom calendar components           |
+| Payments     | Stripe (optional)                   |
 | Hosting      | Vercel (frontend) + Render (backend) |
+| Email        | SendGrid (optional)                 |
 
 ## Project Setup
 
@@ -142,33 +144,44 @@ mkdir frontend backend
 
 ### Step 6: Set Up PostgreSQL
 
-#### Option 1: Supabase (Recommended for MVP)
-
-1. Create a Supabase project
-2. Create tables: `users`, `providers`, `bookings`, `reviews`
-3. Get your connection string from the dashboard
-
-#### Option 2: Render PostgreSQL
+**Production: Render PostgreSQL (Recommended)**
 
 1. Create a PostgreSQL instance on Render
-2. Get the connection string
+2. Get the **Internal Database URL** from the Render dashboard
 3. Save to `.env` in backend:
    ```
    DATABASE_URL=postgres://user:password@host:port/dbname
    ```
+4. Run migrations:
+   ```bash
+   cd backend
+   node migrations/run-migration.js
+   ```
+
+**Local Development:**
+- Use a local PostgreSQL instance or Supabase for development
+- Update `DATABASE_URL` in backend `.env` file
 
 ### Step 7: Set Up Authentication
 
-Use NextAuth.js (works great with Next.js + PostgreSQL):
+The app uses JWT-based authentication:
 
-1. Install NextAuth:
-   ```bash
-   npm install next-auth
+1. **Backend Authentication**:
+   - JWT tokens for session management
+   - Password hashing with bcrypt
+   - Token expiration: 7 days (configurable)
+   - OAuth support for Google and Facebook
+
+2. **Frontend Authentication**:
+   - Tokens stored in localStorage
+   - Automatic token validation
+   - Protected routes based on user type
+
+3. **Environment Variables** (Backend):
    ```
-
-2. Setup `/pages/api/auth/[...nextauth].ts`
-3. Use email/password or OAuth (start simple with email)
-4. Configure database to store sessions
+   JWT_SECRET=your-secret-key-here
+   JWT_EXPIRES_IN=7d
+   ```
 
 ### Step 8: Setup Cloudinary (for profile photos)
 
@@ -213,14 +226,44 @@ You'll add routes to handle:
 1. Go to [Vercel](https://vercel.com)
 2. Connect GitHub repository
 3. Set root to `frontend/`
-4. Set environment variables (NEXTAUTH, Cloudinary, etc.)
+4. Set environment variables:
+   ```
+   NEXT_PUBLIC_API_URL=https://your-backend.onrender.com/api
+   ```
+   **Important**: If `NEXT_PUBLIC_API_URL` is not set, the app will automatically use `https://omvirawellness-backend.onrender.com/api` as fallback.
 
 #### Backend (Render)
 
+See detailed deployment guide: [RENDER_BACKEND_DEPLOY.md](./RENDER_BACKEND_DEPLOY.md)
+
+**Quick Setup:**
 1. Go to [Render](https://render.com)
-2. Create Web Service
-3. Set root to `backend/`
-4. Add environment variables (DB, Stripe, etc.)
+2. Create PostgreSQL database
+3. Create Web Service
+4. Connect GitHub repository
+5. Set root to `backend/`
+6. Build command: `npm install`
+7. Start command: `npm start`
+8. Add environment variables (see below)
+
+**Required Environment Variables:**
+```
+DATABASE_URL=postgres://... (from Render PostgreSQL)
+JWT_SECRET=your-secret-key
+PORT=4000
+NODE_ENV=production
+FRONTEND_URL=https://your-frontend.vercel.app
+```
+
+**Optional Environment Variables:**
+```
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+FACEBOOK_APP_ID=...
+FACEBOOK_APP_SECRET=...
+SENDGRID_API_KEY=...
+STRIPE_SECRET_KEY=...
+```
 
 ## Development
 
@@ -238,7 +281,74 @@ You'll add routes to handle:
 
 ### Environment Variables
 
-Create `.env` files in both frontend and backend directories with the necessary environment variables.
+#### Frontend (`.env.local` in `frontend/` directory)
+
+**Required:**
+```
+NEXT_PUBLIC_API_URL=https://omvirawellness-backend.onrender.com/api
+```
+
+**Note**: If not set, the app will automatically use the Render backend URL as fallback. For local development, the app will use `http://localhost:4000` automatically.
+
+#### Backend (`.env` in `backend/` directory)
+
+**Required:**
+```
+DATABASE_URL=postgres://user:password@host:port/database
+JWT_SECRET=your-secret-key-here
+PORT=4000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+```
+
+**Optional (for full features):**
+```
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+FACEBOOK_APP_ID=...
+FACEBOOK_APP_SECRET=...
+SENDGRID_API_KEY=...
+SENDGRID_FROM_EMAIL=...
+STRIPE_SECRET_KEY=...
+STRIPE_WEBHOOK_SECRET=...
+```
+
+**Generate JWT_SECRET:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+## API Configuration
+
+The frontend uses a centralized API configuration system located at `frontend/src/config/api.ts`:
+
+- **Local Development**: Automatically uses `http://localhost:4000` when running on localhost
+- **Production**: Uses `NEXT_PUBLIC_API_URL` environment variable if set
+- **Fallback**: If `NEXT_PUBLIC_API_URL` is not set, uses `https://omvirawellness-backend.onrender.com/api`
+
+This ensures the app works correctly in both development and production without hardcoded URLs.
+
+## Recent Updates & Fixes
+
+### Authentication & Security
+- ✅ Fixed missing `two_factor_enabled` column handling (graceful fallback)
+- ✅ Fixed Facebook OAuth configuration checks
+- ✅ Improved error handling for missing database columns
+
+### UI/UX Improvements
+- ✅ Created missing pages: `/forgot-password`, `/terms`, `/privacy`
+- ✅ Fixed error message spacing and alignment in login form
+- ✅ Updated button styling for consistency (Back button matches Complete Setup button)
+- ✅ Reduced font weights and improved text contrast in provider signup forms
+- ✅ Condensed subscription/plans modal for better UX
+- ✅ Removed trial period references (free plan available instead)
+
+### API & Deployment
+- ✅ Replaced all hardcoded `localhost:4000` URLs with centralized API configuration
+- ✅ Added automatic fallback to Render backend URL
+- ✅ Fixed local network permission prompts in production
+- ✅ Backend deployed to Render with health check endpoint
+- ✅ Database migrations documented and tested
 
 ## Key Features
 
@@ -269,9 +379,12 @@ Create `.env` files in both frontend and backend directories with the necessary 
 
 ### Technical Features
 - **Dynamic User Routes**: User-specific dashboards (`/dashboard/[userId]`, `/providers/dashboard/[userId]`)
-- **Real-time Updates**: Bookings and availability update automatically
+- **Real-time Updates**: Bookings and availability update automatically via polling (10-second intervals)
 - **Smart Filtering**: Past bookings automatically move based on date/time, not just status
 - **Blocked Slot Management**: Booked time slots are automatically excluded from availability
+- **Notification Badges**: Real-time badge counts for new booking requests and unread messages
+- **Responsive Design**: Mobile-friendly interface with optimized layouts
+- **Error Handling**: User-friendly error messages with proper spacing and alignment
 
 ## Authentication & Account System
 
@@ -390,6 +503,42 @@ providers (
 - **Distinct UI/UX**: Provider and client experiences have different visual designs
 - **Shared Authentication**: Same login credentials work for both experiences
 - **Role Switching**: Users can switch between client and provider modes seamlessly
+
+## Project Structure
+
+```
+omvirawellness/
+├── frontend/
+│   ├── src/
+│   │   ├── app/              # Next.js app router pages
+│   │   ├── components/       # React components
+│   │   ├── config/           # Configuration files (API, categories)
+│   │   ├── services/         # API service functions
+│   │   └── styles/           # SCSS modules
+│   └── package.json
+├── backend/
+│   ├── src/
+│   │   ├── controllers/     # Route controllers
+│   │   ├── routes/          # Express routes
+│   │   ├── middleware/      # Auth middleware
+│   │   ├── utils/           # Utility functions
+│   │   └── index.js         # Server entry point
+│   ├── migrations/          # Database migrations
+│   └── package.json
+└── README.md
+```
+
+## Deployment Status
+
+- ✅ **Frontend**: Deployed on Vercel at `https://omvirawellness.vercel.app`
+- ✅ **Backend**: Deployed on Render at `https://omvirawellness-backend.onrender.com`
+- ✅ **Database**: PostgreSQL on Render
+- ✅ **Health Check**: Available at `/health` endpoint
+
+## Additional Documentation
+
+- **Backend Deployment**: See [RENDER_BACKEND_DEPLOY.md](./RENDER_BACKEND_DEPLOY.md) for detailed Render deployment instructions
+- **Deployment Checklist**: See [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md) for a quick deployment reference
 
 ## Contributing
 

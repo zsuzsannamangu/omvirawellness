@@ -392,7 +392,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/messages', {
+      const response = await fetch(`${API_URL}/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
