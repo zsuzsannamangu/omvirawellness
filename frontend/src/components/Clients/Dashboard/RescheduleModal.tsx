@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Clients/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface RescheduleModalProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ export default function RescheduleModal({
   const loadAvailability = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:4000/api/providers/${providerId}/availability`);
+      const response = await fetch(`${API_URL}/providers/${providerId}/availability`);
       if (response.ok) {
         const data = await response.json();
         const availData = data.availability || [];

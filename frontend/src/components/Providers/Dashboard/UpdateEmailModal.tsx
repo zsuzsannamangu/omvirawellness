@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface UpdateEmailModalProps {
   isOpen: boolean;
@@ -67,7 +68,7 @@ export default function UpdateEmailModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:4000/api/auth/update-email', {
+      const response = await fetch(`${API_URL}/auth/update-email', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -7,6 +7,7 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import styles from '@/styles/Search.module.scss';
 import FavoriteAuthModal from '@/components/FavoriteAuthModal';
 import { isClientAuthenticated, getClientId, getFavoriteStatus, addFavorite, removeFavorite } from '@/services/favorites';
+import { API_URL } from '@/config/api';
 
 // Helper function to find next available date from availability slots
 const getNextAvailableDate = (availability: any): string | null => {
@@ -227,7 +228,7 @@ export default function SearchPage() {
     const fetchProviders = async () => {
       try {
         console.log('Fetching providers from API...');
-        const response = await fetch('http://localhost:4000/api/providers');
+        const response = await fetch(`${API_URL}/providers`);
         console.log('Response status:', response.status);
         
         if (response.ok) {

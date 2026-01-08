@@ -10,6 +10,7 @@ import {
   useElements
 } from '@stripe/react-stripe-js';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -320,7 +321,7 @@ export default function UpdatePaymentMethodModalStripe({
           if (!token) return;
 
           // First ensure customer exists
-          const customerResponse = await fetch(`http://localhost:4000/api/stripe/customer`, {
+          const customerResponse = await fetch(`${API_URL}/stripe/customer`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -338,7 +339,7 @@ export default function UpdatePaymentMethodModalStripe({
           }
 
           // Then create setup intent
-          const response = await fetch(`http://localhost:4000/api/stripe/setup-intent`, {
+          const response = await fetch(`${API_URL}/stripe/setup-intent`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

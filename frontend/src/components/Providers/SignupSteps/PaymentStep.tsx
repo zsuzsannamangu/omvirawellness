@@ -68,7 +68,6 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
       payment: { 
         selectedPlan, 
         billingCycle,
-        trialPeriod: '14 days',
         finalPrice: selectedPlan === 'essential' ? 'Free' : selectedPlan === 'professional' ? '$49' : '$99'
       } 
     });
@@ -79,20 +78,9 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
   return (
     <div className={styles.stepContainer}>
       <h1 className={styles.title}>Choose your plan</h1>
-      <p className={styles.subtitle}>Start with a free 2-week trial, then continue with the plan that works best for your practice.</p>
+      <p className={styles.subtitle}>Select the plan that works best for your practice.</p>
       
       <form onSubmit={handleSubmit} className={styles.form}>
-        {/* Trial Banner */}
-        <div className={styles.trialBanner}>
-          <div className={styles.trialIcon}>🎉</div>
-          <div className={styles.trialContent}>
-            <h3 className={styles.trialTitle}>14-Day Free Trial</h3>
-            <p className={styles.trialDescription}>
-              No credit card required. Cancel anytime.
-            </p>
-          </div>
-        </div>
-
         {/* Billing Toggle */}
         <div className={styles.billingToggle}>
           <button
@@ -178,12 +166,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
             <span className={styles.summaryValue}>{billingCycle === 'yearly' ? 'Yearly' : 'Monthly'}</span>
           </div>
           <div className={styles.summaryRow}>
-            <span className={styles.summaryLabel}>Trial Period:</span>
-            <span className={styles.summaryValue}>14 days free</span>
-          </div>
-          <div className={styles.summaryDivider}></div>
-          <div className={styles.summaryRow}>
-            <span className={styles.summaryLabel}>After trial:</span>
+            <span className={styles.summaryLabel}>Price:</span>
             <span className={styles.summaryValue}>
               {billingCycle === 'yearly' 
                 ? (selectedPlan === 'essential' ? 'Free' : selectedPlan === 'professional' ? '$47/year' : '$79/year')
@@ -204,7 +187,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
             <a href="/privacy" className={styles.termsLink} target="_blank" rel="noopener noreferrer">
               Privacy Policy
             </a>
-            . Your trial starts immediately and you can cancel anytime.
+            . You can cancel anytime.
           </p>
         </div>
         

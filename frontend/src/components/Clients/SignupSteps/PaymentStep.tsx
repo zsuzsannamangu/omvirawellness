@@ -13,7 +13,6 @@ export default function PaymentStep({ onNext, onBack, initialData }: PaymentStep
   const [payment, setPayment] = useState(initialData.payment || {
     selectedPlan: 'free',
     billingCycle: 'monthly',
-    trialPeriod: '14 days',
     finalPrice: 'Free'
   });
 

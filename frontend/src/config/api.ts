@@ -14,9 +14,14 @@ function getApiBaseUrl(): string {
     return 'http://localhost:4000';
   }
   
-  // For production without backend (portfolio mode)
-  // Return empty string - API calls will fail gracefully
-  return '';
+  // For production: Use Render backend URL as fallback
+  // This prevents the browser from asking for local network permission
+  if (typeof window !== 'undefined') {
+    return 'https://omvirawellness-backend.onrender.com';
+  }
+  
+  // Server-side fallback
+  return 'https://omvirawellness-backend.onrender.com';
 }
 
 export const API_BASE_URL = getApiBaseUrl();

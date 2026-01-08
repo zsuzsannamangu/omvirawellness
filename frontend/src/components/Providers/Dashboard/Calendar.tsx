@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface CalendarProps {
   activeSubmenu: string;
@@ -41,7 +42,7 @@ export default function Calendar({ activeSubmenu }: CalendarProps) {
         const token = localStorage.getItem('token');
         if (!token || !userId) return;
 
-        const response = await fetch(`http://localhost:4000/api/bookings/provider/${userId}`, {
+        const response = await fetch(`${API_URL}/bookings/provider/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

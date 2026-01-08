@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { FaStar, FaEye, FaCalendarAlt, FaDollarSign, FaChartLine, FaUsers, FaArrowUp, FaArrowDown, FaChevronDown, FaCheckCircle, FaClock, FaTimesCircle, FaReply } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface StatsProps {
   activeSubmenu: string;
@@ -131,7 +132,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
         return;
       }
 
-      const response = await fetch(`http://localhost:4000/api/reviews/provider/${userId}`, {
+      const response = await fetch(`${API_URL}/reviews/provider/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -162,7 +163,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch(`http://localhost:4000/api/bookings/provider/${userId}`, {
+      const response = await fetch(`${API_URL}/bookings/provider/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -185,7 +186,7 @@ export default function Stats({ activeSubmenu }: StatsProps) {
       // Fetch real traffic data for all periods
       const periods: TrafficPeriod[] = ['today', 'yesterday', 'last_7_days', 'last_30_days', 'this_month', 'last_month', 'this_year', 'last_year'];
       const trafficPromises = periods.map(period =>
-        fetch(`http://localhost:4000/api/providers/${userId}/visits/stats?period=${period}&timezone=${encodeURIComponent(userTimezone)}`)
+        fetch(`${API_URL}/providers/${userId}/visits/stats?period=${period}&timezone=${encodeURIComponent(userTimezone)}`)
           .then(res => res.json())
           .then(data => ({ 
             period, 

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { FaPlus, FaEdit, FaTrash, FaClock, FaCalendarAlt, FaRedo, FaTimes } from 'react-icons/fa';
 import styles from '@/styles/Providers/AvailabilityManager.module.scss';
+import { API_URL } from '@/config/api';
 
 interface AvailabilitySlot {
   id: string;
@@ -51,7 +52,7 @@ export default function AvailabilityManager() {
         const token = localStorage.getItem('token');
         if (!token || !userId) return;
 
-        const response = await fetch(`http://localhost:4000/api/providers/${userId}/availability`, {
+        const response = await fetch(`${API_URL}/providers/${userId}/availability`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -93,7 +94,7 @@ export default function AvailabilityManager() {
 
       setSaving(true);
 
-      const response = await fetch(`http://localhost:4000/api/providers/${userId}/availability`, {
+      const response = await fetch(`${API_URL}/providers/${userId}/availability`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

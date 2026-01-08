@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { FaDollarSign, FaDownload, FaCalendarAlt, FaCreditCard, FaChartLine, FaFileAlt, FaClock, FaCheckCircle, FaTimesCircle, FaChevronDown, FaExchangeAlt, FaImage } from 'react-icons/fa';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface PaymentsProps {
   activeSubmenu: string;
@@ -72,7 +73,7 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
           return;
         }
 
-        const response = await fetch(`http://localhost:4000/api/bookings/provider/${userId}`, {
+        const response = await fetch(`${API_URL}/bookings/provider/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

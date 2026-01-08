@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { FaCheckCircle, FaTimesCircle, FaStar, FaUser, FaCalendarAlt, FaClock, FaEnvelope, FaPhone } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface BookingsProps {
   activeSubmenu: string;
@@ -93,10 +94,10 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         if (activeSubmenu === 'past') {
           // Fetch both completed and confirmed bookings
           const [completedRes, confirmedRes] = await Promise.all([
-            fetch(`http://localhost:4000/api/bookings/provider/${userId}/completed`, {
+            fetch(`${API_URL}/bookings/provider/${userId}/completed`, {
               headers: { 'Authorization': `Bearer ${token}` }
             }),
-            fetch(`http://localhost:4000/api/bookings/provider/${userId}/confirmed`, {
+            fetch(`${API_URL}/bookings/provider/${userId}/confirmed`, {
               headers: { 'Authorization': `Bearer ${token}` }
             })
           ]);
@@ -111,14 +112,14 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
           });
         } else {
           // For other sections, use the original logic
-          let url = `http://localhost:4000/api/bookings/provider/${userId}`;
+          let url = `${API_URL}/bookings/provider/${userId}`;
           
           if (activeSubmenu === 'requests') {
-            url = `http://localhost:4000/api/bookings/provider/${userId}/pending`;
+            url = `${API_URL}/bookings/provider/${userId}/pending`;
           } else if (activeSubmenu === 'upcoming') {
-            url = `http://localhost:4000/api/bookings/provider/${userId}/confirmed`;
+            url = `${API_URL}/bookings/provider/${userId}/confirmed`;
           } else if (activeSubmenu === 'canceled') {
-            url = `http://localhost:4000/api/bookings/provider/${userId}/cancelled`;
+            url = `${API_URL}/bookings/provider/${userId}/cancelled`;
           }
 
           const response = await fetch(url, {
@@ -285,7 +286,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
       }
 
       const cancelPromises = Array.from(selectedBookings).map(bookingId =>
-        fetch(`http://localhost:4000/api/bookings/${bookingId}/status`, {
+        fetch(`${API_URL}/bookings/${bookingId}/status`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -514,7 +515,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
               try {
                 const token = localStorage.getItem('token');
                 if (!token) return;
-                const resp = await fetch(`http://localhost:4000/api/bookings/${booking.id}/status`, {
+                const resp = await fetch(`${API_URL}/bookings/${booking.id}/status`, {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                   body: JSON.stringify({ status: newStatus })

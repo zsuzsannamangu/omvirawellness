@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -89,7 +90,7 @@ export default function ChangePasswordModal({
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:4000/api/auth/change-password', {
+      const response = await fetch(`${API_URL}/auth/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

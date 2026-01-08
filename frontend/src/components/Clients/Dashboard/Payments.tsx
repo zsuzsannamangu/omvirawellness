@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { FaDownload, FaReceipt } from 'react-icons/fa';
 import styles from '@/styles/Clients/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface PaymentsProps {
   activeSubmenu: string;
@@ -39,7 +40,7 @@ export default function Payments({ activeSubmenu }: PaymentsProps) {
       const userData = JSON.parse(user);
       const clientId = userData.id;
 
-      const response = await fetch(`http://localhost:4000/api/bookings/client/${clientId}`, {
+      const response = await fetch(`${API_URL}/bookings/client/${clientId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

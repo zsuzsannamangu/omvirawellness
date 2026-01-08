@@ -23,7 +23,7 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
 
   const handleSocialSignup = (method: string) => {
     // For OAuth, redirect directly to OAuth endpoint (no email needed)
-    const baseUrl = API_BASE_URL || 'http://localhost:4000';
+    const baseUrl = API_BASE_URL || 'https://omvirawellness-backend.onrender.com';
     
     console.log('handleSocialSignup called with method:', method);
     console.log('baseUrl:', baseUrl);

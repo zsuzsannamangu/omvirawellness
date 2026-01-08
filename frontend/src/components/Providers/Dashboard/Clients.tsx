@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { FaEnvelope, FaCalendarAlt, FaStickyNote, FaTimes, FaSort, FaSortAlphaDown, FaSortAlphaDownAlt } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Providers/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface ClientsProps {
   activeSubmenu: string;
@@ -120,7 +121,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
           return;
         }
 
-        const response = await fetch(`http://localhost:4000/api/providers/${userId}/clients`, {
+        const response = await fetch(`${API_URL}/providers/${userId}/clients`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -142,7 +143,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
         const token = localStorage.getItem('token');
         if (!token || !userId) return;
 
-        const response = await fetch(`http://localhost:4000/api/providers/${userId}/clients/notes`, {
+        const response = await fetch(`${API_URL}/providers/${userId}/clients/notes`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -239,7 +240,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
       }
       
       console.log('Fetching services for provider:', userId);
-      const url = `http://localhost:4000/api/providers/${userId}`;
+      const url = `${API_URL}/providers/${userId}`;
       console.log('Fetch URL:', url);
       
       const response = await fetch(url, {
@@ -298,7 +299,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
         if (needsSave || cleanedServices.length !== allServices.length) {
           console.log('Services were cleaned/fixed. Auto-saving...');
           try {
-            await fetch(`http://localhost:4000/api/providers/${userId}`, {
+            await fetch(`${API_URL}/providers/${userId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -414,7 +415,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
       console.log('Creating booking with data:', bookingData);
 
       // Create booking
-      const response = await fetch('http://localhost:4000/api/bookings', {
+      const response = await fetch(`${API_URL}/bookings', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -491,7 +492,7 @@ export default function Clients({ activeSubmenu }: ClientsProps) {
       if (!token) return;
 
       const response = await fetch(
-        `http://localhost:4000/api/providers/${userId}/clients/${selectedClient.client_profile_id}/notes`,
+        `${API_URL}/providers/${userId}/clients/${selectedClient.client_profile_id}/notes`,
         {
           method: 'POST',
           headers: {

@@ -64,7 +64,6 @@ function ProviderSignupPageContent() {
     payment: {
       selectedPlan: 'professional',
       billingCycle: 'monthly',
-      trialPeriod: '14 days',
       finalPrice: '$59'
     }
   });

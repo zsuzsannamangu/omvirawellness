@@ -64,7 +64,6 @@ function SignupPageContent() {
     payment: {
       selectedPlan: 'free',
       billingCycle: 'monthly',
-      trialPeriod: '14 days',
       finalPrice: 'Free'
     }
   });

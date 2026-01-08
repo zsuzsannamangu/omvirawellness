@@ -10,6 +10,7 @@ import BookingOptions from '@/components/BookingOptions';
 import FavoriteAuthModal from '@/components/FavoriteAuthModal';
 import { isClientAuthenticated, getClientId, getFavoriteStatus, addFavorite, removeFavorite } from '@/services/favorites';
 import { SERVICE_CATEGORIES } from '@/config/categories';
+import { API_URL } from '@/config/api';
 
 // Format business type string: map category IDs to display names
 // Only show categories that are in the unified SERVICE_CATEGORIES list
@@ -204,7 +205,7 @@ export default function ProviderDetailPage() {
     const fetchProvider = async () => {
     if (params?.id) {
         try {
-          const response = await fetch(`http://localhost:4000/api/providers/${params.id}`);
+          const response = await fetch(`${API_URL}/providers/${params.id}`);
           console.log('Fetching provider with ID:', params.id);
           console.log('Response status:', response.status);
           if (response.ok) {
@@ -299,7 +300,7 @@ export default function ProviderDetailPage() {
                     }
                   }
                   
-                  await fetch(`http://localhost:4000/api/providers/${params.id}/visit`, {
+                  await fetch(`${API_URL}/providers/${params.id}/visit`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ visitorId })
@@ -326,7 +327,7 @@ export default function ProviderDetailPage() {
 
             // Fetch reviews separately
             try {
-              const reviewsResponse = await fetch(`http://localhost:4000/api/reviews/provider/${data.id}`);
+              const reviewsResponse = await fetch(`${API_URL}/reviews/provider/${data.id}`);
               if (reviewsResponse.ok) {
                 const reviewsData = await reviewsResponse.json();
                 // Transform reviews to match expected format

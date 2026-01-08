@@ -70,7 +70,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       }
       
       // Fetch fresh data from backend to ensure we have latest
-      const response = await fetch(`http://localhost:4000/api/providers/${parsed.id}`);
+      const response = await fetch(`${API_URL}/providers/${parsed.id}`);
       if (response.ok) {
         const providerData = await response.json();
         
@@ -96,7 +96,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
           if (cleanedServices.length !== rawServices.length || cleanedServices.some((s: any, i: number) => s.id !== rawServices[i]?.id)) {
             console.log('Services cleaned and UUIDs assigned. Auto-saving...');
             try {
-              await fetch(`http://localhost:4000/api/providers/${parsed.id}`, {
+              await fetch(`${API_URL}/providers/${parsed.id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -307,7 +307,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       }
 
       // Send to backend
-      const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+      const response = await fetch(`${API_URL}/auth/profile/provider', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -519,7 +519,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                               services: updatedServices
                             };
 
-                            const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+                            const response = await fetch(`${API_URL}/auth/profile/provider', {
                               method: 'PUT',
                               headers: {
                                 'Content-Type': 'application/json',
@@ -726,7 +726,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             // Update local state
                             setServices(updatedServices);
 
-                            const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+                            const response = await fetch(`${API_URL}/auth/profile/provider', {
                               method: 'PUT',
                               headers: {
                                 'Content-Type': 'application/json',
@@ -867,7 +867,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                                   add_ons: updatedAddOns
                                 };
 
-                                const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+                                const response = await fetch(`${API_URL}/auth/profile/provider', {
                                   method: 'PUT',
                                   headers: {
                                     'Content-Type': 'application/json',
@@ -1032,7 +1032,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                               // Update local state
                               setAddOns(updatedAddOns);
 
-                              const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+                              const response = await fetch(`${API_URL}/auth/profile/provider', {
                                 method: 'PUT',
                                 headers: {
                                   'Content-Type': 'application/json',
@@ -1753,7 +1753,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                                 certifications: updatedCerts
                               };
 
-                              const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+                              const response = await fetch(`${API_URL}/auth/profile/provider', {
                                 method: 'PUT',
                                 headers: {
                                   'Content-Type': 'application/json',
@@ -1937,7 +1937,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                             // Update local state
                             setCertifications(updatedCertifications);
 
-                            const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+                            const response = await fetch(`${API_URL}/auth/profile/provider', {
                               method: 'PUT',
                               headers: {
                                 'Content-Type': 'application/json',

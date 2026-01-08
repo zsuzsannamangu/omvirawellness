@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './client-profile.module.scss';
+import { API_URL } from '@/config/api';
 
 interface ClientPublicProfile {
   firstName: string;
@@ -67,7 +68,7 @@ export default function ClientPublicProfilePage() {
           return;
         }
 
-        const response = await fetch(`http://localhost:4000/api/clients/${clientId}/public`, {
+        const response = await fetch(`${API_URL}/clients/${clientId}/public`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

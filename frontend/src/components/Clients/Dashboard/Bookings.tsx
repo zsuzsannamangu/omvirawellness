@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import styles from '@/styles/Clients/Dashboard.module.scss';
 import ReviewPopup from './ReviewPopup';
 import RescheduleModal from './RescheduleModal';
+import { API_URL } from '@/config/api';
 
 interface BookingsProps {
   activeSubmenu: string;
@@ -45,7 +46,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         const clientId = userData.id;
 
         // Always fetch all, then filter per tab so 'upcoming' can include pending
-        const baseUrl = `http://localhost:4000/api/bookings/client/${clientId}`;
+        const baseUrl = `${API_URL}/bookings/client/${clientId}`;
         const resp = await fetch(baseUrl, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -250,7 +251,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         return;
       }
 
-      const response = await fetch('http://localhost:4000/api/reviews', {
+      const response = await fetch(`${API_URL}/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -335,7 +336,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         return;
       }
 
-      const response = await fetch(`http://localhost:4000/api/bookings/${selectedRescheduleBooking.bookingId}/reschedule`, {
+      const response = await fetch(`${API_URL}/bookings/${selectedRescheduleBooking.bookingId}/reschedule`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -399,7 +400,7 @@ export default function Bookings({ activeSubmenu }: BookingsProps) {
         return;
       }
 
-      const response = await fetch(`http://localhost:4000/api/bookings/${bookingId}/cancel`, {
+      const response = await fetch(`${API_URL}/bookings/${bookingId}/cancel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

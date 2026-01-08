@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import styles from '@/styles/Spaces/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface ProfileProps {
   activeSubmenu: string;
@@ -25,7 +26,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch(`http://localhost:4000/api/space-owners/${userId}`, {
+      const response = await fetch(`${API_URL}/space-owners/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -108,7 +109,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       console.log('Space name element:', spaceNameEl, spaceNameEl?.value);
 
       // Send to backend
-      const response = await fetch(`http://localhost:4000/api/space-owners/${userId}`, {
+      const response = await fetch(`${API_URL}/space-owners/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

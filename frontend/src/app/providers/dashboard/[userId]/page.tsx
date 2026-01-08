@@ -28,6 +28,7 @@ import UpdateBillingAddressModal from '@/components/Providers/Dashboard/UpdateBi
 import ChangePasswordModal from '@/components/Providers/Dashboard/ChangePasswordModal';
 import UpdateEmailModal from '@/components/Providers/Dashboard/UpdateEmailModal';
 import TwoFactorSettings from '@/components/Providers/Dashboard/TwoFactorSettings';
+import { API_URL } from '@/config/api';
 
 function ProvidersDashboardContent() {
   const params = useParams();
@@ -190,7 +191,7 @@ function ProvidersDashboardContent() {
       
       // Validate token with backend
       try {
-        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+        const verifyResponse = await fetch(`${API_URL}/auth/verify`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -287,7 +288,7 @@ function ProvidersDashboardContent() {
       // Fetch subscription data from backend (always fetch to ensure it's up-to-date)
       try {
         const token = localStorage.getItem('token');
-        const subscriptionResponse = await fetch(`http://localhost:4000/api/providers/${userId}/subscription`, {
+        const subscriptionResponse = await fetch(`${API_URL}/providers/${userId}/subscription`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -432,7 +433,7 @@ function ProvidersDashboardContent() {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const paymentResponse = await fetch(`http://localhost:4000/api/providers/${userId}/payment-method`, {
+          const paymentResponse = await fetch(`${API_URL}/providers/${userId}/payment-method`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -514,7 +515,7 @@ function ProvidersDashboardContent() {
       try {
         const token = localStorage.getItem('token');
         if (!token || !userId || !isMounted) return;
-        const resp = await fetch(`http://localhost:4000/api/bookings/provider/${userId}/pending`, {
+        const resp = await fetch(`${API_URL}/bookings/provider/${userId}/pending`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (resp.ok && isMounted) {
@@ -558,7 +559,7 @@ function ProvidersDashboardContent() {
       try {
         const token = localStorage.getItem('token');
         if (!token || !userId || !isMounted) return;
-        const resp = await fetch('http://localhost:4000/api/notifications/unread-count', {
+        const resp = await fetch(`${API_URL}/notifications/unread-count`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (resp.ok && isMounted) {
@@ -605,7 +606,7 @@ function ProvidersDashboardContent() {
         if (!token || !userId) return;
         
         // Load reviews for rating
-        const reviewsResponse = await fetch(`http://localhost:4000/api/reviews/provider/${userId}`, {
+        const reviewsResponse = await fetch(`${API_URL}/reviews/provider/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -624,7 +625,7 @@ function ProvidersDashboardContent() {
         }
         
         // Load provider profile to get services count
-        const providerResponse = await fetch(`http://localhost:4000/api/providers/${userId}`, {
+        const providerResponse = await fetch(`${API_URL}/providers/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -644,7 +645,7 @@ function ProvidersDashboardContent() {
         }
         
         // Load bookings to get total count
-        const bookingsResponse = await fetch(`http://localhost:4000/api/bookings/provider/${userId}`, {
+        const bookingsResponse = await fetch(`${API_URL}/bookings/provider/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -680,7 +681,7 @@ function ProvidersDashboardContent() {
       try {
         const token = localStorage.getItem('token');
         if (!token || !userId || !isMounted) return;
-        const resp = await fetch('http://localhost:4000/api/messages/unread-count', {
+        const resp = await fetch(`${API_URL}/messages/unread-count`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (resp.ok && isMounted) {
@@ -792,7 +793,7 @@ function ProvidersDashboardContent() {
         try {
           const token = localStorage.getItem('token');
           if (token) {
-            const response = await fetch('http://localhost:4000/api/auth/profile/provider', {
+            const response = await fetch(`${API_URL}/auth/profile/provider`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -931,7 +932,7 @@ function ProvidersDashboardContent() {
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch(`http://localhost:4000/api/providers/${userId}/subscription`, {
+      const response = await fetch(`${API_URL}/providers/${userId}/subscription`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1605,7 +1606,7 @@ function ProvidersDashboardContent() {
             }
 
             // Attach payment method to customer via Stripe API
-            const response = await fetch(`http://localhost:4000/api/stripe/payment-method`, {
+            const response = await fetch(`${API_URL}/stripe/payment-method`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -1681,7 +1682,7 @@ function ProvidersDashboardContent() {
               requestBody.expiryDate = savedPaymentMethod?.expiryDate || '12/99';
             }
             
-            const response = await fetch(`http://localhost:4000/api/providers/${userId}/payment-method`, {
+            const response = await fetch(`${API_URL}/providers/${userId}/payment-method`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -1750,7 +1751,7 @@ function ProvidersDashboardContent() {
               }
 
               // Update subscription via API
-              const response = await fetch(`http://localhost:4000/api/providers/${userId}/subscription`, {
+              const response = await fetch(`${API_URL}/providers/${userId}/subscription`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',

@@ -18,6 +18,7 @@ import Messages from '@/components/Clients/Dashboard/Messages';
 import Profile from '@/components/Clients/Dashboard/Profile';
 import ChangePasswordModal from '@/components/Clients/Dashboard/ChangePasswordModal';
 import UpdateEmailModal from '@/components/Clients/Dashboard/UpdateEmailModal';
+import { API_URL } from '@/config/api';
 
 function ClientDashboardContent() {
   const params = useParams();
@@ -111,7 +112,7 @@ function ClientDashboardContent() {
       
       // Validate token with backend
       try {
-        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+        const verifyResponse = await fetch(`${API_URL}/auth/verify`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -156,7 +157,7 @@ function ClientDashboardContent() {
         
         // Load booking stats
         try {
-          const statsResponse = await fetch(`http://localhost:4000/api/bookings/client/${userId}/stats`, {
+          const statsResponse = await fetch(`${API_URL}/bookings/client/${userId}/stats`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -215,7 +216,7 @@ function ClientDashboardContent() {
       try {
         const token = localStorage.getItem('token');
         if (!token || !userId || !isMounted) return;
-        const resp = await fetch('http://localhost:4000/api/messages/unread-count', {
+        const resp = await fetch(`${API_URL}/messages/unread-count`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (resp.ok && isMounted) {

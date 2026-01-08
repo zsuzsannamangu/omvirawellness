@@ -36,8 +36,8 @@
   display: block;
   font-family: $font-main;
   font-size: 0.875rem;
-  font-weight: 700;
-  color: $dark-text;
+  font-weight: 500;
+  color: $subtext-color;
   margin-bottom: $spacing-xs;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -51,6 +51,7 @@
   border-radius: 8px;
   font-family: $font-main;
   font-size: 1rem;
+  font-weight: 400;
   color: $dark-text;
   background: $bg-white;
   transition: border-color 0.2s ease;
@@ -643,8 +644,8 @@
 .addServiceTitle {
   font-family: $font-main;
   font-size: 1.25rem;
-  font-weight: 700;
-  color: $dark-text;
+  font-weight: 500;
+  color: $subtext-color;
   margin-bottom: $spacing-md;
   text-align: center;
 }
@@ -695,7 +696,7 @@
   border-radius: 8px;
   font-family: $font-main;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   color: $dark-text;
   background: $bg-white;
   height: 48px;
@@ -723,7 +724,7 @@
     padding: $spacing-sm $spacing-md;
     color: $dark-text;
     background: $bg-white;
-    font-weight: 600;
+    font-weight: 400;
     font-size: 1rem;
     line-height: 1.4;
   }

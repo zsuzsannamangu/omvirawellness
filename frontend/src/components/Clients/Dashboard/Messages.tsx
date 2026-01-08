@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { FaStar, FaTrash, FaPlus, FaEnvelope, FaEnvelopeOpen, FaPaperPlane, FaTrashRestore, FaBold, FaItalic, FaUnderline, FaPaperclip, FaReply } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Clients/Dashboard.module.scss';
+import { API_URL } from '@/config/api';
 
 interface Message {
   id: string;
@@ -55,7 +56,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         setLoadingProviders(true);
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch('http://localhost:4000/api/providers', {
+          const response = await fetch(`${API_URL}/providers`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -103,7 +104,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
       };
 
       const folder = folderMap[activeSubmenu] || 'inbox';
-      const url = `http://localhost:4000/api/messages?folder=${folder}`;
+      const url = `${API_URL}/messages?folder=${folder}`;
       
       const response = await fetch(url, {
         headers: {
@@ -145,7 +146,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
   const handleStar = async (messageId: string, currentStarred: boolean) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/messages/${messageId}`, {
+      const response = await fetch(`${API_URL}/messages/${messageId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -180,7 +181,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/messages/${messageId}`, {
+      const response = await fetch(`${API_URL}/messages/${messageId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -211,7 +212,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
   const handleRestore = async (messageId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/messages/${messageId}`, {
+      const response = await fetch(`${API_URL}/messages/${messageId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -244,7 +245,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/messages/${messageId}`, {
+      const response = await fetch(`${API_URL}/messages/${messageId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -306,7 +307,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
         const deletePromises = selectedMessageIds.map(messageId => {
           if (activeSubmenu === 'trash') {
             // Permanent delete
-            return fetch(`http://localhost:4000/api/messages/${messageId}`, {
+            return fetch(`${API_URL}/messages/${messageId}`, {
               method: 'DELETE',
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -314,7 +315,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
             });
           } else {
             // Move to trash
-            return fetch(`http://localhost:4000/api/messages/${messageId}`, {
+            return fetch(`${API_URL}/messages/${messageId}`, {
               method: 'PATCH',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -391,7 +392,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/messages', {
+      const response = await fetch(`${API_URL}/messages', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -414,7 +415,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
 
         // Refresh messages if we're on sent folder
         if (activeSubmenu === 'sent') {
-          const folderResponse = await fetch(`http://localhost:4000/api/messages?folder=sent`, {
+          const folderResponse = await fetch(`${API_URL}/messages?folder=sent`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -871,7 +872,7 @@ export default function Messages({ activeSubmenu }: MessagesProps) {
                       if (!message.isRead) {
                         try {
                           const token = localStorage.getItem('token');
-                          await fetch(`http://localhost:4000/api/messages/${message.id}`, {
+                          await fetch(`${API_URL}/messages/${message.id}`, {
                             method: 'PATCH',
                             headers: {
                               'Authorization': `Bearer ${token}`,

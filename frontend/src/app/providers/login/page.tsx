@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/services/auth';
 import TwoFactorVerifyModal from '@/components/Providers/Login/TwoFactorVerifyModal';
-import { API_BASE_URL } from '@/config/api';
+import { API_BASE_URL, API_URL } from '@/config/api';
 import styles from '@/styles/Providers/ProviderLogin.module.scss';
 
 export default function ProviderLoginPage() {
@@ -30,7 +30,7 @@ export default function ProviderLoginPage() {
       
       // Validate token with backend
       try {
-        const verifyResponse = await fetch('http://localhost:4000/api/auth/verify', {
+        const verifyResponse = await fetch(`${API_URL}/auth/verify`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -355,7 +355,7 @@ export default function ProviderLoginPage() {
               type="button"
               className={`${styles.socialButton} ${styles.facebookButton}`}
               onClick={() => {
-                window.location.href = `${API_BASE_URL || 'http://localhost:4000'}/api/oauth/facebook?user_type=provider`;
+                window.location.href = `${API_BASE_URL || 'https://omvirawellness-backend.onrender.com'}/api/oauth/facebook?user_type=provider`;
               }}
               aria-label="Continue with Facebook as provider"
             >
@@ -369,7 +369,7 @@ export default function ProviderLoginPage() {
               type="button"
               className={`${styles.socialButton} ${styles.googleButton}`}
               onClick={() => {
-                window.location.href = `${API_BASE_URL || 'http://localhost:4000'}/api/oauth/google?user_type=provider`;
+                window.location.href = `${API_BASE_URL || 'https://omvirawellness-backend.onrender.com'}/api/oauth/google?user_type=provider`;
               }}
               aria-label="Continue with Google as provider"
             >
