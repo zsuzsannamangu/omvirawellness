@@ -925,6 +925,12 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
       }
 
       if (messageSubject && messageBody) {
+        console.log('Creating confirmation message:', {
+          senderId: req.userId,
+          recipientId: booking.client_user_id,
+          subject: messageSubject
+        });
+        
         // Insert message
         const messageResult = await pool.query(
           `INSERT INTO messages (sender_id, recipient_id, subject, body)
@@ -934,6 +940,7 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
         );
 
         const messageId = messageResult.rows[0].id;
+        console.log('Message created successfully with ID:', messageId);
 
         // Create metadata records for both sender and recipient
         // Sender (provider): message is in "sent" folder, read, not starred, not deleted
@@ -951,9 +958,19 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
            ON CONFLICT (message_id, user_id) DO NOTHING`,
           [messageId, booking.client_user_id]
         );
+        
+        console.log('Message metadata created successfully for both sender and recipient');
+      } else {
+        console.warn('No message subject/body generated for booking status:', status);
       }
     } catch (messageError) {
       console.error('Error creating message:', messageError);
+      console.error('Message error details:', {
+        code: messageError.code,
+        detail: messageError.detail,
+        message: messageError.message,
+        stack: messageError.stack
+      });
       // Don't fail the status update if message creation fails
     }
 
