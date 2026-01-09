@@ -132,7 +132,20 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
             work_location: typeof providerData.work_location === 'string' ? JSON.parse(providerData.work_location) : (providerData.work_location || []),
             services: cleanedServices,
             add_ons: typeof providerData.add_ons === 'string' ? JSON.parse(providerData.add_ons) : (providerData.add_ons || providerData.addOns || []),
-            certifications: typeof providerData.certifications === 'string' ? JSON.parse(providerData.certifications) : (providerData.certifications || []),
+            certifications: (() => {
+              try {
+                if (typeof providerData.certifications === 'string') {
+                  return JSON.parse(providerData.certifications);
+                } else if (Array.isArray(providerData.certifications)) {
+                  return providerData.certifications;
+                } else {
+                  return [];
+                }
+              } catch (e) {
+                console.error('Error parsing certifications from API:', e);
+                return [];
+              }
+            })(),
             travel_policy: providerData.travel_policy,
             travel_fee: providerData.travel_fee,
             max_distance: providerData.max_distance,
@@ -165,8 +178,31 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
       }
       
       // Load certifications if available
-      if (parsed.profile?.certifications && Array.isArray(parsed.profile.certifications)) {
-        setCertifications(parsed.profile.certifications);
+      if (parsed.profile?.certifications) {
+        if (Array.isArray(parsed.profile.certifications)) {
+          console.log('Loading certifications from profile (array):', parsed.profile.certifications);
+          setCertifications(parsed.profile.certifications);
+        } else if (typeof parsed.profile.certifications === 'string') {
+          try {
+            const parsedCerts = JSON.parse(parsed.profile.certifications);
+            if (Array.isArray(parsedCerts)) {
+              console.log('Loading certifications from profile (parsed string):', parsedCerts);
+              setCertifications(parsedCerts);
+            } else {
+              console.warn('Certifications is not an array after parsing:', parsedCerts);
+              setCertifications([]);
+            }
+          } catch (e) {
+            console.error('Error parsing certifications:', e);
+            setCertifications([]);
+          }
+        } else {
+          console.warn('Certifications is not an array or string:', typeof parsed.profile.certifications, parsed.profile.certifications);
+          setCertifications([]);
+        }
+      } else {
+        console.log('No certifications found in profile');
+        setCertifications([]);
       }
       
       // Load team members if available
@@ -207,6 +243,12 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
           }
           if (parsed.profile?.services && Array.isArray(parsed.profile.services)) {
             setServices(parsed.profile.services);
+          }
+          if (parsed.profile?.add_ons && Array.isArray(parsed.profile.add_ons)) {
+            setAddOns(parsed.profile.add_ons);
+          }
+          if (parsed.profile?.certifications && Array.isArray(parsed.profile.certifications)) {
+            setCertifications(parsed.profile.certifications);
           }
           if (parsed.profile?.team_members && Array.isArray(parsed.profile.team_members)) {
             setTeamMembers(parsed.profile.team_members);
@@ -1784,7 +1826,7 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                                 };
                                 localStorage.setItem('user', JSON.stringify(updatedUser));
                                 setUserData(updatedUser);
-                                setCertifications(updatedProfile.certifications);
+                                setCertifications(updatedProfile.certifications || []);
                                 
                                 window.dispatchEvent(new Event('profileUpdated'));
                               }
@@ -1952,27 +1994,47 @@ export default function Profile({ activeSubmenu }: ProfileProps) {
                               const updatedProfile = { ...result.profile };
                               
                               // Parse JSONB fields
+                              let parsedCertifications = [];
                               if (typeof updatedProfile.certifications === 'string') {
                                 try {
-                                  updatedProfile.certifications = JSON.parse(updatedProfile.certifications);
+                                  parsedCertifications = JSON.parse(updatedProfile.certifications);
                                 } catch (e) {
-                                  updatedProfile.certifications = [];
+                                  console.error('Error parsing certifications from response:', e);
+                                  parsedCertifications = [];
                                 }
+                              } else if (Array.isArray(updatedProfile.certifications)) {
+                                parsedCertifications = updatedProfile.certifications;
+                              } else {
+                                parsedCertifications = [];
                               }
+                              
+                              updatedProfile.certifications = parsedCertifications;
 
                               const updatedUser = {
                                 ...userData,
                                 profile: {
                                   ...userData.profile,
-                                  certifications: updatedProfile.certifications
+                                  ...updatedProfile,
+                                  certifications: parsedCertifications
                                 }
                               };
+                              
+                              console.log('Saving certifications to localStorage:', parsedCertifications);
                               localStorage.setItem('user', JSON.stringify(updatedUser));
                               setUserData(updatedUser);
-                              setCertifications(updatedProfile.certifications);
+                              setCertifications(parsedCertifications);
+                              
+                              // Verify it was saved
+                              const verifyUser = localStorage.getItem('user');
+                              if (verifyUser) {
+                                const verifyData = JSON.parse(verifyUser);
+                                console.log('Verified certifications in localStorage:', verifyData.profile?.certifications);
+                              }
                               
                               // Dispatch event to notify dashboard
                               window.dispatchEvent(new Event('profileUpdated'));
+                            } else {
+                              console.error('No profile in response:', result);
                             }
 
                             setSaveMessage('Certification saved successfully!');
