@@ -188,45 +188,30 @@ function ClientDashboardContent() {
 
     loadUserData();
     
-    // Listen for profile update events to refresh the profile image
+    // Listen for profile update events to refresh profile data (image, name, email)
     const handleProfileUpdate = () => {
       const user = localStorage.getItem('user');
       if (user) {
         try {
           const userData = JSON.parse(user);
+          // Update profile image
           if (userData.profile?.profile_photo_url) {
             setProfileImage(userData.profile.profile_photo_url);
           }
-        } catch (error) {
-          console.error('Error refreshing profile image:', error);
-        }
-      }
-    };
-    
-    window.addEventListener('profileUpdated', handleProfileUpdate);
-    
-    return () => {
-      window.removeEventListener('profileUpdated', handleProfileUpdate);
-    };
-
-    // Listen for profile update events to refresh name and email
-    const handleProfileUpdate = () => {
-      const user = localStorage.getItem('user');
-      if (user) {
-        try {
-          const userData = JSON.parse(user);
+          // Update name
           if (userData.profile?.first_name && userData.profile?.last_name) {
             setUserName(`${userData.profile.first_name} ${userData.profile.last_name}`);
           }
+          // Update email
           if (userData.email) {
             setUserEmail(userData.email);
           }
         } catch (error) {
-          console.error('Error parsing user data on profile update:', error);
+          console.error('Error refreshing profile data:', error);
         }
       }
     };
-
+    
     window.addEventListener('profileUpdated', handleProfileUpdate);
     
     return () => {
