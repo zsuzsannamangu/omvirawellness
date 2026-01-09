@@ -48,17 +48,50 @@ The Omvira Wellness database supports three types of users and their interaction
 
 ## Running Migrations
 
-### Manual Migration (Supabase SQL Editor)
+### ⚡ Quick Start: Run All Migrations at Once
 
-1. Log into your Supabase dashboard
-2. Go to SQL Editor
-3. Copy and paste the contents of `001_initial_schema.sql`
-4. Click "Run"
-
-### Programmatic Migration (Node.js)
+**For Render (Recommended):**
 
 ```bash
-# Run the migration script
+# In Render shell, navigate to backend directory
+cd ~/project/src/backend
+
+# Run all migrations at once
+bash migrations/run-all-migrations.sh
+```
+
+**Or using Node.js:**
+
+```bash
+# From backend directory
+node migrations/run-all-migrations.js
+```
+
+This will:
+- ✅ Run all migrations in order (001 through 017)
+- ✅ Skip migrations that are already applied
+- ✅ Show a summary of what succeeded/failed
+- ✅ Handle errors gracefully
+
+### Manual Migration (One at a Time)
+
+If you need to run migrations individually:
+
+**In Render Shell:**
+```bash
+psql $DATABASE_URL -f migrations/011_add_messages_table.sql
+psql $DATABASE_URL -f migrations/012_add_message_user_metadata.sql
+```
+
+**Or using SQL directly:**
+```bash
+psql $DATABASE_URL -c "ALTER TABLE provider_profiles ADD COLUMN IF NOT EXISTS ..."
+```
+
+### Programmatic Migration (Node.js - Single Migration)
+
+```bash
+# Run a single migration script
 node migrations/run-migration.js
 ```
 
