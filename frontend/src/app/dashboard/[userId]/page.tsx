@@ -155,6 +155,11 @@ function ClientDashboardContent() {
           setUserEmail(userData.email);
         }
         
+        // Load profile image if available
+        if (userData.profile?.profile_photo_url) {
+          setProfileImage(userData.profile.profile_photo_url);
+        }
+        
         // Load booking stats
         try {
           const statsResponse = await fetch(`${API_URL}/bookings/client/${userId}/stats`, {
@@ -182,6 +187,27 @@ function ClientDashboardContent() {
     };
 
     loadUserData();
+    
+    // Listen for profile update events to refresh the profile image
+    const handleProfileUpdate = () => {
+      const user = localStorage.getItem('user');
+      if (user) {
+        try {
+          const userData = JSON.parse(user);
+          if (userData.profile?.profile_photo_url) {
+            setProfileImage(userData.profile.profile_photo_url);
+          }
+        } catch (error) {
+          console.error('Error refreshing profile image:', error);
+        }
+      }
+    };
+    
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
 
     // Listen for profile update events to refresh name and email
     const handleProfileUpdate = () => {
@@ -303,12 +329,66 @@ function ClientDashboardContent() {
     return () => clearInterval(interval);
   }, [activeSection, activeSubmenu]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target?.result as string);
+      reader.onload = async (e) => {
+        const imageDataUrl = e.target?.result as string;
+        setProfileImage(imageDataUrl);
+        
+        // Save to localStorage
+        try {
+          const user = localStorage.getItem('user');
+          if (user) {
+            const userData = JSON.parse(user);
+            if (userData.profile) {
+              userData.profile.profile_photo_url = imageDataUrl;
+              localStorage.setItem('user', JSON.stringify(userData));
+            }
+          }
+        } catch (error) {
+          console.error('Error saving profile image to localStorage:', error);
+        }
+        
+        // Save to database
+        try {
+          const token = localStorage.getItem('token');
+          if (token) {
+            const response = await fetch(`${API_URL}/auth/profile/client`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                profile_photo_url: imageDataUrl
+              })
+            });
+            
+            if (!response.ok) {
+              console.error('Failed to save profile image to database');
+              const errorData = await response.json().catch(() => ({}));
+              console.error('Error details:', errorData);
+            } else {
+              console.log('Profile image saved successfully to database');
+              // Update localStorage with server response
+              const result = await response.json();
+              if (result.data?.profile) {
+                const user = localStorage.getItem('user');
+                if (user) {
+                  const userData = JSON.parse(user);
+                  userData.profile = { ...userData.profile, ...result.data.profile };
+                  localStorage.setItem('user', JSON.stringify(userData));
+                  // Dispatch event to refresh profile image
+                  window.dispatchEvent(new Event('profileUpdated'));
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error saving profile image to database:', error);
+        }
       };
       reader.readAsDataURL(file);
     }

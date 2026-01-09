@@ -926,7 +926,8 @@ async function login(req, res) {
           special_requirements,
           travel_willingness,
           max_travel_distance,
-          notes
+          notes,
+          profile_photo_url
         FROM client_profiles WHERE user_id = $1`,
         [user.id]
       );
@@ -1135,7 +1136,8 @@ async function updateClientProfile(req, res) {
       specialRequirements,
       travelWillingness,
       maxTravelDistance,
-      notes
+      notes,
+      profile_photo_url
     } = req.body;
 
     console.log('Received data:', req.body);
@@ -1187,8 +1189,9 @@ async function updateClientProfile(req, res) {
         travel_willingness = COALESCE($24, travel_willingness),
         max_travel_distance = COALESCE($25, max_travel_distance),
         notes = COALESCE($26, notes),
+        profile_photo_url = COALESCE($27, profile_photo_url),
         updated_at = CURRENT_TIMESTAMP
-      WHERE user_id = $27
+      WHERE user_id = $28
       RETURNING *`,
       [
         toNull(firstName),
@@ -1217,6 +1220,7 @@ async function updateClientProfile(req, res) {
         toNull(travelWillingness),
         toNull(maxTravelDistance),
         toNull(notes),
+        toNull(profile_photo_url),
         userId
       ]
     );
