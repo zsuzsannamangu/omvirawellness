@@ -4,7 +4,11 @@
 
 set -e  # Exit on error
 
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 echo "🚀 Starting database migrations..."
+echo "📁 Migration directory: $SCRIPT_DIR"
 echo ""
 
 # List of migrations in order
@@ -36,21 +40,22 @@ FAILED=0
 
 for i in "${!MIGRATIONS[@]}"; do
   MIGRATION="${MIGRATIONS[$i]}"
+  MIGRATION_PATH="$SCRIPT_DIR/$MIGRATION"
   NUM=$((i + 1))
   
-  if [ ! -f "$MIGRATION" ]; then
+  if [ ! -f "$MIGRATION_PATH" ]; then
     echo "⏭️  [$NUM/$TOTAL] $MIGRATION - File not found, skipping"
     continue
   fi
   
   echo "🔄 [$NUM/$TOTAL] Running $MIGRATION..."
   
-  if psql $DATABASE_URL -f "$MIGRATION" > /dev/null 2>&1; then
+  if psql $DATABASE_URL -f "$MIGRATION_PATH" > /dev/null 2>&1; then
     echo "✅ [$NUM/$TOTAL] $MIGRATION - Success"
     ((SUCCESS++))
   else
     # Check if it's an "already exists" error (which is usually fine)
-    ERROR_OUTPUT=$(psql $DATABASE_URL -f "$MIGRATION" 2>&1 || true)
+    ERROR_OUTPUT=$(psql $DATABASE_URL -f "$MIGRATION_PATH" 2>&1 || true)
     if echo "$ERROR_OUTPUT" | grep -qi "already exists\|duplicate"; then
       echo "⚠️  [$NUM/$TOTAL] $MIGRATION - Already applied (skipping)"
     else
