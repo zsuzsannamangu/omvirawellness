@@ -845,6 +845,14 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
 
     const booking = bookingResult.rows[0];
     const providerName = booking.contact_name || booking.business_name || 'Provider';
+    
+    // Validate we have the client user ID
+    if (!booking.client_user_id) {
+      console.error('ERROR: client_user_id is missing from booking query result:', booking);
+      return res.status(500).json({ error: 'Unable to retrieve client information' });
+    }
+    
+    console.log('Booking confirmation - Client user ID:', booking.client_user_id, 'Provider user ID:', req.userId);
 
     // 3) update status
     const updateFields = status === 'cancelled' 
@@ -925,10 +933,21 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
       }
 
       if (messageSubject && messageBody) {
+        // Validate IDs before creating message
+        if (!req.userId) {
+          console.error('ERROR: req.userId is missing');
+          throw new Error('Provider user ID is missing');
+        }
+        if (!booking.client_user_id) {
+          console.error('ERROR: booking.client_user_id is missing');
+          throw new Error('Client user ID is missing');
+        }
+        
         console.log('Creating confirmation message:', {
           senderId: req.userId,
           recipientId: booking.client_user_id,
-          subject: messageSubject
+          subject: messageSubject,
+          bodyLength: messageBody.length
         });
         
         // Insert message
@@ -939,8 +958,22 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
           [req.userId, booking.client_user_id, messageSubject, messageBody]
         );
 
+        if (!messageResult.rows || messageResult.rows.length === 0) {
+          throw new Error('Message was not created - no rows returned');
+        }
+
         const messageId = messageResult.rows[0].id;
         console.log('Message created successfully with ID:', messageId);
+        
+        // Verify the message exists
+        const verifyResult = await pool.query(
+          'SELECT id, sender_id, recipient_id FROM messages WHERE id = $1',
+          [messageId]
+        );
+        if (verifyResult.rows.length === 0) {
+          throw new Error('Message verification failed - message not found after creation');
+        }
+        console.log('Message verified in database:', verifyResult.rows[0]);
 
         // Create metadata records for both sender and recipient
         // Sender (provider): message is in "sent" folder, read, not starred, not deleted
@@ -960,6 +993,23 @@ router.put('/:bookingId/status', verifyToken, async (req, res) => {
         );
         
         console.log('Message metadata created successfully for both sender and recipient');
+        
+        // Verify the client can see the message in their inbox
+        const inboxCheck = await pool.query(
+          `SELECT m.id, m.subject, COALESCE(mum.is_deleted, false) as is_deleted
+           FROM messages m
+           LEFT JOIN message_user_metadata mum ON m.id = mum.message_id AND mum.user_id = $1
+           WHERE m.recipient_id = $1 
+           AND m.id = $2
+           AND COALESCE(mum.is_deleted, false) = false`,
+          [booking.client_user_id, messageId]
+        );
+        console.log('Inbox verification query result:', {
+          messageId,
+          clientUserId: booking.client_user_id,
+          found: inboxCheck.rows.length > 0,
+          message: inboxCheck.rows[0] || null
+        });
       } else {
         console.warn('No message subject/body generated for booking status:', status);
       }
