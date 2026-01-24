@@ -281,89 +281,106 @@ function BookingConfirmationPageContent() {
 
   // Initialize Google Places Autocomplete
   useEffect(() => {
-    // Check if Google Maps is loaded
+    // Only initialize if location type is 'home'
+    if (locationType !== 'home') {
+      // Clean up existing autocomplete
+      if (autocompleteRef.current) {
+        (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
+        autocompleteRef.current = null;
+      }
+      return;
+    }
+
+    // Check if Google Maps is loaded and input is ready
     const checkAndInit = () => {
-      if (!isGoogleMapsLoaded() || !addressInputRef.current || locationType !== 'home') {
-        // Clean up existing autocomplete
-        if (autocompleteRef.current) {
-          (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
-          autocompleteRef.current = null;
-        }
-        return;
+      if (!addressInputRef.current) {
+        console.log('Address input ref not ready yet');
+        return false;
       }
 
-      // Initialize autocomplete
-      const autocomplete = new (window as any).google.maps.places.Autocomplete(
-        addressInputRef.current,
-        {
-          types: ['address'],
-          componentRestrictions: { country: 'us' } // Restrict to US addresses
-        }
-      );
+      if (!isGoogleMapsLoaded()) {
+        console.log('Google Maps not loaded yet');
+        return false;
+      }
 
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        
-        if (!place.address_components) {
-          return;
-        }
+      // Clean up existing autocomplete if it exists
+      if (autocompleteRef.current) {
+        (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
+        autocompleteRef.current = null;
+      }
 
-        // Parse address components
-        let streetNumber = '';
-        let route = '';
-        let city = '';
-        let state = '';
-        let zipCode = '';
+      try {
+        // Initialize autocomplete
+        const autocomplete = new (window as any).google.maps.places.Autocomplete(
+          addressInputRef.current,
+          {
+            types: ['address'],
+            componentRestrictions: { country: 'us' }, // Restrict to US addresses
+            fields: ['address_components', 'formatted_address', 'geometry']
+          }
+        );
 
-        for (const component of place.address_components) {
-          const types = component.types;
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
           
-          if (types.includes('street_number')) {
-            streetNumber = component.long_name;
+          if (!place.address_components) {
+            console.warn('Place selected but no address_components found');
+            return;
           }
-          if (types.includes('route')) {
-            route = component.long_name;
-          }
-          if (types.includes('locality')) {
-            city = component.long_name;
-          }
-          if (types.includes('administrative_area_level_1')) {
-            state = component.short_name; // Use short name for state (e.g., "CA" instead of "California")
-          }
-          if (types.includes('postal_code')) {
-            zipCode = component.long_name;
-          }
-        }
 
-        // Set address fields
-        const fullAddress = [streetNumber, route].filter(Boolean).join(' ');
-        setUserAddress(fullAddress || place.formatted_address || '');
-        if (city) setUserCity(city);
-        if (state) setUserState(state);
-        if (zipCode) setUserZipCode(zipCode);
+          // Parse address components
+          let streetNumber = '';
+          let route = '';
+          let city = '';
+          let state = '';
+          let zipCode = '';
 
-        // Clear distance check when address changes
-        setDistanceCheck(null);
-        setAddressValidated(null);
-      });
+          for (const component of place.address_components) {
+            const types = component.types;
+            
+            if (types.includes('street_number')) {
+              streetNumber = component.long_name;
+            }
+            if (types.includes('route')) {
+              route = component.long_name;
+            }
+            if (types.includes('locality')) {
+              city = component.long_name;
+            }
+            if (types.includes('administrative_area_level_1')) {
+              state = component.short_name; // Use short name for state (e.g., "CA" instead of "California")
+            }
+            if (types.includes('postal_code')) {
+              zipCode = component.long_name;
+            }
+          }
 
-      autocompleteRef.current = autocomplete;
+          // Set address fields
+          const fullAddress = [streetNumber, route].filter(Boolean).join(' ');
+          setUserAddress(fullAddress || place.formatted_address || '');
+          if (city) setUserCity(city);
+          if (state) setUserState(state);
+          if (zipCode) setUserZipCode(zipCode);
+
+          // Clear distance check when address changes
+          setDistanceCheck(null);
+          setAddressValidated(null);
+          
+          console.log('Address autofilled:', { fullAddress, city, state, zipCode });
+        });
+
+        autocompleteRef.current = autocomplete;
+        console.log('Google Places Autocomplete initialized successfully');
+        return true;
+      } catch (error) {
+        console.error('Error initializing Google Places Autocomplete:', error);
+        return false;
+      }
     };
 
-    // Try to initialize
-    checkAndInit();
-
-    // If Google Maps isn't loaded yet, check periodically
-    if (!isGoogleMapsLoaded()) {
-      const interval = setInterval(() => {
-        if (isGoogleMapsLoaded()) {
-          clearInterval(interval);
-          checkAndInit();
-        }
-      }, 500);
-
+    // Try to initialize immediately if ready
+    if (checkAndInit()) {
       return () => {
-        clearInterval(interval);
         if (autocompleteRef.current) {
           (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
           autocompleteRef.current = null;
@@ -371,7 +388,21 @@ function BookingConfirmationPageContent() {
       };
     }
 
+    // If not ready, check periodically
+    const maxAttempts = 20; // Try for up to 10 seconds (20 * 500ms)
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (checkAndInit() || attempts >= maxAttempts) {
+        clearInterval(interval);
+        if (attempts >= maxAttempts && !autocompleteRef.current) {
+          console.warn('Failed to initialize Google Places Autocomplete after multiple attempts');
+        }
+      }
+    }, 500);
+
     return () => {
+      clearInterval(interval);
       if (autocompleteRef.current) {
         (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
         autocompleteRef.current = null;
@@ -430,21 +461,27 @@ function BookingConfirmationPageContent() {
 
     setIsCheckingDistance(true);
     try {
+      const requestBody = {
+        clientAddress: userAddress,
+        clientCity: userCity,
+        clientState: userState,
+        clientZipCode: userZipCode
+      };
+      console.log('Checking distance with:', requestBody);
+      console.log('Provider max distance:', provider.maxDistance);
+      
       const response = await fetch(`${API_URL}/providers/${params?.id}/check-distance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          clientAddress: userAddress,
-          clientCity: userCity,
-          clientState: userState,
-          clientZipCode: userZipCode
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Distance check result:', data);
+        
         setDistanceCheck({
           distance: data.distance,
           withinRange: data.withinRange,
@@ -452,23 +489,32 @@ function BookingConfirmationPageContent() {
           checked: true
         });
         
+        // Set address as validated if distance check succeeded
+        if (data.addressValid !== false) {
+          setAddressValidated(true);
+        }
+        
         // Show SweetAlert based on result
         if (data.withinRange) {
+          const distanceText = data.distance !== null 
+            ? `You are ${data.distance} miles away. `
+            : '';
           Swal.fire({
             icon: 'success',
             title: 'Location Confirmed',
-            text: data.distance !== null 
-              ? `You are ${data.distance} miles away. The provider will travel to your location.`
-              : "You are within the provider's travel range. The provider will travel to your location.",
+            text: `${distanceText}Good news! You are within the provider's travel range (up to ${data.maxDistance || 'unlimited'} miles). The provider will travel to your location.`,
             confirmButtonColor: '#4a90e2',
             confirmButtonText: 'Continue Booking'
           });
         } else {
-          // Outside range - show warning
+          // Outside range - show warning with detailed info
+          const distanceText = data.distance !== null 
+            ? `Your location is ${data.distance} miles away, but the provider only travels up to ${data.maxDistance} miles.`
+            : `Your location is outside the provider's travel range of ${data.maxDistance} miles.`;
           Swal.fire({
             icon: 'warning',
             title: 'Outside Travel Range',
-            html: `<p>${data.message}</p><p style="margin-top: 12px;">Please select a different location option or contact the provider to discuss travel arrangements.</p>`,
+            html: `<p>${distanceText}</p><p style="margin-top: 12px;">Please select a different location option or contact the provider to discuss travel arrangements.</p>`,
             confirmButtonColor: '#4a90e2',
             confirmButtonText: 'OK'
           });
@@ -1036,29 +1082,33 @@ function BookingConfirmationPageContent() {
             <div className={styles.addOnsCard}>
               <h3>Add-ons (Optional)</h3>
               <div className={styles.addOnsList}>
-                {provider.addOns?.map((addOn: any) => (
-                  <div 
-                    key={addOn.id} 
-                    className={`${styles.addOnItem} ${selectedAddOns[addOn.id] ? styles.selected : ''}`}
-                    onClick={() => handleAddOnChange(addOn.id)}
-                  >
-                    <div className={styles.addOnInfo}>
-                      <h4>{addOn.name}</h4>
-                      <p>{addOn.description}</p>
-                      <span className={styles.addOnPrice}>+${addOn.price}</span>
+                {provider.addOns && provider.addOns.length > 0 ? (
+                  provider.addOns.map((addOn: any) => (
+                    <div 
+                      key={addOn.id} 
+                      className={`${styles.addOnItem} ${selectedAddOns[addOn.id] ? styles.selected : ''}`}
+                      onClick={() => handleAddOnChange(addOn.id)}
+                    >
+                      <div className={styles.addOnInfo}>
+                        <h4>{addOn.name}</h4>
+                        <p>{addOn.description}</p>
+                        <span className={styles.addOnPrice}>+${addOn.price}</span>
+                      </div>
+                      <div className={styles.addOnToggle}>
+                        <input
+                          type="checkbox"
+                          id={`addon-${addOn.id}`}
+                          checked={selectedAddOns[addOn.id] || false}
+                          onChange={() => handleAddOnChange(addOn.id)}
+                          className={styles.addOnCheckbox}
+                        />
+                        <label htmlFor={`addon-${addOn.id}`} className={styles.addOnLabel}></label>
+                      </div>
                     </div>
-                    <div className={styles.addOnToggle}>
-                      <input
-                        type="checkbox"
-                        id={`addon-${addOn.id}`}
-                        checked={selectedAddOns[addOn.id] || false}
-                        onChange={() => handleAddOnChange(addOn.id)}
-                        className={styles.addOnCheckbox}
-                      />
-                      <label htmlFor={`addon-${addOn.id}`} className={styles.addOnLabel}></label>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className={styles.noAddOnsMessage}>Provider does not offer any add-ons.</p>
+                )}
               </div>
             </div>
           </div>

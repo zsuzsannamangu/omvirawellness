@@ -409,6 +409,15 @@
   gap: $spacing-sm;
 }
 
+.noAddOnsMessage {
+  color: $subtext-color;
+  font-size: 0.9rem;
+  font-family: $font-main;
+  text-align: center;
+  padding: $spacing-md;
+  font-style: italic;
+}
+
 .addOnItem {
   display: flex;
   justify-content: space-between;
