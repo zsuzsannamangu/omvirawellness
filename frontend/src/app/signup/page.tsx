@@ -146,8 +146,14 @@ function SignupPageContent() {
       const data = await registerClient(registrationData);
       
       // Registration successful - user is logged in
-      // Redirect to their dashboard
-      router.push(`/dashboard/${data.user.id}`);
+      // Check for redirect parameter first (e.g., from booking flow)
+      const redirectUrl = searchParams.get('redirect');
+      if (redirectUrl) {
+        router.push(redirectUrl);
+      } else {
+        // Otherwise redirect to their dashboard
+        router.push(`/dashboard/${data.user.id}`);
+      }
     } catch (err: any) {
       console.error('Registration error:', err);
       setError(err.message || 'Registration failed. Please try again.');
@@ -156,9 +162,10 @@ function SignupPageContent() {
   };
 
   const renderStep = () => {
+    const redirectUrl = searchParams.get('redirect');
     switch (currentStep) {
       case 1:
-        return <EmailStep onNext={handleNext} initialData={formData} />;
+        return <EmailStep onNext={handleNext} initialData={formData} redirectUrl={redirectUrl} />;
       case 2:
         return <PasswordStep onNext={handleNext} onBack={handleBack} initialData={formData} />;
       case 3:

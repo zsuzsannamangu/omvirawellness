@@ -8,9 +8,10 @@ import styles from '@/styles/Clients/SignupSteps.module.scss';
 interface EmailStepProps {
   onNext: (data: { email: string; signupMethod: string }) => void;
   initialData: any;
+  redirectUrl?: string | null;
 }
 
-export default function EmailStep({ onNext, initialData }: EmailStepProps) {
+export default function EmailStep({ onNext, initialData, redirectUrl }: EmailStepProps) {
   const [email, setEmail] = useState(initialData.email || '');
   const [signupMethod, setSignupMethod] = useState('');
 
@@ -24,11 +25,12 @@ export default function EmailStep({ onNext, initialData }: EmailStepProps) {
   const handleSocialSignup = (method: string) => {
     // For OAuth, redirect directly to OAuth endpoint (no email needed)
     const baseUrl = API_BASE_URL || 'https://omvirawellness-backend.onrender.com';
+    const redirectParam = redirectUrl ? `&redirect=${encodeURIComponent(redirectUrl)}` : '';
     
     if (method === 'google') {
-      window.location.href = `${baseUrl}/api/oauth/google?user_type=client`;
+      window.location.href = `${baseUrl}/api/oauth/google?user_type=client${redirectParam}`;
     } else if (method === 'facebook') {
-      window.location.href = `${baseUrl}/api/oauth/facebook?user_type=client`;
+      window.location.href = `${baseUrl}/api/oauth/facebook?user_type=client${redirectParam}`;
     } else {
       // For other methods, use the old flow if email is provided
       if (email) {
