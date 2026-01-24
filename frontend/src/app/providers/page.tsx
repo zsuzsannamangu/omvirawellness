@@ -297,7 +297,7 @@ export default function ProvidersPage() {
                                     </div>
                                 </div>
                                 <div className={styles.chooseButton}>
-                                    <a href="/join" className={styles.chooseBtn}>
+                                    <a href="/join?plan=essential" className={styles.chooseBtn}>
                                         Choose Essential
                                     </a>
                                 </div>
@@ -344,7 +344,7 @@ export default function ProvidersPage() {
                                     </div>
                                 </div>
                                 <div className={styles.chooseButton}>
-                                    <a href="/join" className={styles.chooseBtn}>
+                                    <a href="/join?plan=professional" className={styles.chooseBtn}>
                                         Choose Professional
                                     </a>
                                 </div>
@@ -403,7 +403,7 @@ export default function ProvidersPage() {
                                     </div>
                                 </div>
                                 <div className={styles.chooseButton}>
-                                    <a href="/join" className={styles.chooseBtn}>
+                                    <a href="/join?plan=growth" className={styles.chooseBtn}>
                                         Choose Growth+
                                     </a>
                                 </div>

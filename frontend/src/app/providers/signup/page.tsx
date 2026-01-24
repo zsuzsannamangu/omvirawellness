@@ -24,6 +24,13 @@ function ProviderSignupPageContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [oauthError, setOauthError] = useState('');
+  
+  // Get plan from URL parameter, default to 'professional'
+  const planFromUrl = searchParams.get('plan');
+  const initialPlan = planFromUrl && ['essential', 'professional', 'growth'].includes(planFromUrl) 
+    ? planFromUrl 
+    : 'professional';
+  
   const [formData, setFormData] = useState({
     email: '',
     businessName: '',
@@ -62,9 +69,9 @@ function ProviderSignupPageContent() {
       languages: []
     },
     payment: {
-      selectedPlan: 'professional',
+      selectedPlan: initialPlan,
       billingCycle: 'monthly',
-      finalPrice: '$59'
+      finalPrice: initialPlan === 'essential' ? 'Free' : initialPlan === 'professional' ? '$49' : '$99'
     }
   });
 
