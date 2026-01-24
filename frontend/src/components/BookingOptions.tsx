@@ -46,7 +46,7 @@ export default function BookingOptions({
   return (
     <div className={styles.bookingOptionsContainer}>
       <Link
-        href={`http://localhost:3000/login?redirect=${encodeURIComponent(bookingUrl || '/search')}`}
+        href={`/login?redirect=${encodeURIComponent(bookingUrl || '/search')}`}
         className={styles.authButton}
       >
         Sign In to Book

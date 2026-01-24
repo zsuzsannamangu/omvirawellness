@@ -76,16 +76,18 @@ if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
 router.get(
   '/google',
   (req, res, next) => {
-    // Store user_type in session/state for callback
-    const state = req.query.user_type || 'client';
-    console.log('Initiating Google OAuth with user_type:', state);
+    // Store user_type and redirect in state for callback
+    const userType = req.query.user_type || 'client';
+    const redirect = req.query.redirect || null;
+    const state = JSON.stringify({ user_type: userType, redirect: redirect });
+    console.log('Initiating Google OAuth with user_type:', userType, 'redirect:', redirect);
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
       console.error('❌ Google OAuth credentials not configured!');
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/signup?error=oauth_not_configured`);
     }
     passport.authenticate('google', {
       scope: ['profile', 'email'],
-      state: state, // Pass user_type through state parameter
+      state: state, // Pass user_type and redirect through state parameter
     })(req, res, next);
   }
 );
@@ -135,11 +137,13 @@ router.get(
       console.error('❌ Facebook OAuth credentials not configured!');
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_not_configured`);
     }
-    // Store user_type in session/state for callback
-    const state = req.query.user_type || 'client';
+    // Store user_type and redirect in state for callback
+    const userType = req.query.user_type || 'client';
+    const redirect = req.query.redirect || null;
+    const state = JSON.stringify({ user_type: userType, redirect: redirect });
     passport.authenticate('facebook', {
       scope: ['email'],
-      state: state, // Pass user_type through state parameter
+      state: state, // Pass user_type and redirect through state parameter
     })(req, res, next);
   }
 );

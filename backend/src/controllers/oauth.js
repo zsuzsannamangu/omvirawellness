@@ -30,9 +30,20 @@ async function handleGoogleCallback(req, res) {
 
     console.log('Processing OAuth for:', email);
 
-    // Get requested user type from state parameter
-    const requestedUserType = req.query.state || 'client';
-    console.log('Requested user type:', requestedUserType);
+    // Get requested user type and redirect from state parameter
+    let requestedUserType = 'client';
+    let redirectUrl = null;
+    try {
+      if (req.query.state) {
+        const stateData = JSON.parse(req.query.state);
+        requestedUserType = stateData.user_type || 'client';
+        redirectUrl = stateData.redirect || null;
+      }
+    } catch (e) {
+      // Fallback: if state is not JSON, treat it as user_type (backward compatibility)
+      requestedUserType = req.query.state || 'client';
+    }
+    console.log('Requested user type:', requestedUserType, 'Redirect URL:', redirectUrl);
 
     // Check if user exists with this Google ID
     let userResult = await pool.query(
@@ -162,11 +173,21 @@ async function handleGoogleCallback(req, res) {
       email_verified: true,
     };
 
-    // Redirect to profile completion if new OAuth user, otherwise to dashboard
+    // Redirect to profile completion if new OAuth user, otherwise check for redirect parameter
     // Use hash fragment instead of query params to avoid URL length limits
-    let redirectUrl;
-    console.log('Determining redirect - isNewUser:', isNewUser, 'user_type:', user.user_type);
-    if (isNewUser) {
+    let finalRedirectUrl;
+    console.log('Determining redirect - isNewUser:', isNewUser, 'user_type:', user.user_type, 'redirectUrl:', redirectUrl);
+    
+    // If there's a redirect URL and user is not new, use it
+    if (redirectUrl && !isNewUser) {
+      // Store token and user data in hash fragment to avoid HTTP 431
+      const hashData = {
+        token: token,
+        user: minimalUserData
+      };
+      finalRedirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}${redirectUrl}#${encodeURIComponent(JSON.stringify(hashData))}`;
+      console.log('Redirecting to requested URL:', finalRedirectUrl);
+    } else if (isNewUser) {
       // New OAuth user - redirect to dashboard Profile page to complete profile
       // Store token and user data in hash fragment to avoid HTTP 431
       const hashData = {
@@ -175,7 +196,7 @@ async function handleGoogleCallback(req, res) {
         complete_profile: true,
         section: 'profile'
       };
-      redirectUrl = user.user_type === 'provider' 
+      finalRedirectUrl = user.user_type === 'provider' 
         ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
         : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
       console.log('Redirecting NEW USER to profile completion (using hash)');
@@ -185,13 +206,13 @@ async function handleGoogleCallback(req, res) {
         token: token,
         user: minimalUserData
       };
-      redirectUrl = user.user_type === 'provider' 
+      finalRedirectUrl = user.user_type === 'provider' 
         ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
         : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
       console.log('Redirecting EXISTING USER to dashboard (using hash)');
     }
 
-    res.redirect(redirectUrl);
+    res.redirect(finalRedirectUrl);
   } catch (error) {
     console.error('Google OAuth error:', error);
     console.error('Error stack:', error.stack);
@@ -215,8 +236,19 @@ async function handleFacebookCallback(req, res) {
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_email`);
     }
 
-    // Get requested user type from state parameter
-    const requestedUserType = req.query.state || 'client';
+    // Get requested user type and redirect from state parameter
+    let requestedUserType = 'client';
+    let redirectUrl = null;
+    try {
+      if (req.query.state) {
+        const stateData = JSON.parse(req.query.state);
+        requestedUserType = stateData.user_type || 'client';
+        redirectUrl = stateData.redirect || null;
+      }
+    } catch (e) {
+      // Fallback: if state is not JSON, treat it as user_type (backward compatibility)
+      requestedUserType = req.query.state || 'client';
+    }
 
     // Check if user exists with this Facebook ID
     let userResult = await pool.query(
@@ -344,10 +376,21 @@ async function handleFacebookCallback(req, res) {
       email_verified: true,
     };
 
-    // Redirect to profile completion if new OAuth user, otherwise to dashboard
+    // Redirect to profile completion if new OAuth user, otherwise check for redirect parameter
     // Use hash fragment instead of query params to avoid URL length limits
-    let redirectUrl;
-    if (isNewUser) {
+    let finalRedirectUrl;
+    console.log('Determining redirect - isNewUser:', isNewUser, 'user_type:', user.user_type, 'redirectUrl:', redirectUrl);
+    
+    // If there's a redirect URL and user is not new, use it
+    if (redirectUrl && !isNewUser) {
+      // Store token and user data in hash fragment to avoid HTTP 431
+      const hashData = {
+        token: token,
+        user: minimalUserData
+      };
+      finalRedirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}${redirectUrl}#${encodeURIComponent(JSON.stringify(hashData))}`;
+      console.log('Redirecting to requested URL:', finalRedirectUrl);
+    } else if (isNewUser) {
       // New OAuth user - redirect to dashboard Profile page to complete profile
       const hashData = {
         token: token,
@@ -355,7 +398,7 @@ async function handleFacebookCallback(req, res) {
         complete_profile: true,
         section: 'profile'
       };
-      redirectUrl = user.user_type === 'provider' 
+      finalRedirectUrl = user.user_type === 'provider' 
         ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
         : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
     } else {
@@ -364,12 +407,12 @@ async function handleFacebookCallback(req, res) {
         token: token,
         user: minimalUserData
       };
-      redirectUrl = user.user_type === 'provider' 
+      finalRedirectUrl = user.user_type === 'provider' 
         ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/providers/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`
         : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/${user.id}#${encodeURIComponent(JSON.stringify(hashData))}`;
     }
 
-    res.redirect(redirectUrl);
+    res.redirect(finalRedirectUrl);
   } catch (error) {
     console.error('Facebook OAuth error:', error);
     res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=oauth_failed`);

@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { login } from '@/services/auth';
 import TwoFactorVerifyModal from '@/components/Providers/Login/TwoFactorVerifyModal';
 import { API_BASE_URL, API_URL } from '@/config/api';
 import styles from '@/styles/Login.module.scss';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -17,6 +17,7 @@ export default function LoginPage() {
   const [requires2FA, setRequires2FA] = useState(false);
   const [twoFactorUserId, setTwoFactorUserId] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Prevent password manager detection on login form
   useEffect(() => {
@@ -71,7 +72,14 @@ export default function LoginPage() {
         });
         
         if (verifyResponse.ok) {
-          // Token is valid, redirect to appropriate dashboard
+          // Token is valid, check for redirect parameter first
+          const redirectUrl = searchParams.get('redirect');
+          if (redirectUrl) {
+            router.push(redirectUrl);
+            return;
+          }
+          
+          // Otherwise redirect to appropriate dashboard
           try {
             const userData = JSON.parse(user);
             if (userData.user_type === 'client') {
@@ -97,7 +105,7 @@ export default function LoginPage() {
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, searchParams]);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,7 +123,14 @@ export default function LoginPage() {
         return;
       }
       
-      // Redirect based on user type with user ID
+      // Check for redirect parameter first
+      const redirectUrl = searchParams.get('redirect');
+      if (redirectUrl) {
+        router.push(redirectUrl);
+        return;
+      }
+      
+      // Otherwise redirect based on user type with user ID
       if (data.user.user_type === 'client') {
         router.push(`/dashboard/${data.user.id}`);
       } else if (data.user.user_type === 'provider') {
@@ -135,7 +150,14 @@ export default function LoginPage() {
     try {
       const data = await login(email, password, token, backupCode);
       
-      // Redirect based on user type with user ID
+      // Check for redirect parameter first
+      const redirectUrl = searchParams.get('redirect');
+      if (redirectUrl) {
+        router.push(redirectUrl);
+        return;
+      }
+      
+      // Otherwise redirect based on user type with user ID
       if (data.user.user_type === 'client') {
         router.push(`/dashboard/${data.user.id}`);
       } else if (data.user.user_type === 'provider') {
@@ -276,7 +298,9 @@ export default function LoginPage() {
               type="button"
               className={`${styles.socialButton} ${styles.facebookButton}`}
               onClick={() => {
-                window.location.href = `${API_BASE_URL || 'https://omvirawellness-backend.onrender.com'}/api/oauth/facebook?user_type=client`;
+                const redirectUrl = searchParams.get('redirect');
+                const redirectParam = redirectUrl ? `&redirect=${encodeURIComponent(redirectUrl)}` : '';
+                window.location.href = `${API_BASE_URL || 'https://omvirawellness-backend.onrender.com'}/api/oauth/facebook?user_type=client${redirectParam}`;
               }}
               aria-label="Continue with Facebook"
             >
@@ -290,7 +314,9 @@ export default function LoginPage() {
               type="button"
               className={`${styles.socialButton} ${styles.googleButton}`}
               onClick={() => {
-                window.location.href = `${API_BASE_URL || 'https://omvirawellness-backend.onrender.com'}/api/oauth/google?user_type=client`;
+                const redirectUrl = searchParams.get('redirect');
+                const redirectParam = redirectUrl ? `&redirect=${encodeURIComponent(redirectUrl)}` : '';
+                window.location.href = `${API_BASE_URL || 'https://omvirawellness-backend.onrender.com'}/api/oauth/google?user_type=client${redirectParam}`;
               }}
               aria-label="Continue with Google"
             >
@@ -330,5 +356,24 @@ export default function LoginPage() {
         }}
       />
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.container}>
+        <header className={styles.topBar}>
+          <Link href="/" className={styles.backLink}>
+            ← Back to Homepage
+          </Link>
+        </header>
+        <main className={styles.formContainer}>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        </main>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 } 

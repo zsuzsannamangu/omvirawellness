@@ -54,6 +54,26 @@ function BookingConfirmationPageContent() {
   const addressInputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<any>(null);
 
+  // Handle OAuth token from URL hash (for OAuth redirects)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      try {
+        const hashData = JSON.parse(decodeURIComponent(window.location.hash.substring(1)));
+        if (hashData.token) {
+          localStorage.setItem('token', hashData.token);
+          if (hashData.user) {
+            localStorage.setItem('user', JSON.stringify(hashData.user));
+          }
+          // Remove hash from URL to clean it up
+          const currentUrl = window.location.pathname + window.location.search;
+          router.replace(currentUrl);
+        }
+      } catch (error) {
+        console.error('Error parsing hash data:', error);
+      }
+    }
+  }, [router]);
+
   // Normalize date string (YYYY-MM-DD) into local Date for display only
   const formatLocalDateLong = (dateString: string) => {
     const [y, m, d] = dateString.split('-').map(Number);
