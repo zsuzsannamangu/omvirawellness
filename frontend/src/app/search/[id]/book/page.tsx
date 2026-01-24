@@ -502,7 +502,7 @@ function BookingConfirmationPageContent() {
           Swal.fire({
             icon: 'success',
             title: 'Location Confirmed',
-            text: `${distanceText}Good news! You are within the provider's travel range (up to ${data.maxDistance || 'unlimited'} miles). The provider will travel to your location.`,
+            text: `Good news! You are within the provider's travel range. The provider will travel to your location`,
             confirmButtonColor: '#4a90e2',
             confirmButtonText: 'Continue Booking'
           });
@@ -1062,8 +1062,8 @@ function BookingConfirmationPageContent() {
                         <>
                           <span className={styles.checkmark}>✓</span>
                           {distanceCheck.distance !== null 
-                            ? `You are ${distanceCheck.distance} miles away. Provider will travel to your location.`
-                            : "You are within the provider's travel range. Provider will travel to your location."}
+                            ? `Good news! You are within the provider's travel range. Provider will travel to your location.`
+                            : "Good news! You are within the provider's travel range. Provider will travel to your location."}
                         </>
                       ) : (
                         <>
