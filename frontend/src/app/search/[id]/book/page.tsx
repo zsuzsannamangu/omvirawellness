@@ -514,15 +514,12 @@ function BookingConfirmationPageContent() {
           Swal.fire({
             icon: 'warning',
             title: 'Outside Travel Range',
-            html: `<p>${distanceText}</p><p style="margin-top: 12px;">Please select a different location option or contact the provider to discuss travel arrangements.</p>`,
+            html: `<p>${distanceText}</p><p style="margin-top: 12px;">You can try entering a different address, select a different location option, or contact the provider to discuss travel arrangements.</p>`,
             confirmButtonColor: '#4a90e2',
             confirmButtonText: 'OK'
           });
           
-          // If outside range, switch to a different location option
-          if (locationType === 'home') {
-            setLocationType('studio');
-          }
+          // Don't automatically switch location - let user decide
         }
       } else {
         const errorData = await response.json().catch(() => ({}));
@@ -916,13 +913,20 @@ function BookingConfirmationPageContent() {
                 </div>
 
                 <div 
-                  className={`${styles.locationOption} ${locationType === 'home' ? styles.selected : ''} ${!provider?.locationOptions?.travelsToClient || (distanceCheck && distanceCheck.checked && !distanceCheck.withinRange) ? styles.disabled : ''}`}
+                  className={`${styles.locationOption} ${locationType === 'home' ? styles.selected : ''} ${!provider?.locationOptions?.travelsToClient ? styles.disabled : ''} ${distanceCheck && distanceCheck.checked && !distanceCheck.withinRange ? styles.warning : ''}`}
                   onClick={() => {
                     if (provider?.locationOptions?.travelsToClient) {
-                      // If distance hasn't been checked yet, allow selection (will check when address is entered)
-                      if (!distanceCheck || distanceCheck.withinRange || !distanceCheck.checked) {
-                        handleLocationChange('home');
+                      // Always allow selection - if outside range, clear the check so they can try a different address
+                      if (distanceCheck && distanceCheck.checked && !distanceCheck.withinRange) {
+                        // Clear distance check to allow trying a different address
+                        setDistanceCheck(null);
+                        setAddressValidated(null);
+                        setUserAddress('');
+                        setUserCity('');
+                        setUserState('');
+                        setUserZipCode('');
                       }
+                      handleLocationChange('home');
                     }
                   }}
                 >
@@ -932,8 +936,8 @@ function BookingConfirmationPageContent() {
                     {distanceCheck && distanceCheck.checked && !distanceCheck.withinRange ? (
                       <p style={{ color: '#d32f2f', fontSize: '0.875rem', marginTop: '4px' }}>
                         {provider.maxDistance 
-                          ? `Provider is willing to travel up to ${provider.maxDistance} miles from their location${provider.providerZipCode ? ` at ${provider.providerZipCode}` : ''}. Your location is outside this range.`
-                          : 'Your location is outside the provider\'s travel range'}
+                          ? `Your location is outside the provider's travel range (${provider.maxDistance} miles). Click to try a different address.`
+                          : 'Your location is outside the provider\'s travel range. Click to try a different address.'}
                       </p>
                     ) : provider?.maxDistance ? (
                       <p style={{ fontSize: '0.875rem', color: '#666' }}>
