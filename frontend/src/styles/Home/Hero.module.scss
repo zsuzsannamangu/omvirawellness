@@ -1,234 +1,358 @@
 @import '../_variables.scss';
 
-.hero {
-  background: url('/images/screenshots/meditation.png') center top no-repeat;
-  background-size: 120%;
-  height: 100vh;
-  position: relative;
-  margin-bottom: 0;
-  overflow: hidden;
-  
-  @media (max-width: 768px) {
-    height: 50vh;
-    min-height: 50vh;
-    max-height: 50vh;
-    background-size: 140%;
-    margin-bottom: 0;
-    overflow: hidden;
-  }
-  
-  @media (max-width: 480px) {
-    height: 45vh;
-    min-height: 45vh;
-    max-height: 45vh;
-    background-size: 160%;
-    margin-bottom: 0;
-    overflow: hidden;
-  }
-}
+// Task-focused booking hero (Uber-style clarity): white surface, strong hierarchy, paired fields.
 
-.overlay {
-  background-color: transparentize(white , 0.2);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: center;
-  padding: $spacing-lg;
-  padding-top: 15vh;
-  
-  @media (max-width: 768px) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50vh;
-    min-height: 50vh;
-    max-height: 50vh;
-    padding: $spacing-md;
-    padding-top: 12vh;
-    padding-bottom: 0;
-    overflow: hidden;
-  }
-  
-  @media (max-width: 480px) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 45vh;
-    min-height: 45vh;
-    max-height: 45vh;
-    padding: $spacing-sm;
-    padding-top: 10vh;
-    padding-bottom: 0;
-    overflow: hidden;
-  }
-}
+.bookingHero {
+  background: $bg-white;
+  padding: $spacing-xl $spacing-lg $spacing-xxl;
+  border-bottom: 1px solid $border-light;
 
-.searchSection {
-  display: none;
-  background-color: $bg-white;
-  padding: $spacing-xl $spacing-lg;
-  justify-content: center;
-  align-items: center;
-  
-  @media (max-width: 768px) {
-    display: flex;
-    padding: 0 $spacing-md $spacing-lg;
-    margin-top: 0;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 0 $spacing-md $spacing-md;
-  }
-}
-
-.title {
-  font-family: $font-mainheading;
-  font-size: 4rem;
-  font-weight: bold;
-  color: $dark-text;
-  text-align: center;
-  width: 100%;
-  margin: 0 auto;
-  
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 2rem;
-  }
-}
-
-.subtitle {
-  color: $dark-text;
-  font-weight: bold;
-  margin-top: $spacing-md;
-  margin-bottom: $spacing-xl;
-  font-size: 2.25rem;
-  max-width: 600px;
-  font-family: $font-subheading;
-  text-align: center;
-  
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    padding: 0 $spacing-md;
-    margin-bottom: $spacing-lg;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-    margin-top: $spacing-sm;
-    margin-bottom: $spacing-md;
-  }
-}
-
-.searchForm {
-  display: flex;
-  gap: $spacing-sm;
-  max-width: 450px;
-  width: 100%;
-  margin: 0 auto;
-  margin-top: $spacing-xl;
-  align-items: center;
-  
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.searchFormMobile {
-  display: flex;
-  gap: $spacing-sm;
-  max-width: 100%;
-  width: 100%;
-  margin: 0 auto;
-  align-items: center;
-  
   @media (min-width: 769px) {
-    display: none;
-  }
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: $spacing-md;
-    max-width: 100%;
-  }
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: $spacing-sm;
-    max-width: 100%;
+    padding: $spacing-xxl $spacing-xl 4rem;
   }
 }
 
-.searchInput {
-  padding: 0.625rem $spacing-md;
-  border-radius: 8px;
+.inner {
+  max-width: 520px;
+  margin: 0 auto;
+
+  @media (min-width: 769px) {
+    max-width: 560px;
+  }
+}
+
+.cityRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  font-family: $font-main;
+  font-size: 0.875rem;
+  color: $subtext-color;
+  margin-bottom: $spacing-md;
+}
+
+.cityPin {
+  color: $client-colors-1;
+  flex-shrink: 0;
+}
+
+.cityText {
+  color: $dark-text;
+  font-weight: $font-weight-medium;
+}
+
+.changeCity {
+  background: none;
   border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: $font-weight-semibold;
+  color: $client-colors-1;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: $button-pink-hover;
+  }
+}
+
+.headline {
+  font-family: $font-main;
+  font-size: 1.875rem;
+  font-weight: $font-weight-bold;
+  color: $dark-text;
+  line-height: 1.2;
+  margin: 0 0 $spacing-sm;
+  letter-spacing: -0.02em;
+
+  @media (min-width: 769px) {
+    font-size: 2.25rem;
+  }
+}
+
+.lede {
+  font-family: $font-main;
   font-size: 1rem;
+  line-height: 1.5;
+  color: $subtext-color;
+  margin: 0 0 $spacing-xl;
+  max-width: 42ch;
+}
+
+.form {
+  margin: 0;
+}
+
+.routeBlock {
+  position: relative;
+  padding-left: 1.125rem;
+  margin-bottom: $spacing-md;
+}
+
+.routeConnector {
+  position: absolute;
+  left: 0.375rem;
+  top: 2.25rem;
+  bottom: 2.25rem;
+  width: 2px;
+  background: #d1d5db;
+  border-radius: 1px;
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 0.75rem 0.875rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-within {
+    border-color: rgba($client-colors-1, 0.45);
+    box-shadow: 0 0 0 3px rgba($client-colors-1, 0.12);
+    background: $bg-white;
+  }
+}
+
+.fieldIconCircle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #9ca3af;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fieldIconSquare {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #9ca3af;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.fieldInput {
   flex: 1;
   min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: $font-main;
+  font-size: 1rem;
   color: $dark-text;
-  box-sizing: border-box;
-  
+  outline: none;
+
   &::placeholder {
-    color: $subtext-color;
-  }
-  
-  &:focus {
-    outline: none;
-  }
-  
-  @media (max-width: 768px) {
-    border: 2px solid $border-light;
-    width: 100%;
-    padding: 0.875rem $spacing-md;
-    font-size: 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 0.875rem $spacing-md;
-    font-size: 16px;
+    color: #6b7280;
   }
 }
 
-.searchButton {
-  padding: 0.625rem $spacing-lg;
-  background-color: $secondary-color;
-  color: $dark-text;
+.locateBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
   border: none;
   border-radius: 8px;
+  background: $bg-white;
+  color: $subtext-color;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #e5e7eb;
+    color: $dark-text;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.fieldError {
+  font-family: $font-main;
+  font-size: 0.875rem;
+  color: #b91c1c;
+  margin: 0 0 $spacing-md;
+}
+
+.dateTimeRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.dateTimeField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  label {
+    font-family: $font-main;
+    font-size: 0.75rem;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $subtext-color;
+  }
+}
+
+.dateTimeInputWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid transparent;
+
+  &:focus-within {
+    border-color: rgba($client-colors-1, 0.35);
+    background: $bg-white;
+  }
+}
+
+.inputGlyph {
+  flex-shrink: 0;
+  font-size: 1rem;
+  color: $subtext-color;
+}
+
+.timeIcon {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  color: $subtext-color;
+}
+
+.dateInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: $font-main;
+  font-size: 0.9375rem;
+  color: $dark-text;
+  outline: none;
+}
+
+.timeSelect {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: $font-main;
+  font-size: 0.9375rem;
+  color: $dark-text;
+  cursor: pointer;
+  outline: none;
+}
+
+.customTimeRow {
+  margin-bottom: $spacing-md;
+}
+
+.timeInput {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid $border-light;
+  font-family: $font-main;
+  font-size: 1rem;
+}
+
+.suggestionsHeading {
+  font-family: $font-main;
+  font-size: 0.8125rem;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $subtext-color;
+  margin: $spacing-lg 0 $spacing-sm;
+}
+
+.suggestionsList {
+  list-style: none;
+  margin: 0 0 $spacing-xl;
+  padding: 0;
+  border-top: 1px solid $border-light;
+}
+
+.suggestionBtn {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: $spacing-md 0;
+  border: none;
+  border-bottom: 1px solid $border-light;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: rgba($client-colors-3, 0.15);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.suggestionIcon {
+  color: #9ca3af;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.suggestionText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.suggestionPrimary {
+  font-family: $font-main;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  color: $dark-text;
+}
+
+.suggestionSecondary {
+  font-family: $font-main;
+  font-size: 0.8125rem;
+  color: $subtext-color;
+  line-height: 1.35;
+}
+
+.cta {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  background: #111827;
+  color: $light-text;
+  font-family: $font-main;
   font-size: 1rem;
   font-weight: $font-weight-semibold;
-  font-family: $font-main;
   cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-  
+  transition: background 0.2s ease, transform 0.15s ease;
+
   &:hover {
-    background-color: $button-yellow-hover;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba($secondary-color, 0.3);
+    background: #000000;
   }
-  
+
   &:active {
-    transform: translateY(0);
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 0.875rem $spacing-md;
-    font-size: 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    width: 100%;
-    padding: 0.875rem $spacing-md;
-    font-size: 1rem;
+    transform: scale(0.99);
   }
 }

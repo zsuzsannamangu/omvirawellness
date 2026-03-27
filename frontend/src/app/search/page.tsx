@@ -206,6 +206,7 @@ const formatBusinessType = (businessType: string | null | undefined): string => 
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [areaFilter, setAreaFilter] = useState('');
   const [selectedService, setSelectedService] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedPriceRange, setSelectedPriceRange] = useState('');
@@ -291,13 +292,31 @@ export default function SearchPage() {
       const urlParams = new URLSearchParams(window.location.search);
       const queryParam = urlParams.get('q');
       const serviceParam = urlParams.get('service');
-      
+      const areaParam = urlParams.get('area');
+      const dateParam = urlParams.get('date');
+      const timeParam = urlParams.get('time');
+
       if (queryParam) {
         setSearchQuery(queryParam);
       }
-      
+
+      if (areaParam) {
+        setAreaFilter(areaParam);
+      }
+
       if (serviceParam) {
         setSelectedCategories([serviceParam]);
+      }
+
+      if (dateParam || timeParam) {
+        try {
+          sessionStorage.setItem(
+            'omvira_search_intent',
+            JSON.stringify({ date: dateParam || null, time: timeParam || null })
+          );
+        } catch {
+          /* ignore */
+        }
       }
     }
   }, []);
@@ -406,10 +425,17 @@ export default function SearchPage() {
   // Reset all filters
   const handleResetFilters = () => {
     setSearchQuery('');
+    setAreaFilter('');
     setSelectedService('');
     setSelectedLocation('');
     setSelectedPriceRange('');
     setSortBy('Most Relevant');
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      params.delete('area');
+      const qs = params.toString();
+      window.history.replaceState(null, '', qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
+    }
   };
 
   // Helper function to extract word stems (simple stemming)
@@ -611,6 +637,27 @@ export default function SearchPage() {
   // Filter and sort providers
   const filteredAndSortedProviders = React.useMemo(() => {
     let filtered = [...providers];
+
+    // City / region / ZIP from homepage
+    if (areaFilter && areaFilter.trim()) {
+      const raw = areaFilter.trim().toLowerCase();
+      const tokens = raw.split(/[,\s]+/).filter((t) => t.length >= 2);
+      filtered = filtered.filter((provider) => {
+        const city = (provider.city || '').toLowerCase();
+        const state = (provider.state || '').toLowerCase();
+        const zip = String(
+          (provider as { zip_code?: string; zipCode?: string }).zip_code ||
+            (provider as { zipCode?: string }).zipCode ||
+            ''
+        ).toLowerCase();
+        if (city.includes(raw) || state.includes(raw) || zip.includes(raw)) {
+          return true;
+        }
+        return tokens.some(
+          (t) => city.includes(t) || state.includes(t) || zip.includes(t)
+        );
+      });
+    }
 
     // Apply service filter FIRST (if selected)
     // This way, when user filters by category and then searches, we search within that category
@@ -842,7 +889,7 @@ export default function SearchPage() {
     });
 
     return sorted;
-  }, [providers, searchQuery, selectedService, selectedLocation, selectedPriceRange, sortBy]);
+  }, [providers, searchQuery, areaFilter, selectedService, selectedLocation, selectedPriceRange, sortBy]);
 
   return (
     <>
@@ -1013,7 +1060,9 @@ export default function SearchPage() {
                   ) : (
                   <div>
                     <p style={{ marginBottom: '16px', fontSize: '18px', fontWeight: '600' }}>
-                      No providers found {searchQuery ? `for "${searchQuery}"` : ''} {selectedService || selectedLocation || selectedPriceRange ? 'with your current filters' : ''}
+                      No providers found {searchQuery ? `for "${searchQuery}"` : ''}
+                      {areaFilter ? ` near "${areaFilter}"` : ''}{' '}
+                      {selectedService || selectedLocation || selectedPriceRange || areaFilter ? 'with your current filters' : ''}
                     </p>
                     <p style={{ marginBottom: '12px', color: '#666', fontSize: '16px' }}>
                       {searchQuery ? (
