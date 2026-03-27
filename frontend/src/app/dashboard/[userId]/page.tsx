@@ -547,7 +547,11 @@ function ClientDashboardContent() {
       </div>
 
       {/* Main Content Area */}
-      <div className={styles.mainContent} style={{ marginLeft: sidebarExpanded ? '240px' : '80px' }}>
+      <div
+        className={`${styles.mainContent} ${
+          sidebarExpanded ? styles.mainContentShiftExpanded : styles.mainContentShiftCollapsed
+        }`}
+      >
         {/* Top Navigation */}
         <div className={styles.topNav}>
           <div className={styles.greetingSection}>

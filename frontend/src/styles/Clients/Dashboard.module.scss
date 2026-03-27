@@ -172,14 +172,21 @@
   line-height: 1;
 }
 
-// Main Content Area
+// Main Content Area — offset matches sidebar; no inline styles (mobile overrides below)
 .mainContent {
   flex: 1;
-  margin-left: 240px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
+}
+
+.mainContentShiftExpanded {
+  margin-left: 240px;
+}
+
+.mainContentShiftCollapsed {
+  margin-left: 80px;
 }
 
 // Top Navigation
@@ -627,7 +634,7 @@
     }
   }
   
-  .mainContent {
+  .mainContentShiftExpanded {
     margin-left: 220px;
   }
 }
@@ -649,7 +656,7 @@
     }
   }
   
-  .mainContent {
+  .mainContentShiftExpanded {
     margin-left: 200px;
   }
   
@@ -685,13 +692,70 @@
     }
   }
   
-  .mainContent {
+  .mainContentShiftExpanded,
+  .mainContentShiftCollapsed {
     margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .topNav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+    padding: $spacing-md;
+  }
+
+  .greetingSection {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+
+  .greetingInfo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .greeting {
+    font-size: 1.25rem;
+    word-break: break-word;
+  }
+
+  .statsRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-xs;
+  }
+
+  .topNavRight {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .findProviderBtn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: $spacing-sm $spacing-md;
+    box-sizing: border-box;
   }
   
   .submenu {
     padding: 0 $spacing-md;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .content {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .datetimeRow {
