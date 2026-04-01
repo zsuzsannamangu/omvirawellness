@@ -67,14 +67,19 @@ $card-input-bg: #f7f7f7;
 .heroSubtitle {
   margin: 0 0 0.4rem;
   font-family: $font-subheading;
-  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
-  font-weight: $font-weight-medium;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.96);
+  // Slightly stronger than before: still clearly under Omvira, but a touch more presence
+  font-size: clamp(1.15rem, 2.5vw, 1.42rem);
+  font-weight: $font-weight-semibold;
+  line-height: 1.42;
+  letter-spacing: 0.015em;
+  color: rgba(255, 255, 255, 0.98);
   max-width: 36rem;
   margin-left: auto;
   margin-right: auto;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
+  text-shadow:
+    0 1px 14px rgba(0, 0, 0, 0.28),
+    0 0 1px rgba(0, 0, 0, 0.15);
+  text-wrap: balance;
 }
 
 .heroSupporting {
@@ -122,6 +127,7 @@ $card-input-bg: #f7f7f7;
   gap: 0.75rem;
   min-height: 52px;
   padding: 0 0.875rem;
+  font-family: $font-main;
   background: $card-input-bg;
   border-radius: 10px;
   border: 1px solid #ebebeb;
@@ -149,29 +155,28 @@ $card-input-bg: #f7f7f7;
   background: transparent;
   font-family: $font-main;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: $font-weight-regular;
   line-height: 1.4;
   letter-spacing: normal;
-  color: #191919;
+  color: $dark-text;
   outline: none;
   padding: 0.875rem 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // Match typed text and placeholder (Safari/Firefox often diverge otherwise)
+  // Typed text and placeholder: same stack as $font-main (see _variables.scss)
   &::placeholder,
   &::-webkit-input-placeholder,
   &::-moz-placeholder,
   &:-ms-input-placeholder {
     font-family: $font-main;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: $font-weight-regular;
     line-height: 1.4;
     letter-spacing: normal;
-    color: #757575;
+    color: $subtext-color;
     opacity: 1;
   }
-
 }
 
 .locateBtn {

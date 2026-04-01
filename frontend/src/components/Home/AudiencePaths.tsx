@@ -19,7 +19,7 @@ const paths = [
     key: 'provider',
     title: 'Become a provider',
     description:
-      'Grow your independent practice on Omvira. Reach clients who value wellness, set your own availability, and keep more of what you earn.',
+      'Start earning with tools, visibility and clients without the overwhelm.',
     cta: 'Get started',
     href: '/join',
     image: '/images/screenshots/growyourpractice2.png',

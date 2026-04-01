@@ -99,7 +99,7 @@ const Hero: React.FC = () => {
         <h1 className={styles.heroTitle}>Omvira</h1>
         <p className={styles.heroSubtitle}>Wellness, delivered to you</p>
         <p className={styles.heroSupporting}>
-          Book trusted professionals for massage, yoga, skincare, and more—solo or with friends.
+          Book trusted professionals for massage, yoga, skincare.
         </p>
 
         <div className={styles.searchCard}>
