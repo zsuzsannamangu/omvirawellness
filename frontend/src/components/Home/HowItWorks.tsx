@@ -4,8 +4,8 @@ import Image from 'next/image';
 
 const steps = [
   {
-    title: 'Browse verified providers with real-time availability and transparent pricing',
-    description: 'Discover local wellness professionals who are vetted, trusted, and ready to serve you with upfront pricing and instant availability.',
+    title: 'Book in Minutes',
+    description: 'Browse services, check availability, and schedule instantly.',
     image: '/images/screenshots/growyourpractice2.png',
   },
   {
