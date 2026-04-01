@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import Hero from '@/components/Home/Hero';
 import AudiencePaths from '@/components/Home/AudiencePaths';
 import FAQ from '@/components/Home/FAQ';
-import RecommendedProviders from '@/components/Home/RecommendedProviders';
+// import RecommendedProviders from '@/components/Home/RecommendedProviders'; // TODO: restore when ready
 import HowItWorks from '@/components/Home/HowItWorks';
 import Testimonials from '@/components/Home/Testimonials';
 
@@ -20,7 +20,7 @@ const Home: React.FC = () => {
         <Hero />
         <AudiencePaths />
         <HowItWorks />
-        <RecommendedProviders />
+        {/* <RecommendedProviders /> */}
         <Testimonials />
         <ServiceCategories />
         <FAQ />

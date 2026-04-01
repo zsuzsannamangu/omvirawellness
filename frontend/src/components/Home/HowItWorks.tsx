@@ -4,24 +4,15 @@ import Image from 'next/image';
 
 const steps = [
   {
-    title: 'Book in Minutes',
-    description: 'Browse services, check availability, and schedule instantly.',
+    title: 'Book in minutes',
+    description: 'Browse services, check availability, and schedule in a few taps.',
     image: '/images/screenshots/growyourpractice2.png',
   },
   {
-    title: 'Book on-demand or in advance for wellness services near you',
-    description: 'Schedule your wellness session exactly when you need it - whether it\'s a last-minute massage or a planned yoga retreat.',
-    image: '/images/screenshots/arrival.png',
-  },
-  {
-    title: 'Curate your own experience — solo or with friends, for daily care or special events',
-    description: 'Customize your wellness journey whether you\'re treating yourself, planning a group session, or organizing a special celebration.',
+    title: 'We come to you',
+    description:
+      'Vetted providers at home, outdoors, or a shared space—upfront rates, no membership fees.',
     image: '/images/screenshots/massage1.png',
-  },
-  {
-    title: 'Wellness that travels — to your home, retreat, hotel, or workplace',
-    description: 'Enjoy professional wellness services wherever you are most comfortable, bringing the spa experience directly to you.',
-    image: '/images/screenshots/massagetable.png',
   },
 ];
 
@@ -35,7 +26,7 @@ const HowItWorks: React.FC = () => {
         </div>
         <div className={styles.stepsContainer}>
           {steps.map((step, index) => (
-            <div key={index} className={`${styles.step} ${index % 2 === 1 ? styles.reverse : ''}`}>
+            <div key={step.title} className={`${styles.step} ${index % 2 === 1 ? styles.reverse : ''}`}>
               <div className={styles.content}>
                 <h3>{step.title}</h3>
                 <p>{step.description}</p>

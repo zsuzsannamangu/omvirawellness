@@ -1,11 +1,11 @@
 @import '../_variables.scss';
 
 .howSection {
-  padding: $spacing-xxl 2rem;
+  padding: $spacing-xl 2rem;
   background-color: $light-text;
-  
+
   @media (max-width: 768px) {
-    padding: 3rem 1rem;
+    padding: 2.5rem 1rem;
   }
 }
 
@@ -16,10 +16,10 @@
 
 .header {
   text-align: left;
-  margin-bottom: $spacing-xxl;
-  
+  margin-bottom: $spacing-xl;
+
   @media (max-width: 768px) {
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-lg;
   }
 }
 
@@ -43,10 +43,10 @@
 .stepsContainer {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xxl;
-  
+  gap: $spacing-xl;
+
   @media (max-width: 768px) {
-    gap: $spacing-xl;
+    gap: $spacing-lg;
   }
 }
 
@@ -74,14 +74,14 @@
   max-width: 500px;
   
   h3 {
-    font-size: 2rem;
+    font-size: 1.65rem;
     font-family: $font-subheading;
     color: $primary-color;
-    margin-bottom: $spacing-lg;
+    margin-bottom: $spacing-md;
     font-weight: 600;
-    
+
     @media (max-width: 768px) {
-      font-size: 1.5rem;
+      font-size: 1.35rem;
     }
   }
   
