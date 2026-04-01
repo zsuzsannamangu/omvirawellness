@@ -7,6 +7,9 @@
 
 $brand-lime: #9bc043;
 $brand-lime-dark: #88a83a;
+// Dark forest green — distinct from lime; navbar Log In and similar CTAs
+$brand-forest-green: #4a6230;
+$brand-forest-green-hover: #3d5228;
 $brand-purple: #5b3e7a;
 $brand-purple-deep: #4a3263;
 $brand-purple-mid: #6e528f;
@@ -18,6 +21,9 @@ $navbar-fg-muted: rgba(255, 255, 255, 0.9);
 $navbar-link-hover: $brand-purple;
 $navbar-cta-bg: $brand-purple;
 $navbar-cta-hover: $brand-purple-deep;
+$navbar-login-bg: $brand-forest-green;
+$navbar-login-hover: $brand-forest-green-hover;
+$navbar-login-fg: #ffffff;
 
 // Semantic colors
 $primary-color: $brand-lime;

@@ -131,7 +131,7 @@ export default function Navbar() {
             <Link href="/providers" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>
               For Providers
             </Link>
-            <Link href="/login" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>
+            <Link href="/login" className={styles.mobileLoginButton} onClick={() => setIsMenuOpen(false)}>
               Log In
             </Link>
             <Link href="/signup" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>

@@ -174,7 +174,7 @@ export default function SpaceNavbar() {
             <Link href="/providers" className={styles.mobileNavLink}>
               For Providers
             </Link>
-            <Link href="/spaces/login" className={styles.mobileNavLink}>
+            <Link href="/spaces/login" className={styles.mobileLoginButton}>
               Log In
             </Link>
             <Link href="/spaces/signup" className={styles.mobileNavLink}>

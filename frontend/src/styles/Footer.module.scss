@@ -109,19 +109,19 @@
 
   &:focus-visible {
     outline: 3px solid rgba($primary-color, 0.55);
-    outline-offset: 6px;
-    border-radius: 50%;
+    outline-offset: 4px;
+    border-radius: 12px;
   }
 }
 
 .logo {
-  width: 124px;
+  display: block;
+  width: min(240px, 100%);
   height: auto;
-  max-width: 100%;
-  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.35));
 
   @media (max-width: 480px) {
-    width: 108px;
+    width: min(200px, 100%);
   }
 }
 

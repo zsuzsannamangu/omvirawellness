@@ -44,8 +44,19 @@
   display: inline-block;
   margin-top: $spacing-xs;
   font-weight: $font-weight-semibold;
-  color: $client-colors-1;
+  color: #111;
   text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: #000;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .inputGroup {

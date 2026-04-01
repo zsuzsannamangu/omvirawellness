@@ -133,15 +133,35 @@
 }
 
 .loginLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1rem;
-  color: $navbar-fg-muted;
+  color: $navbar-login-fg;
   font-weight: 600;
   text-decoration: none;
-  transition: color 0.2s ease;
   font-family: $font-main;
+  padding: 0.6rem 1.35rem;
+  border-radius: 999px;
+  background-color: $navbar-login-bg;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
-    color: $navbar-fg;
+    color: $navbar-login-fg;
+    background-color: $navbar-login-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.55);
+    outline-offset: 2px;
   }
 }
 
@@ -261,6 +281,39 @@
   
   &:last-child {
     border-bottom: none;
+  }
+}
+
+.mobileLoginButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.35rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  font-family: $font-main;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: $navbar-login-fg;
+  text-decoration: none;
+  background-color: $navbar-login-bg;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba($brand-forest-green-hover, 0.35);
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: $navbar-login-hover;
+    color: $navbar-login-fg;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba($brand-forest-green-hover, 0.4);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($primary-color, 0.55);
+    outline-offset: 2px;
   }
 }
 

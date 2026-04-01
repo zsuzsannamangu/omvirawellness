@@ -190,7 +190,7 @@ export default function ProviderNavbar() {
               For Spaces
             </Link>
             */}
-            <Link href="/providers/login" className={styles.mobileNavLink}>
+            <Link href="/providers/login" className={styles.mobileLoginButton}>
               Log In
             </Link>
             <Link href="/providers/signup" className={styles.mobileNavLink}>

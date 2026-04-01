@@ -77,10 +77,10 @@ export default function Footer() {
           <div className={styles.brandPanel}>
             <Link href="/" className={styles.logoLink}>
               <Image
-                src="/Omvira_logo_circle.png"
+                src="/Omvira_logo_white.png"
                 alt="Omvira Wellness — home"
-                width={160}
-                height={160}
+                width={300}
+                height={75}
                 className={styles.logo}
               />
             </Link>
