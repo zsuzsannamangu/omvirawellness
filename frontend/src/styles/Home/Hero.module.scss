@@ -79,23 +79,23 @@ $card-input-bg: #f7f7f7;
 .heroSubtitle {
   margin: 0.35rem 0 0;
   width: 100%;
-  max-width: min(100%, 38rem);
+  max-width: 100%;
   padding: 0 $spacing-xs;
   box-sizing: border-box;
   text-align: center;
-  font-family: $font-subheading;
-  // Nearly the same scale as Omvira; slightly lighter weight keeps hierarchy clear
-  font-size: clamp(2.45rem, 8vw, 4.1rem);
-  font-weight: $font-weight-semibold;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
+  font-family: $font-mainheading;
+  // Single line on all breakpoints; fluid type so it fits narrow viewports
+  font-size: clamp(1rem, calc(0.65rem + 3.8vw), 4.1rem);
+  font-weight: $font-weight-bold;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: rgba(255, 255, 255, 0.98);
   margin-left: auto;
   margin-right: auto;
   text-shadow:
     0 1px 18px rgba(0, 0, 0, 0.3),
     0 0 1px rgba(0, 0, 0, 0.15);
-  text-wrap: balance;
+  white-space: nowrap;
 }
 
 .heroSupporting {

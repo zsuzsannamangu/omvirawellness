@@ -31,7 +31,7 @@ const HowItWorks: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>How It Works</h2>
-          <p className={styles.subtitle}>Simple steps to wellness at your fingertips.</p>
+          <p className={styles.subtitle}>Simple. Seamless. Designed for real life.</p>
         </div>
         <div className={styles.stepsContainer}>
           {steps.map((step, index) => (

@@ -101,7 +101,7 @@ const Hero: React.FC = () => {
           <p className={styles.heroSubtitle}>Wellness, delivered to you</p>
         </div>
         <p className={styles.heroSupporting}>
-          Book trusted professionals for massage, yoga, skincare, Acupuncture, and more—solo or with friends.
+          Book trusted professionals for massage, yoga, skincare and more.
         </p>
 
         <div className={styles.searchCard}>
