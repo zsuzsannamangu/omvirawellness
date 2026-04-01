@@ -3,6 +3,7 @@ import { Forum, Playfair_Display } from 'next/font/google';
 import '../styles/tailwind.css';
 import '../styles/globals.scss';
 import '../styles/accessibility.scss';
+import ContactFloatingChip from '@/components/ContactFloatingChip';
 
 // Optimize font loading with Next.js font system for available fonts
 const forum = Forum({
@@ -46,6 +47,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <ContactFloatingChip />
       </body>
     </html>
   );

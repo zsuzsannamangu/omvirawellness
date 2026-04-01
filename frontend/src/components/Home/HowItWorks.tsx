@@ -53,29 +53,35 @@ const HowItWorks: React.FC = () => {
           <p className={styles.subtitle}>Simple. Seamless. Designed for real life.</p>
         </div>
         <div className={styles.stepsContainer}>
-          {rows.map((row) => (
-            <div
+          {rows.map((row, rowIndex) => (
+            <article
               key={row.image}
-              className={`${styles.step} ${row.reverse ? styles.reverse : ''}`}
+              className={`${styles.stepPanel} ${row.reverse ? styles.panelReverse : ''} ${rowIndex % 2 === 1 ? styles.panelTintB : styles.panelTintA}`}
             >
-              <div className={styles.contentStack}>
-                {row.steps.map((step) => (
-                  <div key={step.title} className={styles.stepBlock}>
-                    <h3>{step.title}</h3>
-                    <p>{step.description}</p>
+              <div className={styles.panelInner}>
+                <div className={styles.contentStack}>
+                  {row.steps.map((step, i) => (
+                    <div key={step.title} className={styles.stepBlock}>
+                      {i > 0 && <div className={styles.stepDivider} aria-hidden />}
+                      <h3>{step.title}</h3>
+                      <p>{step.description}</p>
+                    </div>
+                  ))}
+                </div>
+                <figure className={styles.figure}>
+                  <div className={styles.imageFrame}>
+                    <Image
+                      src={row.image}
+                      alt={row.imageAlt}
+                      width={360}
+                      height={288}
+                      className={styles.image}
+                      sizes="(max-width: 768px) 72vw, 280px"
+                    />
                   </div>
-                ))}
+                </figure>
               </div>
-              <div className={styles.imageContainer}>
-                <Image
-                  src={row.image}
-                  alt={row.imageAlt}
-                  width={500}
-                  height={400}
-                  className={styles.image}
-                />
-              </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>

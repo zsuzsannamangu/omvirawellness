@@ -42,7 +42,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 40rem;
+  max-width: 44rem;
   margin: 0 auto;
   text-align: center;
 }
@@ -61,7 +61,8 @@
 
 .body {
   margin: 0;
-  text-align: left;
+  text-align: center;
+  text-wrap: balance;
   font-family: $font-main;
   font-size: clamp(1rem, 2.2vw, 1.125rem);
   font-weight: $font-weight-regular;

@@ -29,7 +29,8 @@ const WellnessNotOneSize: React.FC = () => {
         <p className={styles.body}>
           Omvira was built for real life, busy schedules, evolving needs, scaled events, or something
           more personalized. Omvira is for people who want access to high quality care without
-          navigating complicated systems, crowded environments, or disconnected platforms to bring wellness into your everyday life.
+          navigating complicated systems, crowded environments, or disconnected platforms to bring
+          wellness into your everyday life.
         </p>
       </div>
     </section>
