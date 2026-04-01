@@ -2,17 +2,45 @@ import React from 'react';
 import styles from '@/styles/Home/HowItWorks.module.scss';
 import Image from 'next/image';
 
-const steps = [
+type StepCopy = { title: string; description: string };
+
+type Row = {
+  image: string;
+  imageAlt: string;
+  reverse: boolean;
+  steps: [StepCopy, StepCopy];
+};
+
+const rows: Row[] = [
   {
-    title: 'Book in minutes',
-    description: 'Browse services, check availability, and schedule in a few taps.',
     image: '/images/screenshots/growyourpractice2.png',
+    imageAlt: 'Scheduling and booking wellness services on a device',
+    reverse: false,
+    steps: [
+      {
+        title: 'Book in Minutes',
+        description: 'Browse services, check availability, and schedule instantly.',
+      },
+      {
+        title: 'Trusted Providers',
+        description: 'Every provider is vetted for quality professionalism and alignment.',
+      },
+    ],
   },
   {
-    title: 'We come to you',
-    description:
-      'Vetted providers at home, outdoors, or a shared space—upfront rates, no membership fees.',
     image: '/images/screenshots/massage1.png',
+    imageAlt: 'Relaxing in-home wellness session',
+    reverse: true,
+    steps: [
+      {
+        title: 'We Come to You',
+        description: 'At home, outdoors or a shared space. Your choice.',
+      },
+      {
+        title: 'Clear Pricing',
+        description: 'Zero dollar membership fees. No surprises, just honest upfront rates.',
+      },
+    ],
   },
 ];
 
@@ -25,16 +53,23 @@ const HowItWorks: React.FC = () => {
           <p className={styles.subtitle}>Simple. Seamless. Designed for real life.</p>
         </div>
         <div className={styles.stepsContainer}>
-          {steps.map((step, index) => (
-            <div key={step.title} className={`${styles.step} ${index % 2 === 1 ? styles.reverse : ''}`}>
-              <div className={styles.content}>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
+          {rows.map((row) => (
+            <div
+              key={row.image}
+              className={`${styles.step} ${row.reverse ? styles.reverse : ''}`}
+            >
+              <div className={styles.contentStack}>
+                {row.steps.map((step) => (
+                  <div key={step.title} className={styles.stepBlock}>
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                  </div>
+                ))}
               </div>
               <div className={styles.imageContainer}>
                 <Image
-                  src={step.image}
-                  alt={step.title}
+                  src={row.image}
+                  alt={row.imageAlt}
                   width={500}
                   height={400}
                   className={styles.image}

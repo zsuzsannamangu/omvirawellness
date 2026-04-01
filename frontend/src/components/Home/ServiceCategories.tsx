@@ -2,42 +2,8 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { SERVICE_CATEGORIES } from '@/config/categories';
 import styles from '@/styles/Home/ServiceCategories.module.scss';
-
-// Map category IDs to icon paths (for homepage display)
-const categoryIcons: { [key: string]: string } = {
-  'private-yoga': '/images/icons/yoga.png',
-  'yoga-therapy': '/images/icons/yoga.png',
-  'somatic-practices': '/images/icons/yoga.png',
-  'massage-therapy': '/images/icons/massage.png',
-  meditation: '/images/icons/yoga.png',
-  'reiki-energy-work': '/images/icons/aromatherapy.png',
-  'sound-healing': '/images/icons/aromatherapy.png',
-  'craniosacral-therapy': '/images/icons/massage.png',
-  reflexology: '/images/icons/massage.png',
-  acupuncture: '/images/icons/medicine.png',
-  'life-coaching': '/images/icons/training.png',
-  'health-coaching': '/images/icons/training.png',
-  breathwork: '/images/icons/yoga.png',
-  'nutrition-counseling': '/images/icons/training.png',
-  ayurveda: '/images/icons/hot-stones.png',
-  herbalist: '/images/icons/medicine.png',
-  'personal-training': '/images/icons/training.png',
-  'doula-care': '/images/icons/baby.png',
-  'skincare-esthetics': '/images/icons/skincare.png',
-  'hair-styling': '/images/icons/hairdresser.png',
-  'nail-care': '/images/icons/cosmetic.png',
-  makeup: '/images/icons/mascara.png',
-  'cacao-facilitation': '/images/icons/aromatherapy.png',
-};
-
-const categories = SERVICE_CATEGORIES.map((cat) => ({
-  label: cat.displayName,
-  icon: categoryIcons[cat.id] || '/images/icons/yoga.png',
-  description: cat.description || '',
-}));
 
 const ServiceCategories: React.FC = () => {
   const router = useRouter();
@@ -51,31 +17,22 @@ const ServiceCategories: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>Popular Services</h2>
-          <p className={styles.subtitle}>Browse trusted wellness providers in your area.</p>
         </div>
 
         <div className={styles.grid}>
-          {categories.map((category, idx) => (
+          {SERVICE_CATEGORIES.map((cat) => (
             <button
-              key={idx}
+              key={cat.id}
               type="button"
               className={styles.categoryCard}
-              onClick={() => handleCategoryClick(category.label)}
+              onClick={() => handleCategoryClick(cat.displayName)}
             >
-              <div className={styles.titleRow}>
-                <div className={styles.imageContainer}>
-                  <Image
-                    src={category.icon}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className={styles.serviceIcon}
-                    aria-hidden
-                  />
-                </div>
-                <h3 className={styles.categoryTitle}>{category.label}</h3>
-              </div>
-              <p className={styles.description}>{category.description}</p>
+              <span className={styles.accentLine} aria-hidden />
+              <span className={styles.labelWash} aria-hidden />
+              <span className={styles.categoryTitle}>{cat.displayName}</span>
+              <span className={styles.arrow} aria-hidden>
+                →
+              </span>
             </button>
           ))}
         </div>

@@ -16,10 +16,10 @@
 
 .header {
   text-align: left;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 
   @media (max-width: 768px) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.35rem;
   }
 }
 
@@ -27,29 +27,26 @@
   font-size: 2.5rem;
   font-family: $font-heading;
   color: $dark-text;
-  margin-bottom: $spacing-md;
+  margin: 0;
 
   @media (max-width: 768px) {
     font-size: 2rem;
   }
 }
 
-.subtitle {
-  font-family: $font-subheading;
-  font-size: 1.1rem;
-  color: $subtext-color;
-  margin: 0;
-}
-
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: 0.85rem 1rem;
   align-items: stretch;
+
+  @media (min-width: 640px) {
+    gap: 1rem 1.15rem;
+  }
 
   @media (min-width: 900px) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
+    gap: 1.1rem 1.25rem;
   }
 
   @media (min-width: 1200px) {
@@ -58,90 +55,112 @@
 }
 
 .categoryCard {
-  background: $light-text;
-  border-radius: 16px;
-  padding: 1.25rem 1.35rem;
-  box-shadow: 0 4px 20px $shadow-light;
-  border: none;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 1.15rem 1.1rem 1.15rem 1.35rem;
+  min-height: 4.5rem;
+  border: 1px solid rgba($dark-text, 0.06);
+  box-shadow: 0 2px 12px rgba(41, 64, 85, 0.06);
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
   cursor: pointer;
   text-align: left;
   display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   width: 100%;
-  height: 100%;
   font: inherit;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px $shadow-medium;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(41, 64, 85, 0.1);
+    border-color: rgba($primary-color, 0.18);
   }
 
   &:focus-visible {
-    outline: 3px solid rgba($client-colors-1, 0.5);
+    outline: 3px solid rgba($client-colors-1, 0.45);
     outline-offset: 2px;
   }
 }
 
-.titleRow {
-  display: flex;
-  align-items: flex-start;
-  gap: $spacing-sm;
+.accentLine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 14px 0 0 14px;
+  z-index: 1;
 }
 
-.imageContainer {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.categoryCard:nth-child(3n + 1) .accentLine {
+  background: linear-gradient(180deg, $primary-color 0%, darken($primary-color, 8%) 100%);
+}
+
+.categoryCard:nth-child(3n + 2) .accentLine {
+  background: linear-gradient(180deg, $secondary-color 0%, darken($secondary-color, 10%) 100%);
+}
+
+.categoryCard:nth-child(3n + 3) .accentLine {
+  background: linear-gradient(180deg, $accent-color 0%, darken($accent-color, 6%) 100%);
+}
+
+.labelWash {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
-    135deg,
-    rgba($primary-color, 0.1) 0%,
-    rgba($secondary-color, 0.1) 100%
+    120deg,
+    rgba($primary-color, 0.07) 0%,
+    transparent 42%,
+    transparent 100%
   );
-  box-shadow: 0 2px 8px $shadow-color;
-  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.serviceIcon {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-  transition: transform 0.25s ease;
-}
-
-.categoryCard:hover .serviceIcon {
-  transform: scale(1.08);
+.categoryCard:hover .labelWash {
+  opacity: 1;
 }
 
 .categoryTitle {
-  font-size: 1.1rem;
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1rem, 2.1vw, 1.15rem);
   font-family: $font-subheading;
   color: $dark-text;
   margin: 0;
   font-weight: 600;
-  text-align: left;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
   flex: 1;
-  line-height: 1.3;
+  min-width: 0;
 }
 
-.description {
-  font-size: 0.875rem;
-  color: $subtext-color;
+.arrow {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
   font-family: $font-main;
-  line-height: 1.45;
-  margin: 0;
-  text-align: left;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: rgba($subtext-color, 0.45);
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease;
+}
+
+.categoryCard:hover .arrow {
+  transform: translateX(4px);
+  color: $primary-color;
 }

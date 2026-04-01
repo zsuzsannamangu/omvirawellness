@@ -12,6 +12,7 @@ import WellnessNotOneSize from '@/components/Home/WellnessNotOneSize';
 import Testimonials from '@/components/Home/Testimonials';
 
 import ServiceCategories from '@/components/Home/ServiceCategories';
+import ProviderFinalCta from '@/components/Home/ProviderFinalCta';
 
 const Home: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const Home: React.FC = () => {
         <Testimonials />
         <ServiceCategories />
         <FAQ />
+        <ProviderFinalCta />
       </main>
       <Footer />
     </>

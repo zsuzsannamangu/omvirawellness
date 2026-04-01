@@ -69,32 +69,38 @@
   }
 }
 
-.content {
+.contentStack {
   flex: 1;
   max-width: 500px;
-  
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    gap: $spacing-lg;
+  }
+}
+
+.stepBlock {
   h3 {
     font-size: 1.65rem;
     font-family: $font-subheading;
     color: $primary-color;
-    margin-bottom: $spacing-md;
+    margin: 0 0 $spacing-md;
     font-weight: 600;
 
     @media (max-width: 768px) {
       font-size: 1.35rem;
     }
   }
-  
+
   p {
+    margin: 0;
     font-family: $font-main;
     font-size: 1.1rem;
     color: $subtext-color;
     line-height: 1.6;
-  }
-  
-  @media (max-width: 768px) {
-    text-align: left;
-    max-width: 100%;
   }
 }
 
