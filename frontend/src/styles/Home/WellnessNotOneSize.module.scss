@@ -1,0 +1,69 @@
+@import '../_variables.scss';
+
+.section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: clamp(300px, 48vw, 440px);
+  padding: 3rem $spacing-md;
+
+  @media (min-width: 769px) {
+    padding: 3.5rem $spacing-lg;
+  }
+}
+
+.bgWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bgImage {
+  object-fit: cover;
+  object-position: center 40%;
+  opacity: 0.42;
+  transform: scale(1.02);
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(41, 64, 85, 0.88) 0%,
+    rgba(92, 62, 91, 0.82) 45%,
+    rgba(41, 64, 85, 0.9) 100%
+  );
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heading {
+  margin: 0 0 1rem;
+  font-family: $font-mainheading;
+  font-size: clamp(1.75rem, 4.5vw, 2.65rem);
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+.body {
+  margin: 0;
+  font-family: $font-main;
+  font-size: clamp(1rem, 2.2vw, 1.125rem);
+  font-weight: $font-weight-regular;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
+}
