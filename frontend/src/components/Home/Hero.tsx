@@ -96,11 +96,17 @@ const Hero: React.FC = () => {
       </div>
 
       <div className={styles.heroInner}>
-        <div className={styles.heroHeadlines}>
-          <h1 className={styles.heroTitle}>Omvira</h1>
-          <p className={styles.heroSubtitle}>Wellness, delivered to you</p>
+        <div className={styles.homeDoorDashHeroHeadlineOuter}>
+          <div className={styles.homeDoorDashHeroHeadlineStack}>
+            <h1 className={styles.homeDoorDashHeroWordmark}>Omvira</h1>
+            <p className={styles.homeDoorDashHeroTaglineRow}>
+              <span className={styles.homeDoorDashHeroTaglineText}>
+                Wellness, delivered to you
+              </span>
+            </p>
+          </div>
         </div>
-        <p className={styles.heroSupporting}>
+        <p className={styles.homeHeroLeadSupportLine}>
           Book trusted professionals for massage, yoga, skincare and more.
         </p>
 

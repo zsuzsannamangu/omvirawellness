@@ -23,7 +23,8 @@ $navbar-cta-hover: $brand-purple-deep;
 $primary-color: $brand-lime;
 $secondary-color: $brand-lime-dark;
 $accent-color: $brand-purple;
-$dark-text: #2a1f38;
+// Body copy on light surfaces: purple or darker green (avoid neutral gray)
+$dark-text: $brand-purple-deep;
 $light-text: #ffffff;
 $hover-green: $brand-purple-deep;
 $muted-bg: linear-gradient(
@@ -32,9 +33,11 @@ $muted-bg: linear-gradient(
   rgba($brand-purple, 0.06) 50%,
   rgba($brand-purple-deep, 0.05) 100%
 );
-$subtext-color: #5c4d6e;
-$placeholder-grey: #8a7a96;
+$subtext-color: #5d4a75;
+$placeholder-grey: #6a7349;
 $disabled-button-grey: #cccccc;
+$text-soft: #6b5c7a;
+$text-muted-on-light: #736487;
 
 $client-colors-1: $brand-lime;
 $client-colors-2: $brand-purple;
@@ -59,7 +62,7 @@ $button-yellow-hover: darken($brand-lime-dark, 6%);
 $button-pink-hover: darken($brand-lime, 10%);
 
 $stars-color: #ffc107;           // Star color for ratings
-$signup-color: #adb5bd;          // Color used at the signup pages
+$signup-color: #7d6e90;
 $calendar-has-appointment: #fef3c7;
 $calendar-has-appointment-hover: #fde68a;
 $favorite-red: #dc2626;
@@ -99,7 +102,7 @@ $border-medium: #e0e0e0;             // Medium border color
 $border-color: #d0d0d0;               // Dark border color
 $border-form: #cccccc;                // Form border color (light gray)
 $bg-form-card: #FFFFFF;                // Form card background (white)
-$text-form-label: #333333;            // Form label text color (dark gray/black)
+$text-form-label: $brand-purple-deep;
 $background-light: #f8fafc;          // Very light background
 $background-gray: #f0f0f0;           // Light gray background
 $success-color: #27ab81;             // Success green
@@ -118,7 +121,7 @@ $overlay-color: rgba(0, 0, 0, 0.5);  // Overlay color
 $overlay-dark: rgba(0, 0, 0, 0.7);   // Dark overlay
 
 // Additional UI Colors
-$chart-text-color: #666;              // Chart axis text
+$chart-text-color: #655a78;
 $chart-tooltip-bg: #FFFFFF;           // Chart tooltip background
 $chart-tooltip-border-radius: 4px;    // Chart tooltip border radius
 $chart-tooltip-font-size: 0.85rem;    // Chart tooltip font size
@@ -126,7 +129,7 @@ $chart-axis-font-size: 0.75rem;       // Chart axis font size
 $positive-change: #10b981;            // Positive change (green)
 $negative-change: #ef4444;            // Negative change (red)
 $divider-color: #e5e5e5;             // Divider/separator color
-$text-muted: #999;                   // Muted text color
+$text-muted: $text-muted-on-light;
 $cancel-red: #dc3545;                // Cancel/delete red
 $warning-yellow: #ffc107;            // Warning yellow
 $warning-bg: #fff3cd;                // Warning background
@@ -138,7 +141,7 @@ $success-text-dark: #155724;          // Success text dark
 $danger-bg-light: #f8d7da;           // Danger background light
 $danger-text-dark: #721c24;           // Danger text dark
 $secondary-bg-light: #e2e3e5;         // Secondary background light
-$secondary-text-dark: #383d41;        // Secondary text dark
+$secondary-text-dark: $brand-purple-deep;
 $highlight-yellow: #ffeaa7;           // Highlight yellow
 $gradient-orange-start: #f59e0b;      // Gradient orange start
 $gradient-orange-end: #f97316;        // Gradient orange end

@@ -2,32 +2,50 @@
 
 .footer {
   background: $bg-footer;
-  padding: $spacing-xl 2rem $spacing-lg;
-  margin-top: $spacing-xxl;
+  padding: 2.25rem 1.5rem 1.5rem;
+  margin-top: 2.5rem;
   position: relative;
   color: $light-text;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 
   @media (max-width: 768px) {
-    padding: $spacing-lg $spacing-md;
-    margin-top: $spacing-xl;
+    padding: 1.85rem $spacing-md 1.35rem;
+    margin-top: 2rem;
   }
 }
 
 .container {
-  max-width: 960px;
+  max-width: min(1200px, 94vw);
   margin: 0 auto;
 }
 
-.brandRow {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-bottom: 1.75rem;
+.footerTop {
+  display: grid;
+  grid-template-columns: minmax(108px, 148px) repeat(3, minmax(0, 1fr));
+  gap: 2rem 2.5rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
 
-  @media (max-width: 768px) {
-    margin-bottom: 1.5rem;
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    .logoSlot {
+      grid-column: 1 / -1;
+    }
   }
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+
+    .logoSlot {
+      grid-column: auto;
+    }
+  }
+}
+
+.logoSlot {
+  line-height: 0;
 }
 
 .logoLink {
@@ -55,22 +73,6 @@
 
   @media (max-width: 480px) {
     width: 108px;
-  }
-}
-
-.nav {
-  margin-bottom: 2rem;
-}
-
-.columns {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem 2.5rem;
-
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-    gap: 1.75rem;
-    text-align: left;
   }
 }
 
@@ -190,6 +192,6 @@
   margin: 0;
   text-align: center;
   font-size: 0.875rem;
-  color: rgba($dark-text, 0.72);
+  color: #fff;
   font-weight: $font-weight-semibold;
 }

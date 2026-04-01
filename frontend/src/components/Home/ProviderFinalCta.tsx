@@ -15,7 +15,7 @@ const ProviderFinalCta: React.FC = () => {
         <p className={styles.copy}>
           Omvira gives wellness pros the tools to run their business with clarity and confidence
           without relying on outdated systems or{' '}
-          <span className={styles.phraseLock}>constant self-promotion</span>.
+          <span className={styles.phraseLock}>constant self-promotion.</span>
         </p>
         <Link href="/join" className={styles.cta}>
           Become a provider

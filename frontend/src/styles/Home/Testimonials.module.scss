@@ -2,39 +2,42 @@
 
 .testimonialsSection {
   background-color: $muted-bg;
-  padding: $spacing-xxl 2rem;
-  
+  padding: 2.5rem 1.5rem 2.65rem;
+
   @media (max-width: 768px) {
-    padding: $spacing-xl $spacing-md;
+    padding: 2rem $spacing-md 2.25rem;
   }
 }
 
 .container {
-  max-width: 1200px;
+  max-width: min(1320px, 94vw);
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
-  
-  @media (min-width: 768px) {
-    gap: $spacing-xxl;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+  align-items: start;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 3rem;
   }
 }
 
 .testimonial {
   display: flex;
   flex-direction: column;
-  
+  padding: 0 0.25rem;
+
   &:first-child {
     align-items: flex-start;
     text-align: left;
   }
-  
+
   &:last-child {
     align-items: flex-end;
     text-align: right;
-    
-    @media (max-width: 768px) {
+
+    @media (max-width: 899px) {
       align-items: flex-start;
       text-align: left;
     }
@@ -53,20 +56,16 @@
 }
 
 .quote {
-  font-size: 2.5rem;
-  line-height: 1.3;
+  font-size: clamp(1.45rem, 2.8vw, 2.05rem);
+  line-height: 1.28;
   color: $primary-color;
   font-family: $font-heading;
   font-style: italic;
   margin: 0;
-  max-width: 800px;
-  margin-bottom: $spacing-lg;
-  
+  max-width: 100%;
+  margin-bottom: $spacing-md;
+
   @media (max-width: 768px) {
-    font-size: 1.8rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 1.5rem;
+    font-size: clamp(1.35rem, 4vw, 1.65rem);
   }
 }

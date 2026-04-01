@@ -1,43 +1,43 @@
 @import '../_variables.scss';
 
 .faqSection {
-  padding: $spacing-xxl 2rem;
+  padding: 2.5rem 1.5rem 2.75rem;
   background-color: $muted-bg;
-  margin-bottom: $spacing-xxl;
-  
+  margin-bottom: 2.5rem;
+
   @media (max-width: 768px) {
-    padding: $spacing-xl $spacing-md;
-    margin-bottom: $spacing-xl;
+    padding: 2rem $spacing-md 2.35rem;
+    margin-bottom: 2rem;
   }
 }
 
 .container {
-  max-width: 1200px;
+  max-width: min(1320px, 94vw);
   margin: 0 auto;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(1.85rem, 3.5vw, 2.35rem);
   font-family: $font-heading;
   color: $primary-color;
   text-align: center;
-  margin-bottom: $spacing-xxl;
-  
+  margin-bottom: 1.5rem;
+
   @media (max-width: 768px) {
-    font-size: 2rem;
-    margin-bottom: $spacing-xl;
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
   }
 }
 
 .faqGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-lg;
+  gap: 1rem 1.35rem;
   align-items: start;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: $spacing-md;
+    gap: 0.85rem;
   }
 }
 
@@ -57,7 +57,7 @@
 
 .faqQuestion {
   width: 100%;
-  padding: $spacing-lg;
+  padding: 1rem 1.15rem;
   background: none;
   border: none;
   text-align: left;
@@ -94,7 +94,7 @@
 }
 
 .faqAnswer {
-  padding: 0 $spacing-lg $spacing-lg;
+  padding: 0 1.15rem 1rem;
   animation: slideDown 0.3s ease-out;
   
   p {

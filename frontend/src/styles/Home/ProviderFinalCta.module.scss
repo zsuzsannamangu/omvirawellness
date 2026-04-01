@@ -4,7 +4,7 @@ $cta-bg: $primary-color;
 $cta-bg-hover: darken($primary-color, 10%);
 
 .section {
-  padding: 3rem 1.25rem 3.5rem;
+  padding: 2.35rem 1.5rem 2.75rem;
   background: linear-gradient(
     180deg,
     rgba($accent-color, 0.06) 0%,
@@ -13,21 +13,21 @@ $cta-bg-hover: darken($primary-color, 10%);
   border-top: 1px solid rgba($dark-text, 0.08);
 
   @media (min-width: 769px) {
-    padding: 3.5rem 2rem 4rem;
+    padding: 2.6rem 2.5rem 3rem;
   }
 }
 
 .inner {
-  max-width: 40rem;
+  max-width: min(48rem, 92vw);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   text-align: center;
 
   @media (min-width: 769px) {
-    gap: 1.4rem;
+    gap: 1.15rem;
   }
 }
 
@@ -47,10 +47,10 @@ $cta-bg-hover: darken($primary-color, 10%);
   text-align: center;
   text-wrap: pretty;
   font-family: $font-main;
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  line-height: 1.65;
+  font-size: clamp(0.98rem, 1.85vw, 1.08rem);
+  line-height: 1.55;
   color: $subtext-color;
-  max-width: 36rem;
+  max-width: min(40rem, 100%);
 }
 
 .phraseLock {

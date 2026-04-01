@@ -1,37 +1,37 @@
 @import '../_variables.scss';
 
 .howSection {
-  padding: $spacing-xl 2rem $spacing-xxl;
-  background: linear-gradient(180deg, rgba($accent-color, 0.04) 0%, $light-text 18%, $light-text 100%);
+  padding: 2.5rem 1.5rem 2.75rem;
+  background: linear-gradient(180deg, rgba($accent-color, 0.04) 0%, $light-text 14%, $light-text 100%);
 
   @media (max-width: 768px) {
-    padding: 2.5rem 1rem 3rem;
+    padding: 2rem 1rem 2.35rem;
   }
 }
 
 .container {
-  max-width: 1040px;
+  max-width: min(1200px, 94vw);
   margin: 0 auto;
 }
 
 .header {
   text-align: left;
-  margin-bottom: 2rem;
-  max-width: 36rem;
+  margin-bottom: 1.35rem;
+  max-width: min(38rem, 100%);
 
   @media (max-width: 768px) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.15rem;
   }
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(1.85rem, 3.5vw, 2.35rem);
   font-family: $font-heading;
   color: $dark-text;
-  margin: 0 0 $spacing-sm;
+  margin: 0 0 0.35rem;
 
   @media (max-width: 768px) {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 }
 
@@ -46,16 +46,16 @@
 .stepsContainer {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.25rem;
 
   @media (max-width: 768px) {
-    gap: 1.35rem;
+    gap: 1.1rem;
   }
 }
 
 .stepPanel {
   position: relative;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba($dark-text, 0.07);
   box-shadow:
@@ -69,7 +69,7 @@
     top: 0;
     bottom: 0;
     width: 5px;
-    border-radius: 20px 0 0 20px;
+    border-radius: 16px 0 0 16px;
     z-index: 1;
   }
 }
@@ -86,14 +86,14 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: clamp(1.5rem, 4vw, 2.75rem);
-  padding: 1.65rem 1.75rem 1.65rem 1.5rem;
+  gap: clamp(1.25rem, 3.5vw, 2.25rem);
+  padding: 1.25rem 1.5rem 1.25rem 1.35rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
-    padding: 1.35rem 1.25rem 1.5rem;
-    gap: 1.35rem;
+    padding: 1.15rem 1.1rem 1.25rem;
+    gap: 1.15rem;
   }
 }
 
@@ -108,13 +108,13 @@
 .contentStack {
   flex: 1;
   min-width: 0;
-  max-width: 32rem;
+  max-width: none;
   display: flex;
   flex-direction: column;
   gap: 0;
 
-  @media (max-width: 768px) {
-    max-width: none;
+  @media (min-width: 769px) {
+    max-width: min(38rem, 54%);
   }
 }
 
@@ -145,7 +145,7 @@
 
 .stepDivider {
   height: 1px;
-  margin: 1.15rem 0 1.15rem;
+  margin: 0.85rem 0 0.85rem;
   background: linear-gradient(
     90deg,
     rgba($primary-color, 0.2) 0%,

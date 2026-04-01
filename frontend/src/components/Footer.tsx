@@ -72,34 +72,31 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        <div className={styles.brandRow}>
-          <Link href="/" className={styles.logoLink}>
-            <Image
-              src="/Omvira_logo_circle.png"
-              alt="Omvira Wellness — home"
-              width={160}
-              height={160}
-              className={styles.logo}
-            />
-          </Link>
-        </div>
-
-        <nav className={styles.nav} aria-label="Footer">
-          <div className={styles.columns}>
-            {footerColumns.map((col) => (
-              <div key={col.title} className={styles.column}>
-                <h2 className={styles.columnTitle}>{col.title}</h2>
-                <ul className={styles.linkList}>
-                  {col.links.map((item) => (
-                    <FooterLinkRow
-                      key={'future' in item && item.future ? `${item.label}-future` : item.label}
-                      item={item}
-                    />
-                  ))}
-                </ul>
-              </div>
-            ))}
+        <nav className={styles.footerTop} aria-label="Footer">
+          <div className={styles.logoSlot}>
+            <Link href="/" className={styles.logoLink}>
+              <Image
+                src="/Omvira_logo_circle.png"
+                alt="Omvira Wellness — home"
+                width={160}
+                height={160}
+                className={styles.logo}
+              />
+            </Link>
           </div>
+          {footerColumns.map((col) => (
+            <div key={col.title} className={styles.column}>
+              <h2 className={styles.columnTitle}>{col.title}</h2>
+              <ul className={styles.linkList}>
+                {col.links.map((item) => (
+                  <FooterLinkRow
+                    key={'future' in item && item.future ? `${item.label}-future` : item.label}
+                    item={item}
+                  />
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
 
         <div className={styles.bottomBar}>
