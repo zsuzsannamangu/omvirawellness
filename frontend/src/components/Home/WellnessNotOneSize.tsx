@@ -27,9 +27,9 @@ const WellnessNotOneSize: React.FC = () => {
           Wellness isn&apos;t one size fits all
         </h2>
         <p className={styles.body}>
-          Omvira was built for real life—busy schedules, evolving needs, scaled events, or something
+          Omvira was built for real life, busy schedules, evolving needs, scaled events, or something
           more personalized. Omvira is for people who want access to high quality care without
-          navigating complicated systems, crowded environments, or disconnected platforms.
+          navigating complicated systems, crowded environments, or disconnected platforms to bring wellness into your everyday life.
         </p>
       </div>
     </section>

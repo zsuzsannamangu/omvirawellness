@@ -30,86 +30,23 @@
   }
 }
 
-// Newsletter Section (Top Left)
-.newsletterSection {
+.socialSection {
   grid-column: 1;
   grid-row: 1;
+  align-self: start;
 
   @media (max-width: 768px) {
     grid-column: 1;
     grid-row: 1;
-  }
-}
-
-.newsletterTitle {
-  font-family: $font-heading;
-  color: $dark-text;
-  font-size: 2rem;
-  margin-bottom: $spacing-md;
-  font-weight: $font-weight-bold;
-  
-  @media (max-width: 480px) {
-    font-size: 1.5rem;
-  }
-}
-
-.emailSignup {
-  display: flex;
-  max-width: 380px;
-
-  @media (max-width: 768px) {
-    margin: 0 auto;
-    max-width: 100%;
-    flex-direction: column;
-    gap: $spacing-sm;
-  }
-}
-
-.emailInput {
-  flex: 1;
-  padding: 10px 15px;
-  border: 2px solid rgba($dark-text, 0.3);
-  background: $bg-white;
-  color: $dark-text;
-  font-family: $font-main;
-  font-weight: $font-weight-semibold;
-  border-radius: 0;
-
-  &::placeholder {
-    color: rgba($dark-text, 0.5);
-    font-weight: $font-weight-semibold;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
-  }
-}
-
-.subscribeButton {
-  padding: 10px 20px;
-  background-color: $primary-color;
-  border: 2px solid $primary-color;
-  color: $light-text;
-  font-family: $font-main;
-  font-weight: $font-weight-bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 0;
-
-  &:hover {
-    background-color: $button-pink-hover;
-    border-color: $button-pink-hover;
-    color: $light-text;
+    justify-self: center;
   }
 }
 
 .socialIcons {
   display: flex;
   gap: $spacing-md;
-  margin-top: $spacing-lg;
-  
+  margin: 0;
+
   @media (max-width: 768px) {
     justify-content: center;
   }
@@ -213,50 +150,54 @@
 
 
 
-// Get in Touch (Bottom Right)
 .getInTouchSection {
   grid-column: 3;
   grid-row: 2;
+  justify-self: end;
+  align-self: center;
 
   @media (max-width: 768px) {
     grid-column: 1;
     grid-row: 5;
-    text-align: left;
+    justify-self: center;
+    text-align: center;
   }
 }
 
-.getInTouchTitle {
-  font-family: $font-heading;
-  color: $dark-text;
-  font-size: 2rem;
-  margin-bottom: $spacing-md;
-  font-weight: $font-weight-bold;
-  
-  @media (max-width: 480px) {
-    font-size: 1.5rem;
-  }
-}
-
-.email,
-.phone {
+.contactButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1rem;
   font-family: $font-main;
-  color: rgba($dark-text, 0.9);
-  margin: 0.5rem 0;
-  font-size: 1.3rem;
-  font-weight: $font-weight-semibold;
-  
-  @media (max-width: 480px) {
-    font-size: 1rem;
-  }
-}
-
-.email {
-  text-decoration: underline;
-  cursor: pointer;
+  font-size: 0.8125rem;
   font-weight: $font-weight-bold;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: $light-text;
+  background-color: $dark-text;
+  border: 2px solid $dark-text;
+  border-radius: 999px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.12s ease;
 
   &:hover {
-    color: $primary-color;
+    background-color: $primary-color;
+    border-color: $primary-color;
+    color: $light-text;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($primary-color, 0.45);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 

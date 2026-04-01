@@ -49,6 +49,7 @@
 
 .heading {
   margin: 0 0 1rem;
+  text-align: center;
   font-family: $font-mainheading;
   font-size: clamp(1.75rem, 4.5vw, 2.65rem);
   font-weight: $font-weight-bold;
@@ -60,6 +61,7 @@
 
 .body {
   margin: 0;
+  text-align: left;
   font-family: $font-main;
   font-size: clamp(1rem, 2.2vw, 1.125rem);
   font-weight: $font-weight-regular;

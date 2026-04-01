@@ -7,18 +7,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        {/* Newsletter Section */}
-        <div className={styles.newsletterSection}>
-          <h3 className={styles.newsletterTitle}>Newsletter</h3>
-          <div className={styles.emailSignup}>
-            <input 
-              type="email" 
-              placeholder="email address" 
-              className={styles.emailInput}
-            />
-            <button className={styles.subscribeButton}>Subscribe</button>
-          </div>
-          {/* Social Icons */}
+        <div className={styles.socialSection}>
           <div className={styles.socialIcons}>
             <a href="https://www.instagram.com/omvirawellness" target="_blank" rel="noopener noreferrer" className={styles.socialIcon}>
               <FaInstagram />
@@ -50,10 +39,13 @@ export default function Footer() {
 
 
 
-        {/* Get in Touch */}
         <div className={styles.getInTouchSection}>
-          <h3 className={styles.getInTouchTitle}>Contact Us</h3>
-          <p className={styles.email}>Hello@omvirawellness.com</p>
+          <a
+            href="mailto:hello@omvirawellness.com"
+            className={styles.contactButton}
+          >
+            Contact Us
+          </a>
         </div>
 
 
