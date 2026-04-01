@@ -1,39 +1,62 @@
 // _variables.scss
+//
+// Brand palette (primary)
+// - Lime green (header accents, CTAs, buttons): #9BC043 — hover/darker: #88A83A
+// - Deep purple (main / hero backgrounds, brand): #5B3E7A
+// Supporting: white #FFFFFF, soft grays #F2F2F2 / #EDEDED
 
-// Colors
-//$secondary-color: #32E9CD;   
-$secondary-color: #F4B763;      // Muted Plum – NEW primary
-$accent-color: #6D4f71;       // Soft Neutral (unchanged)
-$primary-color: #ED6E95;          // Warm Rose Accent (instead of green)
-$dark-text: #294055;             // Dark text (unchanged)
-$light-text: #FAFAFA;     
-$hover-green: #5C3E5B;        // Light text (unchanged)
-$muted-bg: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($accent-color, 0.08) 50%, rgba($hover-green, 0.05) 100%);              // Soft background (unchanged)
-$subtext-color: #455F76;
-$placeholder-grey: #999999;
+$brand-lime: #9bc043;
+$brand-lime-dark: #88a83a;
+$brand-purple: #5b3e7a;
+$brand-purple-deep: #4a3263;
+$brand-purple-mid: #6e528f;
+
+// Header (lime bar + light foreground per brand)
+$navbar-bg: $brand-lime;
+$navbar-fg: #ffffff;
+$navbar-fg-muted: rgba(255, 255, 255, 0.9);
+$navbar-link-hover: $brand-purple;
+$navbar-cta-bg: $brand-purple;
+$navbar-cta-hover: $brand-purple-deep;
+
+// Semantic colors
+$primary-color: $brand-lime;
+$secondary-color: $brand-lime-dark;
+$accent-color: $brand-purple;
+$dark-text: #2a1f38;
+$light-text: #ffffff;
+$hover-green: $brand-purple-deep;
+$muted-bg: linear-gradient(
+  135deg,
+  rgba($brand-lime, 0.07) 0%,
+  rgba($brand-purple, 0.06) 50%,
+  rgba($brand-purple-deep, 0.05) 100%
+);
+$subtext-color: #5c4d6e;
+$placeholder-grey: #8a7a96;
 $disabled-button-grey: #cccccc;
 
-$client-colors-1: #3d8a85; // Darkened for better contrast (was #4F8D80)
-$client-colors-2: #455F76;
-$client-colors-3: #B9DBCB;
+$client-colors-1: $brand-lime;
+$client-colors-2: $brand-purple;
+$client-colors-3: #c5d9a0;
 
-$provider-colors-2: #F1B9F1;
-$provider-colors-3: #455F76;
-$provider-colors-1: #ED6E95;
+$provider-colors-1: $brand-lime;
+$provider-colors-2: #c4b5dc;
+$provider-colors-3: $brand-purple;
 
-$space-colors-1: #F4B763;
-$space-colors-2: #6C4F70;
-$space-colors-3: #5C3E5B;
+$space-colors-1: $brand-lime-dark;
+$space-colors-2: $brand-purple-mid;
+$space-colors-3: $brand-purple-deep;
 
-$cta-green: #6C4F70;             // CTA background
-$cta-hover-green: #5C3E5B;       // CTA hover color
-$cta-text: #FAFAFA;              // CTA text
-$cta-border: #6C4F70;            // CTA border
-$cta-text-hover: #FFFFFF;        // Optional bright hover text
+$cta-green: $brand-lime;
+$cta-hover-green: $brand-lime-dark;
+$cta-text: #ffffff;
+$cta-border: $brand-purple;
+$cta-text-hover: #ffffff;
 
 // Standardized button hover colors
-$button-yellow-hover: darken($secondary-color, 8%);  // Standard yellow button hover
-$button-pink-hover: darken($client-colors-1, 10%);   // Teal button hover (changed from pink)
+$button-yellow-hover: darken($brand-lime-dark, 6%);
+$button-pink-hover: darken($brand-lime, 10%);
 
 $stars-color: #ffc107;           // Star color for ratings
 $signup-color: #adb5bd;          // Color used at the signup pages
@@ -42,17 +65,17 @@ $calendar-has-appointment-hover: #fde68a;
 $favorite-red: #dc2626;
 
 // Background Colors
-$bg-primary: #6C4F70;            // Primary background
-$bg-accent: #A67873;             // Accent background
-$bg-light: #FAFAFA;              // Light background
-$bg-white: #FFFFFF;              // Pure white background
-$bg-footer: #F4B763;             // Footer background
+$bg-primary: $brand-purple;
+$bg-accent: $brand-purple-mid;
+$bg-light: #f2f2f2;
+$bg-white: #ffffff;
+$bg-footer: $brand-purple-deep;
 
 // Section Backgrounds
-$section-bg-1: #F8F9FA;          // Very light gray
-$section-bg-2: #F5F0E8;          // Warm cream
-$section-bg-3: #E9ECEF;          // Light gray
-$section-bg-5: #DEE2E6;          // Medium gray
+$section-bg-1: #f2f2f2;
+$section-bg-2: #ededed;
+$section-bg-3: #e8e4ee;
+$section-bg-5: #ddd8e4;
 
 // Fonts
 $font-main: 'Avenir', sans-serif;              // Paragraphs (Avenir Light)
@@ -119,12 +142,12 @@ $secondary-text-dark: #383d41;        // Secondary text dark
 $highlight-yellow: #ffeaa7;           // Highlight yellow
 $gradient-orange-start: #f59e0b;      // Gradient orange start
 $gradient-orange-end: #f97316;        // Gradient orange end
-$accent-color-rgba-05: rgba(108, 79, 112, 0.05);  // Accent color rgba 5%
-$accent-color-rgba-10: rgba(108, 79, 112, 0.1);   // Accent color rgba 10%
-$provider-color-3-rgba-02: rgba(69, 95, 118, 0.02); // Provider color 3 rgba 2%
-$provider-color-3-rgba-05: rgba(69, 95, 118, 0.05); // Provider color 3 rgba 5%
-$provider-color-3-rgba-10: rgba(69, 95, 118, 0.1);  // Provider color 3 rgba 10%
-$provider-color-3-rgba-15: rgba(69, 95, 118, 0.15); // Provider color 3 rgba 15%
+$accent-color-rgba-05: rgba(91, 62, 122, 0.05);
+$accent-color-rgba-10: rgba(91, 62, 122, 0.1);
+$provider-color-3-rgba-02: rgba(91, 62, 122, 0.02);
+$provider-color-3-rgba-05: rgba(91, 62, 122, 0.05);
+$provider-color-3-rgba-10: rgba(91, 62, 122, 0.1);
+$provider-color-3-rgba-15: rgba(91, 62, 122, 0.15);
 $overlay-black-60: rgba(0, 0, 0, 0.6);              // Black overlay 60%
 $overlay-black-90: rgba(0, 0, 0, 0.9);              // Black overlay 90%
 $shadow-light: rgba(0, 0, 0, 0.08);                 // Light shadow
@@ -133,8 +156,8 @@ $shadow-dark: rgba(0, 0, 0, 0.15);                   // Dark shadow
 $white-rgba-10: rgba(255, 255, 255, 0.1);          // White rgba 10%
 $white-rgba-20: rgba(255, 255, 255, 0.2);          // White rgba 20%
 $white-rgba-30: rgba(255, 255, 255, 0.3);          // White rgba 30%
-$client-color-rgba-20: rgba(21, 123, 127, 0.2);     // Client color rgba 20%
-$client-color-rgba-30: rgba(21, 123, 127, 0.3);    // Client color rgba 30%
+$client-color-rgba-20: rgba(155, 192, 67, 0.22);
+$client-color-rgba-30: rgba(155, 192, 67, 0.32);
 $black-rgba-02: rgba(0, 0, 0, 0.02);                // Black rgba 2%
 $black-rgba-05: rgba(0, 0, 0, 0.05);                // Black rgba 5%
 $black-rgba-10: rgba(0, 0, 0, 0.1);                 // Black rgba 10%

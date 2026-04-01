@@ -77,8 +77,8 @@ export default function Footer() {
             <Image
               src="/Omvira_logo_circle.png"
               alt="Omvira Wellness — home"
-              width={120}
-              height={120}
+              width={160}
+              height={160}
               className={styles.logo}
             />
           </Link>

@@ -5,8 +5,8 @@
   padding: $spacing-xl 2rem $spacing-lg;
   margin-top: $spacing-xxl;
   position: relative;
-  color: $dark-text;
-  border-top: 1px solid rgba($dark-text, 0.1);
+  color: $light-text;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 
   @media (max-width: 768px) {
     padding: $spacing-lg $spacing-md;
@@ -21,7 +21,8 @@
 
 .brandRow {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  width: 100%;
   margin-bottom: 1.75rem;
 
   @media (max-width: 768px) {
@@ -47,13 +48,13 @@
 }
 
 .logo {
-  width: 100px;
+  width: 132px;
   height: auto;
   max-width: 100%;
-  filter: drop-shadow(0 8px 16px rgba($dark-text, 0.15));
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
 
   @media (max-width: 480px) {
-    width: 84px;
+    width: 108px;
   }
 }
 
@@ -82,7 +83,7 @@
   font-family: $font-heading;
   font-size: 1.125rem;
   font-weight: $font-weight-bold;
-  color: $dark-text;
+  color: $light-text;
   letter-spacing: -0.01em;
 }
 
@@ -105,7 +106,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    color: rgba($dark-text, 0.45);
+    color: rgba(255, 255, 255, 0.45);
     font-weight: $font-weight-bold;
   }
 
@@ -115,7 +116,7 @@
 }
 
 .link {
-  color: rgba($dark-text, 0.88);
+  color: rgba(255, 255, 255, 0.88);
   font-weight: $font-weight-semibold;
   text-decoration: none;
   transition: color 0.2s ease;
@@ -125,14 +126,14 @@
   }
 
   &:focus-visible {
-    outline: 2px solid rgba($primary-color, 0.5);
+    outline: 2px solid rgba($primary-color, 0.65);
     outline-offset: 2px;
     border-radius: 2px;
   }
 }
 
 .futureLink {
-  color: rgba($dark-text, 0.45);
+  color: rgba(255, 255, 255, 0.45);
   font-weight: $font-weight-semibold;
   cursor: default;
 }
@@ -149,7 +150,7 @@
   align-items: center;
   gap: 1rem;
   padding-top: 1.25rem;
-  border-top: 1px solid rgba($dark-text, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .socialIcons {
@@ -164,8 +165,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: $dark-text;
-  color: $bg-footer;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: $light-text;
   border-radius: 50%;
   font-size: 1.35rem;
   transition:
@@ -175,7 +176,7 @@
 
   &:hover {
     background-color: $primary-color;
-    color: $light-text;
+    color: $brand-purple-deep;
     transform: scale(1.06);
   }
 
