@@ -49,6 +49,7 @@ const HowItWorks: React.FC = () => {
     <section id="how-it-works" className={styles.howSection}>
       <div className={styles.container}>
         <div className={styles.header}>
+          <span className={styles.kicker}>From search to session</span>
           <h2 className={styles.title}>How It Works</h2>
           <p className={styles.subtitle}>Simple. Seamless. Designed for real life.</p>
         </div>
@@ -59,6 +60,9 @@ const HowItWorks: React.FC = () => {
               className={`${styles.stepPanel} ${row.reverse ? styles.panelReverse : ''} ${rowIndex % 2 === 1 ? styles.panelTintB : styles.panelTintA}`}
             >
               <div className={styles.panelInner}>
+                <span className={styles.panelWatermark} aria-hidden>
+                  {String(rowIndex + 1).padStart(2, '0')}
+                </span>
                 <div className={styles.contentStack}>
                   {row.steps.map((step, i) => (
                     <div key={step.title} className={styles.stepBlock}>

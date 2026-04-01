@@ -14,6 +14,7 @@ $card-input-bg: #f7f7f7;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
 }
 
 .bgWrap {

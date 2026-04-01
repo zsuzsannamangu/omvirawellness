@@ -1,66 +1,118 @@
 @import '../_variables.scss';
 
 .howSection {
-  padding: 2.5rem 1.5rem 2.75rem;
-  background: linear-gradient(180deg, rgba($accent-color, 0.04) 0%, $light-text 14%, $light-text 100%);
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.75rem, 6vw, 4rem) 1.5rem clamp(3rem, 6vw, 4.25rem);
+  background:
+    radial-gradient(ellipse 75% 55% at 0% -15%, rgba($primary-color, 0.11) 0%, transparent 58%),
+    radial-gradient(ellipse 60% 50% at 100% 105%, rgba($accent-color, 0.09) 0%, transparent 52%),
+    radial-gradient(ellipse 40% 35% at 50% 50%, rgba($client-colors-3, 0.06) 0%, transparent 65%),
+    linear-gradient(180deg, rgba($accent-color, 0.045) 0%, $light-text 18%, #fafbfc 55%, $light-text 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba($brand-purple-deep, 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.45;
+    pointer-events: none;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.08) 45%, transparent 78%);
+  }
 
   @media (max-width: 768px) {
-    padding: 2rem 1rem 2.35rem;
+    padding: 2.35rem 1rem 2.65rem;
   }
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   max-width: min(1200px, 94vw);
   margin: 0 auto;
 }
 
 .header {
-  text-align: left;
-  margin-bottom: 1.35rem;
-  max-width: min(38rem, 100%);
+  position: relative;
+  margin-bottom: clamp(1.75rem, 4vw, 2.35rem);
+  max-width: min(40rem, 100%);
+  padding-left: 1.35rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.2rem;
+    bottom: 0.2rem;
+    width: 4px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, $primary-color 0%, rgba($accent-color, 0.88) 100%);
+    box-shadow: 0 2px 10px rgba($primary-color, 0.25);
+  }
 
   @media (max-width: 768px) {
-    margin-bottom: 1.15rem;
+    padding-left: 1.1rem;
+    margin-bottom: 1.65rem;
   }
 }
 
+.kicker {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: $font-main;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba($brand-purple-deep, 0.55);
+}
+
 .title {
-  font-size: clamp(1.85rem, 3.5vw, 2.35rem);
+  font-size: clamp(1.9rem, 3.6vw, 2.5rem);
   font-family: $font-heading;
   color: $dark-text;
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 
   @media (max-width: 768px) {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
   }
 }
 
 .subtitle {
   margin: 0;
   font-family: $font-subheading;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2vw, 1.15rem);
   color: $subtext-color;
-  line-height: 1.5;
+  line-height: 1.55;
+  font-style: italic;
 }
 
 .stepsContainer {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: clamp(1.35rem, 3vw, 1.75rem);
+  counter-reset: hiw-step;
 
   @media (max-width: 768px) {
-    gap: 1.1rem;
+    gap: 1.2rem;
   }
 }
 
 .stepPanel {
   position: relative;
-  border-radius: 16px;
+  border-radius: 22px;
   overflow: hidden;
-  border: 1px solid rgba($dark-text, 0.07);
+  border: 1px solid rgba($dark-text, 0.06);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 12px 40px rgba(41, 64, 85, 0.06);
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 16px 48px rgba($brand-purple-deep, 0.07);
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.15, 0.64, 1),
+    box-shadow 0.35s ease,
+    border-color 0.25s ease;
 
   &::before {
     content: '';
@@ -68,32 +120,63 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 5px;
-    border-radius: 16px 0 0 16px;
-    z-index: 1;
+    width: 6px;
+    border-radius: 22px 0 0 22px;
+    z-index: 2;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06);
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      0 22px 56px rgba($brand-purple-deep, 0.1);
+    border-color: rgba($primary-color, 0.14);
+  }
+}
+
+.panelWatermark {
+  position: absolute;
+  top: 0.25rem;
+  right: clamp(0.5rem, 2.5vw, 1.25rem);
+  font-family: $font-heading;
+  font-size: clamp(3.25rem, 10vw, 5.25rem);
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  color: rgba($brand-purple-deep, 0.07);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+
+  @media (max-width: 768px) {
+    top: 0.1rem;
+    right: 0.35rem;
+    font-size: clamp(2.75rem, 18vw, 4rem);
   }
 }
 
 .panelTintA::before {
-  background: linear-gradient(180deg, $primary-color 0%, darken($primary-color, 6%) 100%);
+  background: linear-gradient(180deg, $primary-color 0%, darken($primary-color, 8%) 100%);
 }
 
 .panelTintB::before {
-  background: linear-gradient(180deg, $secondary-color 0%, darken($secondary-color, 8%) 100%);
+  background: linear-gradient(180deg, $secondary-color 0%, darken($secondary-color, 10%) 100%);
 }
 
 .panelInner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: clamp(1.25rem, 3.5vw, 2.25rem);
-  padding: 1.25rem 1.5rem 1.25rem 1.35rem;
+  gap: clamp(1.35rem, 3.5vw, 2.5rem);
+  padding: 1.45rem 1.65rem 1.45rem 1.45rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
-    padding: 1.15rem 1.1rem 1.25rem;
-    gap: 1.15rem;
+    padding: 1.2rem 1.15rem 1.35rem;
+    gap: 1.2rem;
   }
 }
 
@@ -106,6 +189,8 @@
 }
 
 .contentStack {
+  position: relative;
+  z-index: 1;
   flex: 1;
   min-width: 0;
   max-width: none;
@@ -122,39 +207,118 @@
   position: relative;
 
   h3 {
-    font-size: 1.35rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 1.32rem;
     font-family: $font-subheading;
-    color: $primary-color;
-    margin: 0 0 0.45rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    color: $brand-purple-deep;
+    margin: 0 0 0.5rem;
+    font-weight: $font-weight-semibold;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+
+    &::before {
+      counter-increment: hiw-step;
+      content: counter(hiw-step);
+      flex-shrink: 0;
+      width: 1.9rem;
+      height: 1.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.08rem;
+      font-size: 0.8125rem;
+      font-family: $font-main;
+      font-weight: $font-weight-bold;
+      color: $brand-purple-deep;
+      background: linear-gradient(160deg, rgba($primary-color, 0.28) 0%, rgba($primary-color, 0.08) 100%);
+      border: 1px solid rgba($primary-color, 0.35);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba($primary-color, 0.12);
+    }
 
     @media (max-width: 768px) {
-      font-size: 1.2rem;
+      font-size: 1.18rem;
     }
   }
 
   p {
     margin: 0;
+    padding-left: calc(1.9rem + 0.7rem);
     font-family: $font-main;
-    font-size: 1rem;
+    font-size: 0.98rem;
     color: $subtext-color;
-    line-height: 1.58;
+    line-height: 1.6;
+
+    @media (max-width: 768px) {
+      padding-left: 0;
+      font-size: 0.95rem;
+    }
   }
 }
 
+.panelTintB .stepBlock h3::before {
+  background: linear-gradient(160deg, rgba($secondary-color, 0.3) 0%, rgba($secondary-color, 0.1) 100%);
+  border-color: rgba($secondary-color, 0.4);
+  box-shadow: 0 2px 8px rgba($secondary-color, 0.14);
+}
+
 .stepDivider {
+  position: relative;
   height: 1px;
-  margin: 0.85rem 0 0.85rem;
+  margin: 1.05rem 0 1.05rem calc(1.9rem + 0.7rem);
   background: linear-gradient(
     90deg,
-    rgba($primary-color, 0.2) 0%,
-    rgba($secondary-color, 0.12) 55%,
+    rgba($primary-color, 0.35) 0%,
+    rgba($accent-color, 0.18) 45%,
     transparent 100%
   );
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: $primary-color;
+    box-shadow:
+      0 0 0 3px rgba($primary-color, 0.2),
+      0 2px 6px rgba($brand-purple-deep, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+
+    &::after {
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.panelTintB .stepDivider {
+  background: linear-gradient(
+    90deg,
+    rgba($secondary-color, 0.38) 0%,
+    rgba($accent-color, 0.15) 50%,
+    transparent 100%
+  );
+
+  &::after {
+    background: $secondary-color;
+    box-shadow:
+      0 0 0 3px rgba($secondary-color, 0.22),
+      0 2px 6px rgba($brand-purple-deep, 0.12);
+  }
 }
 
 .figure {
+  position: relative;
+  z-index: 1;
   flex: 0 0 auto;
   margin: 0;
   align-self: center;
@@ -169,58 +333,76 @@
 .imageFrame {
   position: relative;
   width: 100%;
-  max-width: 268px;
+  max-width: 278px;
   margin: 0 auto;
-  padding: 7px;
-  border-radius: 16px;
+  padding: 9px;
+  border-radius: 22px 22px 22px 8px;
   background: linear-gradient(
-    145deg,
-    rgba($primary-color, 0.2) 0%,
-    rgba($secondary-color, 0.15) 45%,
+    155deg,
+    rgba($primary-color, 0.22) 0%,
+    rgba($secondary-color, 0.14) 42%,
     rgba($accent-color, 0.12) 100%
   );
   box-shadow:
-    0 8px 28px rgba(41, 64, 85, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  transform: rotate(-1.75deg);
+    0 12px 36px rgba($brand-purple-deep, 0.11),
+    0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+  transform: rotate(-2deg);
   transition:
-    transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
-    box-shadow 0.3s ease;
+    transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1),
+    box-shadow 0.35s ease,
+    border-radius 0.35s ease;
 
   @media (max-width: 768px) {
-    max-width: 240px;
-    transform: rotate(-1deg);
+    max-width: 248px;
+    transform: rotate(-1.25deg);
   }
 }
 
 .panelReverse .imageFrame {
-  transform: rotate(1.75deg);
+  border-radius: 22px 22px 8px 22px;
+  transform: rotate(2deg);
 
   @media (max-width: 768px) {
-    transform: rotate(1deg);
+    transform: rotate(1.25deg);
   }
+}
+
+.panelTintB .imageFrame {
+  background: linear-gradient(
+    205deg,
+    rgba($secondary-color, 0.2) 0%,
+    rgba($primary-color, 0.12) 50%,
+    rgba($accent-color, 0.1) 100%
+  );
 }
 
 .stepPanel:hover .imageFrame {
   transform: rotate(0deg);
+  border-radius: 18px;
   box-shadow:
-    0 14px 36px rgba($primary-color, 0.14),
-    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    0 18px 44px rgba($primary-color, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.65) inset;
+}
+
+.panelReverse.stepPanel:hover .imageFrame {
+  border-radius: 18px;
 }
 
 .panelTintA {
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba($primary-color, 0.04) 100%
+    128deg,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba($primary-color, 0.045) 48%,
+    rgba(255, 255, 255, 0.92) 100%
   );
 }
 
 .panelTintB {
   background: linear-gradient(
-    225deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba($secondary-color, 0.05) 100%
+    232deg,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba($secondary-color, 0.055) 50%,
+    rgba(255, 255, 255, 0.94) 100%
   );
 }
 
@@ -229,6 +411,33 @@
   width: 100%;
   height: auto;
   aspect-ratio: 5 / 4;
-  border-radius: 11px;
+  border-radius: 14px;
   object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepPanel {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .imageFrame {
+    transition: none;
+  }
+
+  .stepPanel:hover .imageFrame {
+    transform: rotate(-2deg);
+    border-radius: 22px 22px 22px 8px;
+    box-shadow:
+      0 12px 36px rgba($brand-purple-deep, 0.11),
+      0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+  }
+
+  .panelReverse.stepPanel:hover .imageFrame {
+    transform: rotate(2deg);
+    border-radius: 22px 22px 8px 22px;
+  }
 }
