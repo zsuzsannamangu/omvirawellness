@@ -60,9 +60,6 @@ const AudiencePaths: React.FC = () => {
               </div>
               <div className={styles.body}>
                 <h3 className={styles.cardTitle}>{item.title}</h3>
-                {item.variant === 'soon' && (
-                  <span className={styles.badge}>Coming soon</span>
-                )}
                 <p className={styles.cardCopy}>{item.description}</p>
                 {item.href ? (
                   <Link href={item.href} className={styles.cta}>

@@ -1,78 +1,208 @@
 @import './_variables.scss';
 
 .footer {
-  background: $bg-footer;
-  padding: 2.25rem 1.5rem 1.5rem;
-  margin-top: 2.5rem;
   position: relative;
+  overflow: hidden;
+  margin-top: 2.5rem;
+  padding: 2.75rem 1.5rem 2rem;
   color: $light-text;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(ellipse 85% 70% at 100% 0%, rgba($brand-lime, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba($brand-purple-mid, 0.35) 0%, transparent 50%),
+    $bg-footer;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba($brand-lime, 0.25) 18%,
+      $primary-color 50%,
+      rgba($brand-lime, 0.25) 82%,
+      transparent 100%
+    );
+    opacity: 0.95;
+    pointer-events: none;
+  }
 
   @media (max-width: 768px) {
-    padding: 1.85rem $spacing-md 1.35rem;
+    padding: 2.25rem $spacing-md 1.65rem;
     margin-top: 2rem;
   }
 }
 
+.glow {
+  position: absolute;
+  width: min(420px, 70vw);
+  height: min(420px, 70vw);
+  top: -35%;
+  right: -12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba($brand-lime, 0.12) 0%, transparent 68%);
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    right: -25%;
+    top: -28%;
+  }
+}
+
 .container {
+  position: relative;
+  z-index: 1;
   max-width: min(1200px, 94vw);
   margin: 0 auto;
 }
 
-.footerTop {
+.main {
   display: grid;
-  grid-template-columns: minmax(108px, 148px) repeat(3, minmax(0, 1fr));
-  gap: 2rem 2.5rem;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 2.5rem 3.25rem;
   align-items: start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 
   @media (max-width: 900px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-
-    .logoSlot {
-      grid-column: 1 / -1;
-    }
-  }
-
-  @media (max-width: 700px) {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
-
-    .logoSlot {
-      grid-column: auto;
-    }
+    gap: 2rem;
   }
 }
 
-.logoSlot {
-  line-height: 0;
+.brandPanel {
+  padding: 1.65rem 1.5rem 1.5rem;
+  border-radius: 22px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+
+  @supports not (backdrop-filter: blur(14px)) {
+    background: rgba(255, 255, 255, 0.06);
+  }
 }
 
 .logoLink {
   display: block;
+  width: fit-content;
+  margin: 0 auto 1rem;
   line-height: 0;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 
   &:hover {
-    opacity: 0.92;
-    transform: scale(1.02);
+    opacity: 0.95;
+    transform: scale(1.03);
   }
 
   &:focus-visible {
-    outline: 3px solid rgba($primary-color, 0.45);
-    outline-offset: 4px;
+    outline: 3px solid rgba($primary-color, 0.55);
+    outline-offset: 6px;
     border-radius: 50%;
   }
 }
 
 .logo {
-  width: 132px;
+  width: 124px;
   height: auto;
   max-width: 100%;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.35));
 
   @media (max-width: 480px) {
     width: 108px;
+  }
+}
+
+.tagline {
+  margin: 0 0 1.35rem;
+  text-align: center;
+  font-family: $font-heading;
+  font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+  font-weight: $font-weight-regular;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.35;
+}
+
+.socialWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.socialLabel {
+  font-size: 0.6875rem;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba($primary-color, 0.95);
+}
+
+.socialIcons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: $light-text;
+  font-size: 1.3rem;
+  text-decoration: none;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition:
+    background-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+
+  &:hover {
+    background-color: $primary-color;
+    color: $brand-purple-deep;
+    border-color: rgba($brand-lime-dark, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($primary-color, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.linkGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem 2.25rem;
+  padding-top: 0.35rem;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    gap: 1.65rem;
+    padding-top: 0;
   }
 }
 
@@ -81,12 +211,26 @@
 }
 
 .columnTitle {
-  margin: 0 0 0.85rem;
+  position: relative;
+  margin: 0 0 1rem;
+  padding-bottom: 0.65rem;
   font-family: $font-heading;
-  font-size: 1.125rem;
+  font-size: 0.8125rem;
   font-weight: $font-weight-bold;
   color: $light-text;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2.25rem;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, $primary-color, rgba($primary-color, 0.25));
+  }
 }
 
 .linkList {
@@ -96,21 +240,10 @@
 }
 
 .linkItem {
-  position: relative;
-  margin: 0 0 0.5rem;
-  padding-left: 1.1rem;
+  margin: 0 0 0.45rem;
   font-family: $font-main;
   font-size: 0.9375rem;
-  line-height: 1.45;
-
-  &::before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    top: 0;
-    color: rgba(255, 255, 255, 0.45);
-    font-weight: $font-weight-bold;
-  }
+  line-height: 1.5;
 
   &:last-child {
     margin-bottom: 0;
@@ -118,24 +251,46 @@
 }
 
 .link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.2rem 0;
   color: rgba(255, 255, 255, 0.88);
   font-weight: $font-weight-semibold;
   text-decoration: none;
   transition: color 0.2s ease;
 
+  &::before {
+    content: '';
+    width: 0;
+    height: 2px;
+    border-radius: 1px;
+    background: $primary-color;
+    transition: width 0.22s ease;
+    flex-shrink: 0;
+  }
+
   &:hover {
-    color: $primary-color;
+    color: #fff;
+
+    &::before {
+      width: 0.65rem;
+    }
   }
 
   &:focus-visible {
     outline: 2px solid rgba($primary-color, 0.65);
-    outline-offset: 2px;
+    outline-offset: 3px;
     border-radius: 2px;
   }
 }
 
 .futureLink {
-  color: rgba(255, 255, 255, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.42);
   font-weight: $font-weight-semibold;
   cursor: default;
 }
@@ -147,51 +302,43 @@
 }
 
 .bottomBar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
+  position: relative;
+  padding-top: 1.5rem;
+  margin-top: 0.25rem;
 
-.socialIcons {
-  display: flex;
-  gap: $spacing-md;
-  justify-content: center;
-}
-
-.socialIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.12);
-  color: $light-text;
-  border-radius: 50%;
-  font-size: 1.35rem;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
-
-  &:hover {
-    background-color: $primary-color;
-    color: $brand-purple-deep;
-    transform: scale(1.06);
-  }
-
-  &:focus-visible {
-    outline: 3px solid rgba($primary-color, 0.45);
-    outline-offset: 2px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(200px, 40%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
   }
 }
 
 .copyright {
   margin: 0;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #fff;
   font-weight: $font-weight-semibold;
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logoLink,
+  .socialIcon,
+  .link::before {
+    transition: none;
+  }
+
+  .logoLink:hover {
+    transform: none;
+  }
+
+  .socialIcon:hover {
+    transform: none;
+  }
 }

@@ -71,9 +71,10 @@ function FooterLinkRow({ item }: { item: FooterLinkItem }) {
 export default function Footer() {
   return (
     <footer className={styles.footer}>
+      <div className={styles.glow} aria-hidden />
       <div className={styles.container}>
-        <nav className={styles.footerTop} aria-label="Footer">
-          <div className={styles.logoSlot}>
+        <div className={styles.main}>
+          <div className={styles.brandPanel}>
             <Link href="/" className={styles.logoLink}>
               <Image
                 src="/Omvira_logo_circle.png"
@@ -83,43 +84,50 @@ export default function Footer() {
                 className={styles.logo}
               />
             </Link>
-          </div>
-          {footerColumns.map((col) => (
-            <div key={col.title} className={styles.column}>
-              <h2 className={styles.columnTitle}>{col.title}</h2>
-              <ul className={styles.linkList}>
-                {col.links.map((item) => (
-                  <FooterLinkRow
-                    key={'future' in item && item.future ? `${item.label}-future` : item.label}
-                    item={item}
-                  />
-                ))}
-              </ul>
+            <p className={styles.tagline}>Wellness, delivered.</p>
+            <div className={styles.socialWrap}>
+              <span className={styles.socialLabel}>Follow</span>
+              <div className={styles.socialIcons}>
+                <a
+                  href="https://www.instagram.com/omvirawellness"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialIcon}
+                  aria-label="Omvira on Instagram"
+                >
+                  <FaInstagram />
+                </a>
+                <a
+                  href="https://www.facebook.com/profile.php?id=61577726068469"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialIcon}
+                  aria-label="Omvira on Facebook"
+                >
+                  <FaFacebook />
+                </a>
+              </div>
             </div>
-          ))}
-        </nav>
+          </div>
+
+          <nav className={styles.linkGrid} aria-label="Footer">
+            {footerColumns.map((col) => (
+              <div key={col.title} className={styles.column}>
+                <h2 className={styles.columnTitle}>{col.title}</h2>
+                <ul className={styles.linkList}>
+                  {col.links.map((item) => (
+                    <FooterLinkRow
+                      key={'future' in item && item.future ? `${item.label}-future` : item.label}
+                      item={item}
+                    />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
 
         <div className={styles.bottomBar}>
-          <div className={styles.socialIcons}>
-            <a
-              href="https://www.instagram.com/omvirawellness"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.socialIcon}
-              aria-label="Omvira on Instagram"
-            >
-              <FaInstagram />
-            </a>
-            <a
-              href="https://www.facebook.com/profile.php?id=61577726068469"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.socialIcon}
-              aria-label="Omvira on Facebook"
-            >
-              <FaFacebook />
-            </a>
-          </div>
           <p className={styles.copyright}>© 2026 Omvira Wellness. All rights reserved.</p>
         </div>
       </div>
