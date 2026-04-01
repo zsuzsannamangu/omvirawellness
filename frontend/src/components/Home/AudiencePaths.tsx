@@ -8,7 +8,7 @@ const paths = [
     key: 'find',
     title: 'Find a service',
     description:
-      'Browse vetted wellness professionals near you—massage, yoga, skincare, and more. Book on your schedule with clear pricing.',
+      'Browse and book trusted providers for in-home or on-location wellness.',
     cta: 'Search providers',
     href: '/search',
     image: '/images/screenshots/arrival.png',
@@ -30,7 +30,7 @@ const paths = [
     key: 'space',
     title: 'List your space',
     description:
-      'Coming soon: rent your studio, treatment room, or event space to trusted providers and wellness gatherings.',
+      'Turn your space into a destination for wellness professionals and experiences.',
     cta: 'Coming soon',
     href: null,
     image: '/images/screenshots/wework2.png',

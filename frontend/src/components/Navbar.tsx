@@ -2,17 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { FaUserFriends, FaHome } from 'react-icons/fa';
 import styles from '../styles/Navbar.module.scss';
 
 export default function Navbar() {
-  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -57,25 +54,24 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <nav className={styles.mainNav}>
-        <button 
-          onClick={() => scrollToSection('services')} 
+      <nav className={styles.mainNav} aria-label="Primary">
+        <button
+          type="button"
+          onClick={() => scrollToSection('services')}
           className={styles.navLink}
         >
           Services
         </button>
-        <button 
-          onClick={() => scrollToSection('how-it-works')} 
+        <button
+          type="button"
+          onClick={() => scrollToSection('how-it-works')}
           className={styles.navLink}
         >
           How It Works
         </button>
-        <button 
-          onClick={() => scrollToSection('faq')} 
-          className={styles.navLink}
-        >
-          FAQ
-        </button>
+        <Link href="/providers" className={styles.navLink}>
+          For Providers
+        </Link>
       </nav>
 
       <div className={styles.rightWrap}>
@@ -87,96 +83,60 @@ export default function Navbar() {
             Sign Up
           </Link>
         </div>
-
-        <div className={styles.secondaryLinks}>
-          <Link href="/providers" className={styles.providerLink}>
-            <FaUserFriends className={styles.linkIcon} />
-            For Providers
-          </Link>
-          {/* SPACES FEATURE - COMMENTED OUT FOR MVP
-          {pathname?.startsWith('/spaces') ? (
-            <Link href="/providers" className={styles.spacesLink}>
-              <FaUserFriends className={styles.linkIcon} />
-              Find a Provider
-            </Link>
-          ) : (
-            <Link href="/spaces" className={styles.spacesLink}>
-              <FaHome className={styles.linkIcon} />
-              For Spaces
-            </Link>
-          )}
-          */}
-        </div>
       </div>
 
-      <button 
+      <button
         ref={buttonRef}
+        type="button"
         className={styles.menuButton}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="Toggle menu"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
           {isMenuOpen ? (
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
           ) : (
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
           )}
         </svg>
       </button>
 
       {isMenuOpen && (
         <div ref={menuRef} className={styles.mobileMenu}>
-          <button 
+          <button
+            type="button"
             className={styles.closeButton}
             onClick={() => setIsMenuOpen(false)}
             aria-label="Close menu"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
           </button>
           <div className={styles.mobileMenuContent}>
-            <button 
-              onClick={() => scrollToSection('services')} 
+            <button
+              type="button"
+              onClick={() => scrollToSection('services')}
               className={styles.mobileNavLink}
             >
               Services
             </button>
-            <button 
-              onClick={() => scrollToSection('how-it-works')} 
+            <button
+              type="button"
+              onClick={() => scrollToSection('how-it-works')}
               className={styles.mobileNavLink}
             >
               How It Works
             </button>
-            <button 
-              onClick={() => scrollToSection('faq')} 
-              className={styles.mobileNavLink}
-            >
-              FAQ
-            </button>
-            <Link href="/login" className={styles.mobileNavLink}>
-              Log In
-            </Link>
-            <Link href="/signup" className={styles.mobileNavLink}>
-              Sign Up
-            </Link>
-            <Link href="/providers" className={styles.mobileNavLink}>
-              <FaUserFriends className={styles.linkIcon} />
+            <Link href="/providers" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>
               For Providers
             </Link>
-            {/* SPACES FEATURE - COMMENTED OUT FOR MVP
-            {pathname?.startsWith('/spaces') ? (
-              <Link href="/providers" className={styles.mobileNavLink}>
-                <FaUserFriends className={styles.linkIcon} />
-                Find a Provider
-              </Link>
-            ) : (
-              <Link href="/spaces" className={styles.mobileNavLink}>
-                <FaHome className={styles.linkIcon} />
-                For Spaces
-              </Link>
-            )}
-            */}
+            <Link href="/login" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>
+              Log In
+            </Link>
+            <Link href="/signup" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>
+              Sign Up
+            </Link>
           </div>
         </div>
       )}

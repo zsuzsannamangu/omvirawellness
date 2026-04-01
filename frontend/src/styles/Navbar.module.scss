@@ -4,21 +4,21 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  column-gap: $spacing-xl;
-  padding: 0.75rem 2rem 1.25rem;
+  column-gap: $spacing-lg;
+  padding: 0.5rem 1.5rem;
   background-color: $light-text;
   color: $dark-text;
-  box-shadow: 0 16px 35px rgba($primary-color, 0.1);
+  box-shadow: 0 8px 24px rgba($primary-color, 0.08);
   border-bottom: 1px solid rgba($primary-color, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
   font-family: $font-main;
-  min-height: 100px;
-  
+  min-height: 64px;
+
   @media (max-width: 968px) {
-    padding: 1rem $spacing-md;
-    min-height: 90px;
+    padding: 0.5rem $spacing-md;
+    min-height: 56px;
     grid-template-columns: auto 1fr auto;
   }
 }
@@ -38,49 +38,47 @@
   font-size: 2rem;
   display: flex;
   align-items: center;
+  line-height: 0;
 }
 
 .logoImage {
-  width: 300px;
-  height: auto;
-  max-height: 360px;
+  width: auto;
+  height: 40px;
+  max-height: 40px;
   object-fit: contain;
+  object-position: left center;
   z-index: 10;
   position: relative;
-  margin-top: 30px;
-  
+
   @media (max-width: 768px) {
-    width: 200px;
-    max-height: 240px;
-    margin-top: 20px;
+    height: 34px;
+    max-height: 34px;
   }
-  
+
   @media (max-width: 480px) {
-    width: 150px;
-    max-height: 180px;
-    margin-top: 15px;
+    height: 30px;
+    max-height: 30px;
   }
 }
 
 .brandSection {
-  margin-right: $spacing-lg;
+  margin-right: $spacing-md;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  height: 60px;
+  height: auto;
   overflow: visible;
   z-index: 10;
   position: relative;
-  margin-top: 10px;
 }
 
 .rightWrap {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
   gap: $spacing-sm;
   width: 100%;
-  max-width: 780px;
 
   @media (max-width: 968px) {
     display: none;
@@ -97,14 +95,6 @@
   }
 }
 
-.secondaryLinks {
-  display: flex;
-  gap: $spacing-sm;
-  align-items: center;
-  margin-top: $spacing-xs;
-  justify-content: flex-end;
-}
-
 // Main navigation links
 .mainNav {
   display: flex;
@@ -119,7 +109,7 @@
 }
 
 .navLink {
-  font-size: 1.4rem;
+  font-size: 1.15rem;
   color: rgba($dark-text, 0.9);
   font-weight: 600;
   font-family: $font-mainheading;
@@ -128,81 +118,18 @@
   background: none;
   border: none;
   cursor: pointer;
-  
+  display: inline-flex;
+  align-items: center;
+
   &:hover {
     color: $primary-color;
   }
-}
-
-// Right section with provider link and auth buttons
-.secondaryLinks {
-  display: flex;
-  gap: $spacing-sm;
-  align-items: center;
 }
 
 .rightSection {
   display: flex;
   gap: 1.5rem;
   align-items: center;
-}
-
-.providerLink {
-  font-size: 0.9rem;
-  color: $dark-text;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-family: $font-main;
-  padding: 0.6rem 1.4rem;
-  border-radius: 999px;
-  background: $secondary-color;
-  border: 1px solid $secondary-color;
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  
-  &:hover {
-    background: $button-yellow-hover;
-    border-color: $button-yellow-hover;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba($secondary-color, 0.25);
-  }
-  
-  @media (max-width: 640px) {
-    display: none;
-  }
-}
-
-.spacesLink {
-  font-size: 0.9rem;
-  color: $dark-text;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-family: $font-main;
-  padding: 0.6rem 1.4rem;
-  border-radius: 999px;
-  background: $secondary-color;
-  border: 1px solid $secondary-color;
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  
-  &:hover {
-    background: $button-yellow-hover;
-    border-color: $button-yellow-hover;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba($secondary-color, 0.25);
-  }
-  
-  @media (max-width: 640px) {
-    display: none;
-  }
-}
-
-.linkIcon {
-  font-size: 1rem;
 }
 
 .loginLink {
@@ -249,15 +176,14 @@
   border: none;
   color: $dark-text;
   cursor: pointer;
-  padding: $spacing-sm;
+  padding: $spacing-xs;
   border-radius: 4px;
   transition: background-color 0.2s ease;
   z-index: 101;
   grid-column: 3;
   justify-self: end;
-  align-self: flex-start;
-  margin-top: 1rem;
-  
+  align-self: center;
+
   @media (max-width: 968px) {
     display: flex;
     align-items: center;
