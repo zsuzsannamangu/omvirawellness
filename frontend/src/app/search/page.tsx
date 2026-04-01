@@ -306,6 +306,7 @@ export default function SearchPage() {
 
       if (serviceParam) {
         setSelectedCategories([serviceParam]);
+        setSelectedService(serviceParam);
       }
 
       if (dateParam || timeParam) {

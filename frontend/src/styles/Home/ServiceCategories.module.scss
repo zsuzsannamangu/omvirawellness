@@ -1,11 +1,11 @@
 @import '../_variables.scss';
 
 .categoriesSection {
-  padding: $spacing-xxl 2rem;
+  padding: $spacing-xl 2rem $spacing-xxl;
   background-color: $muted-bg;
-  
+
   @media (max-width: 768px) {
-    padding: $spacing-xl $spacing-md;
+    padding: $spacing-lg $spacing-md $spacing-xl;
   }
 }
 
@@ -16,10 +16,10 @@
 
 .header {
   text-align: left;
-  margin-bottom: 3rem;
-  
+  margin-bottom: 2rem;
+
   @media (max-width: 768px) {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -28,7 +28,7 @@
   font-family: $font-heading;
   color: $dark-text;
   margin-bottom: $spacing-md;
-  
+
   @media (max-width: 768px) {
     font-size: 2rem;
   }
@@ -38,118 +38,75 @@
   font-family: $font-subheading;
   font-size: 1.1rem;
   color: $subtext-color;
+  margin: 0;
 }
 
-.scrollWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
 
-.navButton {
-  background: $primary-color;
-  color: $light-text;
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 105, 92, 0.2);
-  z-index: 10;
-  flex-shrink: 0;
-  
-  &:hover {
-    background: $hover-green;
-    transform: scale(1.05);
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
   }
-  
-  &:first-child {
-    margin-right: -24px;
-  }
-  
-  &:last-child {
-    margin-left: -24px;
-  }
-  
-  @media (max-width: 768px) {
-    width: 40px;
-    height: 40px;
-    
-    &:first-child {
-      margin-right: -20px;
-    }
-    
-    &:last-child {
-      margin-left: -20px;
-    }
-  }
-}
 
-.scrollContainer {
-  display: flex;
-  gap: 1.5rem;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 1rem 2rem;
-  flex: 1;
-  
-  // Hide scrollbar
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1rem 0;
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 .categoryCard {
   background: $light-text;
   border-radius: 16px;
-  padding: 1.5rem;
-  min-width: 280px;
+  padding: 1.25rem 1.35rem;
   box-shadow: 0 4px 20px $shadow-light;
   border: none;
-  transition: all 0.3s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
   cursor: pointer;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
-  
+  gap: $spacing-sm;
+  width: 100%;
+  height: 100%;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     box-shadow: 0 8px 30px $shadow-medium;
   }
-  
-  @media (max-width: 768px) {
-    min-width: 240px;
-    padding: 1.5rem 1rem;
+
+  &:focus-visible {
+    outline: 3px solid rgba($client-colors-1, 0.5);
+    outline-offset: 2px;
   }
 }
 
 .titleRow {
   display: flex;
-  align-items: center;
-  gap: $spacing-md;
+  align-items: flex-start;
+  gap: $spacing-sm;
 }
 
 .imageContainer {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($secondary-color, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba($primary-color, 0.1) 0%,
+    rgba($secondary-color, 0.1) 100%
+  );
   box-shadow: 0 2px 8px $shadow-color;
   flex-shrink: 0;
 }
@@ -158,28 +115,33 @@
   width: 28px;
   height: 28px;
   object-fit: contain;
-  transition: all 0.3s ease;
+  transition: transform 0.25s ease;
 }
 
 .categoryCard:hover .serviceIcon {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .categoryTitle {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-family: $font-subheading;
   color: $dark-text;
   margin: 0;
   font-weight: 600;
   text-align: left;
   flex: 1;
+  line-height: 1.3;
 }
 
 .description {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: $subtext-color;
   font-family: $font-main;
-  line-height: 1.4;
+  line-height: 1.45;
   margin: 0;
   text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

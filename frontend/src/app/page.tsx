@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 
 // Refactored homepage sections
 import Hero from '@/components/Home/Hero';
+import AudiencePaths from '@/components/Home/AudiencePaths';
 import FAQ from '@/components/Home/FAQ';
 import RecommendedProviders from '@/components/Home/RecommendedProviders';
 import HowItWorks from '@/components/Home/HowItWorks';
@@ -17,10 +18,11 @@ const Home: React.FC = () => {
       <Navbar />
       <main id="main-content" role="main">
         <Hero />
-        <ServiceCategories />
+        <AudiencePaths />
         <HowItWorks />
         <RecommendedProviders />
         <Testimonials />
+        <ServiceCategories />
         <FAQ />
       </main>
       <Footer />
