@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   FaMapMarkerAlt,
@@ -191,7 +192,8 @@ const Hero: React.FC = () => {
 
   return (
     <section className={styles.bookingHero} aria-label="Find a wellness provider">
-      <div className={styles.inner}>
+      <div className={styles.split}>
+        <div className={styles.splitLeft}>
         <div className={styles.cityRow}>
           <FaMapMarkerAlt className={styles.cityPin} aria-hidden />
           <span className={styles.cityText}>{cityLabel}</span>
@@ -329,6 +331,20 @@ const Hero: React.FC = () => {
             See providers
           </button>
         </form>
+        </div>
+
+        <div className={styles.splitRight}>
+          <div className={styles.heroImageFrame}>
+            <Image
+              src="/images/massage4.jpg"
+              alt="Calm wellness session in a bright, professional space"
+              fill
+              className={styles.heroImage}
+              sizes="(max-width: 899px) 100vw, 50vw"
+              priority
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
