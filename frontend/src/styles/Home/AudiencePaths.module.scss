@@ -10,12 +10,13 @@ $dd-muted: #606060;
 
 .section {
   background: $dd-surface;
-  padding: 2.5rem 1.25rem 3rem;
+  // Extra top padding: breathing room after hero before the three tiles
+  padding: 3.75rem 1.25rem 3rem;
   border-top: 1px solid $dd-card-border;
   border-bottom: 1px solid $dd-card-border;
 
   @media (min-width: 769px) {
-    padding: 3rem 2rem 3.5rem;
+    padding: 4.5rem 2rem 3.5rem;
   }
 }
 
@@ -38,12 +39,12 @@ $dd-muted: #606060;
 
 .grid {
   display: grid;
-  gap: 1.25rem;
+  gap: 2rem;
   grid-template-columns: 1fr;
 
   @media (min-width: 700px) and (max-width: 1023px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
+    gap: 2.25rem;
 
     .card:last-child {
       grid-column: 1 / -1;
@@ -66,7 +67,7 @@ $dd-muted: #606060;
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
-    gap: 1.5rem;
+    gap: 2.5rem;
 
     .card:last-child {
       flex-direction: column;

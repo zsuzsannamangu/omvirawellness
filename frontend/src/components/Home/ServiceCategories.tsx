@@ -17,6 +17,7 @@ const categoryIcons: { [key: string]: string } = {
   'sound-healing': '/images/icons/aromatherapy.png',
   'craniosacral-therapy': '/images/icons/massage.png',
   reflexology: '/images/icons/massage.png',
+  acupuncture: '/images/icons/medicine.png',
   'life-coaching': '/images/icons/training.png',
   'health-coaching': '/images/icons/training.png',
   breathwork: '/images/icons/yoga.png',

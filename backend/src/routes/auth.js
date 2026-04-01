@@ -20,6 +20,7 @@ const {
   disable2FA,
   verify2FALogin,
   regenerateBackupCodes,
+  checkEmailForProviderSignup,
 } = require('../controllers/auth');
 const { authenticate } = require('../middleware/auth');
 
@@ -36,6 +37,13 @@ router.post('/register/client', registerClient);
  * @access  Public
  */
 router.post('/register/provider', registerProvider);
+
+/**
+ * @route   POST /api/auth/check-email-provider-signup
+ * @desc    Whether email is free for provider registration (early validation)
+ * @access  Public
+ */
+router.post('/check-email-provider-signup', checkEmailForProviderSignup);
 
 // SPACES FEATURE - COMMENTED OUT FOR MVP
 /**

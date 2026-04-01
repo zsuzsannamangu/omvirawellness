@@ -28,6 +28,26 @@
   width: 100%;
 }
 
+.emailAvailabilityError {
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #b91c1c;
+  font-family: $font-main;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.emailAvailabilityErrorLogin {
+  display: inline-block;
+  margin-top: $spacing-xs;
+  font-weight: $font-weight-semibold;
+  color: $client-colors-1;
+  text-decoration: underline;
+}
+
 .inputGroup {
   margin-bottom: $spacing-lg;
 }
@@ -218,6 +238,7 @@
 }
 
 .categoryCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -238,6 +259,22 @@
     border-color: $provider-colors-3;
     background: $provider-color-3-rgba-05;
   }
+}
+
+.categorySelectedBadge {
+  position: absolute;
+  top: $spacing-xs;
+  right: $spacing-xs;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: $provider-colors-3;
+  color: $light-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  pointer-events: none;
 }
 
 .categoryIcon {
@@ -298,6 +335,17 @@
 .arrow {
   color: $provider-colors-3;
   font-weight: bold;
+}
+
+.otherItemRight {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.otherItemCheck {
+  color: $provider-colors-3;
+  font-size: 1rem;
 }
 
 .locationOptions {

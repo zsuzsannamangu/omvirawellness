@@ -2416,6 +2416,69 @@ async function forgotPassword(req, res) {
   }
 }
 
+/**
+ * Check if email is already registered before provider multi-step signup (step 1).
+ * POST body: { email: string }
+ */
+async function checkEmailForProviderSignup(req, res) {
+  try {
+    const raw = req.body && req.body.email;
+    const email = raw == null ? '' : String(raw).trim();
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        available: false,
+        message: 'Email is required.',
+      });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        available: false,
+        message: 'Please enter a valid email address.',
+      });
+    }
+
+    const existingUser = await pool.query(
+      'SELECT id, user_type FROM users WHERE LOWER(TRIM(email)) = LOWER(TRIM($1))',
+      [email]
+    );
+
+    if (existingUser.rows.length === 0) {
+      return res.json({
+        success: true,
+        available: true,
+      });
+    }
+
+    const userType = existingUser.rows[0].user_type || 'user';
+    let message =
+      'This email is already registered. Log in or use a different email address.';
+    if (userType === 'provider') {
+      message =
+        'This email already has a provider account. Log in below or use a different email.';
+    } else if (userType === 'client') {
+      message =
+        'This email is registered as a client. Use a different email for a provider account, or contact support if you need help.';
+    }
+
+    return res.json({
+      success: true,
+      available: false,
+      userType,
+      message,
+    });
+  } catch (error) {
+    console.error('checkEmailForProviderSignup error:', error);
+    res.status(500).json({
+      success: false,
+      available: false,
+      message: 'Could not verify email. Please try again.',
+    });
+  }
+}
+
 module.exports = {
   registerClient,
   registerProvider,
@@ -2435,5 +2498,6 @@ module.exports = {
   disable2FA,
   verify2FALogin,
   regenerateBackupCodes,
+  checkEmailForProviderSignup,
 };
 

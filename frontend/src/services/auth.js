@@ -142,6 +142,33 @@ export async function registerProvider(formData) {
   }
 }
 
+/**
+ * Check whether an email can be used for provider signup (step 1 — before long form).
+ * @returns {Promise<{ success: boolean, available: boolean, message?: string, userType?: string }>}
+ */
+export async function checkProviderSignupEmail(email) {
+  const response = await fetch(`${AUTH_API_URL}/check-email-provider-signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email: String(email || '').trim() }),
+  });
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('Could not verify email. Please try again.');
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Could not verify email. Please try again.');
+  }
+
+  return data;
+}
+
 /* SPACES FEATURE - COMMENTED OUT FOR MVP
  * Register a new space owner
 export async function registerSpaceOwner(formData) {

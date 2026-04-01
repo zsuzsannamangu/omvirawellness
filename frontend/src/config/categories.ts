@@ -65,6 +65,12 @@ export const SERVICE_CATEGORIES: Category[] = [
     description: 'Pressure point therapy on feet, hands, and ears to promote healing'
   },
   {
+    id: 'acupuncture',
+    name: 'Acupuncture',
+    displayName: 'Acupuncture',
+    description: 'Traditional Chinese medicine using fine needles to support balance, pain relief, and overall wellness'
+  },
+  {
     id: 'life-coaching',
     name: 'Life Coaching',
     displayName: 'Life Coaching',

@@ -96,10 +96,12 @@ const Hero: React.FC = () => {
       </div>
 
       <div className={styles.heroInner}>
-        <h1 className={styles.heroTitle}>Omvira</h1>
-        <p className={styles.heroSubtitle}>Wellness, delivered to you</p>
+        <div className={styles.heroHeadlines}>
+          <h1 className={styles.heroTitle}>Omvira</h1>
+          <p className={styles.heroSubtitle}>Wellness, delivered to you</p>
+        </div>
         <p className={styles.heroSupporting}>
-          Book trusted professionals for massage, yoga, skincare.
+          Book trusted professionals for massage, yoga, skincare, Acupuncture, and more—solo or with friends.
         </p>
 
         <div className={styles.searchCard}>
