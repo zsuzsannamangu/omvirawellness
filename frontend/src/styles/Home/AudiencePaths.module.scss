@@ -11,18 +11,23 @@ $dd-card-border: #ebebeb;
   position: relative;
   z-index: 0;
   background: $dd-surface;
-  padding: clamp(4.5rem, 12vw, 7.5rem) 1.25rem 2.35rem;
+  /* Snug band below hero (DoorDash-style), not a huge vertical gap */
+  padding: 2.5rem 1.25rem 2.5rem;
   margin-top: -1px;
   border-top: 1px solid rgba($dark-text, 0.06);
   border-bottom: 1px solid $dd-card-border;
 
   @media (min-width: 769px) {
-    padding: clamp(5rem, 9vw, 8rem) 2.5rem 2.6rem;
+    padding: 2.75rem 2rem 2.65rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 3rem 2.5rem 2.75rem;
   }
 }
 
 .container {
-  max-width: min(1320px, 94vw);
+  max-width: min(1200px, 94vw);
   margin: 0 auto;
 }
 
@@ -40,12 +45,12 @@ $dd-card-border: #ebebeb;
 
 .grid {
   display: grid;
-  gap: 1.35rem;
+  gap: 1.15rem;
   grid-template-columns: 1fr;
 
   @media (min-width: 700px) and (max-width: 1023px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
+    gap: 1.25rem;
 
     .card:last-child {
       grid-column: 1 / -1;
@@ -68,14 +73,14 @@ $dd-card-border: #ebebeb;
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
-    gap: 1.65rem;
+    gap: 1.35rem;
 
     .card:last-child {
       flex-direction: column;
 
       .media {
         width: 100%;
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 16 / 10;
       }
 
       .body {
@@ -87,9 +92,9 @@ $dd-card-border: #ebebeb;
 
 .card {
   background: $bg-white;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
   border: 1px solid $dd-card-border;
   display: flex;
   flex-direction: column;
@@ -100,8 +105,8 @@ $dd-card-border: #ebebeb;
 .media {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 140px;
+  aspect-ratio: 16 / 10;
+  min-height: 160px;
   background: $section-bg-3;
 }
 
