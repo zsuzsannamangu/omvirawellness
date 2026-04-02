@@ -11,7 +11,7 @@ const paths = [
       'Browse and book trusted providers for in-home or on-location wellness.',
     cta: 'Search providers',
     href: '/search',
-    image: '/images/Jenn-52.jpg',
+    image: '/images/Jenn-45.jpg',
     imageAlt: 'Bright, inviting setting where you can discover wellness services',
     variant: 'primary' as const,
   },
