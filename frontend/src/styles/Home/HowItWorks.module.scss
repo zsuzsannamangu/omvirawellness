@@ -182,9 +182,14 @@
 
 .panelReverse .panelInner {
   flex-direction: row-reverse;
+  padding-left: 0.55rem;
+  padding-right: 1.55rem;
+  gap: clamp(1rem, 2.8vw, 1.85rem);
 
   @media (max-width: 768px) {
     flex-direction: column;
+    padding: 1.2rem 1.15rem 1.35rem;
+    gap: 1.2rem;
   }
 }
 
@@ -361,9 +366,17 @@
 .panelReverse .imageFrame {
   border-radius: 22px 22px 8px 22px;
   transform: rotate(2deg);
+  padding: 5px;
+  max-width: min(300px, 42vw);
+  margin-left: 0;
+  margin-right: auto;
 
   @media (max-width: 768px) {
     transform: rotate(1.25deg);
+    padding: 9px;
+    max-width: 248px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -413,6 +426,10 @@
   aspect-ratio: 5 / 4;
   border-radius: 14px;
   object-fit: cover;
+}
+
+.imageLandscape {
+  object-position: 38% 45%;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,6 @@
 @import '../_variables.scss';
 
-// DoorDash-inspired hero: full-bleed lifestyle photo, gradient overlay, floating white search card, red CTA.
-// Background image matches "How it works" step: Curate your own experience (/images/screenshots/massage1.png).
+// Full-bleed hero: lifestyle photo, gradient overlay, floating search card (see /images/screenshots/hero-home-wellness.png).
 
 $hero-cta: $primary-color;
 $hero-cta-hover: darken($primary-color, 10%);
@@ -25,7 +24,7 @@ $card-input-bg: #f7f7f7;
 
 .bgImage {
   object-fit: cover;
-  object-position: center 35%;
+  object-position: 44% 30%;
 }
 
 .bgOverlay {

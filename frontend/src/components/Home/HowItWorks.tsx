@@ -28,8 +28,8 @@ const rows: Row[] = [
     ],
   },
   {
-    image: '/images/screenshots/massage1.png',
-    imageAlt: 'Relaxing in-home wellness session',
+    image: '/images/screenshots/how-it-works-we-come-to-you.png',
+    imageAlt: 'Wellness provider walking outdoors with a portable massage table ready for your location',
     reverse: true,
     steps: [
       {
@@ -79,7 +79,7 @@ const HowItWorks: React.FC = () => {
                       alt={row.imageAlt}
                       width={360}
                       height={288}
-                      className={styles.image}
+                      className={row.reverse ? `${styles.image} ${styles.imageLandscape}` : styles.image}
                       sizes="(max-width: 768px) 72vw, 280px"
                     />
                   </div>

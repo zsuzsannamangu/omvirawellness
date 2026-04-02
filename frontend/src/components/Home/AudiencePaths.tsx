@@ -11,8 +11,9 @@ const paths = [
       'Browse and book trusted providers for in-home or on-location wellness.',
     cta: 'Search providers',
     href: '/search',
-    image: '/images/screenshots/arrival.png',
-    imageAlt: 'Guest arriving for a wellness appointment',
+    image: '/images/screenshots/audience-find-service.png',
+    imageAlt:
+      'Two people in a calm outdoor wellness moment, suggesting discovery and care',
     variant: 'primary' as const,
   },
   {
@@ -22,8 +23,8 @@ const paths = [
       'Start earning with tools, visibility and clients without the overwhelm.',
     cta: 'Get started',
     href: '/join',
-    image: '/images/screenshots/growyourpractice2.png',
-    imageAlt: 'Wellness provider growing their practice',
+    image: '/images/screenshots/audience-provider.png',
+    imageAlt: 'Beauty professional with tools of the trade, ready to grow their practice',
     variant: 'primary' as const,
   },
   {
@@ -33,8 +34,8 @@ const paths = [
       'Turn your space into a destination for wellness professionals and experiences.',
     cta: 'Coming soon',
     href: null,
-    image: '/images/screenshots/wework2.png',
-    imageAlt: 'Bright shared workspace suitable for wellness sessions',
+    image: '/images/screenshots/jenn-52.png',
+    imageAlt: 'Bright shared workspace suitable for hosting wellness sessions',
     variant: 'soon' as const,
   },
 ];

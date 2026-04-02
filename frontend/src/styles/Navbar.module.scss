@@ -109,10 +109,10 @@
 }
 
 .navLink {
-  font-size: 1.15rem;
+  font-family: $font-main;
+  font-size: 1rem;
+  font-weight: $font-weight-bold;
   color: $navbar-fg-muted;
-  font-weight: 600;
-  font-family: $font-mainheading;
   text-decoration: none;
   transition: color 0.2s ease;
   background: none;
@@ -282,6 +282,11 @@
   &:last-child {
     border-bottom: none;
   }
+}
+
+.mobileNavLink.mobileNavLinkCta {
+  font-size: 1rem;
+  font-weight: $font-weight-bold;
 }
 
 .mobileLoginButton {

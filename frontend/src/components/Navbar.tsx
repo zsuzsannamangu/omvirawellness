@@ -117,18 +117,22 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => scrollToSection('services')}
-              className={styles.mobileNavLink}
+              className={`${styles.mobileNavLink} ${styles.mobileNavLinkCta}`}
             >
               Services
             </button>
             <button
               type="button"
               onClick={() => scrollToSection('how-it-works')}
-              className={styles.mobileNavLink}
+              className={`${styles.mobileNavLink} ${styles.mobileNavLinkCta}`}
             >
               How It Works
             </button>
-            <Link href="/providers" className={styles.mobileNavLink} onClick={() => setIsMenuOpen(false)}>
+            <Link
+              href="/providers"
+              className={`${styles.mobileNavLink} ${styles.mobileNavLinkCta}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
               For Providers
             </Link>
             <Link href="/login" className={styles.mobileLoginButton} onClick={() => setIsMenuOpen(false)}>
