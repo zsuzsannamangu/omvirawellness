@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import footerStyles from '@/styles/Footer.module.scss';
 
 // Refactored homepage sections
 import Hero from '@/components/Home/Hero';
@@ -29,7 +30,7 @@ const Home: React.FC = () => {
         <FAQ />
         <ProviderFinalCta />
       </main>
-      <Footer />
+      <Footer className={footerStyles.flushAfterCta} />
     </>
   );
 };

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FaMapMarkerAlt, FaLocationArrow, FaSearch } from 'react-icons/fa';
 import styles from '@/styles/Home/Hero.module.scss';
 
-const HERO_BG = '/images/Jenn-52.jpg';
+const HERO_BG = '/images/Jenn-41.jpg';
 
 const Hero: React.FC = () => {
   const router = useRouter();

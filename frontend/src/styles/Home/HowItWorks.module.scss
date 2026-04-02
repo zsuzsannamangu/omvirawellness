@@ -155,6 +155,16 @@
   }
 }
 
+.panelReverse .panelWatermark {
+  right: auto;
+  left: clamp(0.5rem, 2.5vw, 1.25rem);
+
+  @media (max-width: 768px) {
+    right: auto;
+    left: 0.35rem;
+  }
+}
+
 .panelTintA::before {
   background: linear-gradient(180deg, $primary-color 0%, darken($primary-color, 8%) 100%);
 }

@@ -68,9 +68,13 @@ function FooterLinkRow({ item }: { item: FooterLinkItem }) {
   );
 }
 
-export default function Footer() {
+type FooterProps = {
+  className?: string;
+};
+
+export default function Footer({ className }: FooterProps) {
   return (
-    <footer className={styles.footer}>
+    <footer className={[styles.footer, className].filter(Boolean).join(' ')}>
       <div className={styles.glow} aria-hidden />
       <div className={styles.container}>
         <div className={styles.main}>
