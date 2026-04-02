@@ -38,7 +38,7 @@
   }
 }
 
-// Home: sits directly under ProviderFinalCta purple ramp — no white gap
+// Home: flush under provider CTA — no gap, minimal seam
 .flushAfterCta {
   margin-top: 0;
   border-top-color: transparent;
@@ -49,16 +49,7 @@
   }
 
   &::before {
-    opacity: 0.55;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba($brand-lime, 0.18) 22%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba($brand-lime, 0.18) 78%,
-      transparent 100%
-    );
+    opacity: 0;
   }
 }
 

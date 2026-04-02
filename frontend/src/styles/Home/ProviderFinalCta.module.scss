@@ -5,28 +5,26 @@ $cta-bg-hover: darken($primary-color, 10%);
 
 .section {
   position: relative;
-  padding: 2.35rem 1.5rem clamp(3.25rem, 9vw, 5.5rem);
+  padding: 2.35rem 1.5rem 2.85rem;
   background: linear-gradient(
     180deg,
     rgba($accent-color, 0.06) 0%,
-    rgba($primary-color, 0.05) 55%,
-    rgba($brand-purple-deep, 0.12) 100%
+    rgba($primary-color, 0.05) 100%
   );
   border-top: 1px solid rgba($dark-text, 0.08);
   overflow: hidden;
 
+  // Thin blend into footer purple — short, no tall wash
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    height: clamp(4.25rem, 16vw, 9.5rem);
+    height: clamp(1.5rem, 3.5vw, 2.25rem);
     background: linear-gradient(
       180deg,
-      transparent 0%,
-      rgba($brand-purple-deep, 0.45) 42%,
-      rgba($brand-purple-deep, 0.92) 78%,
+      rgba($brand-purple-deep, 0) 0%,
       $brand-purple-deep 100%
     );
     pointer-events: none;
@@ -34,7 +32,7 @@ $cta-bg-hover: darken($primary-color, 10%);
   }
 
   @media (min-width: 769px) {
-    padding: 2.6rem 2.5rem clamp(3.5rem, 9vw, 5.75rem);
+    padding: 2.6rem 2.5rem 3rem;
   }
 }
 
