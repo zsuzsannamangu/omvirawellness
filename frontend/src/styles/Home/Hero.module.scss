@@ -7,8 +7,7 @@ $hero-blend-to-section: #f7f7f7;
 
 .doorDashHero {
   position: relative;
-  /* Tall hero band (DoorDash-style: ~70vh, cap ~700px desktop) */
-  min-height: min(70vh, 700px);
+  min-height: min(92vh, 960px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,7 +15,7 @@ $hero-blend-to-section: #f7f7f7;
   margin-bottom: 0;
 
   @media (max-width: 768px) {
-    min-height: min(62vh, 560px);
+    min-height: min(78vh, 720px);
   }
 
   &::after {

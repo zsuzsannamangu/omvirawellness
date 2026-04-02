@@ -182,9 +182,9 @@
 
 .panelReverse .panelInner {
   flex-direction: row-reverse;
-  padding-left: 0.55rem;
-  padding-right: 1.55rem;
-  gap: clamp(1rem, 2.8vw, 1.85rem);
+  padding-left: 0.3rem;
+  padding-right: 1.5rem;
+  gap: clamp(0.75rem, 2vw, 1.35rem);
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -366,8 +366,8 @@
 .panelReverse .imageFrame {
   border-radius: 22px 22px 8px 22px;
   transform: rotate(2deg);
-  padding: 5px;
-  max-width: min(300px, 42vw);
+  padding: 4px;
+  max-width: min(336px, 48vw);
   margin-left: 0;
   margin-right: auto;
 

@@ -11,9 +11,8 @@ const paths = [
       'Browse and book trusted providers for in-home or on-location wellness.',
     cta: 'Search providers',
     href: '/search',
-    image: '/images/screenshots/audience-find-service.png',
-    imageAlt:
-      'Two people in a calm outdoor wellness moment, suggesting discovery and care',
+    image: '/images/Jenn-52.jpg',
+    imageAlt: 'Bright, inviting setting where you can discover wellness services',
     variant: 'primary' as const,
   },
   {
@@ -34,8 +33,8 @@ const paths = [
       'Turn your space into a destination for wellness professionals and experiences.',
     cta: 'Coming soon',
     href: null,
-    image: '/images/Jenn-52.jpg',
-    imageAlt: 'Welcoming space for hosting wellness professionals and experiences',
+    image: '/images/Jenn-49.jpg',
+    imageAlt: 'Attractive space ready to host wellness professionals and guests',
     variant: 'soon' as const,
   },
 ];
@@ -55,7 +54,13 @@ const AudiencePaths: React.FC = () => {
                   src={item.image}
                   alt={item.imageAlt}
                   fill
-                  className={item.variant === 'soon' ? `${styles.mediaImg} ${styles.mediaImgMuted}` : styles.mediaImg}
+                  className={
+                    item.variant === 'soon'
+                      ? `${styles.mediaImg} ${styles.mediaImgMuted}`
+                      : item.key === 'provider'
+                        ? `${styles.mediaImg} ${styles.mediaImgProvider}`
+                        : styles.mediaImg
+                  }
                   sizes="(max-width: 899px) 100vw, 33vw"
                 />
               </div>

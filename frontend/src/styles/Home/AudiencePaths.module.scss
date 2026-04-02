@@ -115,6 +115,12 @@ $dd-card-border: #ebebeb;
   object-position: center;
 }
 
+/* Become a provider: portrait photo — anchor toward top so head/hair isn’t cropped */
+.mediaImgProvider {
+  object-fit: cover;
+  object-position: center 15%;
+}
+
 .mediaImgMuted {
   filter: grayscale(0.25) brightness(0.92);
   opacity: 0.92;
