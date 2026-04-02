@@ -28,8 +28,8 @@ const rows: Row[] = [
     ],
   },
   {
-    image: '/images/screenshots/how-it-works-we-come-to-you.png',
-    imageAlt: 'Wellness provider walking outdoors with a portable massage table ready for your location',
+    image: '/images/Jenn-5.jpg',
+    imageAlt: 'Wellness experience brought to a setting that works for you',
     reverse: true,
     steps: [
       {
