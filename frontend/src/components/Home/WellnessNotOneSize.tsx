@@ -1,8 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
 import styles from '@/styles/Home/WellnessNotOneSize.module.scss';
-
-const SECTION_BG = '/images/screenshots/arrival.png';
 
 const WellnessNotOneSize: React.FC = () => {
   return (
@@ -11,17 +8,6 @@ const WellnessNotOneSize: React.FC = () => {
       className={styles.section}
       aria-labelledby="wellness-not-one-size-heading"
     >
-      <div className={styles.bgWrap}>
-        <Image
-          src={SECTION_BG}
-          alt=""
-          fill
-          className={styles.bgImage}
-          sizes="100vw"
-          priority={false}
-        />
-        <div className={styles.bgOverlay} aria-hidden />
-      </div>
       <div className={styles.inner}>
         <h2 id="wellness-not-one-size-heading" className={styles.heading}>
           Wellness isn&apos;t one size fits all

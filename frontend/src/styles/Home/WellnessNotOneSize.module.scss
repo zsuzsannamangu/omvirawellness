@@ -8,39 +8,22 @@
   overflow: hidden;
   min-height: clamp(220px, 34vw, 360px);
   padding: 2rem $spacing-md;
+  margin-bottom: clamp(2rem, 4.5vw, 3.25rem);
+  background: linear-gradient(
+    125deg,
+    rgb(41, 64, 85) 0%,
+    rgb(92, 62, 91) 45%,
+    rgb(41, 64, 85) 100%
+  );
 
   @media (min-width: 769px) {
     padding: 2.35rem 2.5rem;
+    margin-bottom: clamp(2.25rem, 4vw, 3.5rem);
   }
-}
-
-.bgWrap {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.bgImage {
-  object-fit: cover;
-  object-position: center 40%;
-  opacity: 0.42;
-  transform: scale(1.02);
-}
-
-.bgOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    125deg,
-    rgba(41, 64, 85, 0.88) 0%,
-    rgba(92, 62, 91, 0.82) 45%,
-    rgba(41, 64, 85, 0.9) 100%
-  );
 }
 
 .inner {
   position: relative;
-  z-index: 1;
   width: 100%;
   max-width: min(52rem, 92vw);
   margin: 0 auto;

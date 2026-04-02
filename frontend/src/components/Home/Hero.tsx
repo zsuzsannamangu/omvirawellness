@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FaMapMarkerAlt, FaLocationArrow, FaSearch } from 'react-icons/fa';
 import styles from '@/styles/Home/Hero.module.scss';
 
-const HERO_BG = '/images/screenshots/hero-home-wellness.png';
+const HERO_BG = '/images/screenshots/hero-home-jenn95.png';
 
 const Hero: React.FC = () => {
   const router = useRouter();
@@ -86,7 +86,7 @@ const Hero: React.FC = () => {
       <div className={styles.bgWrap}>
         <Image
           src={HERO_BG}
-          alt="Massage therapist providing a session to a client in a bright, comfortable home setting"
+          alt="Warm, welcoming wellness professional representing trusted Omvira providers"
           fill
           priority
           className={styles.bgImage}

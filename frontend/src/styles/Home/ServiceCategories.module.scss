@@ -1,11 +1,11 @@
 @import '../_variables.scss';
 
 .categoriesSection {
-  padding: 2.35rem 1.5rem 2.65rem;
+  padding: clamp(3rem, 5.5vw, 4rem) 1.5rem 2.65rem;
   background-color: $muted-bg;
 
   @media (max-width: 768px) {
-    padding: 2rem $spacing-md 2.35rem;
+    padding: clamp(2.65rem, 5vw, 3.25rem) $spacing-md 2.35rem;
   }
 }
 
