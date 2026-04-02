@@ -75,37 +75,41 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.main}>
           <div className={styles.brandPanel}>
-            <Link href="/" className={styles.logoLink}>
-              <Image
-                src="/Omvira_logo_white.png"
-                alt="Omvira Wellness — home"
-                width={300}
-                height={75}
-                className={styles.logo}
-              />
-            </Link>
-            <p className={styles.tagline}>Wellness, delivered.</p>
-            <div className={styles.socialWrap}>
-              <span className={styles.socialLabel}>Follow</span>
-              <div className={styles.socialIcons}>
-                <a
-                  href="https://www.instagram.com/omvirawellness"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialIcon}
-                  aria-label="Omvira on Instagram"
-                >
-                  <FaInstagram />
-                </a>
-                <a
-                  href="https://www.facebook.com/profile.php?id=61577726068469"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialIcon}
-                  aria-label="Omvira on Facebook"
-                >
-                  <FaFacebook />
-                </a>
+            <div className={styles.brandTop}>
+              <Link href="/" className={styles.logoLink}>
+                <Image
+                  src="/Omvira_logo_white.png"
+                  alt="Omvira Wellness — home"
+                  width={300}
+                  height={75}
+                  className={styles.logo}
+                />
+              </Link>
+              <div className={styles.brandAside}>
+                <p className={styles.tagline}>Wellness, delivered.</p>
+                <div className={styles.socialWrap}>
+                  <span className={styles.socialLabel}>Follow</span>
+                  <div className={styles.socialIcons}>
+                    <a
+                      href="https://www.instagram.com/omvirawellness"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.socialIcon}
+                      aria-label="Omvira on Instagram"
+                    >
+                      <FaInstagram />
+                    </a>
+                    <a
+                      href="https://www.facebook.com/profile.php?id=61577726068469"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.socialIcon}
+                      aria-label="Omvira on Facebook"
+                    >
+                      <FaFacebook />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

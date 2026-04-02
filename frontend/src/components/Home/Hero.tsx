@@ -101,7 +101,7 @@ const Hero: React.FC = () => {
             <h1 className={styles.homeDoorDashHeroWordmark}>Omvira</h1>
             <p className={styles.homeDoorDashHeroTaglineRow}>
               <span className={styles.homeDoorDashHeroTaglineText}>
-                Wellness, delivered to you
+                Wellness, Delivered to You
               </span>
             </p>
           </div>
