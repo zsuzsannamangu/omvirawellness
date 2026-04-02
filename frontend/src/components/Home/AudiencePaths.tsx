@@ -33,8 +33,9 @@ const paths = [
       'Turn your space into a destination for wellness professionals and experiences.',
     cta: 'Coming soon',
     href: null,
-    image: '/images/Jenn-49.jpg',
-    imageAlt: 'Attractive space ready to host wellness professionals and guests',
+    image: '/images/Jenn-14.png',
+    imageAlt:
+      'Provider with equipment arriving at a bright, welcoming home as a host greets them',
     variant: 'soon' as const,
   },
 ];

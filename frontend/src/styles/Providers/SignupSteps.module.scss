@@ -1546,7 +1546,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   margin-left: 8px;
-  $bg-white-space: nowrap;
+  white-space: nowrap;
 }
 
 
@@ -1774,6 +1774,120 @@
   }
 }
 
+// Provider signup — choose plan step (condensed vertical rhythm)
+.stepContainer.paymentStep {
+  padding: $spacing-md $spacing-lg;
+
+  .title {
+    font-size: clamp(1.45rem, 3.5vw, 1.65rem);
+    margin-bottom: 0.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: $spacing-md;
+    line-height: 1.35;
+  }
+
+  .billingToggle {
+    margin-bottom: $spacing-md;
+    padding: 3px;
+    max-width: 520px;
+  }
+
+  .billingOption {
+    padding: 6px 12px;
+    font-size: 0.8125rem;
+  }
+
+  .plansContainer {
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  }
+
+  .planCard {
+    padding: $spacing-md;
+    border-radius: 12px;
+  }
+
+  .popularBadge {
+    top: -8px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+
+  .planName {
+    font-size: 1.15rem;
+    margin: 0 0 6px;
+  }
+
+  .planPrice {
+    margin-bottom: 2px;
+  }
+
+  .price {
+    font-size: 1.95rem;
+  }
+
+  .period {
+    font-size: 0.875rem;
+  }
+
+  .planDescription {
+    font-size: 0.8125rem;
+    margin: 0 0 $spacing-sm;
+  }
+
+  .planFeatures {
+    gap: 4px;
+  }
+
+  .feature {
+    padding: 2px 0;
+    font-size: 0.8125rem;
+    gap: 8px;
+  }
+
+  .checkIcon {
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  .planRadio {
+    margin-top: $spacing-md;
+    gap: 6px;
+  }
+
+  .planRadioLabel {
+    padding: 6px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .pricingSummary {
+    margin-bottom: $spacing-md;
+  }
+
+  .summaryRow {
+    padding: 3px 0;
+    font-size: 0.8125rem;
+  }
+
+  .termsNote {
+    padding: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  .termsText {
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .buttonContainer {
+    margin-top: $spacing-md;
+  }
+}
+
 // Responsive design
 @media (max-width: 768px) {
   .stepContainer {
@@ -1901,6 +2015,39 @@
   .popularBadge {
     right: 50%;
     transform: translateX(50%);
+  }
+
+  .stepContainer.paymentStep {
+    padding: $spacing-sm $spacing-md;
+
+    .title {
+      font-size: 1.45rem;
+    }
+
+    .subtitle {
+      margin-bottom: $spacing-sm;
+    }
+
+    .plansContainer {
+      gap: $spacing-sm;
+      margin-bottom: $spacing-md;
+    }
+
+    .planCard {
+      padding: $spacing-sm $spacing-md;
+    }
+
+    .price {
+      font-size: 1.7rem;
+    }
+
+    .planRadio {
+      margin-top: $spacing-sm;
+    }
+
+    .buttonContainer {
+      margin-top: $spacing-sm;
+    }
   }
 }
 

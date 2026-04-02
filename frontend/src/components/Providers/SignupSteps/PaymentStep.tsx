@@ -76,7 +76,7 @@ export default function PaymentStep({ onSubmit, onBack, initialData, isSubmittin
   const selectedPlanData = planOptions.find(plan => plan.id === selectedPlan);
 
   return (
-    <div className={styles.stepContainer}>
+    <div className={`${styles.stepContainer} ${styles.paymentStep}`}>
       <h1 className={styles.title}>Choose your plan</h1>
       <p className={styles.subtitle}>Select the plan that works best for your practice.</p>
       
