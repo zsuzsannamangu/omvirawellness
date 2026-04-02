@@ -4,7 +4,7 @@
   position: relative;
   overflow: hidden;
   margin-top: 2.5rem;
-  padding: 2.75rem 1.5rem 1.85rem;
+  padding: 3.15rem 1.5rem 2.15rem;
   color: $light-text;
   background:
     radial-gradient(ellipse 75% 65% at 100% 0%, rgba($brand-lime, 0.12) 0%, transparent 52%),
@@ -33,7 +33,7 @@
   }
 
   @media (max-width: 768px) {
-    padding: 2.25rem $spacing-md 1.6rem;
+    padding: 2.55rem $spacing-md 1.85rem;
     margin-top: 2.1rem;
   }
 }
@@ -66,11 +66,11 @@
   grid-template-columns: minmax(0, min(100%, 24rem)) minmax(0, 1fr);
   gap: 2rem 3rem;
   align-items: start;
-  margin-bottom: 1.85rem;
+  margin-bottom: 2.05rem;
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
-    gap: 1.85rem;
+    gap: 1.95rem;
   }
 }
 
@@ -347,8 +347,8 @@
 
 .bottomBar {
   position: relative;
-  padding-top: 1.45rem;
-  padding-bottom: 0.15rem;
+  padding-top: 1.55rem;
+  padding-bottom: 0.2rem;
   margin-top: 0.25rem;
 
   &::before {
