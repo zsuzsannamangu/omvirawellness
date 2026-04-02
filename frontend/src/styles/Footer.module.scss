@@ -38,14 +38,16 @@
   }
 }
 
-// Home: flush under provider CTA — no gap, minimal seam
+// Home: flush under provider CTA — overlap subpixel gap, calmer top rhythm
 .flushAfterCta {
-  margin-top: 0;
+  margin-top: -1px;
+  padding-top: 2.35rem;
   border-top-color: transparent;
   box-shadow: none;
 
   @media (max-width: 768px) {
-    margin-top: 0;
+    margin-top: -1px;
+    padding-top: 2.05rem;
   }
 
   &::before {

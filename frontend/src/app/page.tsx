@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import footerStyles from '@/styles/Footer.module.scss';
+import homeStyles from './page.module.scss';
 
 // Refactored homepage sections
 import Hero from '@/components/Home/Hero';
@@ -19,7 +20,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Navbar />
-      <main id="main-content" role="main">
+      <main id="main-content" role="main" className={homeStyles.homeMain}>
         <Hero />
         <AudiencePaths />
         <HowItWorks />

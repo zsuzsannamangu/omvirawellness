@@ -1,0 +1,6 @@
+// Homepage only — clean handoff to footer (no stray margin / collapse)
+.homeMain {
+  display: flow-root;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
